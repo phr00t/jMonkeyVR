@@ -1,0 +1,6 @@
+Material My Material : MatDefs/BarrelDistortion.j3md {
+     MaterialParameters {
+     }
+    AdditionalRenderState {
+    }
+}

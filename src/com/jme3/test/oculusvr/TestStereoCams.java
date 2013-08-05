@@ -20,6 +20,9 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeSystem;
+import com.jme3.system.Natives;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import oculusvr.input.OculusRiftReader;
@@ -36,6 +39,27 @@ public class TestStereoCams extends SimpleApplication {
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Node scene;
     public static void main(String[] args) {
+        String platform = JmeSystem.getPlatform().name();
+        
+        if(platform.startsWith("Win")){
+            try {
+                if(platform.endsWith("64")){
+                    Natives.extractNativeLib("windows","OculusLib64", false, false);
+                } else {
+                    Natives.extractNativeLib("windows","OculusLib", false, false);
+                }
+                
+            } catch (IOException ex) {
+                System.out.println("failed to extract " + ex);
+                Logger.getLogger(StereoCamAppState.class.getName()).log(Level.SEVERE, null, "Could not extract Oculus Rift library" + ex);
+            }
+        } else {
+            try {
+                throw new Exception("Sorry, platform not supported yet!");
+            } catch (Exception ex) {
+                Logger.getLogger(StereoCamAppState.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         File file = new File("wildhouse.zip");
         if (file.exists()) {
             useHttp = false;

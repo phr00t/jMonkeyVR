@@ -36,10 +36,10 @@ public class TestStereoCams extends SimpleApplication {
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Node scene;
     public static void main(String[] args) {
-//        File file = new File("wildhouse.zip");
-//        if (file.exists()) {
-//            useHttp = false;
-//        }
+        File file = new File("wildhouse.zip");
+        if (file.exists()) {
+            useHttp = false;
+        }
         
         TestStereoCams app = new TestStereoCams();
         app.start();
@@ -59,12 +59,12 @@ public class TestStereoCams extends SimpleApplication {
         stateManager.attach(stereoCamAppState);
         
         scene = new Node();
-//        if (useHttp) {
-//            assetManager.registerLocator("http://jmonkeyengine.googlecode.com/files/wildhouse.zip", HttpZipLocator.class);
-//        } else {
-//            assetManager.registerLocator("wildhouse.zip", ZipLocator.class);
-//        }
-//        scene.attachChild(assetManager.loadModel("main.scene"));
+        if (useHttp) {
+            assetManager.registerLocator("http://jmonkeyengine.googlecode.com/files/wildhouse.zip", HttpZipLocator.class);
+        } else {
+            assetManager.registerLocator("wildhouse.zip", ZipLocator.class);
+        }
+        scene.attachChild(assetManager.loadModel("main.scene"));
         Geometry box = new Geometry("", new Box(5,5,5));
         Material m = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         

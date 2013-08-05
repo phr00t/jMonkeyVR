@@ -45,6 +45,7 @@ public class TestStereoCams extends SimpleApplication {
         app.start();
         try {
             orr = new OculusRiftReader();
+            StereoCamAppState.setOculusRiftReader(orr);
         } catch (Exception ex) {
             Logger.getLogger(TestStereoCams.class.getName()).log(Level.SEVERE, null, ex);
         }

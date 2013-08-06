@@ -38,60 +38,81 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
 import com.jme3.util.TempVars;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import oculusvr.input.OculusRiftReader;
 
 /**
  * This Control maintains a reference to a Camera,
  * which will be synched with the position (worldTranslation)
  * of the current spatial.
- * @author tim, reden
+ * @author tim
  */
-public class StereoCameraControl extends CameraControl {
+public class CameraControl extends AbstractControl {
 
-    private Quaternion lookDirection = new Quaternion();
-    protected Camera camera2;
-    private float camHalfDistance = 0f;
-    private Vector3f cameraOffset = new Vector3f();
-    private OculusRiftReader oculus;
-    private Quaternion leftRot = new Quaternion();
-    private Quaternion rightRot = new Quaternion();
+    public static enum ControlDirection {
 
-    public StereoCameraControl(){
-        super();
-        cameraOffset.setX(camHalfDistance);
+        /**
+         * Means, that the Camera's transform is "copied"
+         * to the Transform of the Spatial.
+         */
+        CameraToSpatial,
+        /**
+         * Means, that the Spatial's transform is "copied"
+         * to the Transform of the Camera.
+         */
+        SpatialToCamera;
     }
-    
-    public StereoCameraControl(Camera camera, Camera camera2) {
-        super(camera);
-        this.camera2 = camera2;
-        cameraOffset.setX(camHalfDistance);
+    protected Camera camera;
+    protected ControlDirection controlDir = ControlDirection.SpatialToCamera;
+
+    /**
+     * Constructor used for Serialization.
+     */
+    public CameraControl() {
     }
-    
-    public StereoCameraControl(Camera camera, Camera camera2, ControlDirection controlDir) {
-        super(camera, controlDir);
-        this.camera2 = camera2;
-        cameraOffset.setX(camHalfDistance);
+
+    /**
+     * @param camera The Camera to be synced.
+     */
+    public CameraControl(Camera camera) {
+        this.camera = camera;
     }
+
+    /**
+     * @param camera The Camera to be synced.
+     */
+    public CameraControl(Camera camera, ControlDirection controlDir) {
+        this.camera = camera;
+        this.controlDir = controlDir;
+    }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public void setCamera(Camera camera) {
+        this.camera = camera;
+    }
+
+    public ControlDirection getControlDir() {
+        return controlDir;
+    }
+
+    public void setControlDir(ControlDirection controlDir) {
+        this.controlDir = controlDir;
+    }
+
     // fields used, when inversing ControlDirection:
     @Override
     protected void controlUpdate(float tpf) {
         if (spatial != null && camera != null) {
             switch (controlDir) {
                 case SpatialToCamera:
-                    
-                    if(oculus != null){
-                        lookDirection = new Quaternion().fromAngles(oculus.getRotation());
-                    }
-//                    lookDirection.multLocal(spatial.getWorldRotation());
-                    camera.setRotation(lookDirection.mult(leftRot));
-                    camera.setLocation(spatial.getWorldTranslation()/*.add(camera.getRotation().mult(cameraOffset))*/);
-                    camera2.setLocation(spatial.getWorldTranslation()/*.add(camera.getRotation().mult(cameraOffset.negate()))*/);
-                    camera2.setRotation(lookDirection.mult(rightRot));
+                    camera.setLocation(spatial.getWorldTranslation());
+                    camera.setRotation(spatial.getWorldRotation());
                     break;
                 case CameraToSpatial:
                     // set the localtransform, so that the worldtransform would be equal to the camera's transform.
@@ -107,68 +128,23 @@ public class StereoCameraControl extends CameraControl {
                     vars.release();
                     break;
             }
-        }else if (spatial == null){
-            throw new NullPointerException("Spatial can't be null!");
-        } 
+        }
     }
 
-    public Quaternion getLookDirection() {
-        return lookDirection;
+    @Override
+    protected void controlRender(RenderManager rm, ViewPort vp) {
+        // nothing to do
     }
 
-    public void setLookDirection(Quaternion lookDirection) {
-        this.lookDirection = lookDirection;
-    }
-    
-    private static final String CONTROL_DIR_NAME = "controlDir";
-    private static final String CAMERA_NAME = "camera";
-    
-    
-    public void increaseDistance(){
-        camHalfDistance += 0.01f;
-        cameraOffset.setX(camHalfDistance);
-        Logger.getLogger(StereoCameraControl.class.getName()).log(Level.FINE, null, "Cam offset: " + camHalfDistance);
-    }
-    
-    public void decreaseDistance(){
-        camHalfDistance -= 0.01f;
-        cameraOffset.setX(camHalfDistance);
-        Logger.getLogger(StereoCameraControl.class.getName()).log(Level.FINE, null, "Cam offset: " + camHalfDistance);
-    }
-
-    public float getCamHalfDistance() {
-        return camHalfDistance;
-    }
-
-    public void setCamHalfDistance(float camHalfDistance) {
-        this.camHalfDistance = camHalfDistance;
-        leftRot.fromAngles(0, -camHalfDistance, 0);
-                    
-        rightRot.fromAngles(0, camHalfDistance, 0);
-        cameraOffset.setX(camHalfDistance);
-    }
-    
-    
-    
-    public void setOculus(OculusRiftReader oculus){
-        this.oculus = oculus;
-    }
-    
-    public Camera getCamera2(){
-        return camera2;
-    }
-    
-    public void setCamera2(Camera cam2){
-        this.camera2 = cam2;
-    }
-    
     @Override
     public Control cloneForSpatial(Spatial newSpatial) {
-        StereoCameraControl control = new StereoCameraControl(camera, camera2, controlDir);
+        CameraControl control = new CameraControl(camera, controlDir);
         control.setSpatial(newSpatial);
         control.setEnabled(isEnabled());
         return control;
     }
+    private static final String CONTROL_DIR_NAME = "controlDir";
+    private static final String CAMERA_NAME = "camera";
     
     @Override
     public void read(JmeImporter im) throws IOException {
@@ -185,5 +161,4 @@ public class StereoCameraControl extends CameraControl {
         oc.write(controlDir, CONTROL_DIR_NAME, ControlDirection.SpatialToCamera);
         oc.write(camera, CAMERA_NAME, null);
     }
-    
 }

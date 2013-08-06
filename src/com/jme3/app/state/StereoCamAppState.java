@@ -24,8 +24,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.jme3.post.BarrelDistortionFilter;
 import com.jme3.scene.control.CameraControl;
-import com.jme3.test.oculusvr.TestGui;
-import com.jme3.test.oculusvr.TestStereoCams;
 import oculusvr.input.HMDInfo;
 import oculusvr.input.OculusRiftReader;
 

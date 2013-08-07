@@ -6,13 +6,9 @@ package com.jme3.app.state;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.AssetManager;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.post.Filter;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -37,9 +33,10 @@ public class StereoCamAppState extends AbstractAppState{
     private FilterPostProcessor ppLeft, ppRight;
     private BarrelDistortionFilter filterLeft, filterRight;
     Camera camLeft,camRight;
-    ViewPort viewPortLeft, viewPortRight;
+    ViewPort viewPortLeft, viewPortRight, guiViewPortRight;
     private static OculusRiftReader oculus;
     private StereoCameraControl camControl = new StereoCameraControl();
+    private HMDInfo info;
     
     static {
         String platform = JmeSystem.getPlatform().name();
@@ -69,10 +66,7 @@ public class StereoCamAppState extends AbstractAppState{
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
         this.app = (SimpleApplication) app;
-        
-        
-        
-        
+
         viewPortLeft = app.getViewPort();
         camLeft = app.getCamera();
         if(camControl != null){
@@ -91,9 +85,8 @@ public class StereoCamAppState extends AbstractAppState{
         viewPortRight.setClearFlags(true, true, true);
         viewPortRight.attachScene(((SimpleApplication)app).getRootNode());
 
-//        setOculusRiftReader(((TestGui)app).getOculusRiftReader());
-        HMDInfo info;
         try {
+            oculus = new OculusRiftReader();
             camControl.setOculus(oculus);
             info = oculus.getHMDInfo();
             
@@ -114,6 +107,8 @@ public class StereoCamAppState extends AbstractAppState{
         Vector2f vec = new Vector2f(0.5f - filterLeft.getOffset(), 0.5f);
         Vector3f vec3 = app.getCamera().getWorldCoordinates(vec, 0.0f);
         camControl.setCamHalfDistance(vec3.x * 0.1f);
+        
+//        setupGuiViewports(vec3.x);
     }
     
    
@@ -145,12 +140,12 @@ public class StereoCamAppState extends AbstractAppState{
     }
 
     @Override
-    public void stateDetached(AppStateManager stateManager) {
-        super.stateDetached(stateManager);
+    public void cleanup() {
+        super.cleanup();
         if(oculus != null){
             oculus.destroy();
         }
     }
-    
-    
+
+   
 }

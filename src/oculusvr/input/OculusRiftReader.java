@@ -117,7 +117,9 @@ public class OculusRiftReader {
     }
     
     public void destroy(){
+        Logger.getLogger(OculusRiftReader.class.getName()).log(Level.INFO, "Cleaning up");
         info = null;
+        
         oculusRift.destroy();
     }
     

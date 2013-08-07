@@ -17,11 +17,6 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import com.jme3.system.JmeSystem;
-import com.jme3.system.Natives;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import oculusvr.input.OculusRiftReader;
 
 public class TestStereoCams extends SimpleApplication {
@@ -29,34 +24,13 @@ public class TestStereoCams extends SimpleApplication {
     // set default for applets
     private static boolean useHttp = true;
     private static StereoCamAppState stereoCamAppState;
-    private static OculusRiftReader orr;
     Spatial observer = new Node("");
     Node boxes = new Node("");
     
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Node scene;
     public static void main(String[] args) {
-        String platform = JmeSystem.getPlatform().name();
-        
-        if(platform.startsWith("Win")){
-            try {
-                if(platform.endsWith("64")){
-                    Natives.extractNativeLib("windows","OculusLib64", false, false);
-                } else {
-                    Natives.extractNativeLib("windows","OculusLib", false, false);
-                }
-                
-            } catch (IOException ex) {
-                System.out.println("failed to extract " + ex);
-                Logger.getLogger(StereoCamAppState.class.getName()).log(Level.SEVERE, null, "Could not extract Oculus Rift library" + ex);
-            }
-        } else {
-            try {
-                throw new Exception("Sorry, platform not supported yet!");
-            } catch (Exception ex) {
-                Logger.getLogger(StereoCamAppState.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+
         File file = new File("wildhouse.zip");
         if (file.exists()) {
             useHttp = false;
@@ -64,12 +38,6 @@ public class TestStereoCams extends SimpleApplication {
         
         TestStereoCams app = new TestStereoCams();
         app.start();
-        try {
-            orr = new OculusRiftReader();
-            StereoCamAppState.setOculusRiftReader(orr);
-        } catch (Exception ex) {
-            Logger.getLogger(TestStereoCams.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     public void simpleInitApp() {
@@ -204,21 +172,5 @@ public class TestStereoCams extends SimpleApplication {
              observer.rotate(0, -0.05f, 0);
          }
      }
-
-    public static OculusRiftReader getOculusRiftReader(){
-        return orr;
-    }
-
-    @Override
-    public void destroy() {
-        
-        super.destroy();
-        if(orr != null){
-            orr.destroy();
-        }
-        
-    }
-    
-    
 }
 

@@ -17,7 +17,7 @@ public class OculusRift {
         } else if (System.getProperty("sun.arch.data.model").equals("64")){
             System.loadLibrary("OculusLib64");
         }
-        
+    
     }
     
     public native boolean initialize();

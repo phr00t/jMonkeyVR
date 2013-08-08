@@ -17,7 +17,6 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import oculusvr.input.OculusRiftReader;
 
 public class TestStereoCams extends SimpleApplication {
 
@@ -56,7 +55,7 @@ public class TestStereoCams extends SimpleApplication {
         }
         scene.attachChild(assetManager.loadModel("main.scene"));
         Geometry box = new Geometry("", new Box(5,5,5));
-        Material m = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        Material m = new Material(getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         
         box.setMaterial(m);
         
@@ -91,10 +90,11 @@ public class TestStereoCams extends SimpleApplication {
         initInputs();
     }
 
+    private float mult = 1f;
      private void initInputs() {
 //        inputManager.addMapping("toggle", new KeyTrigger(KeyInput.KEY_SPACE));
-//        inputManager.addMapping("incShift", new KeyTrigger(KeyInput.KEY_ADD));
-//        inputManager.addMapping("decShift", new KeyTrigger(KeyInput.KEY_SUBTRACT));
+//        inputManager.addMapping("incShift", new KeyTrigger(KeyInput.KEY_M));
+//        inputManager.addMapping("decShift", new KeyTrigger(KeyInput.KEY_N));
          inputManager.addMapping("forward", new KeyTrigger(KeyInput.KEY_W));
          inputManager.addMapping("back", new KeyTrigger(KeyInput.KEY_S));
          inputManager.addMapping("left", new KeyTrigger(KeyInput.KEY_A));
@@ -107,11 +107,13 @@ public class TestStereoCams extends SimpleApplication {
 //                        oas.doubleSize();
 //                    }
 //                } 
-//                else if(name.equals("incShift") && keyPressed){
-//                    oas.changeProjectionShift(0.005f);
-//                }else if(name.equals("incShift") && keyPressed){
-//                    oas.changeProjectionShift(-0.005f);
-//                }
+                if(name.equals("incShift") && keyPressed){
+                    mult += 0.1f;
+//                    stereoCamAppState.getCameraControl().increaseDistance();
+                }else if(name.equals("decShift") && keyPressed){
+                    mult -= 0.1f;
+//                    stereoCamAppState.getCameraControl().decreaseDistance();
+                }
                 if(name.equals("forward")){
                     if(keyPressed){
                         moveForward = true;
@@ -146,8 +148,8 @@ public class TestStereoCams extends SimpleApplication {
         inputManager.addListener(acl, "left");
         inputManager.addListener(acl, "right");
 //        inputManager.addListener(acl, "toggle");
-//        inputManager.addListener(acl, "incShift");
-//        inputManager.addListener(acl, "decShift");
+        inputManager.addListener(acl, "incShift");
+        inputManager.addListener(acl, "decShift");
     }
      
      private float distance = 100f;

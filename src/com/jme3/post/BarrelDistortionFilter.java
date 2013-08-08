@@ -3,7 +3,9 @@ package com.jme3.post;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
+import com.jme3.math.Matrix4f;
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
 import com.jme3.post.Filter;
 import com.jme3.renderer.RenderManager;
@@ -43,16 +45,27 @@ public class BarrelDistortionFilter extends Filter{
 
         float halfScreenDistance = (deviceInfo.getVScreenSize() * 0.5f);
         float yfov = 1.0f * FastMath.atan(halfScreenDistance/deviceInfo.getEyeToScreenDistance());
+
         vp.getCamera().setFrustumPerspective(FastMath.RAD_TO_DEG * yfov, aspectRatio, 0.1f, 10000f);
         float viewCenter = deviceInfo.getHScreenSize() * 0.25f;
-
-        eyeProjectionShift = viewCenter - deviceInfo.getInterpupillaryDistance() * 0.5f;
-        projectionCenterOffset = 4f * eyeProjectionShift / (deviceInfo.getHScreenSize());
+//        Matrix4f projLeft = Matrix4f::Translation(projectionCenterOffset, 0, 0) * projCenter;
         
+        
+                eyeProjectionShift = viewCenter - deviceInfo.getLensSeparationDistance() * 0.5f;
+        projectionCenterOffset = 4f * eyeProjectionShift / (deviceInfo.getHScreenSize());
         if(!isLeft){
             projectionCenterOffset = - projectionCenterOffset;
+        } else {
         }
+        //pixel.LensCenterX = x + (w + Distortion.XCenterOffset * 0.5f)*0.5f;
         lensCenter = new Vector2f(0.5f + projectionCenterOffset, 0.5f);
+        
+        Matrix4f mat = new Matrix4f();
+        mat.setTranslation(projectionCenterOffset, 0 ,0);
+        mat.multLocal(vp.getCamera().getProjectionMatrix());
+        vp.getCamera().setProjectionMatrix(mat);
+        
+//        lensCenter = new Vector2f(xOffset + (0.5f + projectionCenterOffset * 0.5f) * 0.5f, 0.5f);
         float[] K = deviceInfo.getDistortionK();
         screenCenter = new Vector2f(0.5f, 0.5f);
         scale = new Vector2f(scaleFactor, scaleFactor * aspectRatio );
@@ -72,7 +85,5 @@ public class BarrelDistortionFilter extends Filter{
         return material;
     }
     
-    public float getOffset(){
-        return projectionCenterOffset;
-    }
+    
 }

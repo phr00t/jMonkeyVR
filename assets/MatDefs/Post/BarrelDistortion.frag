@@ -18,7 +18,7 @@ vec2 HmdWarp(vec2 texIn){
 void main(){
     vec2 tc = HmdWarp(texCoord);
     if (any(notEqual(clamp(tc, m_ScreenCenter-vec2(0.5,0.5), m_ScreenCenter+vec2(0.5, 0.5)) - tc, vec2(0.0, 0.0)))){
-        discard;//gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0); //
+        gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0); //discard;//
     }
     else{
         gl_FragColor = texture2D(m_Texture, tc);

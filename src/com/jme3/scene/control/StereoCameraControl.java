@@ -88,10 +88,10 @@ public class StereoCameraControl extends CameraControl {
                         lookDirection = new Quaternion().fromAngles(oculus.getRotation());
                     }
 //                    lookDirection.multLocal(spatial.getWorldRotation());
-                    camera.setRotation(lookDirection.mult(leftRot));
-                    camera.setLocation(spatial.getWorldTranslation()/*.add(camera.getRotation().mult(cameraOffset))*/);
-                    camera2.setLocation(spatial.getWorldTranslation()/*.add(camera.getRotation().mult(cameraOffset.negate()))*/);
-                    camera2.setRotation(lookDirection.mult(rightRot));
+                    camera.setRotation(lookDirection);
+                    camera.setLocation(spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset)));
+                    camera2.setLocation(spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset.negate())));
+                    camera2.setRotation(lookDirection);
                     break;
                 case CameraToSpatial:
                     // set the localtransform, so that the worldtransform would be equal to the camera's transform.
@@ -125,15 +125,15 @@ public class StereoCameraControl extends CameraControl {
     
     
     public void increaseDistance(){
-        camHalfDistance += 0.01f;
+        camHalfDistance += 0.001f;
         cameraOffset.setX(camHalfDistance);
-        Logger.getLogger(StereoCameraControl.class.getName()).log(Level.FINE, null, "Cam offset: " + camHalfDistance);
+        Logger.getLogger(StereoCameraControl.class.getName()).log(Level.INFO, "Cam offset: " + camHalfDistance);
     }
     
     public void decreaseDistance(){
-        camHalfDistance -= 0.01f;
+        camHalfDistance -= 0.001f;
         cameraOffset.setX(camHalfDistance);
-        Logger.getLogger(StereoCameraControl.class.getName()).log(Level.FINE, null, "Cam offset: " + camHalfDistance);
+        Logger.getLogger(StereoCameraControl.class.getName()).log(Level.INFO, "Cam offset: " + camHalfDistance);
     }
 
     public float getCamHalfDistance() {
@@ -142,9 +142,6 @@ public class StereoCameraControl extends CameraControl {
 
     public void setCamHalfDistance(float camHalfDistance) {
         this.camHalfDistance = camHalfDistance;
-        leftRot.fromAngles(0, -camHalfDistance, 0);
-                    
-        rightRot.fromAngles(0, camHalfDistance, 0);
         cameraOffset.setX(camHalfDistance);
     }
     

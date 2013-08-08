@@ -104,11 +104,9 @@ public class StereoCamAppState extends AbstractAppState{
         viewPortRight.addProcessor(ppRight);
         viewPortLeft.addProcessor(ppLeft);
         
-        Vector2f vec = new Vector2f(0.5f - filterLeft.getOffset(), 0.5f);
-        Vector3f vec3 = app.getCamera().getWorldCoordinates(vec, 0.0f);
-        camControl.setCamHalfDistance(vec3.x * 0.1f);
-        
-//        setupGuiViewports(vec3.x);
+        float offset = info.getInterpupillaryDistance() * 0.5f;
+        camControl.setCamHalfDistance(offset);
+        setupGuiViewports(0.045f);
     }
     
    
@@ -147,5 +145,19 @@ public class StereoCamAppState extends AbstractAppState{
         }
     }
 
+    private void setupGuiViewports(float diff){
+        Camera guiCam = app.getGuiViewPort().getCamera();
+        
+        ViewPort guiViewPortLeft = app.getGuiViewPort();
    
+        Camera guiCamRight = guiCam.clone();
+        
+        guiCam.setViewPort(0.0f + diff, 0.5f + diff, 0.0f, 1.0f);
+        guiCamRight.setViewPort(0.5f - diff, 1f - diff, 0.0f, 1f); // l,r,b,t
+
+        guiViewPortRight = app.getRenderManager().createPostView("Gui Default Right", guiCamRight);
+        guiViewPortRight.setClearFlags(false, false, false);
+        guiViewPortRight.attachScene(((SimpleApplication)app).getGuiNode());
+    }
+    
 }

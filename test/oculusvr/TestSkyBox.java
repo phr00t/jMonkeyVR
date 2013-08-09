@@ -30,22 +30,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.jme3.test.oculusvr;
+package oculusvr;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.StereoCamAppState;
-import com.jme3.asset.plugins.HttpZipLocator;
-import com.jme3.asset.plugins.ZipLocator;
-import com.jme3.light.AmbientLight;
-import com.jme3.light.DirectionalLight;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.util.SkyFactory;
-import java.io.File;
 
 public class TestSkyBox extends SimpleApplication {
 
@@ -53,8 +47,6 @@ public class TestSkyBox extends SimpleApplication {
     private Geometry sphere = new Geometry("Sky", sphereMesh);
     private static boolean useHttp = false;
 
-    Spatial observer = new Node("");
-    
     public static void main(String[] args) {
      
         TestSkyBox app = new TestSkyBox();
@@ -76,7 +68,7 @@ public class TestSkyBox extends SimpleApplication {
         StereoCamAppState stereoCamAppState = new StereoCamAppState();
         stateManager.attach(stereoCamAppState);
         
-        observer.setLocalTranslation(new Vector3f(0.0f, 0.0f, -10.0f));//observer.setLocalTranslation(new Vector3f(0,0,5));
+        Spatial observer = new Node("Observer");
         observer.addControl(stereoCamAppState.getCameraControl());
         rootNode.attachChild(observer);
     }

@@ -1,4 +1,4 @@
-package com.jme3.test.oculusvr;
+package oculusvr;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.scene.Node;

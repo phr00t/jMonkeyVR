@@ -6,9 +6,6 @@ package com.jme3.app.state;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -19,7 +16,14 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.jme3.post.BarrelDistortionFilter;
+import com.jme3.post.Filter;
+import com.jme3.post.SceneProcessor;
+import com.jme3.post.filters.FogFilter;
+import com.jme3.post.ssao.SSAOFilter;
+import com.jme3.post.util.FilterUtil;
 import com.jme3.scene.control.CameraControl;
+import com.jme3.water.WaterFilter;
+import java.util.List;
 import oculusvr.input.HMDInfo;
 import oculusvr.input.OculusRiftReader;
 
@@ -98,15 +102,27 @@ public class StereoCamAppState extends AbstractAppState{
         filterRight =new BarrelDistortionFilter(info, false);
         filterLeft=new BarrelDistortionFilter(info, true);
         ppRight =new FilterPostProcessor(app.getAssetManager());
-        ppLeft =new FilterPostProcessor(app.getAssetManager());
+        for(SceneProcessor sceneProcessor : viewPortLeft.getProcessors()){
+            if(sceneProcessor instanceof FilterPostProcessor){
+                ppLeft = (FilterPostProcessor) sceneProcessor;
+                break;
+            }
+        }
+        if(ppLeft == null){
+            ppLeft =new FilterPostProcessor(app.getAssetManager());
+            viewPortLeft.addProcessor(ppLeft);
+        }
+        
         ppRight.addFilter(filterRight);
         ppLeft.addFilter(filterLeft);
         viewPortRight.addProcessor(ppRight);
-        viewPortLeft.addProcessor(ppLeft);
+        
         
         float offset = info.getInterpupillaryDistance() * 0.5f;
         camControl.setCamHalfDistance(offset);
         setupGuiViewports(0.045f);
+        
+        cloneProcessors();
     }
     
    
@@ -146,18 +162,67 @@ public class StereoCamAppState extends AbstractAppState{
     }
 
     private void setupGuiViewports(float diff){
-        Camera guiCam = app.getGuiViewPort().getCamera();
-        
         ViewPort guiViewPortLeft = app.getGuiViewPort();
-   
-        Camera guiCamRight = guiCam.clone();
+        Camera guiCamLeft = guiViewPortLeft.getCamera();
         
-        guiCam.setViewPort(0.0f + diff, 0.5f + diff, 0.0f, 1.0f);
+        
+   
+        Camera guiCamRight = guiCamLeft.clone();
+        
+        guiCamLeft.setViewPort(0.0f + diff, 0.5f + diff, 0.0f, 1.0f);
         guiCamRight.setViewPort(0.5f - diff, 1f - diff, 0.0f, 1f); // l,r,b,t
 
         guiViewPortRight = app.getRenderManager().createPostView("Gui Default Right", guiCamRight);
         guiViewPortRight.setClearFlags(false, false, false);
         guiViewPortRight.attachScene(((SimpleApplication)app).getGuiNode());
+        
+//        List<SceneProcessor> processors = guiViewPortLeft.getProcessors();
+//        for(SceneProcessor sp: processors){
+//            if(sp instanceof NiftyJmeDisplay){
+//                
+//                ClonedNiftyJmeDisplay niftyRight = new ClonedNiftyJmeDisplay((NiftyJmeDisplay)sp,
+//                        viewPortRight);
+//                guiViewPortRight.addProcessor(niftyRight);
+//                ((NiftyJmeDisplay)sp).reshape(guiViewPortLeft, guiCamLeft.getWidth(), guiCamRight.getHeight());
+//            }
+//        }
+    }
+    
+    private void cloneProcessors(){
+        List<SceneProcessor> processors = viewPortLeft.getProcessors();
+        for(SceneProcessor sp: processors){
+            if(sp instanceof FilterPostProcessor){
+                FilterPostProcessor fpp1 = (FilterPostProcessor) sp;
+                
+                for(Filter filter: fpp1.getFilterList()){
+                    BarrelDistortionFilter bdf = ppRight.getFilter(BarrelDistortionFilter.class);
+                    
+                    Filter f2 = null;
+                    if(filter instanceof FogFilter){
+                        f2 = FilterUtil.cloneFogFilter((FogFilter)filter);
+                        
+                    } 
+//                    else if (filter instanceof WaterFilter){
+//                        f2 = ((WaterFilter)filter).clone();
+//                    } 
+                    else if (filter instanceof SSAOFilter){
+                        
+                        
+                        f2 = FilterUtil.cloneSSAOFilter((SSAOFilter)filter);
+                    } 
+                    else if (!(filter instanceof BarrelDistortionFilter)){
+                        f2 = filter; // dof, bloom, lightscattering
+                    }
+                    
+                    if(f2 != null){
+                        ppRight.removeFilter(bdf);
+                        ppRight.addFilter(f2);
+                        ppRight.addFilter(bdf);
+                    }
+                    
+                }
+            }
+        }
     }
     
 }

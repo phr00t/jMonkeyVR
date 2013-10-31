@@ -10,11 +10,25 @@ MaterialDef My MaterialDef {
         Vector4 HmdWarpParam
         Texture2D WarpTexture
     }
-
+ 
+     Technique {
+        VertexShader GLSL150:   Common/MatDefs/Post/Post15.vert
+        FragmentShader GLSL150: MatDefs/Post/BarrelDistortion15.frag
+ 
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+ 
+        Defines {
+            RESOLVE_MS : NumSamples
+        }
+ 
+    }
+ 
     Technique {
         VertexShader GLSL100:   Common/MatDefs/Post/Post.vert
         FragmentShader GLSL100: MatDefs/Post/BarrelDistortion.frag
-
+ 
         WorldParameters {
             WorldViewProjectionMatrix
         }

@@ -4,11 +4,14 @@
  */
 package com.jme3.post.util;
 
+import com.jme3.asset.AssetManager;
 import com.jme3.post.Filter;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.post.filters.LightScatteringFilter;
 import com.jme3.post.ssao.SSAOFilter;
+import com.jme3.shadow.DirectionalLightShadowFilter;
+import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.water.WaterFilter;
 
 /**
@@ -33,6 +36,16 @@ public class FilterUtil {
         clone.setIntensity(filter.getIntensity());
         clone.setScale(filter.getScale());
         clone.setBias(filter.getBias());
+        return clone;
+    }
+    
+    public static DirectionalLightShadowFilter cloneDirectionalLightShadowFilter(AssetManager assetManager, DirectionalLightShadowFilter filter){
+        DirectionalLightShadowFilter clone = new DirectionalLightShadowFilter(assetManager, 512, 3);
+        clone.setLight(filter.getLight());
+        clone.setLambda(filter.getLambda());
+        clone.setShadowIntensity(filter.getShadowIntensity());
+        clone.setEdgeFilteringMode(filter.getEdgeFilteringMode());
+//        clone.setEnabled(filter.isEnabled());
         return clone;
     }
 }

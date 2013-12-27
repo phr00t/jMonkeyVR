@@ -22,6 +22,8 @@ import com.jme3.post.filters.FogFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.post.util.FilterUtil;
 import com.jme3.scene.control.CameraControl;
+import com.jme3.shadow.DirectionalLightShadowFilter;
+import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.water.WaterFilter;
 import java.util.List;
 import oculusvr.input.HMDInfo;
@@ -38,32 +40,11 @@ public class StereoCamAppState extends AbstractAppState{
     private BarrelDistortionFilter filterLeft, filterRight;
     Camera camLeft,camRight;
     ViewPort viewPortLeft, viewPortRight, guiViewPortRight;
-    private static OculusRiftReader oculus;
+//    private static OculusRiftReader oculus;
     private StereoCameraControl camControl = new StereoCameraControl();
     private HMDInfo info;
     
     static {
-        String platform = JmeSystem.getPlatform().name();
-        
-        if(platform.startsWith("Win")){
-            try {
-                if(platform.endsWith("64")){
-                    Natives.extractNativeLib("windows","OculusLib64", false, false);
-                } else {
-                    Natives.extractNativeLib("windows","OculusLib", false, false);
-                }
-                
-            } catch (IOException ex) {
-                System.out.println("failed to extract " + ex);
-                Logger.getLogger(StereoCamAppState.class.getName()).log(Level.SEVERE, null, "Could not extract Oculus Rift library" + ex);
-            }
-        } else {
-            try {
-                throw new Exception("Sorry, platform not supported yet!");
-            } catch (Exception ex) {
-                Logger.getLogger(StereoCamAppState.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
     }
     
     @Override
@@ -90,9 +71,9 @@ public class StereoCamAppState extends AbstractAppState{
         viewPortRight.attachScene(((SimpleApplication)app).getRootNode());
 
         try {
-            oculus = new OculusRiftReader();
-            camControl.setOculus(oculus);
-            info = oculus.getHMDInfo();
+//            oculus = new OculusRiftReader();
+//            camControl.setOculus(oculus);
+            info = OculusRiftReader.getHMDInfo();
             
         } catch (Exception ex) {
             info = new HMDInfo();
@@ -131,9 +112,7 @@ public class StereoCamAppState extends AbstractAppState{
     public void update(float tpf) {
         super.update(tpf);
         
-        if(oculus != null){
-            oculus.update();
-        }
+        OculusRiftReader.update();
     }
     
     public void setCameraControl(StereoCameraControl control){
@@ -145,22 +124,13 @@ public class StereoCamAppState extends AbstractAppState{
         return camControl;
     }
     
-    public OculusRiftReader getOculus(){
-        return oculus;
-    }
-    
-    public static void setOculusRiftReader(OculusRiftReader orr){
-        oculus = orr;
-    }
-
     @Override
     public void cleanup() {
         super.cleanup();
-        if(oculus != null){
-            oculus.destroy();
-        }
+        OculusRiftReader.destroy();
     }
 
+    
     private void setupGuiViewports(float diff){
         ViewPort guiViewPortLeft = app.getGuiViewPort();
         Camera guiCamLeft = guiViewPortLeft.getCamera();
@@ -188,27 +158,28 @@ public class StereoCamAppState extends AbstractAppState{
 //        }
     }
     
-    private void cloneProcessors(){
+    public void cloneProcessors(){
         List<SceneProcessor> processors = viewPortLeft.getProcessors();
         for(SceneProcessor sp: processors){
             if(sp instanceof FilterPostProcessor){
                 FilterPostProcessor fpp1 = (FilterPostProcessor) sp;
-                
+                BarrelDistortionFilter bdf = ppRight.getFilter(BarrelDistortionFilter.class);
                 for(Filter filter: fpp1.getFilterList()){
-                    BarrelDistortionFilter bdf = ppRight.getFilter(BarrelDistortionFilter.class);
+                    
                     
                     Filter f2 = null;
                     if(filter instanceof FogFilter){
                         f2 = FilterUtil.cloneFogFilter((FogFilter)filter);
                         
                     } 
-//                    else if (filter instanceof WaterFilter){
-//                        f2 = ((WaterFilter)filter).clone();
-//                    } 
+                    else if (filter instanceof WaterFilter){
+                        f2 = ((WaterFilter)filter).clone();
+                    } 
                     else if (filter instanceof SSAOFilter){
-                        
-                        
                         f2 = FilterUtil.cloneSSAOFilter((SSAOFilter)filter);
+                    } else if (filter instanceof DirectionalLightShadowFilter){
+                        f2 = FilterUtil.cloneDirectionalLightShadowFilter(app.getAssetManager(), (DirectionalLightShadowFilter)filter); //new DirectionalLightShadowFilter(app.getAssetManager(), 512, 3);//
+//                        ((DirectionalLightShadowFilter)f2).setLight(((DirectionalLightShadowFilter)filter).getLight());
                     } 
                     else if (!(filter instanceof BarrelDistortionFilter)){
                         f2 = filter; // dof, bloom, lightscattering
@@ -221,8 +192,23 @@ public class StereoCamAppState extends AbstractAppState{
                     }
                     
                 }
+            } else if (sp instanceof DirectionalLightShadowRenderer){
+                DirectionalLightShadowRenderer dlsr = (DirectionalLightShadowRenderer) sp;
+                
+                DirectionalLightShadowRenderer dlsrRight = dlsr.clone(); //new DirectionalLightShadowRenderer(app.getAssetManager(), 512, 3);//
+                dlsrRight.setLight(dlsr.getLight());
+                
+                viewPortRight.addProcessor(dlsrRight);
             }
         }
+    }
+    
+    public ViewPort getLeftViewPort(){
+        return viewPortLeft;
+    }
+    
+    public ViewPort getRightViewPort(){
+        return viewPortRight;
     }
     
 }

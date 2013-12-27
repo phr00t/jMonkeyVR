@@ -51,7 +51,9 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.WireFrustum;
 import com.jme3.scene.shape.Box;
 import com.jme3.util.SkyFactory;
+import java.util.concurrent.Callable;
 import jme3test.post.BloomUI;
+import oculusvr.input.OculusRiftReader;
 
 public class TestBloom extends SimpleApplication {
 
@@ -64,6 +66,7 @@ public class TestBloom extends SimpleApplication {
     FilterPostProcessor fpp;
     
     public static void main(String[] args){
+        OculusRiftReader.initialize();
         TestBloom app = new TestBloom();
         app.start();
     }
@@ -133,7 +136,6 @@ public class TestBloom extends SimpleApplication {
 
         viewPort.addProcessor(fpp);
         fpp.addFilter(bloom);
-        initInputs();
 
         final StereoCamAppState stereoCamAppState = new StereoCamAppState();
         stateManager.attach(stereoCamAppState);
@@ -143,30 +145,6 @@ public class TestBloom extends SimpleApplication {
         observer.setLocalRotation(new Quaternion(0.23602544f, 0.11321983f, -0.027698677f, 0.96473104f));
         observer.addControl(stereoCamAppState.getCameraControl());
         rootNode.attachChild(observer);
+        
     }
-    
-         private void initInputs() {
-        inputManager.addMapping("toggle", new KeyTrigger(KeyInput.KEY_SPACE));
-     
-        ActionListener acl = new ActionListener() {
-
-            public void onAction(String name, boolean keyPressed, float tpf) {
-                if (name.equals("toggle") && keyPressed) {
-                    if(active){
-                        active=false;
-                        viewPort.removeProcessor(fpp);
-                    }else{
-                        active=true;
-                        viewPort.addProcessor(fpp);
-                    }
-                }
-            }
-        };
-             
-        inputManager.addListener(acl, "toggle");
-
-    }
-
- 
-
 }

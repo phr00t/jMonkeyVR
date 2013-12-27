@@ -41,6 +41,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import oculusvr.input.OculusRiftReader;
 
 /**
  * Particle that moves in a circle.
@@ -53,6 +54,7 @@ public class TestMovingParticle extends SimpleApplication {
     private float angle = 0;
     
     public static void main(String[] args) {
+        OculusRiftReader.initialize();
         TestMovingParticle app = new TestMovingParticle();
         app.start();
     }

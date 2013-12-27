@@ -14,22 +14,18 @@ import oculusvr.input.OculusRiftReader;
 
 public class TestGui extends SimpleApplication {
 
-    // set default for applets
-    private static boolean useHttp = true;
     private static StereoCamAppState stereoCamAppState;
-    private static OculusRiftReader orr;
     Spatial observer = new Node("");
 
     private String txtB =
     "ABCDEFGHIKLMNOPQRSTUVWXYZ1234567 890`~!@#$%^&*()-=_+[]\\;',./{}|:<>?";
 
     private BitmapText txt;
-    private BitmapText txt2;
     
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Node scene;
     public static void main(String[] args) {
-        
+        OculusRiftReader.initialize();
         TestGui app = new TestGui();
         app.start();
     }
@@ -65,20 +61,6 @@ public class TestGui extends SimpleApplication {
          super.update();
      }
 
-    public static OculusRiftReader getOculusRiftReader(){
-        return orr;
-    }
-
-    @Override
-    public void destroy() {
-        
-        super.destroy();
-        if(orr != null){
-            orr.destroy();
-        }
-        
-    }
-    
     
 }
 

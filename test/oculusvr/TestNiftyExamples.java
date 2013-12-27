@@ -34,43 +34,36 @@ package oculusvr;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.StereoCamAppState;
-import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Sphere;
-import com.jme3.util.SkyFactory;
-import oculusvr.input.OculusRiftReader;
+import com.jme3.niftygui.NiftyJmeDisplay;
+import de.lessvoid.nifty.Nifty;
 
-public class TestSkyBox extends SimpleApplication {
+public class TestNiftyExamples extends SimpleApplication {
 
-    private Sphere sphereMesh = new Sphere(32, 32, 10, false, true);
-    private Geometry sphere = new Geometry("Sky", sphereMesh);
-    private static boolean useHttp = false;
+    private Nifty nifty;
 
-    public static void main(String[] args) {
-        OculusRiftReader.initialize();
-        TestSkyBox app = new TestSkyBox();
+    public static void main(String[] args){
+        TestNiftyExamples app = new TestNiftyExamples();
+        app.setPauseOnLostFocus(false);
         app.start();
     }
 
-    @Override
-    public void simpleUpdate(float tpf){
-        sphere.setLocalTranslation(cam.getLocation());
-    }
-
     public void simpleInitApp() {
-        this.flyCam.setMoveSpeed(10);
+        NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
+                                                          inputManager,
+                                                          audioRenderer,
+                                                          guiViewPort);
+        nifty = niftyDisplay.getNifty();
 
-        // load sky
-        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+        nifty.fromXml("all/intro.xml", "start");
 
+        // attach the nifty display to the gui view port as a processor
+        guiViewPort.addProcessor(niftyDisplay);
+
+        // disable the fly cam
+        flyCam.setEnabled(false);
         
         StereoCamAppState stereoCamAppState = new StereoCamAppState();
         stateManager.attach(stereoCamAppState);
-        
-        Spatial observer = new Node("Observer");
-        observer.addControl(stereoCamAppState.getCameraControl());
-        rootNode.attachChild(observer);
     }
+
 }

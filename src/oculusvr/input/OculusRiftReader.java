@@ -13,50 +13,59 @@ import java.util.logging.Logger;
  */
 public class OculusRiftReader {
     
-    private HMDInfo info = new HMDInfo();
+    private static HMDInfo info = new HMDInfo();
     
-    private float roll;
-    private float pitch;
-    private float yaw;
-    private float x;
-    private float y;
-    private float z;
-    private boolean initialized;
-    private static OculusRift oculusRift;
+    private static float roll;
+    private static float pitch;
+    private static float yaw;
+    private static float x;
+    private static float y;
+    private static float z;
+    private static boolean initialized;
+//    private static OculusRift oculusRift;
+    
+    
+    static {
+        
+        
+    }
     
     public OculusRiftReader() throws Exception{
+//        oculusRift = new OculusRift();
         
-        oculusRift = new OculusRift();
-        initialized = oculusRift.initialize();
+        
+    }
+    
+    public static void initialize(){
+        initialized = OculusRift.initialize();
         if(initialized){
 //            info = new HMDInfo();
             updateHMDInfo();
             System.out.println(info);
         } else {
-            throw new Exception("Oculus Rift could not be initialized");
+            System.out.println("Oculus Rift could not be initialized");
         }
     }
     
-    
-    public HMDInfo updateHMDInfo(){
-        info.HResolution = oculusRift.getHResolution();
-        info.VResolution = oculusRift.getVResolution();
-        info.HScreenSize = oculusRift.getHScreenSize();
-        info.VScreenSize = oculusRift.getVScreenSize();
-        info.VScreenCenter = oculusRift.getVScreenCenter();
-        info.EyeToScreenDistance = oculusRift.getEyeToScreenDistance();
-        info.LensSeparationDistance = oculusRift.getLensSeparationDistance();
-        info.InterpupillaryDistance = oculusRift.getInterpupillaryDistance();
-        info.DistortionK = oculusRift.getDistortionK();
-        info.DesktopX = oculusRift.getDesktopX();
-        info.DesktopY = oculusRift.getDesktopY();
-        info.DisplayDeviceName = oculusRift.getDisplayDeviceName();
-        info.DisplayId = oculusRift.getDisplayId();
+    public static HMDInfo updateHMDInfo(){
+        info.HResolution = OculusRift.getHResolution();
+        info.VResolution = OculusRift.getVResolution();
+        info.HScreenSize = OculusRift.getHScreenSize();
+        info.VScreenSize = OculusRift.getVScreenSize();
+        info.VScreenCenter = OculusRift.getVScreenCenter();
+        info.EyeToScreenDistance = OculusRift.getEyeToScreenDistance();
+        info.LensSeparationDistance = OculusRift.getLensSeparationDistance();
+        info.InterpupillaryDistance = OculusRift.getInterpupillaryDistance();
+        info.DistortionK = OculusRift.getDistortionK();
+        info.DesktopX = OculusRift.getDesktopX();
+        info.DesktopY = OculusRift.getDesktopY();
+        info.DisplayDeviceName = OculusRift.getDisplayDeviceName();
+        info.DisplayId = OculusRift.getDisplayId();
         return info;
     }
     
-    public void update(){
-        float[] data = oculusRift.update();
+    public static void update(){
+        float[] data = OculusRift.update();
         //System.out.println(data[0] + ", " + data[1] + ", " + data[2]);
         roll = -data[0];
         pitch = -data[1];
@@ -66,35 +75,35 @@ public class OculusRiftReader {
         z = data[5];
     }
 
-    public HMDInfo getHMDInfo() {
+    public static HMDInfo getHMDInfo() {
         return info;
     }
 
-    public float getRoll() {
+    public static float getRoll() {
         return roll;
     }
 
-    public float getPitch() {
+    public static float getPitch() {
         return pitch;
     }
     
-    public float getX() {
+    public static float getX() {
         return x;
     }
 
-    public float getYaw() {
+    public static float getYaw() {
         return yaw;
     }
 
-    public float getY() {
+    public static float getY() {
         return y;
     }
 
-    public float getZ() {
+    public static float getZ() {
         return z;
     }
     
-    public float[] getRotation(){
+    public static float[] getRotation(){
         return new float[]{pitch, yaw, roll};
     }
     
@@ -116,14 +125,14 @@ public class OculusRiftReader {
         
     }
     
-    public void destroy(){
+    public static void destroy(){
         Logger.getLogger(OculusRiftReader.class.getName()).log(Level.INFO, "Cleaning up");
         info = null;
-        oculusRift.destroy();
-        oculusRift = null;
+        OculusRift.destroy();
+//        oculusRift = null;
     }
     
-    public boolean isInitialized(){
+    public static boolean isInitialized(){
         return initialized;
     }
 }

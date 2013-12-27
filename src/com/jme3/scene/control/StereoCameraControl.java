@@ -57,9 +57,6 @@ public class StereoCameraControl extends CameraControl {
     protected Camera camera2;
     private float camHalfDistance = 0f;
     private Vector3f cameraOffset = new Vector3f();
-    private OculusRiftReader oculus;
-    private Quaternion leftRot = new Quaternion();
-    private Quaternion rightRot = new Quaternion();
 
     public StereoCameraControl(){
         super();
@@ -84,14 +81,14 @@ public class StereoCameraControl extends CameraControl {
             switch (controlDir) {
                 case SpatialToCamera:
                     
-                    if(oculus != null){
-                        lookDirection = new Quaternion().fromAngles(oculus.getRotation());
-                    }
+//                    if(oculus != null){
+                        lookDirection = new Quaternion().fromAngles(OculusRiftReader.getRotation());
+//                    }
 //                    lookDirection.multLocal(spatial.getWorldRotation());
-                    camera.setRotation(lookDirection);
+                    camera.setRotation(spatial.getWorldRotation().mult(lookDirection));
                     camera.setLocation(spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset)));
                     camera2.setLocation(spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset.negate())));
-                    camera2.setRotation(lookDirection);
+                    camera2.setRotation(camera.getRotation());
                     break;
                 case CameraToSpatial:
                     // set the localtransform, so that the worldtransform would be equal to the camera's transform.
@@ -145,11 +142,11 @@ public class StereoCameraControl extends CameraControl {
         cameraOffset.setX(camHalfDistance);
     }
     
-    
-    
-    public void setOculus(OculusRiftReader oculus){
-        this.oculus = oculus;
-    }
+//    
+//    
+//    public void setOculus(OculusRiftReader oculus){
+//        this.oculus = oculus;
+//    }
     
     public Camera getCamera2(){
         return camera2;

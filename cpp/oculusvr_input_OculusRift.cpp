@@ -1,14 +1,15 @@
 #include <jni.h>  
- #include <iostream>  
- #include <stdio.h>  
- #include "OVR.h"  
+#include <iostream> 
+#include <conio.h>
+ //#include <stdio.h>  
+ #include "OVR.h"
  #include "oculusvr_input_OculusRift.h"  
  using namespace OVR;  
  using namespace std;  
  Ptr<DeviceManager>     pManager;  
  Ptr<HMDDevice>     pHMD;  
  Ptr<SensorDevice>     pSensor;  
- SensorFusion     FusionResult;  
+ SensorFusion*     pFusionResult;  
  HMDInfo     Info;  
  bool InfoLoaded;  
  //#define STD_GRAV 9.81 // What SHOULD work with Rift, but off by 1000  
@@ -16,41 +17,48 @@
  JNIEXPORT jboolean JNICALL Java_oculusvr_input_OculusRift_initialize  
   (JNIEnv *env, jobject thisObj) {  
    printf("Initializing Rift...\n");  
-   System::Init();  
-   bool initialized = false;  
+   System::Init();
+
+	pFusionResult = new SensorFusion();
       pManager = *DeviceManager::Create();  
+
       pHMD = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();  
-      if (pHMD){  
+      if (pHMD)
+	  {  
            printf("pHMD created\n");  
            InfoLoaded = pHMD->GetDeviceInfo(&Info);  
-           pSensor = *pHMD->GetSensor();  
+           pSensor = *pHMD->GetSensor();
       }  
       else{  
+		  printf("No HMD, creating sensor");
            pSensor = *pManager->EnumerateDevices<SensorDevice>().CreateDevice();  
-      }  
+      }
       if (pSensor)  
       {  
            printf("Attaching sensor\n");  
-           FusionResult.AttachToSensor(pSensor);  
-     initialized = true;  
-      }  
-   return initialized;  
+           pFusionResult->AttachToSensor(pSensor);
+      }  else {
+		  printf("Failed to init sensor\n");
+	  }
+   return pSensor != NULL;  
  }  
  JNIEXPORT void JNICALL Java_oculusvr_input_OculusRift_destroy  
       (JNIEnv *env, jobject thisObj) {  
-           pSensor.Clear();  
-     pHMD.Clear();  
-           pManager.Clear();  
-           System::Destroy();  
+           pSensor.Clear();
+			pHMD.Clear();
+           pManager.Clear();
+		   delete pFusionResult;
+           OVR::System::Destroy();  
 		   printf("Cleaning up\n");  
            return;  
  }  
  JNIEXPORT jfloatArray JNICALL Java_oculusvr_input_OculusRift_update  
   (JNIEnv *env, jobject thisObj) {  
    jfloat data[6];  
-   Vector3f acc=FusionResult.GetAcceleration();  
+   Vector3f acc=pFusionResult->GetAcceleration();
+   Quatf quaternion = pFusionResult->GetOrientation();
    // yaw, pitch, roll  
-   FusionResult.GetOrientation().GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&data[2], &data[1], &data[0]);  
+   quaternion.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&data[2], &data[1], &data[0]);  
    data[3] = acc.x / STD_GRAV;  
    data[4] = acc.y / STD_GRAV;  
    data[5] = acc.z / STD_GRAV;  

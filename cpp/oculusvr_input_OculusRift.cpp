@@ -131,3 +131,39 @@
   (JNIEnv *env, jobject thisObj) {  
    return Info.DisplayId;  
  }  
+
+ JNIEXPORT jfloatArray JNICALL Java_oculusvr_input_OculusRift_getOrientation
+  (JNIEnv *env, jobject thisObj){
+	  jfloat data[4];  
+   Quatf quaternion = pFusionResult->GetOrientation();
+ 
+   data[0] = quaternion.x;
+   data[1] = quaternion.y;  
+   data[2] = quaternion.z;
+   data[3] = quaternion.w;
+   jfloatArray result;  
+   result = env->NewFloatArray(4);  
+   if (result == NULL) {  
+     return NULL; /* out of memory error thrown */  
+   }  
+   env->SetFloatArrayRegion(result, 0, 4, data);  
+   return result;  
+ }
+
+ JNIEXPORT jfloatArray JNICALL Java_oculusvr_input_OculusRift_getAcceleration
+  (JNIEnv *env, jobject thisObj){
+	  jfloat data[3];  
+   Vector3f acc=pFusionResult->GetAcceleration();
+   data[0] = acc.x;  
+   data[1] = acc.y;  
+   data[2] = acc.z;
+   jfloatArray result;
+   result = env->NewFloatArray(3);
+   if (result == NULL) {
+     return NULL; /* out of memory error thrown */  
+   }
+   env->SetFloatArrayRegion(result, 0, 3, data);
+   return result;
+ }
+
+ 

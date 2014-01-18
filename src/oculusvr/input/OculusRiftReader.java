@@ -4,6 +4,9 @@
  */
 package oculusvr.input;
 
+import com.jme3.system.JmeSystem;
+import com.jme3.system.Natives;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +29,31 @@ public class OculusRiftReader {
     
     
     static {
-        
+        String platform = JmeSystem.getPlatform().name();
+        if(platform.startsWith("Win")){
+            try {
+                if(platform.endsWith("64")){
+                    Natives.extractNativeLib("windows","OculusLib64", false, false);
+                } else {
+                    Natives.extractNativeLib("windows","OculusLib", false, false);
+                }
+                
+            } catch (IOException ex) {
+                System.out.println("failed to extract " + ex);
+                Logger.getLogger(OculusRiftReader.class.getName()).log(Level.SEVERE, null, "Could not extract Oculus Rift library" + ex);
+            }
+        } else {
+            try {
+                throw new Exception("Sorry, platform not supported yet!");
+            } catch (Exception ex) {
+                Logger.getLogger(OculusRiftReader.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if(System.getProperty("sun.arch.data.model").equals("32")){
+            System.loadLibrary("OculusLib");
+        } else if (System.getProperty("sun.arch.data.model").equals("64")){
+            System.loadLibrary("OculusLib64");
+        }
         
     }
     
@@ -103,22 +130,25 @@ public class OculusRiftReader {
         return z;
     }
     
-    public static float[] getRotation(){
+    /**
+     * Returns the last received orientation data from the Oculus Rift
+     * @return 
+     */
+    public static float[] getLocalOrientation(){
         return new float[]{pitch, yaw, roll};
     }
     
     
     public static void main(String[] args){
         try {
-            OculusRiftReader orr = new OculusRiftReader();
-            
-            System.out.println(orr.initialized);
-            orr.update();
+            OculusRiftReader.initialize();
+            System.out.println(OculusRiftReader.initialized);
+            OculusRiftReader.update();
 //            float[] update = orr.oculusRift.update();
 //            for(float f: update){
 //                System.out.println(f);
 //            }
-            orr.destroy();
+            OculusRiftReader.destroy();
         } catch (Exception ex) {
             Logger.getLogger(OculusRiftReader.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -134,5 +164,21 @@ public class OculusRiftReader {
     
     public static boolean isInitialized(){
         return initialized;
+    }
+    
+    /**
+     * Returns orientation data directly from the Oculus Rift
+     * @return a float array containing Quaternion data(x, y, z, w)
+     */
+    public static float[] getOrientation(){
+        return OculusRift.getOrientation();
+    }
+    
+    /**
+     * Returns acceleration data directly from the Oculus Rft
+     * @return a float array containing Vector3f data(x, y, z)
+     */
+    public static float[] getAcceleration(){
+        return OculusRift.getAcceleration();
     }
 }

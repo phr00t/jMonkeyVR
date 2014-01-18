@@ -82,7 +82,7 @@ public class StereoCameraControl extends CameraControl {
                 case SpatialToCamera:
                     
 //                    if(oculus != null){
-                        lookDirection = new Quaternion().fromAngles(OculusRiftReader.getRotation());
+                        lookDirection.fromAngles(OculusRiftReader.getLocalOrientation());
 //                    }
 //                    lookDirection.multLocal(spatial.getWorldRotation());
                     camera.setRotation(spatial.getWorldRotation().mult(lookDirection));

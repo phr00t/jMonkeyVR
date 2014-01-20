@@ -36,4 +36,9 @@ public class OculusRift {
     public static native void destroy();
     public static native float[] getOrientation();
     public static native float[] getAcceleration();
+    public static native void reset();
+    public static native void predictive(float value, boolean on);
+    public static native float[] latencyTestColor();
+    public static native String latencyTestResult();
+
 }

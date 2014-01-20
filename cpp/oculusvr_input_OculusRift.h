@@ -151,6 +151,38 @@ JNIEXPORT jfloatArray JNICALL Java_oculusvr_input_OculusRift_getOrientation
 JNIEXPORT jfloatArray JNICALL Java_oculusvr_input_OculusRift_getAcceleration
   (JNIEnv *, jobject);
 
+/*
+ * Class:     oculusvr_input_OculusRift
+ * Method:    reset
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_oculusvr_input_OculusRift_reset
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     oculusvr_input_OculusRift
+ * Method:    predictive
+ * Signature: (FZ)V
+ */
+JNIEXPORT void JNICALL Java_oculusvr_input_OculusRift_predictive
+  (JNIEnv *, jobject, jfloat, jboolean);
+
+/*
+ * Class:     oculusvr_input_OculusRift
+ * Method:    latencyTestColor
+ * Signature: ()[F
+ */
+JNIEXPORT jfloatArray JNICALL Java_oculusvr_input_OculusRift_latencyTestColor
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     oculusvr_input_OculusRift
+ * Method:    latencyTestResult
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_oculusvr_input_OculusRift_latencyTestResult
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif

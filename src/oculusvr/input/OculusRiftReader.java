@@ -4,6 +4,7 @@
  */
 package oculusvr.input;
 
+import com.jme3.math.Quaternion;
 import com.jme3.system.JmeSystem;
 import com.jme3.system.Natives;
 import java.io.IOException;
@@ -21,9 +22,14 @@ public class OculusRiftReader {
     private static float roll;
     private static float pitch;
     private static float yaw;
-    private static float x;
-    private static float y;
-    private static float z;
+    private static float acc_x;
+    private static float acc_y;
+    private static float acc_z;
+    private static float rot_x;
+    private static float rot_y;
+    private static float rot_z;
+    private static float rot_w;
+    private static Quaternion rotation = new Quaternion();
     private static boolean initialized;
 //    private static OculusRift oculusRift;
     
@@ -93,13 +99,17 @@ public class OculusRiftReader {
     
     public static void update(){
         float[] data = OculusRift.update();
-        //System.out.println(data[0] + ", " + data[1] + ", " + data[2]);
-        roll = -data[0];
-        pitch = -data[1];
-        yaw = data[2];
-        x = data[3];
-        y = data[4];
-        z = data[5];
+//        roll = -data[0];
+//        pitch = -data[1];
+//        yaw = data[2];
+        rot_x = data[0];
+        rot_y = data[1];
+        rot_z = data[2];
+        rot_w = data[3];
+        acc_x = data[4];
+        acc_y = data[5];
+        acc_z = data[6];
+        rotation.set(rot_x, -rot_y, rot_z, -rot_w);
     }
 
     public static HMDInfo getHMDInfo() {
@@ -115,7 +125,7 @@ public class OculusRiftReader {
     }
     
     public static float getX() {
-        return x;
+        return acc_x;
     }
 
     public static float getYaw() {
@@ -123,19 +133,19 @@ public class OculusRiftReader {
     }
 
     public static float getY() {
-        return y;
+        return acc_y;
     }
 
     public static float getZ() {
-        return z;
+        return acc_z;
     }
     
     /**
      * Returns the last received orientation data from the Oculus Rift
      * @return 
      */
-    public static float[] getLocalOrientation(){
-        return new float[]{pitch, yaw, roll};
+    public static Quaternion getLocalOrientation(){
+        return rotation;
     }
     
     
@@ -180,5 +190,20 @@ public class OculusRiftReader {
      */
     public static float[] getAcceleration(){
         return OculusRift.getAcceleration();
+    }
+    
+    public static void reset(){
+        OculusRift.reset();
+    }
+    public static void predictive(float value, boolean on){
+        OculusRift.predictive(value, on);
+    }
+    
+    public static float[] latencyTestColor(){
+        return OculusRift.latencyTestColor();
+    }
+    
+    public static String latencyTestResult(){
+        return OculusRift.latencyTestResult();
     }
 }

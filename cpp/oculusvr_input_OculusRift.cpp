@@ -1,15 +1,17 @@
 #include <jni.h>  
 #include <iostream> 
 #include <conio.h>
+ #include <vector>
  //#include <stdio.h>  
  #include "OVR.h"
- #include "oculusvr_input_OculusRift.h"  
+ #include "oculusvr_input_OculusRift.h"
  using namespace OVR;  
  using namespace std;  
  Ptr<DeviceManager>     pManager;  
  Ptr<HMDDevice>     pHMD;  
- Ptr<SensorDevice>     pSensor;  
- SensorFusion*     pFusionResult;  
+ Ptr<SensorDevice>     pSensor;
+ std::auto_ptr<SensorFusion> pFusionResult;
+ //SensorFusion* pFusionResult;
  HMDInfo     Info;  
  bool InfoLoaded;  
  //#define STD_GRAV 9.81 // What SHOULD work with Rift, but off by 1000  
@@ -18,14 +20,14 @@
   (JNIEnv *env, jobject thisObj) {  
    printf("Initializing Rift...\n");  
    System::Init();
-
-	pFusionResult = new SensorFusion();
+   pFusionResult.reset(new SensorFusion); 
+	//pFusionResult = new SensorFusion();
       pManager = *DeviceManager::Create();  
 
       pHMD = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();  
       if (pHMD)
 	  {  
-           printf("pHMD created\n");  
+           printf("pHMD created\n");
            InfoLoaded = pHMD->GetDeviceInfo(&Info);  
            pSensor = *pHMD->GetSensor();
       }  
@@ -47,7 +49,8 @@
            pSensor.Clear();
 			pHMD.Clear();
            pManager.Clear();
-		   delete pFusionResult;
+		   pFusionResult.reset();
+		   //delete pFusionResult;
            OVR::System::Destroy();  
 		   printf("Cleaning up\n");  
            return;  
@@ -57,17 +60,19 @@
    jfloat data[6];  
    Vector3f acc=pFusionResult->GetAcceleration();
    Quatf quaternion = pFusionResult->GetOrientation();
-   // yaw, pitch, roll  
-   quaternion.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&data[2], &data[1], &data[0]);  
-   data[3] = acc.x / STD_GRAV;  
-   data[4] = acc.y / STD_GRAV;  
-   data[5] = acc.z / STD_GRAV;  
+   data[0] = quaternion.x;
+   data[1] = quaternion.y;  
+   data[2] = quaternion.z;
+   data[3] = quaternion.w;
+   data[4] = acc.x / STD_GRAV;  
+   data[5] = acc.y / STD_GRAV;  
+   data[6] = acc.z / STD_GRAV;  
    jfloatArray result;  
-   result = env->NewFloatArray(6);  
+   result = env->NewFloatArray(7);  
    if (result == NULL) {  
      return NULL; /* out of memory error thrown */  
    }  
-   env->SetFloatArrayRegion(result, 0, 6, data);  
+   env->SetFloatArrayRegion(result, 0, 7, data);  
    return result;  
  }  
  JNIEXPORT jint JNICALL Java_oculusvr_input_OculusRift_getHResolution  
@@ -165,5 +170,25 @@
    env->SetFloatArrayRegion(result, 0, 3, data);
    return result;
  }
+
+JNIEXPORT void JNICALL Java_oculusvr_input_OculusRift_reset
+  (JNIEnv *env, jobject thisObj){
+	  pFusionResult->Reset();
+}
+
+JNIEXPORT void JNICALL Java_oculusvr_input_OculusRift_predictive
+  (JNIEnv *env, jobject thisObj, jfloat value, jboolean on){
+	  pFusionResult->SetPrediction(value, on == 1 ? true : false);
+}
+
+JNIEXPORT jfloatArray JNICALL Java_oculusvr_input_OculusRift_latencyTestColor
+  (JNIEnv *env, jobject thisObj){
+	  return NULL;
+}
+
+JNIEXPORT jstring JNICALL Java_oculusvr_input_OculusRift_latencyTestResult
+  (JNIEnv *env, jobject thisObj){
+	  return NULL;
+}
 
  

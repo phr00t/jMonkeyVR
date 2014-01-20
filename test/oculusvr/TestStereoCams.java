@@ -30,7 +30,7 @@ public class TestStereoCams extends SimpleApplication {
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Node scene;
     public static void main(String[] args) {
-        OculusRiftReader.initialize();
+        
         File file = new File("wildhouse.zip");
         if (file.exists()) {
             useHttp = false;
@@ -43,7 +43,7 @@ public class TestStereoCams extends SimpleApplication {
     public void simpleInitApp() {
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
-
+        OculusRiftReader.initialize();
         stereoCamAppState = new StereoCamAppState();
         
         stateManager.attach(stereoCamAppState);

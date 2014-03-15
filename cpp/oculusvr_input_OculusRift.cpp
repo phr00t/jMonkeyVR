@@ -57,7 +57,7 @@
  }  
  JNIEXPORT jfloatArray JNICALL Java_oculusvr_input_OculusRift_update  
   (JNIEnv *env, jobject thisObj) {  
-   jfloat data[6];  
+   jfloat data[7];  
    Vector3f acc=pFusionResult->GetAcceleration();
    Quatf quaternion = pFusionResult->GetOrientation();
    data[0] = quaternion.x;

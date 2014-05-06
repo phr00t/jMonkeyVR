@@ -48,6 +48,28 @@ public class OculusRiftReader {
                 System.out.println("failed to extract " + ex);
                 Logger.getLogger(OculusRiftReader.class.getName()).log(Level.SEVERE, null, "Could not extract Oculus Rift library" + ex);
             }
+            if(System.getProperty("sun.arch.data.model").equals("32")){
+                System.loadLibrary("OculusLib");
+            } else if (System.getProperty("sun.arch.data.model").equals("64")){
+                System.loadLibrary("OculusLib64");
+            }
+        } else if(platform.startsWith("Linux")){
+            try {
+                if(platform.endsWith("64")){
+                    Natives.extractNativeLib("linux","ovr64", false, false);
+                } else {
+                    Natives.extractNativeLib("linux","ovr", false, false);
+                }
+                
+            } catch (IOException ex) {
+                System.out.println("failed to extract " + ex);
+                Logger.getLogger(OculusRiftReader.class.getName()).log(Level.SEVERE, null, "Could not extract Oculus Rift library" + ex);
+            }            
+            if(System.getProperty("sun.arch.data.model").equals("32")){
+                System.loadLibrary("ovr");
+            } else if (System.getProperty("sun.arch.data.model").equals("64")){
+                System.loadLibrary("ovr64");
+            }
         } else {
             try {
                 throw new Exception("Sorry, platform not supported yet!");
@@ -55,12 +77,6 @@ public class OculusRiftReader {
                 Logger.getLogger(OculusRiftReader.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        if(System.getProperty("sun.arch.data.model").equals("32")){
-            System.loadLibrary("OculusLib");
-        } else if (System.getProperty("sun.arch.data.model").equals("64")){
-            System.loadLibrary("OculusLib64");
-        }
-        
     }
     
     public OculusRiftReader() throws Exception{

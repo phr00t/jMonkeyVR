@@ -173,7 +173,7 @@ public class StereoCamAppState extends AbstractAppState{
                         
                     } 
                     else if (filter instanceof WaterFilter){
-                        f2 = ((WaterFilter)filter).clone();
+                        //f2 = ((WaterFilter)filter). //doesn't seem to be a clone function ready to go?
                     } 
                     else if (filter instanceof SSAOFilter){
                         f2 = FilterUtil.cloneSSAOFilter((SSAOFilter)filter);

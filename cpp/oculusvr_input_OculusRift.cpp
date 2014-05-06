@@ -1,8 +1,6 @@
 #include <jni.h>  
 #include <iostream> 
-#include <conio.h>
  #include <vector>
- //#include <stdio.h>  
  #include "OVR.h"
  #include "oculusvr_input_OculusRift.h"
  using namespace OVR;  
@@ -10,7 +8,8 @@
  Ptr<DeviceManager>     pManager;  
  Ptr<HMDDevice>     pHMD;  
  Ptr<SensorDevice>     pSensor;
- std::auto_ptr<SensorFusion> pFusionResult;
+ //std::auto_ptr<SensorFusion> pFusionResult;
+ Ptr<SensorFusion> pFusionResult;
  //SensorFusion* pFusionResult;
  HMDInfo     Info;  
  bool InfoLoaded;  
@@ -20,8 +19,7 @@
   (JNIEnv *env, jobject thisObj) {  
    printf("Initializing Rift...\n");  
    System::Init();
-   pFusionResult.reset(new SensorFusion); 
-	//pFusionResult = new SensorFusion();
+   pFusionResult->Reset();
       pManager = *DeviceManager::Create();  
 
       pHMD = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();  
@@ -49,7 +47,7 @@
            pSensor.Clear();
 			pHMD.Clear();
            pManager.Clear();
-		   pFusionResult.reset();
+	   pFusionResult->Reset();
 		   //delete pFusionResult;
            OVR::System::Destroy();  
 		   printf("Cleaning up\n");  

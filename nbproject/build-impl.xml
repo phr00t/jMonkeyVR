@@ -61,12 +61,12 @@ is divided into following sections:
         </loadproperties>
     </target>
     <target depends="-pre-init,-init-private,-init-private-libraries" name="-init-libraries">
-        <loadproperties encoding="ISO-8859-1" srcfile="${libraries.path}">
+        <!--loadproperties encoding="ISO-8859-1" srcfile="${libraries.path}">
             <filterchain>
                 <replacestring from="$${base}" to="${libraries.dir}"/>
                 <escapeunicode/>
             </filterchain>
-        </loadproperties>
+        </loadproperties-->
     </target>
     <target depends="-pre-init,-init-private,-init-libraries" name="-init-user">
         <property file="${user.properties.file}"/>

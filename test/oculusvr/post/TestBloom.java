@@ -33,7 +33,7 @@
 package oculusvr.post;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.StereoCamAppState;
+import oculusvr.state.StereoCamAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;

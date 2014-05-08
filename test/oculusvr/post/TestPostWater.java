@@ -1,7 +1,7 @@
 package oculusvr.post;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.StereoCamAppState;
+import oculusvr.state.StereoCamAppState;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.LowPassFilter;
 import com.jme3.effect.ParticleEmitter;

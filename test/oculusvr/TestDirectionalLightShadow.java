@@ -33,7 +33,7 @@ package oculusvr;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
-import com.jme3.app.state.StereoCamAppState;
+import oculusvr.state.StereoCamAppState;
 import com.jme3.app.state.VideoRecorderAppState;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
@@ -56,7 +56,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.shadow.DirectionalLightShadowFilter;
-import com.jme3.shadow.DirectionalLightShadowRenderer;
+import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
@@ -73,7 +73,7 @@ public class TestDirectionalLightShadow extends SimpleApplication implements Act
 
     private Spatial[] obj;
     private Material[] mat;
-    private DirectionalLightShadowRenderer dlsr;
+    private OculusDirectionalLightShadowRenderer dlsr;
     private DirectionalLightShadowFilter dlsf;
     private Geometry ground;
     private Material matGroundU;
@@ -173,7 +173,7 @@ public class TestDirectionalLightShadow extends SimpleApplication implements Act
 
         loadScene();
 
-        dlsr = new DirectionalLightShadowRenderer(assetManager, SHADOWMAP_SIZE, 3);
+        dlsr = new OculusDirectionalLightShadowRenderer(assetManager, SHADOWMAP_SIZE, 3);
         dlsr.setLight(l);
         dlsr.setLambda(0.55f);
         dlsr.setShadowIntensity(0.6f);

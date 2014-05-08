@@ -2,28 +2,27 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.jme3.app.state;
+package oculusvr.state;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.AbstractAppState;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
-import com.jme3.scene.control.StereoCameraControl;
-import com.jme3.system.JmeSystem;
-import com.jme3.system.Natives;
-import java.io.IOException;
+import oculusvr.control.StereoCameraControl;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.jme3.post.BarrelDistortionFilter;
+import oculusvr.post.BarrelDistortionFilter;
 import com.jme3.post.Filter;
 import com.jme3.post.SceneProcessor;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.post.ssao.SSAOFilter;
-import com.jme3.post.util.FilterUtil;
 import com.jme3.scene.control.CameraControl;
+import oculusvr.util.FilterUtil;
 import com.jme3.shadow.DirectionalLightShadowFilter;
-import com.jme3.shadow.DirectionalLightShadowRenderer;
+import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import com.jme3.water.WaterFilter;
 import java.util.List;
 import oculusvr.input.HMDInfo;
@@ -33,7 +32,7 @@ import oculusvr.input.OculusRiftReader;
  *
  * @author reden
  */
-public class StereoCamAppState extends AbstractAppState{
+public class StereoCamAppState extends AbstractAppState {
     
     private SimpleApplication app;
     private FilterPostProcessor ppLeft, ppRight;
@@ -192,10 +191,10 @@ public class StereoCamAppState extends AbstractAppState{
                     }
                     
                 }
-            } else if (sp instanceof DirectionalLightShadowRenderer){
-                DirectionalLightShadowRenderer dlsr = (DirectionalLightShadowRenderer) sp;
+            } else if (sp instanceof OculusDirectionalLightShadowRenderer){
+                OculusDirectionalLightShadowRenderer dlsr = (OculusDirectionalLightShadowRenderer) sp;
                 
-                DirectionalLightShadowRenderer dlsrRight = dlsr.clone(); //new DirectionalLightShadowRenderer(app.getAssetManager(), 512, 3);//
+                OculusDirectionalLightShadowRenderer dlsrRight = dlsr.clone(); //new DirectionalLightShadowRenderer(app.getAssetManager(), 512, 3);//
                 dlsrRight.setLight(dlsr.getLight());
                 
                 viewPortRight.addProcessor(dlsrRight);

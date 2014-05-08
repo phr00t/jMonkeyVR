@@ -6,7 +6,7 @@ package oculusvr;
 
 import com.jme3.animation.AnimEventListener;
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.StereoCamAppState;
+import oculusvr.state.StereoCamAppState;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.MouseAxisTrigger;
@@ -17,7 +17,7 @@ import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.control.CameraControl;
-import com.jme3.scene.control.StereoCameraControl;
+import oculusvr.control.StereoCameraControl;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 import oculusvr.input.OculusRiftReader;

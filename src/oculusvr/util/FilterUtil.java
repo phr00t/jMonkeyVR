@@ -2,17 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.jme3.post.util;
+package oculusvr.util;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.post.Filter;
-import com.jme3.post.filters.BloomFilter;
 import com.jme3.post.filters.FogFilter;
-import com.jme3.post.filters.LightScatteringFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.shadow.DirectionalLightShadowFilter;
-import com.jme3.shadow.EdgeFilteringMode;
-import com.jme3.water.WaterFilter;
 
 /**
  *

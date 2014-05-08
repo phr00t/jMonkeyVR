@@ -9,7 +9,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.io.File;
-import com.jme3.app.state.StereoCamAppState;
+import oculusvr.state.StereoCamAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;

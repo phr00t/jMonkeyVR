@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.jme3.scene.control;
+package oculusvr.control;
 
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
@@ -39,6 +39,8 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.CameraControl;
+import com.jme3.scene.control.Control;
 import com.jme3.util.TempVars;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -77,6 +79,8 @@ public class StereoCameraControl extends CameraControl {
     // fields used, when inversing ControlDirection:
     @Override
     protected void controlUpdate(float tpf) {
+        Camera camera = getCamera();
+        ControlDirection controlDir = this.getControlDir();
         if (spatial != null && camera != null) {
             switch (controlDir) {
                 case SpatialToCamera:
@@ -158,7 +162,7 @@ public class StereoCameraControl extends CameraControl {
     
     @Override
     public Control cloneForSpatial(Spatial newSpatial) {
-        StereoCameraControl control = new StereoCameraControl(camera, camera2, controlDir);
+        StereoCameraControl control = new StereoCameraControl(getCamera(), camera2, getControlDir());
         control.setSpatial(newSpatial);
         control.setEnabled(isEnabled());
         return control;
@@ -168,16 +172,16 @@ public class StereoCameraControl extends CameraControl {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule ic = im.getCapsule(this);
-        controlDir = ic.readEnum(CONTROL_DIR_NAME, ControlDirection.class, ControlDirection.SpatialToCamera);
-        camera = (Camera)ic.readSavable(CAMERA_NAME, null);
+        setControlDir(ic.readEnum(CONTROL_DIR_NAME, ControlDirection.class, ControlDirection.SpatialToCamera));
+        setCamera((Camera)ic.readSavable(CAMERA_NAME, null));
     }
 
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
-        oc.write(controlDir, CONTROL_DIR_NAME, ControlDirection.SpatialToCamera);
-        oc.write(camera, CAMERA_NAME, null);
+        oc.write(getControlDir(), CONTROL_DIR_NAME, ControlDirection.SpatialToCamera);
+        oc.write(getCamera(), CAMERA_NAME, null);
     }
     
 }

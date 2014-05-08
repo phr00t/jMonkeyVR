@@ -1,4 +1,4 @@
-package com.jme3.post;
+package oculusvr.post;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -7,6 +7,7 @@ import com.jme3.math.Matrix4f;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
+import com.jme3.post.Filter;
 import com.jme3.post.Filter;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;

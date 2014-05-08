@@ -32,7 +32,7 @@
 package oculusvr;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.StereoCamAppState;
+import oculusvr.state.StereoCamAppState;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh.Type;
 import com.jme3.input.KeyInput;

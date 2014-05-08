@@ -10,7 +10,7 @@ import com.jme3.renderer.ViewPort;
  *
  * @author Rickard
  */
-public class ClonedNiftyJmeDisplay extends NiftyJmeDisplay{
+public class ClonedNiftyJmeDisplay extends NiftyJmeDisplay {
     
     public ClonedNiftyJmeDisplay(NiftyJmeDisplay niftyDisplay, final ViewPort viewport2){
         this.nifty = niftyDisplay.nifty;

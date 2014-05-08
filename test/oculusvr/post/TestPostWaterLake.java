@@ -32,7 +32,7 @@
 package oculusvr.post;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.StereoCamAppState;
+import oculusvr.state.StereoCamAppState;
 import com.jme3.asset.plugins.HttpZipLocator;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.input.controls.ActionListener;

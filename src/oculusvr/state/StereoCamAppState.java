@@ -39,12 +39,15 @@ public class StereoCamAppState extends AbstractAppState {
     private BarrelDistortionFilter filterLeft, filterRight;
     Camera camLeft,camRight;
     ViewPort viewPortLeft, viewPortRight, guiViewPortRight;
-//    private static OculusRiftReader oculus;
     private StereoCameraControl camControl = new StereoCameraControl();
     private HMDInfo info;
+    private boolean flipEyes;
     
-    static {
+    public StereoCamAppState(boolean flipEyes) {
+        this.flipEyes = flipEyes;
     }
+    
+    public StereoCamAppState() { }
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -70,10 +73,7 @@ public class StereoCamAppState extends AbstractAppState {
         viewPortRight.attachScene(((SimpleApplication)app).getRootNode());
 
         try {
-//            oculus = new OculusRiftReader();
-//            camControl.setOculus(oculus);
-            info = OculusRiftReader.getHMDInfo();
-            
+            info = OculusRiftReader.getHMDInfo();            
         } catch (Exception ex) {
             info = new HMDInfo();
             info.createFakeValues();
@@ -103,6 +103,8 @@ public class StereoCamAppState extends AbstractAppState {
         setupGuiViewports(0.045f);
         
         cloneProcessors();
+        
+        if( flipEyes ) camControl.SwapCameras();
     }
     
    

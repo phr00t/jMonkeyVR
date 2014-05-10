@@ -88,11 +88,11 @@ public class OculusRiftReader {
     public static void initialize(){
         initialized = OculusRift.initialize();
         if(initialized){
-//            info = new HMDInfo();
             updateHMDInfo();
             System.out.println(info);
         } else {
-            System.out.println("Oculus Rift could not be initialized");
+            System.out.println("Oculus Rift could not be initialized; faking values.");
+            info.createFakeValues();
         }
     }
     
@@ -114,18 +114,17 @@ public class OculusRiftReader {
     }
     
     public static void update(){
-        float[] data = OculusRift.update();
-//        roll = -data[0];
-//        pitch = -data[1];
-//        yaw = data[2];
-        rot_x = data[0];
-        rot_y = data[1];
-        rot_z = data[2];
-        rot_w = data[3];
-        acc_x = data[4];
-        acc_y = data[5];
-        acc_z = data[6];
-        rotation.set(rot_x, -rot_y, rot_z, -rot_w);
+        if( OculusRiftReader.isInitialized() ) {
+            float[] data = OculusRift.update();
+            rot_x = data[0];
+            rot_y = data[1];
+            rot_z = data[2];
+            rot_w = data[3];
+            acc_x = data[4];
+            acc_y = data[5];
+            acc_z = data[6];
+            rotation.set(rot_x, -rot_y, rot_z, -rot_w);
+        }
     }
 
     public static HMDInfo getHMDInfo() {
@@ -170,10 +169,6 @@ public class OculusRiftReader {
             OculusRiftReader.initialize();
             System.out.println(OculusRiftReader.initialized);
             OculusRiftReader.update();
-//            float[] update = orr.oculusRift.update();
-//            for(float f: update){
-//                System.out.println(f);
-//            }
             OculusRiftReader.destroy();
         } catch (Exception ex) {
             Logger.getLogger(OculusRiftReader.class.getName()).log(Level.SEVERE, null, ex);

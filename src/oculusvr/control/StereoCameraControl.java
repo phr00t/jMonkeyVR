@@ -76,6 +76,13 @@ public class StereoCameraControl extends CameraControl {
         this.camera2 = camera2;
         cameraOffset.setX(camHalfDistance);
     }
+    
+    public void SwapCameras() {
+        Camera mycam = getCamera();
+        setCamera(camera2);
+        setCamera2(mycam);
+    }
+    
     // fields used, when inversing ControlDirection:
     @Override
     protected void controlUpdate(float tpf) {

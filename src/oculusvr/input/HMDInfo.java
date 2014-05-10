@@ -122,10 +122,9 @@ public class HMDInfo {
     public void createFakeValues(){
         HScreenSize = 0.14976f;
 	VScreenSize = 0.0935f;
-//	VScreenCenter;
 	EyeToScreenDistance = 0.041f;
 	LensSeparationDistance= 0.0624f;
-	InterpupillaryDistance= 0.0624f;
+	InterpupillaryDistance= 0.0624f*1.5f;
 	DistortionK = new float[]{1f, 0.22f, 0.24f, 0f};
         HResolution = 1280;
 	VResolution = 800;

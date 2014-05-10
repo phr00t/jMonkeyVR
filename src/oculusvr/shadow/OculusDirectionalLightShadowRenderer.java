@@ -62,7 +62,7 @@ public class OculusDirectionalLightShadowRenderer extends DirectionalLightShadow
     }
     
     @Override
-    public OculusDirectionalLightShadowRenderer clone(){
+    public OculusDirectionalLightShadowRenderer clone() {
         OculusDirectionalLightShadowRenderer clone = new OculusDirectionalLightShadowRenderer(assetManager, (int)shadowMapSize, nbShadowMaps);
         clone.assetManager = assetManager;
         clone.setEdgeFilteringMode(edgeFilteringMode);

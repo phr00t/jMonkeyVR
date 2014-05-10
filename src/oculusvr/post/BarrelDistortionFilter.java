@@ -40,7 +40,7 @@ public class BarrelDistortionFilter extends Filter{
     
     @Override
     protected void initFilter(AssetManager manager, RenderManager renderManager, ViewPort vp, int width, int height) {
-        material = new Material(manager, "MatDefs/Post/BarrelDistortion.j3md");
+        material = new Material(manager, "oculusvr/shaders/BarrelDistortion.j3md");
 
         float aspectRatio = (float)(deviceInfo.getHResolution() * 0.5f) / (float)deviceInfo.getVResolution();
 

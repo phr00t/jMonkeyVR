@@ -155,24 +155,24 @@ public class TestStereoCams extends SimpleApplication {
      
      private float distance = 100f;
      private float prod = 0f;
-    @Override
-     public void update(){
-         super.update();
-         prod+=0.02f;
+     
+     @Override
+     public void simpleUpdate(float tpf){
+         prod+=tpf;
          distance = 100f * FastMath.sin(prod);
          boxes.setLocalTranslation(0, 0, 200f+ distance);
          
          if(moveForward){
-             observer.move(stereoCamAppState.getCameraControl().getLookDirection().getRotationColumn(2).mult(1f));
+             observer.move(stereoCamAppState.getCameraControl().getLookDirection().getRotationColumn(2).mult(10f*tpf));
          }
          if(moveBackwards){
-             observer.move(stereoCamAppState.getCameraControl().getLookDirection().getRotationColumn(2).mult(-1f));
+             observer.move(stereoCamAppState.getCameraControl().getLookDirection().getRotationColumn(2).mult(-tpf*10f));
          }
          if(rotateLeft){
-             observer.rotate(0, 0.05f, 0);
+             observer.rotate(0, 0.5f*tpf, 0);
          }
          if(rotateRight){
-             observer.rotate(0, -0.05f, 0);
+             observer.rotate(0, -0.5f*tpf, 0);
          }
      }
 }

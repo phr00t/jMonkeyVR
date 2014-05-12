@@ -8,6 +8,8 @@ import com.jme3.asset.AssetManager;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.shadow.DirectionalLightShadowFilter;
+import com.jme3.shadow.DirectionalLightShadowRenderer;
+import oculusvr.shadow.ClonableDirectionalLightShadowRenderer;
 
 /**
  *
@@ -43,4 +45,5 @@ public class FilterUtil {
 //        clone.setEnabled(filter.isEnabled());
         return clone;
     }
+    
 }

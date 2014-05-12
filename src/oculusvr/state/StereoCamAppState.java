@@ -22,11 +22,12 @@ import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.scene.control.CameraControl;
 import oculusvr.util.FilterUtil;
 import com.jme3.shadow.DirectionalLightShadowFilter;
-import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
+import oculusvr.shadow.ClonableDirectionalLightShadowRenderer;
 import com.jme3.water.WaterFilter;
 import java.util.List;
 import oculusvr.input.HMDInfo;
 import oculusvr.input.OculusRiftReader;
+import oculusvr.post.BasicSSAO;
 
 /**
  *
@@ -47,7 +48,9 @@ public class StereoCamAppState extends AbstractAppState {
         this.flipEyes = flipEyes;
     }
     
-    public StereoCamAppState() { }
+    public StereoCamAppState() {
+        flipEyes = false;
+    }
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -102,8 +105,7 @@ public class StereoCamAppState extends AbstractAppState {
         camControl.setCamHalfDistance(offset);
         setupGuiViewports(0.045f);
         
-        cloneProcessors();
-        
+        cloneProcessors();        
         if( flipEyes ) camControl.SwapCameras();
     }
     
@@ -165,41 +167,39 @@ public class StereoCamAppState extends AbstractAppState {
             if(sp instanceof FilterPostProcessor){
                 FilterPostProcessor fpp1 = (FilterPostProcessor) sp;
                 BarrelDistortionFilter bdf = ppRight.getFilter(BarrelDistortionFilter.class);
+                ppRight.removeFilter(bdf);
                 for(Filter filter: fpp1.getFilterList()){
-                    
-                    
+                                        
                     Filter f2 = null;
                     if(filter instanceof FogFilter){
                         f2 = FilterUtil.cloneFogFilter((FogFilter)filter);
                         
                     } 
+                    else if (filter instanceof BasicSSAO) {
+                        f2 = new BasicSSAO((BasicSSAO)filter);
+                    }
                     else if (filter instanceof WaterFilter){
                         //f2 = ((WaterFilter)filter). //doesn't seem to be a clone function ready to go?
                     } 
                     else if (filter instanceof SSAOFilter){
                         f2 = FilterUtil.cloneSSAOFilter((SSAOFilter)filter);
                     } else if (filter instanceof DirectionalLightShadowFilter){
-                        f2 = FilterUtil.cloneDirectionalLightShadowFilter(app.getAssetManager(), (DirectionalLightShadowFilter)filter); //new DirectionalLightShadowFilter(app.getAssetManager(), 512, 3);//
-//                        ((DirectionalLightShadowFilter)f2).setLight(((DirectionalLightShadowFilter)filter).getLight());
+                        f2 = FilterUtil.cloneDirectionalLightShadowFilter(app.getAssetManager(), (DirectionalLightShadowFilter)filter);
                     } 
                     else if (!(filter instanceof BarrelDistortionFilter)){
                         f2 = filter; // dof, bloom, lightscattering
                     }
                     
-                    if(f2 != null){
-                        ppRight.removeFilter(bdf);
-                        ppRight.addFilter(f2);
-                        ppRight.addFilter(bdf);
-                    }
-                    
+                    if(f2 != null) ppRight.addFilter(f2);                    
                 }
-            } else if (sp instanceof OculusDirectionalLightShadowRenderer){
-                OculusDirectionalLightShadowRenderer dlsr = (OculusDirectionalLightShadowRenderer) sp;
+                ppRight.addFilter(bdf);
+            } else if (sp instanceof ClonableDirectionalLightShadowRenderer){
+                ClonableDirectionalLightShadowRenderer dlsr = (ClonableDirectionalLightShadowRenderer) sp;
                 
-                OculusDirectionalLightShadowRenderer dlsrRight = dlsr.clone(); //new DirectionalLightShadowRenderer(app.getAssetManager(), 512, 3);//
+                ClonableDirectionalLightShadowRenderer dlsrRight = dlsr.clone();
                 dlsrRight.setLight(dlsr.getLight());
                 
-                viewPortRight.addProcessor(dlsrRight);
+                viewPortRight.getProcessors().add(0, dlsrRight);
             }
         }
     }

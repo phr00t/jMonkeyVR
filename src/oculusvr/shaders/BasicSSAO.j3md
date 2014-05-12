@@ -1,0 +1,37 @@
+MaterialDef BasicSSAO {
+
+    MaterialParameters {
+        Int NumSamples
+        Int NumSamplesDepth
+        Texture2D DepthTexture
+        Texture2D Texture
+        Texture2D Noise
+        Texture2D Normals
+        Vector3 FrustumCorner
+        Float SampleRadius
+        Float Intensity
+        Float Scale
+        Float Bias
+        //Boolean EnableFD
+        //Float SampleRadiusFD
+        //Float IntensityFD
+        //Float ScaleFD
+        //Float BiasFD
+        //Boolean UseDistanceFalloff
+        //Float FalloffStartDistance
+        //Float FalloffRate
+        Vector2 FrustumNearFar
+        Vector3Array Samples
+    }
+
+        Technique {
+            VertexShader GLSL100:   Common/MatDefs/Post/Post.vert
+            FragmentShader GLSL100: oculusvr/shaders/BasicSSAO.frag
+
+            WorldParameters {
+            WorldViewProjectionMatrix
+            WorldViewMatrix
+            Resolution
+        }
+    }
+}

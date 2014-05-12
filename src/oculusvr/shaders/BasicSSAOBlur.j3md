@@ -1,0 +1,35 @@
+MaterialDef BasicSSAOBlur {
+
+MaterialParameters {
+Int NumSamples
+Int NumSamplesDepth
+Texture2D Texture
+Texture2D SSAOMap
+Texture2D DepthTexture
+//Vector2 FrustumNearFar
+//Boolean UseAo
+//Boolean UseOnlyAo
+//Boolean UseSmoothing
+//Boolean SmoothMore
+//Float XScale
+//Float YScale
+}
+
+Technique {
+VertexShader GLSL100:   Common/MatDefs/Post/Post.vert
+FragmentShader GLSL100: oculusvr/shaders/BasicSSAOBlur.frag
+
+WorldParameters {
+WorldViewProjectionMatrix
+WorldViewMatrix
+//Resolution
+}
+
+Defines {
+//USE_AO : UseAo
+//USE_ONLY_AO : UseOnlyAo
+//RESOLVE_MS : NumSamples
+//RESOLVE_DEPTH_MS : NumSamplesDepth
+}
+}
+}

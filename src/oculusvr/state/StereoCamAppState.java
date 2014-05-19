@@ -106,7 +106,7 @@ public class StereoCamAppState extends AbstractAppState {
         setupGuiViewports(0.045f);
         
         cloneProcessors();        
-        if( flipEyes ) camControl.SwapCameras();
+        if( flipEyes ) camControl.swapCameras();
     }
     
    
@@ -114,8 +114,6 @@ public class StereoCamAppState extends AbstractAppState {
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        
-        OculusRiftReader.update();
     }
     
     public void setCameraControl(StereoCameraControl control){
@@ -132,13 +130,10 @@ public class StereoCamAppState extends AbstractAppState {
         super.cleanup();
         OculusRiftReader.destroy();
     }
-
     
     private void setupGuiViewports(float diff){
         ViewPort guiViewPortLeft = app.getGuiViewPort();
         Camera guiCamLeft = guiViewPortLeft.getCamera();
-        
-        
    
         Camera guiCamRight = guiCamLeft.clone();
         
@@ -148,17 +143,7 @@ public class StereoCamAppState extends AbstractAppState {
         guiViewPortRight = app.getRenderManager().createPostView("Gui Default Right", guiCamRight);
         guiViewPortRight.setClearFlags(false, false, false);
         guiViewPortRight.attachScene(((SimpleApplication)app).getGuiNode());
-        
-//        List<SceneProcessor> processors = guiViewPortLeft.getProcessors();
-//        for(SceneProcessor sp: processors){
-//            if(sp instanceof NiftyJmeDisplay){
-//                
-//                ClonedNiftyJmeDisplay niftyRight = new ClonedNiftyJmeDisplay((NiftyJmeDisplay)sp,
-//                        viewPortRight);
-//                guiViewPortRight.addProcessor(niftyRight);
-//                ((NiftyJmeDisplay)sp).reshape(guiViewPortLeft, guiCamLeft.getWidth(), guiCamRight.getHeight());
-//            }
-//        }
+
     }
     
     public void cloneProcessors(){

@@ -58,7 +58,7 @@ public class StereoCameraControl extends CameraControl {
     private Quaternion lookDirection = new Quaternion();
     protected Camera camera2;
     private float camHalfDistance = 0f;
-    private Vector3f cameraOffset = new Vector3f();
+    private Vector3f cameraOffset = new Vector3f(), spatialOffset;
 
     public StereoCameraControl(){
         super();
@@ -77,7 +77,21 @@ public class StereoCameraControl extends CameraControl {
         cameraOffset.setX(camHalfDistance);
     }
     
-    public void SwapCameras() {
+    public void setSpatialOffset(Vector3f pos) {
+        if( spatialOffset == null ) spatialOffset = new Vector3f();
+        spatialOffset.x = pos.x;
+        spatialOffset.y = pos.y;
+        spatialOffset.z = pos.z;
+    }
+    
+    public void setSpatialOffset(float x, float y, float z) {
+        if( spatialOffset == null ) spatialOffset = new Vector3f();
+        spatialOffset.x = x;
+        spatialOffset.y = y;
+        spatialOffset.z = z;
+    }
+    
+    public void swapCameras() {
         Camera mycam = getCamera();
         setCamera(camera2);
         setCamera2(mycam);
@@ -88,23 +102,41 @@ public class StereoCameraControl extends CameraControl {
     protected void controlUpdate(float tpf) {
         Camera camera = getCamera();
         ControlDirection controlDir = this.getControlDir();
+                
         if (spatial != null && camera != null) {
+            TempVars vars = TempVars.get();
             switch (controlDir) {
                 case SpatialToCamera:
+                    vars.vect4.set(spatial.getWorldTranslation());
+                    if( spatialOffset != null ) {
+                        vars.vect4.x += spatialOffset.x;
+                        vars.vect4.y += spatialOffset.y;
+                        vars.vect4.z += spatialOffset.z;
+                    }
                     
-//                    if(oculus != null){
-                        lookDirection.set(OculusRiftReader.getLocalOrientation());
-//                    }
-//                    lookDirection.multLocal(spatial.getWorldRotation());
-                    camera.setRotation(spatial.getWorldRotation().mult(lookDirection));
-                    camera.setLocation(spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset)));
-                    camera2.setLocation(spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset.negate())));
+                    // get the latest OculusRift info now!
+                    OculusRiftReader.update();
+                    
+                    // positional tracking
+                    vars.vect4.addLocal(OculusRiftReader.getPositionalTracking());
+                    
+                    lookDirection.set(OculusRiftReader.getLocalOrientation());                    
+                    vars.quat1.set(spatial.getWorldRotation()).multLocal(lookDirection);
+                    camera.setRotation(vars.quat1); //spatial.getWorldRotation().mult(lookDirection));
+                    vars.vect1.set(vars.vect4).addLocal(vars.quat1.mult(cameraOffset, vars.vect2)); //camera.setLocation(spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset)));                    
+                    camera.setLocation(vars.vect1);
+                    
+                    // negate cameraOffset
+                    vars.vect3.x = -cameraOffset.x;
+                    vars.vect3.y = -cameraOffset.y;
+                    vars.vect3.z = -cameraOffset.z;
+                    
+                    camera2.setLocation(vars.vect1.set(vars.vect4).addLocal(camera.getRotation().mult(vars.vect3, vars.vect2))); //spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset.negate())));
                     camera2.setRotation(camera.getRotation());
                     break;
                 case CameraToSpatial:
                     // set the localtransform, so that the worldtransform would be equal to the camera's transform.
                     // Location:
-                    TempVars vars = TempVars.get();
 
                     Vector3f vecDiff = vars.vect1.set(camera.getLocation()).subtractLocal(spatial.getWorldTranslation());
                     spatial.setLocalTranslation(vecDiff.addLocal(spatial.getLocalTranslation()));
@@ -112,9 +144,9 @@ public class StereoCameraControl extends CameraControl {
                     // Rotation:
                     Quaternion worldDiff = vars.quat1.set(camera.getRotation()).subtractLocal(spatial.getWorldRotation());
                     spatial.setLocalRotation(worldDiff.addLocal(spatial.getLocalRotation()));
-                    vars.release();
                     break;
             }
+            vars.release();
         }else if (spatial == null){
             throw new NullPointerException("Spatial can't be null!");
         } 
@@ -152,13 +184,7 @@ public class StereoCameraControl extends CameraControl {
         this.camHalfDistance = camHalfDistance;
         cameraOffset.setX(camHalfDistance);
     }
-    
-//    
-//    
-//    public void setOculus(OculusRiftReader oculus){
-//        this.oculus = oculus;
-//    }
-    
+
     public Camera getCamera2(){
         return camera2;
     }

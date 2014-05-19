@@ -5,6 +5,7 @@
 package oculusvr.input;
 
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import com.jme3.system.JmeSystem;
 import com.jme3.system.Natives;
 import java.io.IOException;
@@ -29,7 +30,9 @@ public class OculusRiftReader {
     private static float rot_y;
     private static float rot_z;
     private static float rot_w;
+    
     private static Quaternion rotation = new Quaternion();
+    private static Vector3f position = new Vector3f();
     private static boolean initialized;
 //    private static OculusRift oculusRift;
     
@@ -124,6 +127,7 @@ public class OculusRiftReader {
             acc_y = data[5];
             acc_z = data[6];
             rotation.set(rot_x, -rot_y, rot_z, -rot_w);
+            // TODO: pick up position tracking info here
         }
     }
 
@@ -163,6 +167,13 @@ public class OculusRiftReader {
         return rotation;
     }
     
+    /**
+     * Returns the last received position data from the Oculus Rift
+     * @return 
+     */
+    public static Vector3f getPositionalTracking() {
+        return position;
+    }    
     
     public static void main(String[] args){
         try {

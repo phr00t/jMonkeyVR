@@ -38,19 +38,27 @@ public class StereoCamAppState extends AbstractAppState {
     private SimpleApplication app;
     private FilterPostProcessor ppLeft, ppRight;
     private BarrelDistortionFilter filterLeft, filterRight;
-    Camera camLeft,camRight;
+    Camera camLeft,camRight,guiCamLeft,guiCamRight;
     ViewPort viewPortLeft, viewPortRight, guiViewPortRight;
     private StereoCameraControl camControl = new StereoCameraControl();
     private HMDInfo info;
     private boolean flipEyes;
+    private float guiDistance;
     
-    public StereoCamAppState(boolean flipEyes) {
+    public StereoCamAppState(float guiDistance, boolean flipEyes) {
         this.flipEyes = flipEyes;
+        this.guiDistance = guiDistance;
+    }
+    
+    public StereoCamAppState(float guiDistance) {
+        flipEyes = false;
+        this.guiDistance = guiDistance;
     }
     
     public StereoCamAppState() {
         flipEyes = false;
-    }
+        guiDistance = 0.045f;
+    }   
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -103,7 +111,7 @@ public class StereoCamAppState extends AbstractAppState {
         
         float offset = info.getInterpupillaryDistance() * 0.5f;
         camControl.setCamHalfDistance(offset);
-        setupGuiViewports(0.045f);
+        setupGuiViewports();
         
         cloneProcessors();        
         if( flipEyes ) camControl.swapCameras();
@@ -131,15 +139,24 @@ public class StereoCamAppState extends AbstractAppState {
         OculusRiftReader.destroy();
     }
     
-    private void setupGuiViewports(float diff){
+    public void setGuiDistance(float newGuiDistance) {
+        guiDistance = newGuiDistance;
+        guiCamLeft.setViewPort(0.0f + guiDistance, 0.5f + guiDistance, 0.0f, 1.0f);
+        guiCamRight.setViewPort(0.5f - guiDistance, 1f - guiDistance, 0.0f, 1f); // l,r,b,t        
+    }
+    
+    public void adjustGuiDistance(float adjustAmount) {
+        setGuiDistance(guiDistance + adjustAmount);
+    }
+    
+    private void setupGuiViewports(){
         ViewPort guiViewPortLeft = app.getGuiViewPort();
-        Camera guiCamLeft = guiViewPortLeft.getCamera();
-   
-        Camera guiCamRight = guiCamLeft.clone();
         
-        guiCamLeft.setViewPort(0.0f + diff, 0.5f + diff, 0.0f, 1.0f);
-        guiCamRight.setViewPort(0.5f - diff, 1f - diff, 0.0f, 1f); // l,r,b,t
-
+        guiCamLeft = guiViewPortLeft.getCamera();
+        guiCamRight = guiCamLeft.clone();
+        
+        setGuiDistance(guiDistance);        
+        
         guiViewPortRight = app.getRenderManager().createPostView("Gui Default Right", guiCamRight);
         guiViewPortRight.setClearFlags(false, false, false);
         guiViewPortRight.attachScene(((SimpleApplication)app).getGuiNode());
@@ -163,9 +180,9 @@ public class StereoCamAppState extends AbstractAppState {
                     else if (filter instanceof BasicSSAO) {
                         f2 = new BasicSSAO((BasicSSAO)filter);
                     }
-                    else if (filter instanceof WaterFilter){
+                    //else if (filter instanceof WaterFilter){
                         //f2 = ((WaterFilter)filter). //doesn't seem to be a clone function ready to go?
-                    } 
+                    //} 
                     else if (filter instanceof SSAOFilter){
                         f2 = FilterUtil.cloneSSAOFilter((SSAOFilter)filter);
                     } else if (filter instanceof DirectionalLightShadowFilter){

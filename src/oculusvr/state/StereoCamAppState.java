@@ -22,12 +22,11 @@ import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.scene.control.CameraControl;
 import oculusvr.util.FilterUtil;
 import com.jme3.shadow.DirectionalLightShadowFilter;
-import oculusvr.shadow.ClonableDirectionalLightShadowRenderer;
-import com.jme3.water.WaterFilter;
+import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import java.util.List;
 import oculusvr.input.HMDInfo;
 import oculusvr.input.OculusRiftReader;
-import oculusvr.post.BasicSSAO;
+import com.jme3.post.BasicSSAO;
 
 /**
  *
@@ -195,10 +194,10 @@ public class StereoCamAppState extends AbstractAppState {
                     if(f2 != null) ppRight.addFilter(f2);                    
                 }
                 ppRight.addFilter(bdf);
-            } else if (sp instanceof ClonableDirectionalLightShadowRenderer){
-                ClonableDirectionalLightShadowRenderer dlsr = (ClonableDirectionalLightShadowRenderer) sp;
+            } else if (sp instanceof OculusDirectionalLightShadowRenderer){
+                OculusDirectionalLightShadowRenderer dlsr = (OculusDirectionalLightShadowRenderer) sp;
                 
-                ClonableDirectionalLightShadowRenderer dlsrRight = dlsr.clone();
+                OculusDirectionalLightShadowRenderer dlsrRight = dlsr.clone();
                 dlsrRight.setLight(dlsr.getLight());
                 
                 viewPortRight.getProcessors().add(0, dlsrRight);

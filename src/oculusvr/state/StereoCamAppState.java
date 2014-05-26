@@ -26,7 +26,7 @@ import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import java.util.List;
 import oculusvr.input.HMDInfo;
 import oculusvr.input.OculusRiftReader;
-import com.jme3.post.BasicSSAO;
+import oculusvr.post.BasicSSAO;
 
 /**
  *

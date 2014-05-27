@@ -20,7 +20,7 @@ import com.jme3.scene.control.CameraControl;
 import oculusvr.control.StereoCameraControl;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
-import oculusvr.input.OculusRiftReader;
+import oculusvr.input.OculusRift;
 
 /**
  *
@@ -37,7 +37,7 @@ public class TestAppState extends SimpleApplication implements AnalogListener{
     private Vector3f camDirection = new Vector3f();
     
     public static void main(String[] args) {
-        OculusRiftReader.initialize();
+        OculusRift.initialize();
         TestAppState app = new TestAppState();
         AppSettings settings = new AppSettings(false);
         app.setSettings(settings);

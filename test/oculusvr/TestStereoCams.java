@@ -17,7 +17,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import oculusvr.input.OculusRiftReader;
+import oculusvr.input.OculusRift;
 
 public class TestStereoCams extends SimpleApplication {
 
@@ -43,7 +43,7 @@ public class TestStereoCams extends SimpleApplication {
     public void simpleInitApp() {
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
-        OculusRiftReader.initialize();
+        OculusRift.initialize();
         stereoCamAppState = new StereoCamAppState();
         
         stateManager.attach(stereoCamAppState);

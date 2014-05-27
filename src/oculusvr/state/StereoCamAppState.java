@@ -25,7 +25,7 @@ import com.jme3.shadow.DirectionalLightShadowFilter;
 import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import java.util.List;
 import oculusvr.input.HMDInfo;
-import oculusvr.input.OculusRiftReader;
+import oculusvr.input.OculusRift;
 import oculusvr.post.BasicSSAO;
 
 /**
@@ -82,13 +82,8 @@ public class StereoCamAppState extends AbstractAppState {
         viewPortRight.setClearFlags(true, true, true);
         viewPortRight.attachScene(((SimpleApplication)app).getRootNode());
 
-        try {
-            info = OculusRiftReader.getHMDInfo();            
-        } catch (Exception ex) {
-            info = new HMDInfo();
-            info.createFakeValues();
-            Logger.getLogger(StereoCamAppState.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        info = OculusRift.getHMDInfo();            
+        
         filterRight =new BarrelDistortionFilter(info, false);
         filterLeft=new BarrelDistortionFilter(info, true);
         ppRight =new FilterPostProcessor(app.getAssetManager());
@@ -135,7 +130,7 @@ public class StereoCamAppState extends AbstractAppState {
     @Override
     public void cleanup() {
         super.cleanup();
-        OculusRiftReader.destroy();
+        OculusRift.destroy();
     }
     
     public void setGuiDistance(float newGuiDistance) {

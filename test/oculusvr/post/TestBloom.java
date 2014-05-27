@@ -53,7 +53,7 @@ import com.jme3.scene.shape.Box;
 import com.jme3.util.SkyFactory;
 import java.util.concurrent.Callable;
 import jme3test.post.BloomUI;
-import oculusvr.input.OculusRiftReader;
+import oculusvr.input.OculusRift;
 
 public class TestBloom extends SimpleApplication {
 
@@ -66,7 +66,7 @@ public class TestBloom extends SimpleApplication {
     FilterPostProcessor fpp;
     
     public static void main(String[] args){
-        OculusRiftReader.initialize();
+        OculusRift.initialize();
         TestBloom app = new TestBloom();
         app.start();
     }

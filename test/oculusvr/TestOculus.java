@@ -5,11 +5,7 @@
 package oculusvr;
 
 import com.jme3.app.SimpleApplication;
-import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import oculusvr.input.OculusRift;
-import oculusvr.input.OculusRiftReader;
 
 /**
  *
@@ -18,7 +14,7 @@ import oculusvr.input.OculusRiftReader;
 public class TestOculus extends SimpleApplication {
 
     public static void main(String[] args) {
-        OculusRiftReader.initialize();
+        OculusRift.initialize();
         TestOculus app = new TestOculus();
         app.start();
 
@@ -40,9 +36,8 @@ public class TestOculus extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         
-        OculusRiftReader.getHMDInfo();
-        OculusRiftReader.update();
-        OculusRiftReader.destroy();
+        OculusRift.getHMDInfo();
+        OculusRift.destroy();
 //   OculusRift oc = new OculusRift();
 //   oc.initOculus();
 //        OculusRiftReader orr = null;

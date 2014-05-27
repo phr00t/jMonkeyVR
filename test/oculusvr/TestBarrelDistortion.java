@@ -20,7 +20,7 @@ import oculusvr.post.BarrelDistortionFilter;
 import oculusvr.post.BarrelDistortionFilterFake;
 import com.jme3.system.AppSettings;
 import oculusvr.input.HMDInfo;
-import oculusvr.input.OculusRiftReader;
+import oculusvr.input.OculusRift;
 
 public class TestBarrelDistortion extends SimpleApplication {
 
@@ -33,7 +33,7 @@ public class TestBarrelDistortion extends SimpleApplication {
     private static boolean useHttp = true;
 
     public static void main(String[] args) {
-        OculusRiftReader.initialize();
+        OculusRift.initialize();
         File file = new File("wildhouse.zip");
         if (file.exists()) {
             useHttp = false;

@@ -10,7 +10,7 @@ import com.jme3.font.Rectangle;
 import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import oculusvr.input.OculusRiftReader;
+import oculusvr.input.OculusRift;
 
 public class TestGui extends SimpleApplication {
 
@@ -25,7 +25,7 @@ public class TestGui extends SimpleApplication {
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Node scene;
     public static void main(String[] args) {
-        OculusRiftReader.initialize();
+        OculusRift.initialize();
         TestGui app = new TestGui();
         app.start();
     }

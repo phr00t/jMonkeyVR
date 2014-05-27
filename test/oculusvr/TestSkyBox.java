@@ -40,7 +40,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.util.SkyFactory;
-import oculusvr.input.OculusRiftReader;
+import oculusvr.input.OculusRift;
 
 public class TestSkyBox extends SimpleApplication {
 
@@ -49,7 +49,7 @@ public class TestSkyBox extends SimpleApplication {
     private static boolean useHttp = false;
 
     public static void main(String[] args) {
-        OculusRiftReader.initialize();
+        OculusRift.initialize();
         TestSkyBox app = new TestSkyBox();
         app.start();
     }

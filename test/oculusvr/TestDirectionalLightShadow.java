@@ -66,7 +66,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3test.light.ShadowTestUIManager;
 import oculusvr.input.OculusRift;
-import oculusvr.input.OculusRiftReader;
 
 public class TestDirectionalLightShadow extends SimpleApplication implements ActionListener, AnalogListener {
     public static final int SHADOWMAP_SIZE = 512;
@@ -80,7 +79,7 @@ public class TestDirectionalLightShadow extends SimpleApplication implements Act
     private Material matGroundL;
 
     public static void main(String[] args) {
-        OculusRiftReader.initialize();
+        OculusRift.initialize();
         TestDirectionalLightShadow app = new TestDirectionalLightShadow();
         app.start();
     }

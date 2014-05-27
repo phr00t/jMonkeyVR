@@ -45,7 +45,7 @@ import com.jme3.util.TempVars;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import oculusvr.input.OculusRiftReader;
+import oculusvr.input.OculusRift;
 
 /**
  * This Control maintains a reference to a Camera,
@@ -113,14 +113,11 @@ public class StereoCameraControl extends CameraControl {
                         vars.vect4.y += spatialOffset.y;
                         vars.vect4.z += spatialOffset.z;
                     }
-                    
-                    // get the latest OculusRift info now!
-                    OculusRiftReader.update();
-                    
+
                     // positional tracking
-                    vars.vect4.addLocal(OculusRiftReader.getPositionalTracking());
+                    vars.vect4.addLocal(OculusRift.getPosition());
                     
-                    lookDirection.set(OculusRiftReader.getLocalOrientation());                    
+                    lookDirection.set(OculusRift.getOrientation());                    
                     vars.quat1.set(spatial.getWorldRotation()).multLocal(lookDirection);
                     camera.setRotation(vars.quat1); //spatial.getWorldRotation().mult(lookDirection));
                     vars.vect1.set(vars.vect4).addLocal(vars.quat1.mult(cameraOffset, vars.vect2)); //camera.setLocation(spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset)));                    

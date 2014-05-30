@@ -35,7 +35,8 @@ public class OculusRift {
             updateHMDInfo();
             System.out.println(info);
             loadedHmd.startSensor(OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation | OvrLibrary.ovrSensorCaps.ovrSensorCap_YawCorrection |
-OvrLibrary.ovrSensorCaps.ovrSensorCap_Position /* | OvrLibrary.ovrSensorCaps.ovrDistortionCap_NoSwapBuffers*/, OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation);
+                                  OvrLibrary.ovrSensorCaps.ovrSensorCap_Position | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_NoSwapBuffers,
+                                  OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation);
         } else {
             System.out.println("Oculus Rift could not be initialized; faking values.");
         }

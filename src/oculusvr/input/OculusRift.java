@@ -118,7 +118,7 @@ public class OculusRift {
     //public static long getDisplayId();
 
     public static Quaternion getOrientation() {
-        if( loadedHmd == null ) return Quaternion.ZERO;
+        if( loadedHmd == null ) return Quaternion.DIRECTION_Z;
         OvrQuaternionf rot = loadedHmd.getSensorState(ovrLib.ovr_GetTimeInSeconds() + predictValue).Predicted.Pose.Orientation;
         orientation.set(rot.x, rot.y, rot.z, rot.w);
         return orientation;

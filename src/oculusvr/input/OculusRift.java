@@ -21,10 +21,13 @@ public class OculusRift {
     
     private static HMDInfo info = new HMDInfo();
     
+    private static OvrLibrary ovrLib;
+    
     private static boolean initHMDSuccess;
     
     public static void initialize(){
-        OvrLibrary.INSTANCE.ovr_Initialize();
+        ovrLib = OvrLibrary.INSTANCE;
+        ovrLib.ovr_Initialize();
         loadedHmd = ovrHmd.create(0);
         initHMDSuccess = loadedHmd != null;
         info.createFakeValues();
@@ -56,14 +59,6 @@ public class OculusRift {
     public static HMDInfo getHMDInfo() {
         return info;
     }
-    
-    /**
-     * Returns the last received position data from the Oculus Rift
-     * @return 
-     */
-    public static Vector3f getPositionalTracking() {
-        return position;
-    }    
     
     public static void main(String[] args){
         try {
@@ -121,32 +116,37 @@ public class OculusRift {
 
     public static Quaternion getOrientation() {
         if( loadedHmd == null ) return Quaternion.ZERO;
-        OvrQuaternionf rot = loadedHmd.getSensorState(predictValue).Predicted.Pose.Orientation;
+        OvrQuaternionf rot = loadedHmd.getSensorState(ovrLib.ovr_GetTimeInSeconds() + predictValue).Predicted.Pose.Orientation;
         orientation.set(rot.x, rot.y, rot.z, rot.w);
         return orientation;
     }
+    
     public static Vector3f getPosition() {
         if( loadedHmd == null ) return Vector3f.ZERO;
-        OvrVector3f pos = loadedHmd.getSensorState(predictValue).Predicted.Pose.Position;
+        OvrVector3f pos = loadedHmd.getSensorState(ovrLib.ovr_GetTimeInSeconds() + predictValue).Predicted.Pose.Position;
         position.set(pos.x, pos.y, pos.z);
         return position;        
     }
+    
     public static Vector3f getAngularAcceleration() {
         if( loadedHmd == null ) return Vector3f.ZERO;
-        OvrVector3f pos = loadedHmd.getSensorState(predictValue).Predicted.AngularAcceleration;
+        OvrVector3f pos = loadedHmd.getSensorState(ovrLib.ovr_GetTimeInSeconds() + predictValue).Predicted.AngularAcceleration;
         angAcc.set(pos.x, pos.y, pos.z);
         return angAcc;                
-    }
+    }    
+    
     public static Vector3f getPositionalAcceleration() {
         if( loadedHmd == null ) return Vector3f.ZERO;
-        OvrVector3f pos = loadedHmd.getSensorState(predictValue).Predicted.LinearAcceleration;
+        OvrVector3f pos = loadedHmd.getSensorState(ovrLib.ovr_GetTimeInSeconds() + predictValue).Predicted.LinearAcceleration;
         posAcc.set(pos.x, pos.y, pos.z);
         return posAcc;                
     }
+    
     public static void reset() {
         if( loadedHmd == null ) return;
         loadedHmd.resetSensor();
     }
+    
     public static void predictive(float value, boolean on) {
         if( !on ) {
             predictValue = 0f;

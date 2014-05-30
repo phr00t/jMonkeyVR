@@ -34,6 +34,8 @@ public class OculusRift {
         if( initHMDSuccess ){
             updateHMDInfo();
             System.out.println(info);
+            loadedHmd.startSensor(OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation | OvrLibrary.ovrSensorCaps.ovrSensorCap_YawCorrection |
+OvrLibrary.ovrSensorCaps.ovrSensorCap_Position /* | OvrLibrary.ovrSensorCaps.ovrDistortionCap_NoSwapBuffers*/, OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation);
         } else {
             System.out.println("Oculus Rift could not be initialized; faking values.");
         }
@@ -124,6 +126,7 @@ public class OculusRift {
     public static Vector3f getPosition() {
         if( loadedHmd == null ) return Vector3f.ZERO;
         OvrVector3f pos = loadedHmd.getSensorState(ovrLib.ovr_GetTimeInSeconds() + predictValue).Predicted.Pose.Position;
+        
         position.set(pos.x, pos.y, pos.z);
         return position;        
     }

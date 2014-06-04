@@ -34,7 +34,6 @@ void main(){
     float result;
     vec3 position = getPosition(texCoord);
     vec3 normal = getNormal(texCoord);
-    vec3 rand = normalize(vec3(texCoord.x*352.3261));
 
     float ao = 0.0;
     float rad = m_SampleRadius/max(position.z, 16.0) + 0.075;
@@ -44,8 +43,8 @@ void main(){
     vec2 coord1;
     for (int j = 0; j < 12; ++j) {
         sampler = m_Samples[j];
-        float math = 2.0 * (rand.x*sampler.x + rand.y*sampler.y + rand.z*sampler.z);
-        coord1.xy = (sampler.xy - (math * rand.xy)) * rad;
+        float math = (sampler.x + sampler.y + sampler.z);
+        coord1.xy = (sampler.xy - math) * rad;
         ao += doAmbientOcclusion(texCoord + coord1.xy * 0.125, position, normal) - 0.075;
     }
 

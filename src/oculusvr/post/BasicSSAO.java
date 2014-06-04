@@ -28,18 +28,18 @@ private Pass normalPass;
 private Vector3f frustumCorner;
 private Vector2f frustumNearFar;
 private Vector3f[] samples = {
-new Vector3f(1.0f, 0.0f, 1.0f),
-new Vector3f(-1.0f, 0.0f, 1.0f),
-new Vector3f(0.0f, 1.0f, 1.0f),
-new Vector3f(0.0f, -1.0f, 1.0f),
-new Vector3f(1.0f, 0.0f, 0.0f),
-new Vector3f(-1.0f, 0.0f, 0.0f),
-new Vector3f(0.0f, 1.0f, 0.0f),
-new Vector3f(0.0f, -1.0f, 0.0f),
-new Vector3f(1.0f, 0.0f, -1.0f),
-new Vector3f(-1.0f, 0.0f, -1.0f),
-new Vector3f(0.0f, 1.0f, -1.0f),
-new Vector3f(0.0f, -1.0f, -1.0f)
+new Vector3f(0.5f, 0.0f, 0.5f),
+new Vector3f(-0.5f, 0.0f, 0.5f),
+new Vector3f(0.0f, 0.5f, 0.5f),
+new Vector3f(0.0f, -0.5f, 0.5f),
+new Vector3f(0.5f, 0.0f, 0.0f),
+new Vector3f(-0.5f, 0.0f, 0.0f),
+new Vector3f(0.0f, 0.5f, 0.0f),
+new Vector3f(0.0f, -0.5f, 0.0f),
+new Vector3f(0.5f, 0.0f, -0.5f),
+new Vector3f(-0.5f, 0.0f, -0.5f),
+new Vector3f(0.0f, 0.5f, -0.5f),
+new Vector3f(0.0f, -0.5f, -0.5f)
 };
 // Wide area occlusion settings
 private float sampleRadius = 3.0f;

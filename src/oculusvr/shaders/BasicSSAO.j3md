@@ -5,7 +5,6 @@ MaterialDef BasicSSAO {
         Int NumSamplesDepth
         Texture2D DepthTexture
         Texture2D Texture
-        Texture2D Noise
         Texture2D Normals
         Vector3 FrustumCorner
         Float SampleRadius

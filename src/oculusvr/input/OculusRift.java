@@ -6,8 +6,8 @@ package oculusvr.input;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.OvrLibrary;
-import com.oculusvr.capi.OvrLibrary.ovrHmd;
 import com.oculusvr.capi.OvrQuaternionf;
 import com.oculusvr.capi.OvrVector3f;
 import java.util.logging.Level;
@@ -28,7 +28,7 @@ public class OculusRift {
     public static void initialize(){
         ovrLib = OvrLibrary.INSTANCE;
         ovrLib.ovr_Initialize();
-        loadedHmd = ovrHmd.create(0);
+        loadedHmd = Hmd.create(0);
         initHMDSuccess = loadedHmd != null;
         info.createFakeValues();
         if( initHMDSuccess ){
@@ -95,7 +95,7 @@ public class OculusRift {
         return OculusRift.latencyTestResult();
     }*/
 
-    public static ovrHmd loadedHmd;
+    public static Hmd loadedHmd;
     
     private static Quaternion orientation = new Quaternion();
     private static Vector3f position = new Vector3f(), posAcc = new Vector3f(), angAcc = new Vector3f();

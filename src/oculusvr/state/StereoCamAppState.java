@@ -26,7 +26,7 @@ import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import java.util.List;
 import oculusvr.input.HMDInfo;
 import oculusvr.input.OculusRift;
-import oculusvr.post.BasicSSAO;
+import oculusvr.post.FastSSAO;
 
 /**
  *
@@ -171,8 +171,8 @@ public class StereoCamAppState extends AbstractAppState {
                         f2 = FilterUtil.cloneFogFilter((FogFilter)filter);
                         
                     } 
-                    else if (filter instanceof BasicSSAO) {
-                        f2 = new BasicSSAO((BasicSSAO)filter);
+                    else if (filter instanceof FastSSAO) {
+                        f2 = new FastSSAO((FastSSAO)filter);
                     }
                     //else if (filter instanceof WaterFilter){
                         //f2 = ((WaterFilter)filter). //doesn't seem to be a clone function ready to go?

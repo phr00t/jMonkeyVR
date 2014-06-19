@@ -1,4 +1,4 @@
-MaterialDef BasicSSAOBlur {
+MaterialDef FastSSAOBlur {
 
 MaterialParameters {
 Int NumSamples
@@ -17,7 +17,7 @@ Texture2D DepthTexture
 
 Technique {
 VertexShader GLSL100:   Common/MatDefs/Post/Post.vert
-FragmentShader GLSL100: oculusvr/shaders/BasicSSAOBlur.frag
+FragmentShader GLSL100: oculusvr/shaders/FastSSAOBlur.frag
 
 WorldParameters {
 WorldViewProjectionMatrix

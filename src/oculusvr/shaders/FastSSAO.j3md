@@ -1,4 +1,4 @@
-MaterialDef BasicSSAO {
+MaterialDef FastSSAO {
 
     MaterialParameters {
         Int NumSamples
@@ -25,7 +25,7 @@ MaterialDef BasicSSAO {
 
         Technique {
             VertexShader GLSL100:   Common/MatDefs/Post/Post.vert
-            FragmentShader GLSL100: oculusvr/shaders/BasicSSAO.frag
+            FragmentShader GLSL100: oculusvr/shaders/FastSSAO.frag
 
             WorldParameters {
             WorldViewProjectionMatrix

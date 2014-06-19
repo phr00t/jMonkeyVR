@@ -23,7 +23,7 @@ import com.jme3.texture.Texture;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class BasicSSAO extends Filter{
+public class FastSSAO extends Filter{
 private Pass normalPass;
 private Vector3f frustumCorner;
 private Vector2f frustumNearFar;
@@ -72,8 +72,8 @@ ViewPort viewPort;
 /**
 * Create a Screen Space Ambient Occlusion Filter
 */
-public BasicSSAO() {
-super("BasicSSAO");
+public FastSSAO() {
+super("FastSSAO");
 }
 
 /**
@@ -83,7 +83,7 @@ super("BasicSSAO");
 * @param scale distance between occluders and occludee. default 0.2f
 * @param bias the width of the occlusion cone considered by the occludee. default 0.1f
 */
-public BasicSSAO(float sampleRadius, float intensity, float scale, float bias) {
+public FastSSAO(float sampleRadius, float intensity, float scale, float bias) {
 this();
 this.sampleRadius = sampleRadius;
 this.intensity = intensity;
@@ -91,7 +91,7 @@ this.scale = scale;
 this.bias = bias;
 }
 
-public BasicSSAO(BasicSSAO cloneFrom) {
+public FastSSAO(FastSSAO cloneFrom) {
     this();
     this.sampleRadius = cloneFrom.sampleRadius;
     this.intensity = cloneFrom.intensity;
@@ -141,7 +141,7 @@ frustumNearFar.x = vp.getCamera().getFrustumNear();
 frustumNearFar.y = vp.getCamera().getFrustumFar();
 
 //ssao Pass
-ssaoMat = new Material(manager, "oculusvr/shaders/BasicSSAO.j3md");
+ssaoMat = new Material(manager, "oculusvr/shaders/FastSSAO.j3md");
 ssaoMat.setTexture("Normals", normalPass.getRenderedTexture());
 
 ssaoPass = new Pass() {
@@ -159,7 +159,7 @@ postRenderPasses.add(ssaoPass);
 //float yScale = 1.0f / h;
 //float blurScale = 6.75f;
 
-material = new Material(manager, "oculusvr/shaders/BasicSSAOBlur.j3md");
+material = new Material(manager, "oculusvr/shaders/FastSSAOBlur.j3md");
 material.setTexture("SSAOMap", ssaoPass.getRenderedTexture());
 //material.setVector2("FrustumNearFar", frustumNearFar);
 //material.setBoolean("UseAo", useAo);

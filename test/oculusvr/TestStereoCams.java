@@ -1,6 +1,7 @@
 package oculusvr;
 
 import com.jme3.app.SimpleApplication;
+import oculusvr.state.OVRAppState;
 import com.jme3.asset.plugins.HttpZipLocator;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.input.controls.ActionListener;
@@ -23,14 +24,14 @@ public class TestStereoCams extends SimpleApplication {
 
     // set default for applets
     private static boolean useHttp = true;
-    private static StereoCamAppState stereoCamAppState;
+    private static OVRAppState stereoCamAppState;
     Spatial observer = new Node("");
     Node boxes = new Node("");
     
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Node scene;
     public static void main(String[] args) {
-        
+        OculusRift.initSensors();
         File file = new File("wildhouse.zip");
         if (file.exists()) {
             useHttp = false;
@@ -43,8 +44,8 @@ public class TestStereoCams extends SimpleApplication {
     public void simpleInitApp() {
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
-        OculusRift.initialize();
-        stereoCamAppState = new StereoCamAppState();
+        
+        stereoCamAppState = new OVRAppState();
         
         stateManager.attach(stereoCamAppState);
         

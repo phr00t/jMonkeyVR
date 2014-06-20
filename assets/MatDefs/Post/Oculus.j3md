@@ -1,0 +1,29 @@
+MaterialDef Simple {
+    MaterialParameters {
+        Int NumSamples
+        Texture2D Texture
+    }
+ 
+     Technique {
+        VertexShader GLSL150:   Common/MatDefs/Post/Post15.vert
+        FragmentShader GLSL150: MatDefs/Post/Oculus.frag
+ 
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+ 
+        Defines {
+            RESOLVE_MS : NumSamples
+        }
+ 
+    }
+ 
+    Technique {
+        VertexShader GLSL100:   Common/MatDefs/Post/Post.vert
+        FragmentShader GLSL100: MatDefs/Post/Oculus.frag
+ 
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+    }
+}

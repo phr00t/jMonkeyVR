@@ -6,26 +6,20 @@ package oculusvr.post;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
 import com.jme3.post.Filter;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.texture.FrameBuffer;
-import com.jme3.texture.Image;
-import com.jme3.texture.Texture2D;
 import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.FovPort;
 import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.HmdDesc;
-import com.oculusvr.capi.OvrLibrary;
 import com.oculusvr.capi.OvrVector2i;
 import com.oculusvr.capi.Posef;
 import com.oculusvr.capi.Texture;
 import com.oculusvr.capi.TextureHeader;
-import com.sun.org.apache.bcel.internal.generic.GETFIELD;
 import oculusvr.util.OculusRiftUtil;
 
 /**
@@ -52,7 +46,7 @@ public class OculusFilter extends Filter {
 
     @Override
     protected void initFilter(AssetManager manager, RenderManager renderManager, ViewPort vp, int w, int h) {
-        material = new Material(manager, "MatDefs/Post/Oculus.j3md");
+        material = new Material(manager, "oculusvr/shaders/Oculus.j3md");
         // JNA weirdness 1
         FovPort defaultEyeFov = eyeRenderDesc.Fov;
 

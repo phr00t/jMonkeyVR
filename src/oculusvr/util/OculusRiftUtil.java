@@ -24,34 +24,19 @@ public class OculusRiftUtil {
 
     public static EyeRenderDesc[] configureRendering(Hmd hmd, HmdDesc hmdDesc) {
         EyeRenderDesc[] configureResult;
+        
         FovPort fovPorts[] = (FovPort[]) new FovPort().toArray(2);
-        for (int eye = 0; eye < 2; ++eye) {
-            {
-                // JNA weirdness 1
-                FovPort defaultEyeFov = hmdDesc.DefaultEyeFov[eye];
-                fovPorts[eye] = defaultEyeFov;
-                FovPort fovPort = new FovPort();
-                fovPort.DownTan = defaultEyeFov.DownTan;
-                fovPort.UpTan = defaultEyeFov.UpTan;
-                fovPort.LeftTan = defaultEyeFov.LeftTan;
-                fovPort.RightTan = defaultEyeFov.RightTan;
-            }
-        }
-
-
+        fovPorts[0] = hmdDesc.DefaultEyeFov[0];
+        fovPorts[1] = hmdDesc.DefaultEyeFov[1];
+    
         RenderAPIConfig rc = new RenderAPIConfig();
         rc.Header.API = OvrLibrary.ovrRenderAPIType.ovrRenderAPI_OpenGL;
         rc.Header.RTSize = hmdDesc.Resolution;
-        rc.Header.Multisample = 1;
-        for (int i = 0; i < rc.PlatformData.length; ++i) {
-            rc.PlatformData[i] = 0;
-        }
-        rc.write();
-        int distortionCaps = 0
-                | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic
-                | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_TimeWarp
-                | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette
-                | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_NoSwapBuffers;
+        rc.Header.Multisample = 0;
+        int distortionCaps = OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic
+                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_TimeWarp
+                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette
+                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_NoSwapBuffers;
 
 
         configureResult = hmd.configureRendering(rc, distortionCaps, fovPorts);
@@ -64,6 +49,6 @@ public class OculusRiftUtil {
     }
     
     public static Matrix4f toMatrix4f(OvrMatrix4f m) {
-    return new Matrix4f(m.M).transpose();
-  }
+        return new Matrix4f(m.M).transpose();
+    }
 }

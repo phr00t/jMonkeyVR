@@ -33,7 +33,7 @@
 package oculusvr;
 
 import com.jme3.app.SimpleApplication;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
@@ -65,7 +65,7 @@ public class TestNiftyGui extends SimpleApplication implements ScreenController 
         guiViewPort.addProcessor(niftyDisplay);
         inputManager.setCursorVisible(true);
         
-        StereoCamAppState stereoCamAppState = new StereoCamAppState();
+        OVRAppState stereoCamAppState = new OVRAppState();
         stateManager.attach(stereoCamAppState);
     }
 

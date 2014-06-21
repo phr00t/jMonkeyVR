@@ -3,7 +3,7 @@ package oculusvr;
 import com.jme3.app.SimpleApplication;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.font.Rectangle;
@@ -14,7 +14,7 @@ import oculusvr.input.OculusRift;
 
 public class TestGui extends SimpleApplication {
 
-    private static StereoCamAppState stereoCamAppState;
+    private static OVRAppState stereoCamAppState;
     Spatial observer = new Node("");
 
     private String txtB =
@@ -34,7 +34,7 @@ public class TestGui extends SimpleApplication {
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
 
-        stereoCamAppState = new StereoCamAppState();
+        stereoCamAppState = new OVRAppState();
         stateManager.attach(stereoCamAppState);
         
         scene = new Node();

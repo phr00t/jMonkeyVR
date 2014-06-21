@@ -22,7 +22,6 @@ import oculusvr.util.OculusRiftUtil;
 public class OculusRift {
 
     private static HMDInfo info = new HMDInfo();
-    private static OvrLibrary ovrLib;
     private static boolean initHMDSuccess;
     private static EyeRenderDesc[] eyeRenderDesc;
 
@@ -33,14 +32,18 @@ public class OculusRift {
         if (initHMDSuccess) {
             updateHMDInfo();
             System.out.println("Oculus Rift initialized: " + info);
-            loadedHmd.startSensor(OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation | OvrLibrary.ovrSensorCaps.ovrSensorCap_YawCorrection
-                                  | OvrLibrary.ovrSensorCaps.ovrSensorCap_Position, OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation);
         } else {
-            System.out.println("Oculus Rift NOT found or initialized; virtual DK1 created.");
-            loadedHmd = Hmd.createDebug(OvrLibrary.ovrHmdType.ovrHmd_DK1);
+            System.out.println("Oculus Rift NOT found or initialized; virtual DK2 created.");
+            loadedHmd = Hmd.createDebug(OvrLibrary.ovrHmdType.ovrHmd_DK2);
             info.createFakeValues();
         }
-        eyeRenderDesc = OculusRiftUtil.configureRendering(loadedHmd, loadedHmd.getDesc()); // we will use debug hmd at least here
+        loadedHmd.startSensor(OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation | OvrLibrary.ovrSensorCaps.ovrSensorCap_YawCorrection
+                              | OvrLibrary.ovrSensorCaps.ovrSensorCap_Position, OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation);
+    }
+    
+    public static void initRendering() {
+        if( eyeRenderDesc == null )
+            eyeRenderDesc = OculusRiftUtil.configureRendering(loadedHmd, loadedHmd.getDesc()); // we will use debug hmd at least here        
     }
 
     public static HMDInfo updateHMDInfo() {

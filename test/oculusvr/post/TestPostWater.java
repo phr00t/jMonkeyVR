@@ -1,7 +1,7 @@
 package oculusvr.post;
 
 import com.jme3.app.SimpleApplication;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.LowPassFilter;
 import com.jme3.effect.ParticleEmitter;
@@ -181,7 +181,7 @@ public class TestPostWater extends SimpleApplication {
 //        createBox();
         //  createFire();
         
-        StereoCamAppState stereoCamAppState = new StereoCamAppState();
+        OVRAppState stereoCamAppState = new OVRAppState();
         stateManager.attach(stereoCamAppState);
         
         Spatial observer = new Node("Observer");

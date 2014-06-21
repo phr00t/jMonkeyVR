@@ -32,7 +32,7 @@
 package oculusvr.post;
 
 import com.jme3.app.SimpleApplication;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -93,7 +93,7 @@ public class TestSSAO extends SimpleApplication {
 
         viewPort.addProcessor(fpp);
         
-        final StereoCamAppState stereoCamAppState = new StereoCamAppState();
+        final OVRAppState stereoCamAppState = new OVRAppState();
         stateManager.attach(stereoCamAppState);
         
         Spatial observer = new Node("Observer");

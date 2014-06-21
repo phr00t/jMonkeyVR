@@ -33,7 +33,7 @@
 package oculusvr;
 
 import com.jme3.app.SimpleApplication;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -66,7 +66,7 @@ public class TestSkyBox extends SimpleApplication {
         rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
 
         
-        StereoCamAppState stereoCamAppState = new StereoCamAppState();
+        OVRAppState stereoCamAppState = new OVRAppState();
         stateManager.attach(stereoCamAppState);
         
         Spatial observer = new Node("Observer");

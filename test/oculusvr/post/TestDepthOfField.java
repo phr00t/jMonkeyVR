@@ -1,7 +1,7 @@
 package oculusvr.post;
 
 import com.jme3.app.SimpleApplication;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.controls.ActionListener;
@@ -132,7 +132,7 @@ public class TestDepthOfField extends SimpleApplication {
         inputManager.addMapping("focusDistanceUp", new KeyTrigger(keyInput.KEY_O));
         inputManager.addMapping("focusDistanceDown", new KeyTrigger(keyInput.KEY_L));
 
-        StereoCamAppState stereoCamAppState = new StereoCamAppState();
+        OVRAppState stereoCamAppState = new OVRAppState();
         stateManager.attach(stereoCamAppState);
         
         Spatial observer = new Node("Observer");

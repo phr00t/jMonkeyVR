@@ -36,7 +36,7 @@ import oculusvr.*;
 import com.jme3.app.SimpleApplication;
 import oculusvr.state.OVRAppState;
 import com.jme3.material.Material;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;

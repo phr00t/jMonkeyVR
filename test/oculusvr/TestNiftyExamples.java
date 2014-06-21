@@ -33,7 +33,7 @@
 package oculusvr;
 
 import com.jme3.app.SimpleApplication;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 
@@ -62,7 +62,7 @@ public class TestNiftyExamples extends SimpleApplication {
         // disable the fly cam
         flyCam.setEnabled(false);
         
-        StereoCamAppState stereoCamAppState = new StereoCamAppState();
+        OVRAppState stereoCamAppState = new OVRAppState();
         stateManager.attach(stereoCamAppState);
     }
 

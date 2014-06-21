@@ -10,7 +10,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.io.File;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
@@ -24,7 +24,7 @@ public class TestStereoCams extends SimpleApplication {
 
     // set default for applets
     private static boolean useHttp = true;
-    private static StereoCamAppState stereoCamAppState;
+    private static OVRAppState stereoCamAppState;
     Spatial observer = new Node("");
     Node boxes = new Node("");
     
@@ -47,7 +47,7 @@ public class TestStereoCams extends SimpleApplication {
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
         
-        stereoCamAppState = new StereoCamAppState();
+        stereoCamAppState = new OVRAppState();
         
         stateManager.attach(stereoCamAppState);
         

@@ -6,7 +6,7 @@ package oculusvr;
 
 import com.jme3.animation.AnimEventListener;
 import com.jme3.app.SimpleApplication;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.MouseAxisTrigger;
@@ -28,7 +28,7 @@ import oculusvr.input.OculusRift;
  */
 public class TestAppState extends SimpleApplication implements AnalogListener{
 
-    private StereoCamAppState oas;
+    private OVRAppState oas;
     private StereoCameraControl camControl;
     private CameraNode camNode;
     private Node origin = new Node("Origin");
@@ -46,7 +46,7 @@ public class TestAppState extends SimpleApplication implements AnalogListener{
     
     @Override
     public void simpleInitApp() {
-        oas = new StereoCamAppState();
+        oas = new OVRAppState();
         stateManager.attach(oas);
         
         camControl = oas.getCameraControl();

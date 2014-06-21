@@ -33,7 +33,7 @@
 package oculusvr;
 
 import com.jme3.app.SimpleApplication;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh.Type;
 import com.jme3.effect.shapes.EmitterBoxShape;
@@ -86,7 +86,7 @@ public class TestPointSprite extends SimpleApplication {
         
         inputManager.addMapping("setNum", new KeyTrigger(KeyInput.KEY_SPACE));
         
-        StereoCamAppState stereoCamAppState = new StereoCamAppState();
+        OVRAppState stereoCamAppState = new OVRAppState();
         stateManager.attach(stereoCamAppState);
     }
 

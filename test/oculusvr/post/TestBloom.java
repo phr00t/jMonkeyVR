@@ -33,7 +33,7 @@
 package oculusvr.post;
 
 import com.jme3.app.SimpleApplication;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -137,7 +137,7 @@ public class TestBloom extends SimpleApplication {
         viewPort.addProcessor(fpp);
         fpp.addFilter(bloom);
 
-        final StereoCamAppState stereoCamAppState = new StereoCamAppState();
+        final OVRAppState stereoCamAppState = new OVRAppState();
         stateManager.attach(stereoCamAppState);
         
         Spatial observer = new Node("Observer");

@@ -33,7 +33,7 @@ package oculusvr;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.app.state.VideoRecorderAppState;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
@@ -196,7 +196,7 @@ public class TestDirectionalLightShadow extends SimpleApplication implements Act
         initInputs();
         
         
-        final StereoCamAppState stereoCamAppState = new StereoCamAppState();
+        final OVRAppState stereoCamAppState = new OVRAppState();
         stateManager.attach(stereoCamAppState);
         
         Spatial observer = new Node("Observer");

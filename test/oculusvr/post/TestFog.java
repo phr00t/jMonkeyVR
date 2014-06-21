@@ -33,7 +33,7 @@
 package oculusvr.post;
 
 import com.jme3.app.SimpleApplication;
-import oculusvr.state.StereoCamAppState;
+import oculusvr.state.OVRAppState;
 import com.jme3.asset.plugins.HttpZipLocator;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.input.KeyInput;
@@ -105,7 +105,7 @@ public class TestFog extends SimpleApplication {
         viewPort.addProcessor(fpp);
         initInputs();
         
-        final StereoCamAppState stereoCamAppState = new StereoCamAppState();
+        final OVRAppState stereoCamAppState = new OVRAppState();
         stateManager.attach(stereoCamAppState);
         
         Spatial observer = new Node("Observer");

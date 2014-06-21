@@ -11,7 +11,7 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
-import com.jme3.scene.control.StereoCameraControl;
+import oculusvr.control.StereoCameraControl;
 import com.jme3.system.JmeSystem;
 import com.jme3.system.Natives;
 import java.io.IOException;
@@ -35,6 +35,7 @@ import java.util.List;
 import oculusvr.input.HMDInfo;
 import oculusvr.input.OculusRift;
 import oculusvr.post.OculusFilter;
+import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import oculusvr.util.FilterUtil;
 
 /**
@@ -205,9 +206,9 @@ public class OVRAppState extends AbstractAppState{
                         f2 = FilterUtil.cloneFogFilter((FogFilter)filter);
                         
                     } 
-                    else if (filter instanceof WaterFilter){
-                        f2 = ((WaterFilter)filter).clone(); //doesn't seem to be a clone function ready to go?
-                    } 
+                    //else if (filter instanceof WaterFilter){
+                    //    f2 = ((WaterFilter)filter).clone(); //doesn't seem to be a clone function ready to go?
+                    //} 
                     else if (filter instanceof SSAOFilter){
                         f2 = FilterUtil.cloneSSAOFilter((SSAOFilter)filter);
                     } else if (filter instanceof DirectionalLightShadowFilter){
@@ -225,10 +226,10 @@ public class OVRAppState extends AbstractAppState{
                     }
                     
                 }
-            } else if (sp instanceof DirectionalLightShadowRenderer){
-                DirectionalLightShadowRenderer dlsr = (DirectionalLightShadowRenderer) sp;
+            } else if (sp instanceof OculusDirectionalLightShadowRenderer){
+                OculusDirectionalLightShadowRenderer dlsr = (OculusDirectionalLightShadowRenderer) sp;
                 
-                DirectionalLightShadowRenderer dlsrRight = dlsr.clone(); //new DirectionalLightShadowRenderer(app.getAssetManager(), 512, 3);//
+                OculusDirectionalLightShadowRenderer dlsrRight = dlsr.clone();
                 dlsrRight.setLight(dlsr.getLight());
                 
                 viewPortRight.addProcessor(dlsrRight);

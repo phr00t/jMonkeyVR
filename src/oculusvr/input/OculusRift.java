@@ -26,30 +26,20 @@ public class OculusRift {
     private static boolean initHMDSuccess;
     private static EyeRenderDesc[] eyeRenderDesc;
 
-    public static void initSensors() {
+    public static void initialize() {
         Hmd.initialize();
         loadedHmd = Hmd.create(0);
         initHMDSuccess = loadedHmd != null;
         if (initHMDSuccess) {
             updateHMDInfo();
             System.out.println("Oculus Rift initialized: " + info);
-            byte b = loadedHmd.startSensor(OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation | OvrLibrary.ovrSensorCaps.ovrSensorCap_YawCorrection
-                    | OvrLibrary.ovrSensorCaps.ovrSensorCap_Position,
-                    OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation);
-            System.out.println(b + " " + getOrientation());
-        }
-    }
-
-    public static void initialize() {
-        initHMDSuccess = loadedHmd != null;
-        if (initHMDSuccess) {
-            System.out.println(getOrientation());
-            eyeRenderDesc = OculusRiftUtil.configureRendering(loadedHmd, loadedHmd.getDesc());
-
+            loadedHmd.startSensor(OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation | OvrLibrary.ovrSensorCaps.ovrSensorCap_YawCorrection
+                                  | OvrLibrary.ovrSensorCaps.ovrSensorCap_Position, OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation);
         } else {
-            info.createFakeValues();
-            System.out.println("Oculus Rift could not be initialized; faking values.");
+            System.out.println("Oculus Rift NOT found or initialized; virtual DK1 created.");
+            loadedHmd = Hmd.createDebug(OvrLibrary.ovrHmdType.ovrHmd_DK1);
         }
+        eyeRenderDesc = OculusRiftUtil.configureRendering(loadedHmd, loadedHmd.getDesc()); // we will use debug hmd at least here
     }
 
     public static HMDInfo updateHMDInfo() {
@@ -67,7 +57,6 @@ public class OculusRift {
 
     public static void main(String[] args) {
         try {
-            initSensors();
             initialize();
             System.out.println(isInitialized());
             destroy();

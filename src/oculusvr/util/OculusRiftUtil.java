@@ -54,8 +54,7 @@ public class OculusRiftUtil {
                 | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_NoSwapBuffers;
 
 
-        configureResult = hmd.configureRendering(
-                rc, distortionCaps, fovPorts);
+        configureResult = hmd.configureRendering(rc, distortionCaps, fovPorts);
 
         System.out.println(configureResult[0]);
         if (null == configureResult) {

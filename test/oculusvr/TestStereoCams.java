@@ -24,28 +24,30 @@ public class TestStereoCams extends SimpleApplication {
 
     // set default for applets
     private static boolean useHttp = true;
-    private static OVRAppState stereoCamAppState;
+    private static StereoCamAppState stereoCamAppState;
     Spatial observer = new Node("");
     Node boxes = new Node("");
+    
+    public static TestStereoCams myApp;
     
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Node scene;
     public static void main(String[] args) {
-        OculusRift.initSensors();
+        OculusRift.initialize();
         File file = new File("wildhouse.zip");
         if (file.exists()) {
             useHttp = false;
         }
         
-        TestStereoCams app = new TestStereoCams();
-        app.start();
+        myApp = new TestStereoCams();
+        myApp.start();
     }
 
     public void simpleInitApp() {
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
         
-        stereoCamAppState = new OVRAppState();
+        stereoCamAppState = new StereoCamAppState();
         
         stateManager.attach(stereoCamAppState);
         

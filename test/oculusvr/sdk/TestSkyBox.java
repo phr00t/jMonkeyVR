@@ -52,7 +52,7 @@ public class TestSkyBox extends SimpleApplication {
     private static boolean useHttp = false;
 
     public static void main(String[] args) {
-        OculusRift.initSensors();
+        OculusRift.initialize();
         TestSkyBox app = new TestSkyBox();
         app.start();
     }

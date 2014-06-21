@@ -12,9 +12,6 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import oculusvr.control.StereoCameraControl;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import oculusvr.post.BarrelDistortionFilter;
 import com.jme3.post.Filter;
 import com.jme3.post.SceneProcessor;
 import com.jme3.post.filters.FogFilter;
@@ -22,11 +19,16 @@ import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.scene.control.CameraControl;
 import oculusvr.util.FilterUtil;
 import com.jme3.shadow.DirectionalLightShadowFilter;
+import com.oculusvr.capi.FrameTiming;
+import com.oculusvr.capi.Posef;
+import com.oculusvr.capi.SensorState;
 import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import java.util.List;
+import oculusvr.TestStereoCams;
 import oculusvr.input.HMDInfo;
 import oculusvr.input.OculusRift;
 import oculusvr.post.FastSSAO;
+import oculusvr.post.OculusFilter;
 
 /**
  *
@@ -36,13 +38,15 @@ public class StereoCamAppState extends AbstractAppState {
     
     private SimpleApplication app;
     private FilterPostProcessor ppLeft, ppRight;
-    private BarrelDistortionFilter filterLeft, filterRight;
+    private OculusFilter filterLeft, filterRight;
     Camera camLeft,camRight,guiCamLeft,guiCamRight;
     ViewPort viewPortLeft, viewPortRight, guiViewPortRight;
     private StereoCameraControl camControl = new StereoCameraControl();
     private HMDInfo info;
     private boolean flipEyes;
     private float guiDistance;
+    
+    private int frameIndex;    
     
     public StereoCamAppState(float guiDistance, boolean flipEyes) {
         this.flipEyes = flipEyes;
@@ -84,8 +88,11 @@ public class StereoCamAppState extends AbstractAppState {
 
         info = OculusRift.getHMDInfo();            
         
-        filterRight =new BarrelDistortionFilter(info, false);
-        filterLeft=new BarrelDistortionFilter(info, true);
+        filterLeft=new OculusFilter(OculusRift.loadedHmd, 0);
+        filterLeft.setEyeRenderDesc(OculusRift.getEyeRenderDesc(0));
+        filterRight =new OculusFilter(OculusRift.loadedHmd, 1);
+        filterRight.setEyeRenderDesc(OculusRift.getEyeRenderDesc(1));
+        
         ppRight =new FilterPostProcessor(app.getAssetManager());
         for(SceneProcessor sceneProcessor : viewPortLeft.getProcessors()){
             if(sceneProcessor instanceof FilterPostProcessor){
@@ -116,7 +123,20 @@ public class StereoCamAppState extends AbstractAppState {
     @Override
     public void update(float tpf) {
         super.update(tpf);
+        
+        frameIndex++;
+
+        OculusRift.loadedHmd.beginFrame(frameIndex++);
+        FrameTiming frameTiming = OculusRift.loadedHmd.getFrameTiming(frameIndex);
+
+        OculusRift.loadedHmd.getSensorState(frameTiming.ScanoutMidpointSeconds);
     }
+    
+    @Override
+    public void postRender() {
+        super.postRender();
+        OculusRift.loadedHmd.endFrame();
+    }   
     
     public void setCameraControl(StereoCameraControl control){
         this.camControl = control;
@@ -162,7 +182,7 @@ public class StereoCamAppState extends AbstractAppState {
         for(SceneProcessor sp: processors){
             if(sp instanceof FilterPostProcessor){
                 FilterPostProcessor fpp1 = (FilterPostProcessor) sp;
-                BarrelDistortionFilter bdf = ppRight.getFilter(BarrelDistortionFilter.class);
+                OculusFilter bdf = ppRight.getFilter(OculusFilter.class);
                 ppRight.removeFilter(bdf);
                 for(Filter filter: fpp1.getFilterList()){
                                         
@@ -182,7 +202,7 @@ public class StereoCamAppState extends AbstractAppState {
                     } else if (filter instanceof DirectionalLightShadowFilter){
                         f2 = FilterUtil.cloneDirectionalLightShadowFilter(app.getAssetManager(), (DirectionalLightShadowFilter)filter);
                     } 
-                    else if (!(filter instanceof BarrelDistortionFilter)){
+                    else if (!(filter instanceof OculusFilter)){
                         f2 = filter; // dof, bloom, lightscattering
                     }
                     

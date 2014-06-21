@@ -6,7 +6,7 @@ MaterialDef Simple {
  
      Technique {
         VertexShader GLSL150:   Common/MatDefs/Post/Post15.vert
-        FragmentShader GLSL150: MatDefs/Post/Oculus.frag
+        FragmentShader GLSL150: oculusvr/shaders/Oculus.frag
  
         WorldParameters {
             WorldViewProjectionMatrix
@@ -20,7 +20,7 @@ MaterialDef Simple {
  
     Technique {
         VertexShader GLSL100:   Common/MatDefs/Post/Post.vert
-        FragmentShader GLSL100: MatDefs/Post/Oculus.frag
+        FragmentShader GLSL100: oculusvr/shaders/Oculus.frag
  
         WorldParameters {
             WorldViewProjectionMatrix

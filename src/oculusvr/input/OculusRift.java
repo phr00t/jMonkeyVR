@@ -38,6 +38,7 @@ public class OculusRift {
         } else {
             System.out.println("Oculus Rift NOT found or initialized; virtual DK1 created.");
             loadedHmd = Hmd.createDebug(OvrLibrary.ovrHmdType.ovrHmd_DK1);
+            info.createFakeValues();
         }
         eyeRenderDesc = OculusRiftUtil.configureRendering(loadedHmd, loadedHmd.getDesc()); // we will use debug hmd at least here
     }

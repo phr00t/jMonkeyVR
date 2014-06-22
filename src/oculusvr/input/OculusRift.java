@@ -8,6 +8,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.Hmd;
+import com.oculusvr.capi.HmdDesc;
 import com.oculusvr.capi.OvrLibrary;
 import com.oculusvr.capi.OvrQuaternionf;
 import com.oculusvr.capi.OvrVector3f;
@@ -41,9 +42,9 @@ public class OculusRift {
                               | OvrLibrary.ovrSensorCaps.ovrSensorCap_Position, OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation);
     }
     
-    public static void initRendering() {
+    public static void initRendering(int width, int height, int samples) {
         if( eyeRenderDesc == null )
-            eyeRenderDesc = OculusRiftUtil.configureRendering(loadedHmd, loadedHmd.getDesc()); // we will use debug hmd at least here        
+            eyeRenderDesc = OculusRiftUtil.configureRendering(loadedHmd, loadedHmd.getDesc(), width, height, samples); // we will use debug hmd at least here        
     }
 
     public static HMDInfo updateHMDInfo() {

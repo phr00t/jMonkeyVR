@@ -12,6 +12,7 @@ import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.HmdDesc;
 import com.oculusvr.capi.OvrLibrary;
 import com.oculusvr.capi.OvrMatrix4f;
+import com.oculusvr.capi.OvrSizei;
 import com.oculusvr.capi.OvrVector2i;
 import com.oculusvr.capi.RenderAPIConfig;
 import com.oculusvr.capi.TextureHeader;
@@ -22,7 +23,7 @@ import com.oculusvr.capi.TextureHeader;
  */
 public class OculusRiftUtil {
 
-    public static EyeRenderDesc[] configureRendering(Hmd hmd, HmdDesc hmdDesc) {
+    public static EyeRenderDesc[] configureRendering(Hmd hmd, HmdDesc hmdDesc, int width, int height, int samples) {
         EyeRenderDesc[] configureResult;
         
         FovPort fovPorts[] = (FovPort[]) new FovPort().toArray(2);
@@ -31,8 +32,9 @@ public class OculusRiftUtil {
     
         RenderAPIConfig rc = new RenderAPIConfig();
         rc.Header.API = OvrLibrary.ovrRenderAPIType.ovrRenderAPI_OpenGL;
-        rc.Header.RTSize = hmdDesc.Resolution;
-        rc.Header.Multisample = 0;
+        rc.Header.RTSize = new OvrSizei(width, height);//hmdDesc.Resolution;
+        rc.Header.Multisample = samples;
+
         int distortionCaps = OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic
                              | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_TimeWarp
                              | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette

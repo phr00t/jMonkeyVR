@@ -19,6 +19,7 @@ import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.scene.control.CameraControl;
 import oculusvr.util.FilterUtil;
 import com.jme3.shadow.DirectionalLightShadowFilter;
+import com.jme3.system.AppSettings;
 import com.oculusvr.capi.FrameTiming;
 import com.oculusvr.capi.Posef;
 import com.oculusvr.capi.SensorState;
@@ -84,11 +85,12 @@ public class OVRAppState extends AbstractAppState {
         camRight.setViewPort(0.5f, 1f, 0.0f, 1f);
         viewPortRight = app.getRenderManager().createPostView("Right viewport", camRight);
         viewPortRight.setClearFlags(true, true, true);
-        viewPortRight.attachScene(((SimpleApplication)app).getRootNode());
+        viewPortRight.attachScene(this.app.getRootNode());
 
         info = OculusRift.getHMDInfo();            
         
-        OculusRift.initRendering();
+        AppSettings settings = this.app.getContext().getSettings();
+        OculusRift.initRendering(settings.getWidth(), settings.getHeight(), settings.getSamples());
         
         filterLeft=new OculusFilter(OculusRift.loadedHmd, 0);
         filterLeft.setEyeRenderDesc(OculusRift.getEyeRenderDesc(0));

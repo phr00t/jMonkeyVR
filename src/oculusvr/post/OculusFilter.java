@@ -16,6 +16,7 @@ import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.FovPort;
 import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.HmdDesc;
+import com.oculusvr.capi.OvrSizei;
 import com.oculusvr.capi.OvrVector2i;
 import com.oculusvr.capi.Posef;
 import com.oculusvr.capi.Texture;
@@ -48,22 +49,22 @@ public class OculusFilter extends Filter {
     @Override
     protected void initFilter(AssetManager manager, RenderManager renderManager, ViewPort vp, int w, int h) {
         material = new Material(manager, "oculusvr/shaders/Oculus.j3md");
-        // JNA weirdness 1
-        FovPort defaultEyeFov = eyeRenderDesc.Fov;
 
-        FovPort fovPort = new FovPort();
-        fovPort.DownTan = defaultEyeFov.DownTan;
-        fovPort.UpTan = defaultEyeFov.UpTan;
-        fovPort.LeftTan = defaultEyeFov.LeftTan;
-        fovPort.RightTan = defaultEyeFov.RightTan;
+//        FovPort defaultEyeFov = eyeRenderDesc.Fov;
+//
+//        FovPort fovPort = new FovPort();
+//        fovPort.DownTan = defaultEyeFov.DownTan;
+//        fovPort.UpTan = defaultEyeFov.UpTan;
+//        fovPort.LeftTan = defaultEyeFov.LeftTan;
+//        fovPort.RightTan = defaultEyeFov.RightTan;
         Matrix4f projMat = OculusRiftUtil.toMatrix4f(Hmd.getPerspectiveProjection(
-                fovPort, 0.1f, 1000000f, true));
+                eyeRenderDesc.Fov, 0.1f, 1000000f, true));
         vp.getCamera().setProjectionMatrix(projMat);
         TextureHeader eth = eyeTexture.Header;
-        eth.TextureSize = hmd.getFovTextureSize(eyeIndex, fovPort, 1.0f);
+        eth.TextureSize = hmd.getFovTextureSize(eyeIndex, eyeRenderDesc.Fov, 1.0f);
         eth.RenderViewport.Size = eth.TextureSize;
         eth.RenderViewport.Pos = new OvrVector2i(0, 0);
-        
+
     }
 
     @Override

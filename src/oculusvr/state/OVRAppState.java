@@ -126,18 +126,18 @@ public class OVRAppState extends AbstractAppState {
     public void update(float tpf) {
         super.update(tpf);
         
-        frameIndex++;
-
-        OculusRift.loadedHmd.beginFrame(frameIndex++);
-        FrameTiming frameTiming = OculusRift.loadedHmd.getFrameTiming(frameIndex);
-
-        OculusRift.loadedHmd.getSensorState(frameTiming.ScanoutMidpointSeconds);
+//        frameIndex++;
+//
+//        OculusRift.loadedHmd.beginFrame(frameIndex++);
+//        FrameTiming frameTiming = OculusRift.loadedHmd.getFrameTiming(frameIndex);
+//
+//        OculusRift.loadedHmd.getSensorState(frameTiming.ScanoutMidpointSeconds);
     }
     
     @Override
     public void postRender() {
         super.postRender();
-        OculusRift.loadedHmd.endFrame();
+//        OculusRift.loadedHmd.endFrame();
     }   
     
     public void setCameraControl(StereoCameraControl control){
@@ -158,7 +158,7 @@ public class OVRAppState extends AbstractAppState {
     public void setGuiDistance(float newGuiDistance) {
         guiDistance = newGuiDistance;
         guiCamLeft.setViewPort(0.0f + guiDistance, 0.5f + guiDistance, 0.0f, 1.0f);
-        guiCamRight.setViewPort(0.5f - guiDistance, 1f - guiDistance, 0.0f, 1f); // l,r,b,t        
+        guiCamRight.setViewPort(0.5f + guiDistance, 1f + guiDistance, 0.0f, 1f); // l,r,b,t        
     }
     
     public void adjustGuiDistance(float adjustAmount) {
@@ -172,6 +172,10 @@ public class OVRAppState extends AbstractAppState {
         guiCamRight = guiCamLeft.clone();
         
         setGuiDistance(guiDistance);        
+        app.getRenderManager().removePostView(guiViewPortLeft);
+        guiViewPortLeft = app.getRenderManager().createPostView("Gui Default Left", guiCamLeft);
+        guiViewPortLeft.setClearFlags(false, false, false);
+        guiViewPortLeft.attachScene(((SimpleApplication)app).getGuiNode());
         
         guiViewPortRight = app.getRenderManager().createPostView("Gui Default Right", guiCamRight);
         guiViewPortRight.setClearFlags(false, false, false);

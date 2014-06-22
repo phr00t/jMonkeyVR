@@ -36,6 +36,7 @@ public class OculusFilter extends Filter {
     int textureId = -1;
     private int eye; // redundant??
     private EyeRenderDesc eyeRenderDesc;
+    private static int frameIndex;
 
     public OculusFilter(Hmd hmd, int eyeIndex) {
         this.hmd = hmd;
@@ -62,7 +63,7 @@ public class OculusFilter extends Filter {
         eth.TextureSize = hmd.getFovTextureSize(eyeIndex, fovPort, 1.0f);
         eth.RenderViewport.Size = eth.TextureSize;
         eth.RenderViewport.Pos = new OvrVector2i(0, 0);
-
+        
     }
 
     @Override
@@ -82,6 +83,9 @@ public class OculusFilter extends Filter {
                 textureId = id;
             }
         }
+        if(eyeIndex == 0){
+            hmd.beginFrame(frameIndex++);
+        }
     }
 
     @Override
@@ -98,6 +102,10 @@ public class OculusFilter extends Filter {
 
         // for both:
         hmd.endEyeRender(eye, pose, eyeTexture);
+        
+        if(eyeIndex == 1){
+            hmd.endFrame();
+        }
     }
 
     public void setEyeRenderDesc(EyeRenderDesc desc) {

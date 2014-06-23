@@ -159,7 +159,7 @@ public class OVRAppState extends AbstractAppState {
     
     public void setGuiDistance(float newGuiDistance) {
         guiDistance = newGuiDistance;
-        guiCamLeft.setViewPort(0.0f + guiDistance, 0.5f + guiDistance, 0.0f, 1.0f);
+        guiCamLeft.setViewPort(0.0f, 0.5f, 0.0f, 1.0f);
         guiCamRight.setViewPort(0.5f + guiDistance, 1f + guiDistance, 0.0f, 1f); // l,r,b,t        
     }
     

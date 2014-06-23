@@ -94,11 +94,10 @@ public class TestStereoCams extends SimpleApplication {
         initInputs();
     }
 
-    private float mult = 1f;
      private void initInputs() {
 //        inputManager.addMapping("toggle", new KeyTrigger(KeyInput.KEY_SPACE));
-//        inputManager.addMapping("incShift", new KeyTrigger(KeyInput.KEY_M));
-//        inputManager.addMapping("decShift", new KeyTrigger(KeyInput.KEY_N));
+         inputManager.addMapping("incShift", new KeyTrigger(KeyInput.KEY_Q));
+         inputManager.addMapping("decShift", new KeyTrigger(KeyInput.KEY_E));
          inputManager.addMapping("forward", new KeyTrigger(KeyInput.KEY_W));
          inputManager.addMapping("back", new KeyTrigger(KeyInput.KEY_S));
          inputManager.addMapping("left", new KeyTrigger(KeyInput.KEY_A));
@@ -112,10 +111,10 @@ public class TestStereoCams extends SimpleApplication {
 //                    }
 //                } 
                 if(name.equals("incShift") && keyPressed){
-                    mult += 0.1f;
+                    stereoCamAppState.adjustGuiDistance(-0.01f);
 //                    stereoCamAppState.getCameraControl().increaseDistance();
                 }else if(name.equals("decShift") && keyPressed){
-                    mult -= 0.1f;
+                    stereoCamAppState.adjustGuiDistance(0.01f);
 //                    stereoCamAppState.getCameraControl().decreaseDistance();
                 }
                 if(name.equals("forward")){

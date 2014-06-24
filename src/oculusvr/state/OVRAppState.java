@@ -20,9 +20,8 @@ import com.jme3.scene.control.CameraControl;
 import oculusvr.util.FilterUtil;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.system.AppSettings;
-import com.oculusvr.capi.FrameTiming;
-import com.oculusvr.capi.Posef;
-import com.oculusvr.capi.SensorState;
+import com.jme3.water.WaterFilter;
+import java.util.ArrayList;
 import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import java.util.List;
 import oculusvr.TestStereoCams;
@@ -47,8 +46,6 @@ public class OVRAppState extends AbstractAppState {
     private boolean flipEyes;
     private float guiDistance;
     
-    private int frameIndex;    
-    
     public OVRAppState(float guiDistance, boolean flipEyes) {
         this.flipEyes = flipEyes;
         this.guiDistance = guiDistance;
@@ -71,6 +68,9 @@ public class OVRAppState extends AbstractAppState {
 
         viewPortLeft = app.getViewPort();
         camLeft = app.getCamera();
+        
+        camLeft.setFrustumPerspective(120f, (float) camLeft.getWidth() / camLeft.getHeight(), 0.1f, 512f);                       
+        
         if(camControl != null){
             camControl.setCamera(camLeft);
         }
@@ -97,22 +97,25 @@ public class OVRAppState extends AbstractAppState {
         filterRight =new OculusFilter(OculusRift.loadedHmd, 1);
         filterRight.setEyeRenderDesc(OculusRift.getEyeRenderDesc(1));
         
-        ppRight =new FilterPostProcessor(app.getAssetManager());
+        ppRight =new FilterPostProcessor(app.getAssetManager());               
+        ppLeft =new FilterPostProcessor(app.getAssetManager());
+        
+        ppLeft.addFilter(filterLeft);
+        
         for(SceneProcessor sceneProcessor : viewPortLeft.getProcessors()){
             if(sceneProcessor instanceof FilterPostProcessor){
-                ppLeft = (FilterPostProcessor) sceneProcessor;
+                for(Filter f : ((FilterPostProcessor)sceneProcessor).getFilterList() ) {
+                    ppLeft.addFilter(f);
+                }
+                viewPortLeft.removeProcessor(sceneProcessor);
                 break;
             }
         }
-        if(ppLeft == null){
-            ppLeft =new FilterPostProcessor(app.getAssetManager());
-            viewPortLeft.addProcessor(ppLeft);
-        }
         
-        ppRight.addFilter(filterRight);
-        ppLeft.addFilter(filterLeft);
+        viewPortLeft.addProcessor(ppLeft);
         viewPortRight.addProcessor(ppRight);
         
+        ppRight.addFilter(filterRight);             
         
         float offset = info.getInterpupillaryDistance() * 0.5f;
         camControl.setCamHalfDistance(offset);
@@ -127,19 +130,11 @@ public class OVRAppState extends AbstractAppState {
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        
-//        frameIndex++;
-//
-//        OculusRift.loadedHmd.beginFrame(frameIndex++);
-//        FrameTiming frameTiming = OculusRift.loadedHmd.getFrameTiming(frameIndex);
-//
-//        OculusRift.loadedHmd.getSensorState(frameTiming.ScanoutMidpointSeconds);
     }
     
     @Override
     public void postRender() {
         super.postRender();
-//        OculusRift.loadedHmd.endFrame();
     }   
     
     public void setCameraControl(StereoCameraControl control){
@@ -203,7 +198,7 @@ public class OVRAppState extends AbstractAppState {
                         f2 = new FastSSAO((FastSSAO)filter);
                     }
                     //else if (filter instanceof WaterFilter){
-                        //f2 = ((WaterFilter)filter). //doesn't seem to be a clone function ready to go?
+                    //    f2 = ((WaterFilter)filter) //doesn't seem to be a clone function ready to go?
                     //} 
                     else if (filter instanceof SSAOFilter){
                         f2 = FilterUtil.cloneSSAOFilter((SSAOFilter)filter);

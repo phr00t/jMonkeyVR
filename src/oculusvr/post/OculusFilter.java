@@ -8,6 +8,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.Matrix4f;
 import com.jme3.post.Filter;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
@@ -50,15 +51,9 @@ public class OculusFilter extends Filter {
     protected void initFilter(AssetManager manager, RenderManager renderManager, ViewPort vp, int w, int h) {
         material = new Material(manager, "oculusvr/shaders/Oculus.j3md");
 
-//        FovPort defaultEyeFov = eyeRenderDesc.Fov;
-//
-//        FovPort fovPort = new FovPort();
-//        fovPort.DownTan = defaultEyeFov.DownTan;
-//        fovPort.UpTan = defaultEyeFov.UpTan;
-//        fovPort.LeftTan = defaultEyeFov.LeftTan;
-//        fovPort.RightTan = defaultEyeFov.RightTan;
         Matrix4f projMat = OculusRiftUtil.toMatrix4f(Hmd.getPerspectiveProjection(
                 eyeRenderDesc.Fov, 0.1f, 1000000f, true));
+        
         vp.getCamera().setProjectionMatrix(projMat);
         TextureHeader eth = eyeTexture.Header;
         eth.TextureSize = hmd.getFovTextureSize(eyeIndex, eyeRenderDesc.Fov, 1.0f);

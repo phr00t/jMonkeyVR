@@ -31,7 +31,13 @@ public class OculusGuiNode extends Node {
     private BillboardControl billBoard;
     
     public OculusGuiNode() {
+        super("ogui");
         guiDistance = 2f;
+    }
+    
+    public OculusGuiNode(float dist) {
+        super("ogui");
+        guiDistance = dist;
     }
     
     public void setPositioningMode(POSITIONING_MODE mode) {
@@ -40,18 +46,14 @@ public class OculusGuiNode extends Node {
     
     public POSITIONING_MODE getPositioningMode() {
         return posMode;
-    }
-    
-    public OculusGuiNode(float dist) {
-        guiDistance = dist;
-    }
+    }    
     
     public void positionGui() {
         Vector3f guiPos = getLocalTranslation();
         setLocalScale(guiDistance * 0.0025f * guiRatioW, guiDistance * 0.0025f * guiRatioH, guiDistance * 0.005f);
         if( cam != null ) {
             Vector3f campos = cam.getLocation();
-            guiPos.set(guiDistance * 1.6f, -guiDistance, guiDistance);
+            guiPos.set(guiDistance * 1.6333f, -guiDistance, guiDistance);
             cam.getRotation().mult(guiPos, guiPos);
             guiPos.x += campos.x;
             guiPos.y += campos.y;

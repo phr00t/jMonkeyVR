@@ -8,12 +8,12 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.Hmd;
-import com.oculusvr.capi.HmdDesc;
 import com.oculusvr.capi.OvrLibrary;
 import com.oculusvr.capi.OvrQuaternionf;
 import com.oculusvr.capi.OvrVector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import oculusvr.state.OVRAppState;
 import oculusvr.util.OculusRiftUtil;
 
 /**
@@ -25,8 +25,10 @@ public class OculusRift {
     private static HMDInfo info = new HMDInfo();
     private static boolean initHMDSuccess;
     private static EyeRenderDesc[] eyeRenderDesc;
+    private static OVRAppState appState;
 
-    public static void initialize() {
+    // returns true if it was successfully loaded
+    public static boolean initialize() {
         Hmd.initialize();
         loadedHmd = Hmd.create(0);
         initHMDSuccess = loadedHmd != null;
@@ -40,6 +42,20 @@ public class OculusRift {
         }
         loadedHmd.startSensor(OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation | OvrLibrary.ovrSensorCaps.ovrSensorCap_YawCorrection
                               | OvrLibrary.ovrSensorCaps.ovrSensorCap_Position, OvrLibrary.ovrSensorCaps.ovrSensorCap_Orientation);
+        return initHMDSuccess;
+    }
+    
+    // can be useful for debugging
+    public static void forceInitializeSuccess() {
+        initHMDSuccess = true;
+    }
+    
+    public static void setAppState(OVRAppState appState) {
+        OculusRift.appState = appState;
+    }
+    
+    public static OVRAppState getAppState() {
+        return OculusRift.appState;
     }
     
     public static void initRendering(int width, int height, int samples) {
@@ -94,6 +110,10 @@ public class OculusRift {
     // HMDInfo
     public static int getHResolution() {
         return loadedHmd == null ? 1280 : loadedHmd.getDesc().Resolution.w;
+    }
+    
+    public static float getFOV() {
+        return loadedHmd == null ? 130f : (float)Math.atan(loadedHmd.getDesc().DefaultEyeFov[0].DownTan) * 2f * 57.2957795f;
     }
 
     public static int getVResolution() {

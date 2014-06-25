@@ -8,6 +8,7 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -15,7 +16,14 @@ import oculusvr.control.StereoCameraControl;
 import com.jme3.post.Filter;
 import com.jme3.post.SceneProcessor;
 import com.jme3.post.filters.FogFilter;
+import com.jme3.post.filters.TranslucentBucketFilter;
 import com.jme3.post.ssao.SSAOFilter;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
+import com.jme3.scene.control.BillboardControl;
 import com.jme3.scene.control.CameraControl;
 import oculusvr.util.FilterUtil;
 import com.jme3.shadow.DirectionalLightShadowFilter;
@@ -29,6 +37,7 @@ import oculusvr.input.HMDInfo;
 import oculusvr.input.OculusRift;
 import oculusvr.post.FastSSAO;
 import oculusvr.post.OculusFilter;
+import oculusvr.util.OculusGuiNode;
 
 /**
  *
@@ -39,27 +48,40 @@ public class OVRAppState extends AbstractAppState {
     private SimpleApplication app;
     private FilterPostProcessor ppLeft, ppRight;
     private OculusFilter filterLeft, filterRight;
-    Camera camLeft,camRight,guiCamLeft,guiCamRight;
-    ViewPort viewPortLeft, viewPortRight, guiViewPortRight;
+    Camera camLeft,camRight;
+    ViewPort viewPortLeft, viewPortRight;
     private StereoCameraControl camControl = new StereoCameraControl();
     private HMDInfo info;
     private boolean flipEyes;
-    private float guiDistance;
-    
-    public OVRAppState(float guiDistance, boolean flipEyes) {
+    private OculusGuiNode guiNode;
+        
+    public OVRAppState(boolean flipEyes) {
+        OculusRift.setAppState(this);
         this.flipEyes = flipEyes;
-        this.guiDistance = guiDistance;
+        this.guiNode = null;
     }
     
-    public OVRAppState(float guiDistance) {
-        flipEyes = false;
-        this.guiDistance = guiDistance;
+    public OVRAppState(OculusGuiNode guiNode, boolean flipEyes) {
+        OculusRift.setAppState(this);
+        this.flipEyes = flipEyes;
+        this.guiNode = guiNode;
     }
+    
+    public OVRAppState(OculusGuiNode guiNode) {
+        OculusRift.setAppState(this);
+        flipEyes = false;
+        this.guiNode = guiNode;
+    }   
     
     public OVRAppState() {
+        OculusRift.setAppState(this);
         flipEyes = false;
-        guiDistance = 0.045f;
-    }   
+        this.guiNode = null;
+    }
+    
+    public OculusGuiNode getGuiNode() {
+        return guiNode;
+    }
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -69,7 +91,9 @@ public class OVRAppState extends AbstractAppState {
         viewPortLeft = app.getViewPort();
         camLeft = app.getCamera();
         
-        camLeft.setFrustumPerspective(120f, (float) camLeft.getWidth() / camLeft.getHeight(), 0.1f, 512f);                       
+        camLeft.setFrustumPerspective(OculusRift.getFOV(), 
+                                      (float) camLeft.getWidth() / camLeft.getHeight(),
+                                      camLeft.getFrustumNear(), camLeft.getFrustumFar());                       
         
         if(camControl != null){
             camControl.setCamera(camLeft);
@@ -101,42 +125,54 @@ public class OVRAppState extends AbstractAppState {
         ppLeft =new FilterPostProcessor(app.getAssetManager());
         
         ppLeft.addFilter(filterLeft);
+        boolean hasTransFilter = false;
         
         for(SceneProcessor sceneProcessor : viewPortLeft.getProcessors()){
             if(sceneProcessor instanceof FilterPostProcessor){
                 for(Filter f : ((FilterPostProcessor)sceneProcessor).getFilterList() ) {
                     ppLeft.addFilter(f);
+                    if( f instanceof TranslucentBucketFilter ) {
+                        hasTransFilter = true;
+                    }
                 }
                 viewPortLeft.removeProcessor(sceneProcessor);
                 break;
             }
         }
         
+        if( hasTransFilter == false ) {
+            ppLeft.addFilter(new TranslucentBucketFilter());
+        }
+        
         viewPortLeft.addProcessor(ppLeft);
         viewPortRight.addProcessor(ppRight);
+        
+        if( guiNode != null ) {
+            guiNode.setupGui(viewPortLeft, viewPortRight);
+        }
         
         ppRight.addFilter(filterRight);             
         
         float offset = info.getInterpupillaryDistance() * 0.5f;
         camControl.setCamHalfDistance(offset);
-        setupGuiViewports();
         
         cloneProcessors();        
-        if( flipEyes ) camControl.swapCameras();
-    }
-    
-   
+        if( flipEyes ) {
+            camControl.swapCameras();
+        }
+    }  
     
     @Override
     public void update(float tpf) {
-        super.update(tpf);
+        super.update(tpf);        
+        
     }
     
     @Override
     public void postRender() {
         super.postRender();
     }   
-    
+        
     public void setCameraControl(StereoCameraControl control){
         this.camControl = control;
         camRight = control.getCamera2();
@@ -150,34 +186,6 @@ public class OVRAppState extends AbstractAppState {
     public void cleanup() {
         super.cleanup();
         OculusRift.destroy();
-    }
-    
-    public void setGuiDistance(float newGuiDistance) {
-        guiDistance = newGuiDistance;
-        guiCamLeft.setViewPort(0.0f, 0.5f, 0.0f, 1.0f);
-        guiCamRight.setViewPort(0.5f + guiDistance, 1f + guiDistance, 0.0f, 1f); // l,r,b,t        
-    }
-    
-    public void adjustGuiDistance(float adjustAmount) {
-        setGuiDistance(guiDistance + adjustAmount);
-    }
-    
-    private void setupGuiViewports(){
-        ViewPort guiViewPortLeft = app.getGuiViewPort();
-        
-        guiCamLeft = guiViewPortLeft.getCamera();
-        guiCamRight = guiCamLeft.clone();
-        
-        setGuiDistance(guiDistance);        
-        app.getRenderManager().removePostView(guiViewPortLeft);
-        guiViewPortLeft = app.getRenderManager().createPostView("Gui Default Left", guiCamLeft);
-        guiViewPortLeft.setClearFlags(false, false, false);
-        guiViewPortLeft.attachScene(((SimpleApplication)app).getGuiNode());
-        
-        guiViewPortRight = app.getRenderManager().createPostView("Gui Default Right", guiCamRight);
-        guiViewPortRight.setClearFlags(false, false, false);
-        guiViewPortRight.attachScene(((SimpleApplication)app).getGuiNode());
-
     }
     
     public void cloneProcessors(){

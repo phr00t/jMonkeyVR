@@ -5,7 +5,6 @@
 package oculusvr.util;
 
 import com.jme3.math.Matrix4f;
-import com.jme3.texture.FrameBuffer;
 import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.FovPort;
 import com.oculusvr.capi.Hmd;
@@ -13,9 +12,7 @@ import com.oculusvr.capi.HmdDesc;
 import com.oculusvr.capi.OvrLibrary;
 import com.oculusvr.capi.OvrMatrix4f;
 import com.oculusvr.capi.OvrSizei;
-import com.oculusvr.capi.OvrVector2i;
 import com.oculusvr.capi.RenderAPIConfig;
-import com.oculusvr.capi.TextureHeader;
 
 /**
  *

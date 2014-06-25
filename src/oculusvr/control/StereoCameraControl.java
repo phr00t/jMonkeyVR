@@ -46,6 +46,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import oculusvr.input.OculusRift;
+import oculusvr.util.OculusGuiNode;
+import oculusvr.util.OculusGuiNode.POSITIONING_MODE;
 
 /**
  * This Control maintains a reference to a Camera,
@@ -144,6 +146,13 @@ public class StereoCameraControl extends CameraControl {
                     break;
             }
             vars.release();
+            
+            // update gui node?
+            if( OculusRift.getAppState() != null && OculusRift.getAppState().getGuiNode() != null &&
+                OculusRift.getAppState().getGuiNode().getPositioningMode() != POSITIONING_MODE.MANUAL ) {
+                OculusRift.getAppState().getGuiNode().positionGui();
+            }
+            
         }else if (spatial == null){
             throw new NullPointerException("Spatial can't be null!");
         } 

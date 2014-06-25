@@ -1,15 +1,12 @@
 package oculusvr;
 
 import com.jme3.app.SimpleApplication;
-import oculusvr.state.OVRAppState;
-import com.jme3.asset.plugins.HttpZipLocator;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.io.File;
 import oculusvr.state.OVRAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.KeyTrigger;
@@ -19,11 +16,12 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import oculusvr.input.OculusRift;
+import oculusvr.util.OculusGuiNode;
+import oculusvr.util.OculusGuiNode.POSITIONING_MODE;
 
 public class TestStereoCams extends SimpleApplication {
 
     // set default for applets
-    private static boolean useHttp = true;
     private static OVRAppState stereoCamAppState;
     Spatial observer = new Node("");
     Node boxes = new Node("");
@@ -34,30 +32,29 @@ public class TestStereoCams extends SimpleApplication {
     Node scene;
     public static void main(String[] args) {
         OculusRift.initialize();
-        File file = new File("wildhouse.zip");
-        if (file.exists()) {
-            useHttp = false;
-        }
+        
+        // this will make it work even if an HMD isn't present
+        OculusRift.forceInitializeSuccess();
         
         myApp = new TestStereoCams();
+        myApp.guiNode = new OculusGuiNode();
         myApp.start();
     }
 
     public void simpleInitApp() {
+        
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
         
-        stereoCamAppState = new OVRAppState();
+        stereoCamAppState = new OVRAppState((OculusGuiNode)guiNode, true);
+        stereoCamAppState.getGuiNode().setPositioningMode(POSITIONING_MODE.AUTO);
         
         stateManager.attach(stereoCamAppState);
         
         scene = new Node();
-        if (useHttp) {
-            assetManager.registerLocator("http://jmonkeyengine.googlecode.com/files/wildhouse.zip", HttpZipLocator.class);
-        } else {
-            assetManager.registerLocator("wildhouse.zip", ZipLocator.class);
-        }
+        assetManager.registerLocator("assets/Scenes/wildhouse.zip", ZipLocator.class);        
         scene.attachChild(assetManager.loadModel("main.scene"));
+        
         Geometry box = new Geometry("", new Box(5,5,5));
         Material m = new Material(getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         
@@ -95,7 +92,7 @@ public class TestStereoCams extends SimpleApplication {
     }
 
      private void initInputs() {
-//        inputManager.addMapping("toggle", new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addMapping("toggle", new KeyTrigger(KeyInput.KEY_SPACE));
          inputManager.addMapping("incShift", new KeyTrigger(KeyInput.KEY_Q));
          inputManager.addMapping("decShift", new KeyTrigger(KeyInput.KEY_E));
          inputManager.addMapping("forward", new KeyTrigger(KeyInput.KEY_W));
@@ -105,17 +102,13 @@ public class TestStereoCams extends SimpleApplication {
         ActionListener acl = new ActionListener() {
 
             public void onAction(String name, boolean keyPressed, float tpf) {
-//                if (name.equals("toggle") && keyPressed) {
-//                    if(enabled){
-//                        oas.doubleSize();
-//                    }
-//                } 
                 if(name.equals("incShift") && keyPressed){
-                    stereoCamAppState.adjustGuiDistance(-0.01f);
-//                    stereoCamAppState.getCameraControl().increaseDistance();
+                    OculusRift.getAppState().getGuiNode().adjustGuiDistance(-0.1f);
                 }else if(name.equals("decShift") && keyPressed){
-                    stereoCamAppState.adjustGuiDistance(0.01f);
-//                    stereoCamAppState.getCameraControl().decreaseDistance();
+                    OculusRift.getAppState().getGuiNode().adjustGuiDistance(0.1f);
+                }
+                if( name.equals("toggle") ) {
+                    OculusRift.getAppState().getGuiNode().positionGui();
                 }
                 if(name.equals("forward")){
                     if(keyPressed){
@@ -150,7 +143,7 @@ public class TestStereoCams extends SimpleApplication {
         inputManager.addListener(acl, "back");
         inputManager.addListener(acl, "left");
         inputManager.addListener(acl, "right");
-//        inputManager.addListener(acl, "toggle");
+        inputManager.addListener(acl, "toggle");
         inputManager.addListener(acl, "incShift");
         inputManager.addListener(acl, "decShift");
     }

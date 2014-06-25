@@ -4,6 +4,8 @@
  */
 package oculusvr.util;
 
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -28,7 +30,10 @@ public class OculusGuiNode extends Node {
     private float guiDistance;
     private float guiRatioW, guiRatioH;
     private POSITIONING_MODE posMode = POSITIONING_MODE.MANUAL;
-    private BillboardControl billBoard;
+    
+    private Vector3f look = new Vector3f(), left = new Vector3f();
+    private Matrix3f orient = new Matrix3f();
+    private Quaternion tempq = new Quaternion();
     
     public OculusGuiNode() {
         super("ogui");
@@ -58,7 +63,23 @@ public class OculusGuiNode extends Node {
             guiPos.x += campos.x;
             guiPos.y += campos.y;
             guiPos.z += campos.z;
+            rotateScreen();
         }
+    }
+    
+    private void rotateScreen() {
+        // coopt diff for our in direction:
+        look.set(cam.getDirection()).negateLocal();
+        // coopt loc for our left direction:
+        left.set(cam.getLeft()).negateLocal();
+        orient.fromAxes(left, cam.getUp(), look);
+        Node myparent = getParent();
+        Quaternion rot = tempq.fromRotationMatrix(orient);
+        if ( myparent != null ) {
+            rot =  myparent.getWorldRotation().inverse().multLocal(rot);
+            rot.normalizeLocal();
+        }
+        setLocalRotation(rot);
     }
     
     public void setGuiDistance(float newGuiDistance) {
@@ -72,8 +93,6 @@ public class OculusGuiNode extends Node {
     public void setupGui(ViewPort left, ViewPort right) {
         left.attachScene(this);
         right.attachScene(this);
-        billBoard = new BillboardControl();
-        addControl(billBoard);
         cam = left.getCamera();
         guiRatioW = 1280f / cam.getWidth();
         guiRatioH = 800f / cam.getHeight();

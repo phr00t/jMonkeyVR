@@ -34,7 +34,6 @@ package oculusvr;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
 import oculusvr.state.OVRAppState;
-import com.jme3.app.state.VideoRecorderAppState;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;

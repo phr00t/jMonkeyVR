@@ -48,7 +48,7 @@ public class TestStereoCams extends SimpleApplication {
         
         stereoCamAppState = new OVRAppState((OculusGuiNode)guiNode, true);
         stereoCamAppState.getGuiNode().setPositioningMode(POSITIONING_MODE.AUTO);
-        
+                
         stateManager.attach(stereoCamAppState);
         
         scene = new Node();

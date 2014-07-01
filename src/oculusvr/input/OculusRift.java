@@ -4,8 +4,10 @@
  */
 package oculusvr.input;
 
+import com.jme3.app.SimpleApplication;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.util.TempVars;
 import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.OvrLibrary;

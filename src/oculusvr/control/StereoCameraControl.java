@@ -46,7 +46,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import oculusvr.input.OculusRift;
-import oculusvr.util.OculusGuiNode;
 import oculusvr.util.OculusGuiNode.POSITIONING_MODE;
 
 /**
@@ -99,6 +98,46 @@ public class StereoCameraControl extends CameraControl {
         setCamera2(mycam);
     }
     
+    public void setView(Vector3f pos, Quaternion look) {
+        setView(pos, look, false);
+    }
+    
+    public void setView(Vector3f pos, Quaternion look, boolean useOffset) {
+        TempVars vars = TempVars.get();
+        Camera camera = getCamera();
+        
+        vars.vect4.set(pos);
+        if( spatialOffset != null && useOffset ) {
+            vars.vect4.x += spatialOffset.x;
+            vars.vect4.y += spatialOffset.y;
+            vars.vect4.z += spatialOffset.z;
+        }
+
+        // positional tracking
+        vars.vect4.addLocal(OculusRift.getPosition());
+
+        lookDirection.set(OculusRift.getOrientation());                    
+        vars.quat1.set(look).multLocal(lookDirection);
+        camera.setRotation(vars.quat1); //spatial.getWorldRotation().mult(lookDirection));
+        vars.vect1.set(vars.vect4).addLocal(vars.quat1.mult(cameraOffset, vars.vect2)); //camera.setLocation(spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset)));                    
+        camera.setLocation(vars.vect1);
+
+        // negate cameraOffset
+        vars.vect3.x = -cameraOffset.x;
+        vars.vect3.y = -cameraOffset.y;
+        vars.vect3.z = -cameraOffset.z;
+
+        camera2.setLocation(vars.vect1.set(vars.vect4).addLocal(camera.getRotation().mult(vars.vect3, vars.vect2))); //spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset.negate())));
+        camera2.setRotation(camera.getRotation());
+        vars.release();
+        
+        // update gui node?
+        if( OculusRift.getAppState() != null && OculusRift.getAppState().getGuiNode() != null &&
+            OculusRift.getAppState().getGuiNode().getPositioningMode() != POSITIONING_MODE.MANUAL ) {
+            OculusRift.getAppState().getGuiNode().positionGui();
+        }
+    }
+
     // fields used, when inversing ControlDirection:
     @Override
     protected void controlUpdate(float tpf) {
@@ -106,53 +145,24 @@ public class StereoCameraControl extends CameraControl {
         ControlDirection controlDir = this.getControlDir();
                 
         if (spatial != null && camera != null) {
-            TempVars vars = TempVars.get();
             switch (controlDir) {
                 case SpatialToCamera:
-                    vars.vect4.set(spatial.getWorldTranslation());
-                    if( spatialOffset != null ) {
-                        vars.vect4.x += spatialOffset.x;
-                        vars.vect4.y += spatialOffset.y;
-                        vars.vect4.z += spatialOffset.z;
-                    }
-
-                    // positional tracking
-                    vars.vect4.addLocal(OculusRift.getPosition());
-                    
-                    lookDirection.set(OculusRift.getOrientation());                    
-                    vars.quat1.set(spatial.getWorldRotation()).multLocal(lookDirection);
-                    camera.setRotation(vars.quat1); //spatial.getWorldRotation().mult(lookDirection));
-                    vars.vect1.set(vars.vect4).addLocal(vars.quat1.mult(cameraOffset, vars.vect2)); //camera.setLocation(spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset)));                    
-                    camera.setLocation(vars.vect1);
-                    
-                    // negate cameraOffset
-                    vars.vect3.x = -cameraOffset.x;
-                    vars.vect3.y = -cameraOffset.y;
-                    vars.vect3.z = -cameraOffset.z;
-                    
-                    camera2.setLocation(vars.vect1.set(vars.vect4).addLocal(camera.getRotation().mult(vars.vect3, vars.vect2))); //spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset.negate())));
-                    camera2.setRotation(camera.getRotation());
+                    setView(spatial.getWorldTranslation(), spatial.getWorldRotation(), true);
                     break;
                 case CameraToSpatial:
                     // set the localtransform, so that the worldtransform would be equal to the camera's transform.
                     // Location:
 
+                    TempVars vars = TempVars.get();
                     Vector3f vecDiff = vars.vect1.set(camera.getLocation()).subtractLocal(spatial.getWorldTranslation());
                     spatial.setLocalTranslation(vecDiff.addLocal(spatial.getLocalTranslation()));
 
                     // Rotation:
                     Quaternion worldDiff = vars.quat1.set(camera.getRotation()).subtractLocal(spatial.getWorldRotation());
                     spatial.setLocalRotation(worldDiff.addLocal(spatial.getLocalRotation()));
+                    vars.release();
                     break;
             }
-            vars.release();
-            
-            // update gui node?
-            if( OculusRift.getAppState() != null && OculusRift.getAppState().getGuiNode() != null &&
-                OculusRift.getAppState().getGuiNode().getPositioningMode() != POSITIONING_MODE.MANUAL ) {
-                OculusRift.getAppState().getGuiNode().positionGui();
-            }
-            
         }else if (spatial == null){
             throw new NullPointerException("Spatial can't be null!");
         } 

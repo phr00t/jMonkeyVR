@@ -19,10 +19,6 @@ vec3 getPosition(in vec2 uv){
     return depth* vec3(x, y, m_FrustumCorner.z);
 }
 
-vec3 getNormal(in vec2 uv){
-    return normalize(texture2D(m_Normals, uv).xyz * 2.0 - 1.0);
-}
-
 float doAmbientOcclusion(in vec2 tc, in vec3 pos, in vec3 norm){
     vec3 diff = getPosition(tc)- pos;
     vec3 v = normalize(diff);
@@ -33,11 +29,11 @@ float doAmbientOcclusion(in vec2 tc, in vec3 pos, in vec3 norm){
 void main(){
     float result;
     vec3 position = getPosition(texCoord);
-    vec3 normal = getNormal(texCoord);
+    vec3 normal = texture2D(m_Normals, texCoord).xyz * 2.0 - 1.0;
 
     float ao = 0.0;
-    float rad = m_SampleRadius/max(position.z, 16.0) + 0.075;
-    float fade = 1.0 - max(16.0 - position.z, 0.0) / 32.0;
+    float rad = m_SampleRadius/max(position.z, 16.0) + (fract(texCoord.x*(g_Resolution.x/2.0))*0.125) + (fract(texCoord.y*(g_Resolution.y/2.0))*0.25);
+    float fade = 1.25 - max(16.0 - position.z, 0.0) / 20.0;
 
     vec3 sampler;
     vec2 coord1;
@@ -51,5 +47,5 @@ void main(){
     ao /= 27.3;
     result = 1.0 - (ao * fade);
 
-    gl_FragColor = vec4(result, result, result, 1.0);
+    gl_FragColor = texture2D(m_Texture, texCoord) * vec4(result, result, result, 1.0);
 }

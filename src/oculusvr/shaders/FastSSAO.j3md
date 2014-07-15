@@ -11,14 +11,7 @@ MaterialDef FastSSAO {
         Float Intensity
         Float Scale
         Float Bias
-        //Boolean EnableFD
-        //Float SampleRadiusFD
-        //Float IntensityFD
-        //Float ScaleFD
-        //Float BiasFD
-        //Boolean UseDistanceFalloff
-        //Float FalloffStartDistance
-        //Float FalloffRate
+
         Vector2 FrustumNearFar
         Vector3Array Samples
     }

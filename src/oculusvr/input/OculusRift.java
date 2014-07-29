@@ -115,7 +115,7 @@ public class OculusRift {
     }
     
     public static float getFOV() {
-        return loadedHmd == null ? 130f : (float)Math.atan(loadedHmd.getDesc().DefaultEyeFov[0].DownTan) * 2f * 57.2957795f;
+        return loadedHmd == null ? 130f : (float)Math.atan(loadedHmd.getDesc().MaxEyeFov[0].DownTan) * 2f * 57.2957795f;
     }
 
     public static int getVResolution() {

@@ -24,17 +24,17 @@ public class OculusRiftUtil {
         EyeRenderDesc[] configureResult;
         
         FovPort fovPorts[] = (FovPort[]) new FovPort().toArray(2);
-        fovPorts[0] = hmdDesc.DefaultEyeFov[0];
-        fovPorts[1] = hmdDesc.DefaultEyeFov[1];
+        fovPorts[0] = hmdDesc.MaxEyeFov[0];
+        fovPorts[1] = hmdDesc.MaxEyeFov[1];
     
         RenderAPIConfig rc = new RenderAPIConfig();
         rc.Header.API = OvrLibrary.ovrRenderAPIType.ovrRenderAPI_OpenGL;
-        rc.Header.RTSize = new OvrSizei(width, height);//hmdDesc.Resolution;
+        rc.Header.RTSize = new OvrSizei(width, height);
         rc.Header.Multisample = samples;
 
         int distortionCaps = OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic
                              | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_TimeWarp
-                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette
+                             /*| OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette*/
                              | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_NoSwapBuffers;
 
 

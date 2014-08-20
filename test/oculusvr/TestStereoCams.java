@@ -1,6 +1,9 @@
 package oculusvr;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetEventListener;
+import com.jme3.asset.AssetKey;
+import com.jme3.asset.TextureKey;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.light.DirectionalLight;
@@ -10,14 +13,26 @@ import com.jme3.scene.Spatial;
 import oculusvr.state.OVRAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Caps;
+import com.jme3.renderer.Renderer;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.jme3.shader.VarType;
+import com.jme3.texture.FrameBuffer;
+import com.jme3.texture.Image;
+import com.jme3.texture.Image.Format;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture2D;
+import com.jme3.util.SkyFactory;
+import java.util.Collection;
 import oculusvr.input.OculusRift;
 import oculusvr.util.OculusGuiNode;
 import oculusvr.util.OculusGuiNode.POSITIONING_MODE;
+import oculusvr.util.OculusRiftUtil;
 
 public class TestStereoCams extends SimpleApplication {
 
@@ -41,10 +56,33 @@ public class TestStereoCams extends SimpleApplication {
         myApp.start();
     }
 
-    public void simpleInitApp() {
+    // I have to do this crazy function to set anisotropic filtering because I don't know
+    // how to set it in the wildhouse.zip main.scene directly :-P
+    public void setFilter(Node n) {
+        for(Spatial s : n.getChildren()) {
+            if( s instanceof Geometry ) {
+                Material mat = ((Geometry)s).getMaterial();
+                if( mat != null ) {
+                    for(MatParam mp : mat.getParams()) {
+                        if( mp.getVarType() == VarType.Texture2D ) {
+                            ((Texture)mp.getValue()).setAnisotropicFilter(16);
+                        }
+                    }
+                }
+            } else if( s instanceof Node ) {
+                setFilter((Node)s);
+            }
+        }
         
+    }
+    
+    public void simpleInitApp() {
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
+        
+        // run this function before OVRAppState gets initialized to force
+        // maximum FOV rendering
+        //OculusRiftUtil.useMaxEyeFov(true);
         
         stereoCamAppState = new OVRAppState((OculusGuiNode)guiNode, true);
         stereoCamAppState.getGuiNode().setPositioningMode(POSITIONING_MODE.AUTO);
@@ -54,9 +92,14 @@ public class TestStereoCams extends SimpleApplication {
         scene = new Node();
         assetManager.registerLocator("assets/Scenes/wildhouse.zip", ZipLocator.class);        
         scene.attachChild(assetManager.loadModel("main.scene"));
+        rootNode.attachChild(SkyFactory.createSky(
+                    assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
         
         Geometry box = new Geometry("", new Box(5,5,5));
         Material m = new Material(getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        
+        // aniscopic filtering really helps!
+        setFilter(scene);
         
         box.setMaterial(m);
         

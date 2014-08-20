@@ -13,6 +13,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.texture.FrameBuffer;
+import com.jme3.texture.Image;
 import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.FovPort;
 import com.oculusvr.capi.Hmd;
@@ -37,7 +38,6 @@ public class OculusFilter extends Filter {
     private Posef pose;
     int textureId = -1;
     private int eye; // redundant??
-    private EyeRenderDesc eyeRenderDesc;
     private static int frameIndex;
 
     public OculusFilter(Hmd hmd, int eyeIndex) {
@@ -50,16 +50,6 @@ public class OculusFilter extends Filter {
     @Override
     protected void initFilter(AssetManager manager, RenderManager renderManager, ViewPort vp, int w, int h) {
         material = new Material(manager, "oculusvr/shaders/Oculus.j3md");
-
-        Matrix4f projMat = OculusRiftUtil.toMatrix4f(Hmd.getPerspectiveProjection(
-                eyeRenderDesc.Fov, 0.1f, 1000000f, true));
-        
-        vp.getCamera().setProjectionMatrix(projMat);
-        TextureHeader eth = eyeTexture.Header;
-        eth.TextureSize = hmd.getFovTextureSize(eyeIndex, eyeRenderDesc.Fov, 1.0f);
-        eth.RenderViewport.Size = eth.TextureSize;
-        eth.RenderViewport.Pos = new OvrVector2i(0, 0);
-
     }
 
     @Override
@@ -67,13 +57,20 @@ public class OculusFilter extends Filter {
         return material;
     }
 
+    public void setEyeTextureSize(OvrSizei size) {
+        TextureHeader eth = eyeTexture.Header;        
+        eyeTexture.Header.TextureSize = size;
+        eth.RenderViewport.Size = eth.TextureSize;
+        eth.RenderViewport.Pos = new OvrVector2i(0, 0);        
+    }
+    
     @Override
     protected void preFrame(float tpf) {
         super.preFrame(tpf);
         if (textureId == -1) {
             // try to assign the texture id from the material
             if (material.getTextureParam("Texture") != null) {
-                com.jme3.texture.Texture t = material.getTextureParam("Texture").getTextureValue();
+                com.jme3.texture.Texture t = material.getTextureParam("Texture").getTextureValue();      
                 int id = t.getImage().getId();
                 eyeTexture.TextureId = id;
                 textureId = id;
@@ -104,7 +101,4 @@ public class OculusFilter extends Filter {
         }
     }
 
-    public void setEyeRenderDesc(EyeRenderDesc desc) {
-        this.eyeRenderDesc = desc;
-    }
 }

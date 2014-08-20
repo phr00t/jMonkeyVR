@@ -8,6 +8,7 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.math.Matrix4f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -21,6 +22,10 @@ import com.jme3.scene.control.CameraControl;
 import oculusvr.util.FilterUtil;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.system.AppSettings;
+import com.oculusvr.capi.Hmd;
+import com.oculusvr.capi.OvrSizei;
+import com.oculusvr.capi.OvrVector2i;
+import com.oculusvr.capi.TextureHeader;
 import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import java.util.List;
 import oculusvr.input.HMDInfo;
@@ -28,6 +33,7 @@ import oculusvr.input.OculusRift;
 import oculusvr.post.FastSSAO;
 import oculusvr.post.OculusFilter;
 import oculusvr.util.OculusGuiNode;
+import oculusvr.util.OculusRiftUtil;
 
 /**
  *
@@ -72,12 +78,30 @@ public class OVRAppState extends AbstractAppState {
     public OculusGuiNode getGuiNode() {
         return guiNode;
     }
+
+    private OvrSizei setupResolution(int eyeIndex) {
+        Matrix4f projMat = OculusRiftUtil.toMatrix4f(Hmd.getPerspectiveProjection(
+                OculusRift.getEyeRenderDesc(eyeIndex).Fov, 0.1f, 1000000f, true));              
+        OvrSizei size = OculusRift.loadedHmd.getFovTextureSize(eyeIndex, OculusRift.getEyeRenderDesc(eyeIndex).Fov, 1.0f);        
+        if( eyeIndex == 0 ) {
+            if( camLeft.getWidth() != size.w || camLeft.getHeight() != size.h ) {
+                camLeft.resize(size.w, size.h, true);
+            }
+            camLeft.setProjectionMatrix(projMat);
+        } else {
+            if( camRight == null ) {
+                camRight = camLeft.clone();
+            }
+            camRight.setProjectionMatrix(projMat);            
+        }
+        return size;
+    }
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
         this.app = (SimpleApplication) app;
-
+        
         viewPortLeft = app.getViewPort();
         camLeft = app.getCamera();
         
@@ -88,28 +112,27 @@ public class OVRAppState extends AbstractAppState {
         if(camControl != null){
             camControl.setCamera(camLeft);
         }
+                
+        info = OculusRift.getHMDInfo();            
         
-        if(camRight == null){
-            camRight = camLeft.clone();
-            camControl.setCamera2(camRight);
-            
-        }
+        AppSettings settings = this.app.getContext().getSettings();
+        OculusRift.initRendering(settings.getWidth(), settings.getHeight(), settings.getSamples());
+        
+        OvrSizei leftsize = setupResolution(0);
+        OvrSizei rightsize = setupResolution(1);
+        
+        camControl.setCamera2(camRight);
         camControl.setControlDir(CameraControl.ControlDirection.SpatialToCamera);
         camLeft.setViewPort(0.0f, 0.5f, 0.0f, 1.0f);
         camRight.setViewPort(0.5f, 1f, 0.0f, 1f);
         viewPortRight = app.getRenderManager().createPostView("Right viewport", camRight);
         viewPortRight.setClearFlags(true, true, true);
         viewPortRight.attachScene(this.app.getRootNode());
-
-        info = OculusRift.getHMDInfo();            
-        
-        AppSettings settings = this.app.getContext().getSettings();
-        OculusRift.initRendering(settings.getWidth(), settings.getHeight(), settings.getSamples());
         
         filterLeft=new OculusFilter(OculusRift.loadedHmd, 0);
-        filterLeft.setEyeRenderDesc(OculusRift.getEyeRenderDesc(0));
+        filterLeft.setEyeTextureSize(leftsize);
         filterRight =new OculusFilter(OculusRift.loadedHmd, 1);
-        filterRight.setEyeRenderDesc(OculusRift.getEyeRenderDesc(1));
+        filterRight.setEyeTextureSize(rightsize);
         
         ppRight =new FilterPostProcessor(app.getAssetManager());               
         ppLeft =new FilterPostProcessor(app.getAssetManager());
@@ -133,7 +156,7 @@ public class OVRAppState extends AbstractAppState {
         if( hasTransFilter == false ) {
             ppLeft.addFilter(new TranslucentBucketFilter());
         }
-        
+                
         viewPortLeft.addProcessor(ppLeft);
         viewPortRight.addProcessor(ppRight);
         

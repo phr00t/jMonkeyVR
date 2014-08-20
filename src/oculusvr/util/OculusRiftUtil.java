@@ -20,12 +20,24 @@ import com.oculusvr.capi.RenderAPIConfig;
  */
 public class OculusRiftUtil {
 
+    private static boolean maxFOV = false;
+    
+    public static void useMaxEyeFov(boolean enable) {
+        maxFOV = enable;
+    }
+    
     public static EyeRenderDesc[] configureRendering(Hmd hmd, HmdDesc hmdDesc, int width, int height, int samples) {
         EyeRenderDesc[] configureResult;
         
         FovPort fovPorts[] = (FovPort[]) new FovPort().toArray(2);
-        fovPorts[0] = hmdDesc.MaxEyeFov[0];
-        fovPorts[1] = hmdDesc.MaxEyeFov[1];
+        
+        if( maxFOV ) {
+            fovPorts[0] = hmdDesc.MaxEyeFov[0];
+            fovPorts[1] = hmdDesc.MaxEyeFov[1];
+        } else {
+            fovPorts[0] = hmdDesc.DefaultEyeFov[0];
+            fovPorts[1] = hmdDesc.DefaultEyeFov[1];            
+        }
     
         RenderAPIConfig rc = new RenderAPIConfig();
         rc.Header.API = OvrLibrary.ovrRenderAPIType.ovrRenderAPI_OpenGL;

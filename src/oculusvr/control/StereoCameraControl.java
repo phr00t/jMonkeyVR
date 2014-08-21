@@ -98,11 +98,11 @@ public class StereoCameraControl extends CameraControl {
         setCamera2(mycam);
     }
     
-    public void setView(Vector3f pos, Quaternion look) {
-        setView(pos, look, false);
+    public void setView(float tpf, Vector3f pos, Quaternion look) {
+        setView(tpf, pos, look, false);
     }
     
-    public void setView(Vector3f pos, Quaternion look, boolean useOffset) {
+    public void setView(float tpf, Vector3f pos, Quaternion look, boolean useOffset) {
         TempVars vars = TempVars.get();
         Camera camera = getCamera();
         
@@ -113,6 +113,9 @@ public class StereoCameraControl extends CameraControl {
             vars.vect4.z += spatialOffset.z;
         }
 
+        // update prediction based on tpf
+        OculusRift.predictive(tpf * 0.5f);
+        
         // positional tracking
         vars.vect4.addLocal(OculusRift.getPosition());
 
@@ -147,7 +150,7 @@ public class StereoCameraControl extends CameraControl {
         if (spatial != null && camera != null) {
             switch (controlDir) {
                 case SpatialToCamera:
-                    setView(spatial.getWorldTranslation(), spatial.getWorldRotation(), true);
+                    setView(tpf, spatial.getWorldTranslation(), spatial.getWorldRotation(), true);
                     break;
                 case CameraToSpatial:
                     // set the localtransform, so that the worldtransform would be equal to the camera's transform.

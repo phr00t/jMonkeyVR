@@ -148,7 +148,6 @@ public class OculusRift {
             return Vector3f.ZERO;
         }
         OvrVector3f pos = loadedHmd.getSensorState(Hmd.getTimeInSeconds() + predictValue).Predicted.Pose.Position;
-
         position.set(pos.x, pos.y, pos.z);
         return position;
     }
@@ -178,12 +177,8 @@ public class OculusRift {
         loadedHmd.resetSensor();
     }
 
-    public static void predictive(float value, boolean on) {
-        if (!on) {
-            predictValue = 0f;
-        } else {
-            predictValue = value;
-        }
+    public static void predictive(float value) {
+        predictValue = value;
     }
 
     public static EyeRenderDesc getEyeRenderDesc(int eyeIndex) {

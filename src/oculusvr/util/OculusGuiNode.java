@@ -89,12 +89,12 @@ public class OculusGuiNode extends Node {
         guiDistance += adjustAmount;
     }
     
-    public void setupGui(ViewPort left, ViewPort right) {
+    public void setupGui(ViewPort left, ViewPort right, int screenResWidth, int screenResHeight) {
         left.attachScene(this);
         right.attachScene(this);
         cam = left.getCamera();
-        guiRatioW = 1280f / cam.getWidth();
-        guiRatioH = 800f / cam.getHeight();
+        guiRatioW = 1280f / screenResWidth;
+        guiRatioH = 800f / screenResHeight;
         setPositioningMode(posMode);
         positionGui();
     }

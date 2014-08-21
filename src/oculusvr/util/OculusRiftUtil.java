@@ -44,9 +44,9 @@ public class OculusRiftUtil {
         rc.Header.RTSize = new OvrSizei(width, height);
         rc.Header.Multisample = samples;
 
-        int distortionCaps = OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic
+        int distortionCaps =   OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic
                              | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_TimeWarp
-                             /*| OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette*/
+                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette
                              | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_NoSwapBuffers;
 
 

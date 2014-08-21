@@ -105,6 +105,9 @@ public class OVRAppState extends AbstractAppState {
         viewPortLeft = app.getViewPort();
         camLeft = app.getCamera();
         
+        int origWidth = camLeft.getWidth();
+        int origHeight = camLeft.getHeight();
+        
         camLeft.setFrustumPerspective(OculusRift.getFOV(), 
                                       (float) camLeft.getWidth() / camLeft.getHeight(),
                                       camLeft.getFrustumNear(), camLeft.getFrustumFar());                       
@@ -161,7 +164,7 @@ public class OVRAppState extends AbstractAppState {
         viewPortRight.addProcessor(ppRight);
         
         if( guiNode != null ) {
-            guiNode.setupGui(viewPortLeft, viewPortRight);
+            guiNode.setupGui(viewPortLeft, viewPortRight, origWidth, origHeight);
         }
         
         ppRight.addFilter(filterRight);             

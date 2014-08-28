@@ -49,7 +49,6 @@ public class TestOVRApplication extends OVRApplication {
         
         
         myApp = new TestOVRApplication();
-        myApp.guiNode = new OculusGuiNode();
         myApp.start();
         
     }

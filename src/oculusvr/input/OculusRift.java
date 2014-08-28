@@ -90,7 +90,8 @@ public class OculusRift {
     }
 
     public static void destroy() {
-        Logger.getLogger(OculusRift.class.getName()).log(Level.INFO, "Cleaning up");
+        //Logger.getLogger(OculusRift.class.getName()).log(Level.INFO, "Cleaning up");
+        System.out.println("Destroying Oculus Rift");
         info = null;
         if (loadedHmd == null) {
             return;

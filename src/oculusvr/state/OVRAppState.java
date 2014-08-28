@@ -79,6 +79,15 @@ public class OVRAppState extends AbstractAppState {
         return guiNode;
     }
 
+    private OvrSizei prepareCameraResolution(int eyeIndex, Camera cam) {
+        Matrix4f projMat = OculusRiftUtil.toMatrix4f(Hmd.getPerspectiveProjection(
+                OculusRift.getEyeRenderDesc(eyeIndex).Fov, 0.1f, 1000000f, true));              
+        OvrSizei size = OculusRift.loadedHmd.getFovTextureSize(eyeIndex, OculusRift.getEyeRenderDesc(eyeIndex).Fov, 1.0f);           
+        if( cam.getWidth() != size.w || cam.getHeight() != size.h ) cam.resize(size.w, size.h, true);
+        cam.setProjectionMatrix(projMat);
+        return size;
+    }
+    
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
@@ -90,50 +99,50 @@ public class OVRAppState extends AbstractAppState {
         int origWidth = camLeft.getWidth();
         int origHeight = camLeft.getHeight();
         
-        if(camControl != null){
-            camControl.setCamera(camLeft);
-        }
+        camLeft.setFrustumPerspective(OculusRift.getFOV(), 
+                                      (float) camLeft.getWidth() / camLeft.getHeight(),
+                                      camLeft.getFrustumNear(), camLeft.getFrustumFar());                       
+        
+        if(camControl != null) camControl.setCamera(camLeft);
                 
         info = OculusRift.getHMDInfo();            
         
         AppSettings settings = this.app.getContext().getSettings();
         OculusRift.initRendering(settings.getWidth(), settings.getHeight(), settings.getSamples());
         
-        createRightDisplay();
+        setupFiltersAndViews();
         
-        setupFilters();
-        
-        if( guiNode != null ) {
-            guiNode.setupGui(viewPortLeft, viewPortRight, origWidth, origHeight);
-        }
-        
+        if( guiNode != null ) guiNode.setupGui(viewPortLeft, viewPortRight, origWidth, origHeight);
+                
         float offset = info.getInterpupillaryDistance() * 0.5f;
         camControl.setCamHalfDistance(offset);
         
         cloneProcessors();        
-        if( flipEyes ) {
-            camControl.swapCameras();
-        }
+        if( flipEyes ) camControl.swapCameras();
     }  
     
-    private void createRightDisplay(){
+    private void setupFiltersAndViews() {
+        OvrSizei leftsize = prepareCameraResolution(0, camLeft);
         camRight = camLeft.clone();
+        OvrSizei rightsize = prepareCameraResolution(1, camRight);
+        
         camControl.setCamera2(camRight);
         camControl.setControlDir(CameraControl.ControlDirection.SpatialToCamera);
+        camLeft.setViewPort(0.0f, 0.5f, 0.0f, 1.0f);
+        camRight.setViewPort(0.5f, 1f, 0.0f, 1f);
         viewPortRight = app.getRenderManager().createPostView("Right viewport", camRight);
         viewPortRight.setClearFlags(true, true, true);
         viewPortRight.attachScene(this.app.getRootNode());
-    }
-    
-    private void setupFilters(){
+        
         filterLeft=new OculusFilter(OculusRift.loadedHmd, 0);
+        filterLeft.setEyeTextureSize(leftsize);
         filterRight =new OculusFilter(OculusRift.loadedHmd, 1);
+        filterRight.setEyeTextureSize(rightsize);
         
         ppRight =new FilterPostProcessor(app.getAssetManager());               
         ppLeft =new FilterPostProcessor(app.getAssetManager());
         
         ppLeft.addFilter(filterLeft);
-        ppRight.addFilter(filterRight);         
         boolean hasTransFilter = false;
         
         for(SceneProcessor sceneProcessor : viewPortLeft.getProcessors()){
@@ -152,8 +161,11 @@ public class OVRAppState extends AbstractAppState {
         if( hasTransFilter == false ) {
             ppLeft.addFilter(new TranslucentBucketFilter());
         }
+                
         viewPortLeft.addProcessor(ppLeft);
-        viewPortRight.addProcessor(ppRight);
+        viewPortRight.addProcessor(ppRight);        
+        
+        ppRight.addFilter(filterRight);             
     }
     
     @Override
@@ -182,7 +194,7 @@ public class OVRAppState extends AbstractAppState {
         OculusRift.destroy();
     }
     
-    public void cloneProcessors(){
+    private void cloneProcessors(){
         List<SceneProcessor> processors = viewPortLeft.getProcessors();
         for(SceneProcessor sp: processors){
             if(sp instanceof FilterPostProcessor){

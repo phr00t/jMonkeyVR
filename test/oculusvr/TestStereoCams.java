@@ -83,10 +83,7 @@ public class TestStereoCams extends SimpleApplication {
     
     
     public void simpleInitApp() {
-        OculusRift.initialize();
         
-        // this will make it work even if an HMD isn't present
-        OculusRift.forceInitializeSuccess();
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
         

@@ -73,6 +73,7 @@ public class OVRAppState extends AbstractAppState {
         OculusRift.setAppState(this);
         flipEyes = false;
         this.guiNode = null;
+        
     }
     
     public OculusGuiNode getGuiNode() {
@@ -243,5 +244,12 @@ public class OVRAppState extends AbstractAppState {
     public ViewPort getRightViewPort(){
         return viewPortRight;
     }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize(); //To change body of generated methods, choose Tools | Templates.
+        OculusRift.destroy();
+    }
+    
     
 }

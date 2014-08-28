@@ -46,7 +46,10 @@ public class TestStereoCams extends SimpleApplication {
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Node scene;
     public static void main(String[] args) {
+        OculusRift.initialize();
         
+        // this will make it work even if an HMD isn't present
+        OculusRift.forceInitializeSuccess();
         
         myApp = new TestStereoCams();
         myApp.guiNode = new OculusGuiNode();
@@ -75,10 +78,7 @@ public class TestStereoCams extends SimpleApplication {
     }
 
     public TestStereoCams() {
-        OculusRift.initialize();
         
-        // this will make it work even if an HMD isn't present
-        OculusRift.forceInitializeSuccess();
     }
     
     
@@ -87,9 +87,7 @@ public class TestStereoCams extends SimpleApplication {
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
         
-        // run this function before OVRAppState gets initialized to force
-        // maximum FOV rendering
-        //OculusRiftUtil.useMaxEyeFov(true);
+        
         
         stereoCamAppState = new OVRAppState((OculusGuiNode)guiNode, true);
         stereoCamAppState.getGuiNode().setPositioningMode(POSITIONING_MODE.AUTO);
@@ -220,12 +218,5 @@ public class TestStereoCams extends SimpleApplication {
          }
      }
 
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize(); //To change body of generated methods, choose Tools | Templates.
-        OculusRift.destroy();
-    }
-
-     
 }
 

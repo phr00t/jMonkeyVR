@@ -36,7 +36,7 @@ public class OVRApplication extends SimpleApplication{
         }               
     }
     
-    public OVRAppState getAppState() {
+    public OVRAppState getOVRAppState() {
         return ovrAppState;
     }
     

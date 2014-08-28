@@ -23,6 +23,7 @@ import com.oculusvr.capi.OvrVector2i;
 import com.oculusvr.capi.Posef;
 import com.oculusvr.capi.Texture;
 import com.oculusvr.capi.TextureHeader;
+import oculusvr.input.OculusRift;
 import oculusvr.util.OculusRiftUtil;
 
 /**
@@ -39,6 +40,7 @@ public class OculusFilter extends Filter {
     int textureId = -1;
     private int eye; // redundant??
     private static int frameIndex;
+    private boolean resized;
 
     public OculusFilter(Hmd hmd, int eyeIndex) {
         this.hmd = hmd;
@@ -50,6 +52,22 @@ public class OculusFilter extends Filter {
     @Override
     protected void initFilter(AssetManager manager, RenderManager renderManager, ViewPort vp, int w, int h) {
         material = new Material(manager, "oculusvr/shaders/Oculus.j3md");
+        
+        Matrix4f projMat = OculusRiftUtil.toMatrix4f(Hmd.getPerspectiveProjection(
+                OculusRift.getEyeRenderDesc(eyeIndex).Fov, 0.1f, 1000000f, true));              
+        OvrSizei size = OculusRift.loadedHmd.getFovTextureSize(eyeIndex, OculusRift.getEyeRenderDesc(eyeIndex).Fov, 1.0f);    
+        Camera cam = vp.getCamera();
+        if( cam.getWidth() != size.w || cam.getHeight() != size.h ) {
+            cam.resize(size.w, size.h, true);
+        }
+        cam.setProjectionMatrix(projMat);
+        cam.updateViewProjection();
+        cam.update();
+        setEyeTextureSize(size);
+        if(!resized){
+            resized = true;
+            this.processor.reshape(vp, size.w, size.h);
+        }
     }
 
     @Override
@@ -70,10 +88,12 @@ public class OculusFilter extends Filter {
         if (textureId == -1) {
             // try to assign the texture id from the material
             if (material.getTextureParam("Texture") != null) {
+                
                 com.jme3.texture.Texture t = material.getTextureParam("Texture").getTextureValue();      
                 int id = t.getImage().getId();
                 eyeTexture.TextureId = id;
                 textureId = id;
+                System.out.println("texture " + id + " " + t.getImage().getWidth() +  " " + t.getImage().getHeight());
             }
         }
         if(eyeIndex == 0){

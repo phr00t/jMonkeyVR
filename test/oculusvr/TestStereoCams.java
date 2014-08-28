@@ -46,14 +46,12 @@ public class TestStereoCams extends SimpleApplication {
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Node scene;
     public static void main(String[] args) {
-        OculusRift.initialize();
         
-        // this will make it work even if an HMD isn't present
-        OculusRift.forceInitializeSuccess();
         
         myApp = new TestStereoCams();
         myApp.guiNode = new OculusGuiNode();
         myApp.start();
+        
     }
 
     // I have to do this crazy function to set anisotropic filtering because I don't know
@@ -75,8 +73,20 @@ public class TestStereoCams extends SimpleApplication {
         }
         
     }
+
+    public TestStereoCams() {
+        OculusRift.initialize();
+        
+        // this will make it work even if an HMD isn't present
+        OculusRift.forceInitializeSuccess();
+    }
+    
     
     public void simpleInitApp() {
+        OculusRift.initialize();
+        
+        // this will make it work even if an HMD isn't present
+        OculusRift.forceInitializeSuccess();
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
         
@@ -89,9 +99,8 @@ public class TestStereoCams extends SimpleApplication {
                 
         stateManager.attach(stereoCamAppState);
         
-        scene = new Node();
-        assetManager.registerLocator("assets/Scenes/wildhouse.zip", ZipLocator.class);        
-        scene.attachChild(assetManager.loadModel("main.scene"));
+        scene = (Node) assetManager.loadModel("Scenes/TestScene.j3o");
+        rootNode.attachChild(scene);
         rootNode.attachChild(SkyFactory.createSky(
                     assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
         
@@ -213,5 +222,13 @@ public class TestStereoCams extends SimpleApplication {
              observer.rotate(0, -0.5f*tpf, 0);
          }
      }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize(); //To change body of generated methods, choose Tools | Templates.
+        OculusRift.destroy();
+    }
+
+     
 }
 

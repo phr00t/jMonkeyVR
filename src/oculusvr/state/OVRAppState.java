@@ -191,7 +191,6 @@ public class OVRAppState extends AbstractAppState {
     @Override
     public void cleanup() {
         super.cleanup();
-        OculusRift.destroy();
     }
     
     private void cloneProcessors(){

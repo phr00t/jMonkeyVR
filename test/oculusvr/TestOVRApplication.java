@@ -78,8 +78,9 @@ public class TestOVRApplication extends OVRApplication {
         super.simpleInitApp();
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
-        
-        scene = (Node) assetManager.loadModel("Scenes/TestScene.j3o");
+        scene = new Node();
+        assetManager.registerLocator("assets/Scenes/wildhouse.zip", ZipLocator.class);        
+        scene.attachChild(assetManager.loadModel("main.scene"));
         rootNode.attachChild(scene);
         rootNode.attachChild(SkyFactory.createSky(
                     assetManager, "Textures/Sky/Bright/BrightSky.dds", false));

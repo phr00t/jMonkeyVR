@@ -94,8 +94,9 @@ public class TestStereoCams extends SimpleApplication {
                 
         stateManager.attach(stereoCamAppState);
         
-        scene = (Node) assetManager.loadModel("Scenes/TestScene.j3o");
-        rootNode.attachChild(scene);
+        scene = new Node();
+        assetManager.registerLocator("assets/Scenes/wildhouse.zip", ZipLocator.class);        
+        scene.attachChild(assetManager.loadModel("main.scene"));
         rootNode.attachChild(SkyFactory.createSky(
                     assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
         
@@ -108,10 +109,10 @@ public class TestStereoCams extends SimpleApplication {
         box.setMaterial(m);
         
         Geometry box2 = box.clone();
-        box2.move(15, 0, 0);
+        box2.move(15, 4, 0);
         box2.setMaterial(m);
         Geometry box3 = box.clone();
-        box3.move(-15, 0, 0);
+        box3.move(-15, 8, 0);
         box3.setMaterial(m);
         
         
@@ -120,7 +121,7 @@ public class TestStereoCams extends SimpleApplication {
         boxes.attachChild(box3);
         scene.attachChild(boxes);
         
-        observer.setLocalTranslation(new Vector3f(0.0f, 0.0f, -10.0f));//observer.setLocalTranslation(new Vector3f(0,0,5));
+        observer.setLocalTranslation(new Vector3f(0.0f, 1.0f, -10.0f));//observer.setLocalTranslation(new Vector3f(0,0,5));
         
         //observer.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         observer.addControl(stereoCamAppState.getCameraControl());

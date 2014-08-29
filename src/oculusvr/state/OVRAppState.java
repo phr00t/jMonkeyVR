@@ -189,11 +189,6 @@ public class OVRAppState extends AbstractAppState {
         return camControl;
     }
     
-    @Override
-    public void cleanup() {
-        super.cleanup();
-    }
-    
     private void cloneProcessors(){
         List<SceneProcessor> processors = viewPortLeft.getProcessors();
         for(SceneProcessor sp: processors){
@@ -244,12 +239,4 @@ public class OVRAppState extends AbstractAppState {
     public ViewPort getRightViewPort(){
         return viewPortRight;
     }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize(); //To change body of generated methods, choose Tools | Templates.
-        OculusRift.destroy();
-    }
-    
-    
 }

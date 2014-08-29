@@ -44,14 +44,14 @@ public class OVRApplication extends SimpleApplication{
     public void simpleInitApp() {
         // run this function before OVRAppState gets initialized to force
         // maximum FOV rendering
-//        if( OculusRift.isInitialized() ) {
+        if( OculusRift.isInitialized() ) {
             OculusRiftUtil.useMaxEyeFov(useFOVMax);
 
             ovrAppState = new OVRAppState((OculusGuiNode)guiNode, flipEyes);
             ovrAppState.getGuiNode().setPositioningMode(OculusGuiNode.POSITIONING_MODE.AUTO);
 
             stateManager.attach(ovrAppState);
-//        }
+        }
     }
     
     @Override

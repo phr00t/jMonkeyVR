@@ -49,6 +49,7 @@ public class TestOVRApplication extends OVRApplication {
         
         
         myApp = new TestOVRApplication();
+        myApp.configureOVRApp(false, false, true);
         myApp.start();
         
     }

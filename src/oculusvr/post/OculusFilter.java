@@ -6,18 +6,23 @@ package oculusvr.post;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.math.Matrix4f;
 import com.jme3.post.Filter;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.texture.FrameBuffer;
+import com.oculusvr.capi.FrameTiming;
 import com.oculusvr.capi.Hmd;
-import com.oculusvr.capi.HmdDesc;
+import com.oculusvr.capi.OvrLibrary;
 import com.oculusvr.capi.OvrSizei;
 import com.oculusvr.capi.OvrVector2i;
 import com.oculusvr.capi.Posef;
 import com.oculusvr.capi.Texture;
 import com.oculusvr.capi.TextureHeader;
+import oculusvr.input.OculusRift;
+import oculusvr.util.OculusRiftUtil;
 
 /**
  *
@@ -27,18 +32,22 @@ public class OculusFilter extends Filter {
 
     private int eyeIndex = 0;
     private Hmd hmd;
-    private HmdDesc hmdDesc;
     private Texture eyeTexture;
     private Posef pose;
     int textureId = -1;
     private int eye; // redundant??
     private static int frameIndex;
+    private static final Posef poses[] =           (Posef[])   new Posef().toArray(2);
+    private static final Texture eyeTextures[] =   (Texture[]) new Texture().toArray(2);
+    private FrameTiming frameTiming;
+    private boolean resized;
+    
+    private static int STATE = 0;
 
     public OculusFilter(Hmd hmd, int eyeIndex) {
         this.hmd = hmd;
-        hmdDesc = hmd.getDesc();
         this.eyeIndex = eyeIndex;
-        eyeTexture = new Texture();
+        eyeTexture = eyeTextures[eyeIndex];
     }
 
     @Override
@@ -49,13 +58,16 @@ public class OculusFilter extends Filter {
     @Override
     protected Material getMaterial() {
         return material;
+        
     }
 
     public void setEyeTextureSize(OvrSizei size) {
+        
         TextureHeader eth = eyeTexture.Header;        
         eyeTexture.Header.TextureSize = size;
         eth.RenderViewport.Size = eth.TextureSize;
-        eth.RenderViewport.Pos = new OvrVector2i(0, 0);        
+        eth.RenderViewport.Pos = new OvrVector2i(0, 0); 
+        System.out.println(eth.TextureSize.w + " " + eth.TextureSize.h);
     }
     
     @Override
@@ -70,8 +82,9 @@ public class OculusFilter extends Filter {
                 textureId = id;
             }
         }
-        if(eyeIndex == 0){
-            hmd.beginFrame(frameIndex++);
+        if(STATE == 0){
+            frameTiming = hmd.beginFrame(frameIndex++);
+            STATE++;
         }
     }
 
@@ -79,20 +92,30 @@ public class OculusFilter extends Filter {
     protected void postFrame(RenderManager renderManager, ViewPort viewPort, FrameBuffer prevFilterBuffer, FrameBuffer sceneBuffer) {
         super.postFrame(renderManager, viewPort, prevFilterBuffer, sceneBuffer);
         // for both:
-        eye = hmdDesc.EyeRenderOrder[eyeIndex];
-        pose = hmd.beginEyeRender(eye);
+        
+        eye = hmd.EyeRenderOrder[eyeIndex];
+        pose = hmd.getEyePose(eye);
+        
+        poses[eye].Orientation = pose.Orientation;
+        poses[eye].Position = pose.Position;
+        STATE++;
     }
 
     @Override
     protected void postFilter(Renderer r, FrameBuffer buffer) {
         super.postFilter(r, buffer);
 
-        // for both:
-        hmd.endEyeRender(eye, pose, eyeTexture);
-        
-        if(eyeIndex == 1){
-            hmd.endFrame();
+        if(STATE == 3){
+            hmd.endFrame(poses, eyeTextures);
+            STATE = 0;
         }
     }
 
+    public Texture getEyeTexture(){
+        return eyeTexture;
+    }
+    
+    public Posef getPosef(){
+        return pose;
+    }
 }

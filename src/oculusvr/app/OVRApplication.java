@@ -5,7 +5,6 @@
 package oculusvr.app;
 
 import com.jme3.app.SimpleApplication;
-import static oculusvr.TestOVRApplication.myApp;
 import oculusvr.input.OculusRift;
 import oculusvr.state.OVRAppState;
 import oculusvr.util.OculusGuiNode;

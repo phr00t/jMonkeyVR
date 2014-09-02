@@ -25,6 +25,8 @@ import com.jme3.system.AppSettings;
 import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.OvrSizei;
 import com.oculusvr.capi.OvrVector2i;
+import com.oculusvr.capi.Posef;
+import com.oculusvr.capi.Texture;
 import com.oculusvr.capi.TextureHeader;
 import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import java.util.List;
@@ -50,6 +52,8 @@ public class OVRAppState extends AbstractAppState {
     private HMDInfo info;
     private boolean flipEyes;
     private OculusGuiNode guiNode;
+    
+    
         
     public OVRAppState(boolean flipEyes) {
         OculusRift.setAppState(this);
@@ -83,8 +87,12 @@ public class OVRAppState extends AbstractAppState {
     private OvrSizei prepareCameraResolution(int eyeIndex, Camera cam) {
         Matrix4f projMat = OculusRiftUtil.toMatrix4f(Hmd.getPerspectiveProjection(
                 OculusRift.getEyeRenderDesc(eyeIndex).Fov, 0.1f, 1000000f, true));              
-        OvrSizei size = OculusRift.loadedHmd.getFovTextureSize(eyeIndex, OculusRift.getEyeRenderDesc(eyeIndex).Fov, 1.0f);           
+        OvrSizei size = OculusRift.loadedHmd.getFovTextureSize(eyeIndex, OculusRift.getEyeRenderDesc(eyeIndex).Fov, 1.0f); 
+        if(size.w < app.getContext().getSettings().getWidth()){
+            size.w = app.getContext().getSettings().getWidth();
+        }
         if( cam.getWidth() != size.w || cam.getHeight() != size.h ) cam.resize(size.w, size.h, true);
+        
         cam.setProjectionMatrix(projMat);
         return size;
     }
@@ -113,6 +121,8 @@ public class OVRAppState extends AbstractAppState {
         
         setupFiltersAndViews();
         
+        app.getContext().setAutoFlushFrames(false); // no swapping
+        
         if( guiNode != null ) guiNode.setupGui(viewPortLeft, viewPortRight, origWidth, origHeight);
                 
         float offset = info.getInterpupillaryDistance() * 0.5f;
@@ -124,22 +134,23 @@ public class OVRAppState extends AbstractAppState {
     
     private void setupFiltersAndViews() {
         OvrSizei leftsize = prepareCameraResolution(0, camLeft);
+
         camRight = camLeft.clone();
         OvrSizei rightsize = prepareCameraResolution(1, camRight);
-        
+        System.out.println(rightsize);
         camControl.setCamera2(camRight);
         camControl.setControlDir(CameraControl.ControlDirection.SpatialToCamera);
-        camLeft.setViewPort(0.0f, 0.5f, 0.0f, 1.0f);
-        camRight.setViewPort(0.5f, 1f, 0.0f, 1f);
+//        camLeft.setViewPort(0.0f, 0.5f, 0.0f, 1.0f);
+//        camRight.setViewPort(0.5f, 1f, 0.0f, 1f);
         viewPortRight = app.getRenderManager().createPostView("Right viewport", camRight);
         viewPortRight.setClearFlags(true, true, true);
         viewPortRight.attachScene(this.app.getRootNode());
-        
+
         filterLeft=new OculusFilter(OculusRift.loadedHmd, 0);
         filterLeft.setEyeTextureSize(leftsize);
         filterRight =new OculusFilter(OculusRift.loadedHmd, 1);
         filterRight.setEyeTextureSize(rightsize);
-        
+
         ppRight =new FilterPostProcessor(app.getAssetManager());               
         ppLeft =new FilterPostProcessor(app.getAssetManager());
         
@@ -166,7 +177,8 @@ public class OVRAppState extends AbstractAppState {
         viewPortLeft.addProcessor(ppLeft);
         viewPortRight.addProcessor(ppRight);        
         
-        ppRight.addFilter(filterRight);             
+        ppRight.addFilter(filterRight);          
+        
     }
     
     @Override
@@ -179,7 +191,7 @@ public class OVRAppState extends AbstractAppState {
     public void postRender() {
         super.postRender();
     }   
-        
+    
     public void setCameraControl(StereoCameraControl control){
         this.camControl = control;
         camRight = control.getCamera2();

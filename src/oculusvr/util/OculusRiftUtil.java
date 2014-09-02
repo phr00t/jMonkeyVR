@@ -8,7 +8,6 @@ import com.jme3.math.Matrix4f;
 import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.FovPort;
 import com.oculusvr.capi.Hmd;
-import com.oculusvr.capi.HmdDesc;
 import com.oculusvr.capi.OvrLibrary;
 import com.oculusvr.capi.OvrMatrix4f;
 import com.oculusvr.capi.OvrSizei;
@@ -26,19 +25,19 @@ public class OculusRiftUtil {
         maxFOV = enable;
     }
     
-    public static EyeRenderDesc[] configureRendering(Hmd hmd, HmdDesc hmdDesc, int width, int height, int samples) {
+    public static EyeRenderDesc[] configureRendering(Hmd hmd, int width, int height, int samples) {
         EyeRenderDesc[] configureResult;
         
         FovPort fovPorts[] = (FovPort[]) new FovPort().toArray(2);
         
         if( maxFOV ) {
-            fovPorts[0] = hmdDesc.MaxEyeFov[0];
-            fovPorts[1] = hmdDesc.MaxEyeFov[1];
+            fovPorts[0] = hmd.MaxEyeFov[0];
+            fovPorts[1] = hmd.MaxEyeFov[1];
         } else {
-            fovPorts[0] = hmdDesc.DefaultEyeFov[0];
-            fovPorts[1] = hmdDesc.DefaultEyeFov[1];            
+            fovPorts[0] = hmd.DefaultEyeFov[0];
+            fovPorts[1] = hmd.DefaultEyeFov[1];            
         }
-    
+        
         RenderAPIConfig rc = new RenderAPIConfig();
         rc.Header.API = OvrLibrary.ovrRenderAPIType.ovrRenderAPI_OpenGL;
         rc.Header.RTSize = new OvrSizei(width, height);
@@ -46,8 +45,7 @@ public class OculusRiftUtil {
 
         int distortionCaps =   OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic
                              | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_TimeWarp
-                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette
-                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_NoSwapBuffers;
+                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette; //  | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_NoSwapBuffers
 
 
         configureResult = hmd.configureRendering(rc, distortionCaps, fovPorts);

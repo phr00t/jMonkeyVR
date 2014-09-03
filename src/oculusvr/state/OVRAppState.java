@@ -88,8 +88,11 @@ public class OVRAppState extends AbstractAppState {
         Matrix4f projMat = OculusRiftUtil.toMatrix4f(Hmd.getPerspectiveProjection(
                 OculusRift.getEyeRenderDesc(eyeIndex).Fov, 0.1f, 1000000f, true));              
         OvrSizei size = OculusRift.loadedHmd.getFovTextureSize(eyeIndex, OculusRift.getEyeRenderDesc(eyeIndex).Fov, 1.0f); 
-        if(size.w < app.getContext().getSettings().getWidth()){
+        if( size.w < app.getContext().getSettings().getWidth() ) {
             size.w = app.getContext().getSettings().getWidth();
+        }
+        if( size.h < app.getContext().getSettings().getHeight() ) {
+            size.h = app.getContext().getSettings().getHeight();
         }
         if( cam.getWidth() != size.w || cam.getHeight() != size.h ) cam.resize(size.w, size.h, true);
         

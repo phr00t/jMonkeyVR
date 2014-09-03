@@ -112,9 +112,6 @@ public class StereoCameraControl extends CameraControl {
             vars.vect4.y += spatialOffset.y;
             vars.vect4.z += spatialOffset.z;
         }
-
-        // update prediction based on tpf
-        OculusRift.predictive(tpf * 0.5f);
         
         // positional tracking
         vars.vect4.addLocal(OculusRift.getPosition());

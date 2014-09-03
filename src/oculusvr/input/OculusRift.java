@@ -29,7 +29,7 @@ public class OculusRift {
     private static boolean initHMDSuccess;
     private static EyeRenderDesc[] eyeRenderDesc;
     private static OVRAppState appState;
-    private static FrameTiming frameTiming;
+    //private static FrameTiming frameTiming;
 
     // returns true if it was successfully loaded
     public static boolean initialize() {
@@ -108,9 +108,8 @@ public class OculusRift {
         return initHMDSuccess;
     }
     public static Hmd loadedHmd;
-    private static Quaternion orientation = new Quaternion();
-    private static Vector3f position = new Vector3f(), posAcc = new Vector3f(), angAcc = new Vector3f();
-    private static float predictValue;
+    private static Quaternion orientation = new Quaternion(), orientationi = new Quaternion();
+    private static Vector3f position = new Vector3f(), positioni = new Vector3f(), posAcc = new Vector3f(), angAcc = new Vector3f();
 
     // HMDInfo
     public static int getHResolution() {
@@ -141,25 +140,43 @@ public class OculusRift {
         if (loadedHmd == null) {
             return Quaternion.DIRECTION_Z;
         }
-        OvrQuaternionf rot = loadedHmd.getSensorState(frameTiming.ScanoutMidpointSeconds).HeadPose.Pose.Orientation;
+        OvrQuaternionf rot = loadedHmd.getEyePose(0).Orientation;
         orientation.set(rot.x, -rot.y, rot.z, -rot.w);
         return orientation;
     }
 
+    public static Quaternion getInstantOrientation() {
+        if (loadedHmd == null) {
+            return Quaternion.DIRECTION_Z;
+        }
+        OvrQuaternionf rot = loadedHmd.getSensorState(loadedHmd.getFrameTiming(0).ScanoutMidpointSeconds).HeadPose.Pose.Orientation;
+        orientationi.set(rot.x, -rot.y, rot.z, -rot.w);
+        return orientationi;
+    }
+    
     public static Vector3f getPosition() {
         if (loadedHmd == null) {
             return Vector3f.ZERO;
         }
-        OvrVector3f pos = loadedHmd.getSensorState(Hmd.getTimeInSeconds() + predictValue).HeadPose.Pose.Position;
+        OvrVector3f pos = loadedHmd.getEyePose(0).Position;
         position.set(pos.x, pos.y, pos.z);
         return position;
     }
-
+    
+    public static Vector3f getInstantPosition() {
+        if (loadedHmd == null) {
+            return Vector3f.ZERO;
+        }
+        OvrVector3f pos = loadedHmd.getSensorState(loadedHmd.getFrameTiming(0).ScanoutMidpointSeconds).HeadPose.Pose.Position;
+        positioni.set(pos.x, pos.y, pos.z);
+        return positioni;
+    }
+    
     public static Vector3f getAngularAcceleration() {
         if (loadedHmd == null) {
             return Vector3f.ZERO;
         }
-        OvrVector3f pos = loadedHmd.getSensorState(Hmd.getTimeInSeconds() + predictValue).RawSensorData.Gyro;
+        OvrVector3f pos = loadedHmd.getSensorState(loadedHmd.getFrameTiming(0).ScanoutMidpointSeconds).RawSensorData.Gyro;
         angAcc.set(pos.x, pos.y, pos.z);
         return angAcc;
     }
@@ -168,7 +185,7 @@ public class OculusRift {
         if (loadedHmd == null) {
             return Vector3f.ZERO;
         }
-        OvrVector3f pos = loadedHmd.getSensorState(Hmd.getTimeInSeconds() + predictValue).RawSensorData.Magnetometer;
+        OvrVector3f pos = loadedHmd.getSensorState(loadedHmd.getFrameTiming(0).ScanoutMidpointSeconds).RawSensorData.Magnetometer;
         posAcc.set(pos.x, pos.y, pos.z);
         return posAcc;
     }
@@ -177,7 +194,7 @@ public class OculusRift {
         if (loadedHmd == null) {
             return Vector3f.ZERO;
         }
-        OvrVector3f pos = loadedHmd.getSensorState(Hmd.getTimeInSeconds() + predictValue).RawSensorData.Accelerometer;
+        OvrVector3f pos = loadedHmd.getSensorState(loadedHmd.getFrameTiming(0).ScanoutMidpointSeconds).RawSensorData.Accelerometer;
         angAcc.set(pos.x, pos.y, pos.z);
         return angAcc;
     }
@@ -189,20 +206,16 @@ public class OculusRift {
         loadedHmd.recenterPose();
     }
 
-    public static void predictive(float value) {
-        predictValue = value;
-    }
-
     public static EyeRenderDesc getEyeRenderDesc(int eyeIndex) {
         return eyeRenderDesc[eyeIndex];
     }
 
-    public static FrameTiming startFrameTiming() {
+    /*public static FrameTiming startFrameTiming() {
         frameTiming = loadedHmd.beginFrameTiming(0);
         return frameTiming;
     }
 
     public static void endFrameTiming() {
         loadedHmd.endFrameTiming();
-    }
+    }*/
 }

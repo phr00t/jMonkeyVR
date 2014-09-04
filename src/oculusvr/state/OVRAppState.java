@@ -124,7 +124,7 @@ public class OVRAppState extends AbstractAppState {
         
         setupFiltersAndViews();
         
-        app.getContext().setAutoFlushFrames(false); // no swapping
+//        app.getContext().setAutoFlushFrames(false); // no swapping
         
         if( guiNode != null ) guiNode.setupGui(viewPortLeft, viewPortRight, origWidth, origHeight);
                 

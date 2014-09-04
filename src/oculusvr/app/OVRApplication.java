@@ -5,6 +5,14 @@
 package oculusvr.app;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.input.RawInputListener;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.event.JoyAxisEvent;
+import com.jme3.input.event.JoyButtonEvent;
+import com.jme3.input.event.KeyInputEvent;
+import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.input.event.MouseMotionEvent;
+import com.jme3.input.event.TouchEvent;
 import oculusvr.input.OculusRift;
 import oculusvr.state.OVRAppState;
 import oculusvr.util.OculusGuiNode;
@@ -18,6 +26,40 @@ public class OVRApplication extends SimpleApplication{
 
     protected boolean useFOVMax, flipEyes;
     protected OVRAppState ovrAppState;
+    
+    private boolean warningShowing = true;
+    private OculusActionListener oculusListener = new OculusActionListener();
+    
+    private class OculusActionListener implements RawInputListener {
+
+        public void beginInput() {
+        }
+
+        public void endInput() {
+        }
+
+        public void onJoyAxisEvent(JoyAxisEvent evt) {
+        }
+
+        public void onJoyButtonEvent(JoyButtonEvent evt) {
+            dismissWarning();
+        }
+
+        public void onMouseMotionEvent(MouseMotionEvent evt) {
+        }
+
+        public void onMouseButtonEvent(MouseButtonEvent evt) {
+            dismissWarning();
+        }
+
+        public void onKeyEvent(KeyInputEvent evt) {
+            dismissWarning();
+        }
+
+        public void onTouchEvent(TouchEvent evt) {
+            dismissWarning();
+        }
+    }
 
     public OVRApplication() {
         guiNode = new OculusGuiNode();        
@@ -51,6 +93,8 @@ public class OVRApplication extends SimpleApplication{
 
             stateManager.attach(ovrAppState);
         }
+        
+        inputManager.addRawInputListener(oculusListener);
     }
     
     @Override
@@ -58,5 +102,13 @@ public class OVRApplication extends SimpleApplication{
         super.finalize(); //To change body of generated methods, choose Tools | Templates.
         OculusRift.destroy();
     }
+    
+    public void dismissWarning(){
+        if(warningShowing){
+            OculusRift.loadedHmd.dismissHSWDisplay();
+            warningShowing = false;
+        }
+    }
+    
     
 }

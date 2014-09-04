@@ -104,7 +104,7 @@ public class OVRApplication extends SimpleApplication{
     }
     
     public void dismissWarning(){
-        if(warningShowing){
+        if(warningShowing && OculusRift.isInitialized() ){
             OculusRift.loadedHmd.dismissHSWDisplay();
             warningShowing = false;
         }

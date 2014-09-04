@@ -27,7 +27,6 @@ public class OVRApplication extends SimpleApplication{
     protected boolean useFOVMax, flipEyes;
     protected OVRAppState ovrAppState;
     
-    private boolean warningShowing = true;
     private OculusActionListener oculusListener = new OculusActionListener();
     
     private class OculusActionListener implements RawInputListener {
@@ -90,11 +89,11 @@ public class OVRApplication extends SimpleApplication{
 
             ovrAppState = new OVRAppState((OculusGuiNode)guiNode, flipEyes);
             ovrAppState.getGuiNode().setPositioningMode(OculusGuiNode.POSITIONING_MODE.AUTO);
+            inputManager.addRawInputListener(oculusListener);
 
             stateManager.attach(ovrAppState);
         }
         
-        inputManager.addRawInputListener(oculusListener);
     }
     
     @Override
@@ -104,10 +103,8 @@ public class OVRApplication extends SimpleApplication{
     }
     
     public void dismissWarning(){
-        if(warningShowing && OculusRift.isInitialized() ){
-            OculusRift.loadedHmd.dismissHSWDisplay();
-            warningShowing = false;
-        }
+        OculusRift.loadedHmd.dismissHSWDisplay();
+        inputManager.removeRawInputListener(oculusListener);
     }
     
     

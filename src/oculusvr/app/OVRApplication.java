@@ -5,14 +5,19 @@
 package oculusvr.app;
 
 import com.jme3.app.SimpleApplication;
+import static com.jme3.app.SimpleApplication.INPUT_MAPPING_EXIT;
+import com.jme3.input.KeyInput;
 import com.jme3.input.RawInputListener;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.event.JoyAxisEvent;
 import com.jme3.input.event.JoyButtonEvent;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
+import com.jme3.system.JmeContext;
+import com.oculusvr.capi.OvrLibrary;
 import oculusvr.input.OculusRift;
 import oculusvr.state.OVRAppState;
 import oculusvr.util.OculusGuiNode;
@@ -27,9 +32,14 @@ public class OVRApplication extends SimpleApplication{
     protected boolean useFOVMax, flipEyes;
     protected OVRAppState ovrAppState;
     
-    private OculusActionListener oculusListener = new OculusActionListener();
+    private DismissWarningListener oculusListener = new DismissWarningListener();
     
-    private class OculusActionListener implements RawInputListener {
+    private boolean directMode;
+    private boolean autoFlushFrames = true;
+    public static String TOGGLE_DIRECT_MODE = "F12";
+    public static String TOGGLE_AUTO_FLUSH = "F11";
+    
+    private class DismissWarningListener implements RawInputListener {
 
         public void beginInput() {
         }
@@ -59,6 +69,21 @@ public class OVRApplication extends SimpleApplication{
             dismissWarning();
         }
     }
+    
+    private class OculusListener implements ActionListener{
+
+        public void onAction(String name, boolean isPressed, float tpf) {
+            if(name.equals(TOGGLE_DIRECT_MODE) && !isPressed){
+//                directMode = !directMode;
+                
+            } else if(name.equals(TOGGLE_AUTO_FLUSH) && !isPressed){
+                autoFlushFrames = !autoFlushFrames;
+                
+                context.setAutoFlushFrames(autoFlushFrames);
+            }
+        }
+    }
+    
 
     public OVRApplication() {
         guiNode = new OculusGuiNode();        
@@ -90,12 +115,15 @@ public class OVRApplication extends SimpleApplication{
             ovrAppState = new OVRAppState((OculusGuiNode)guiNode, flipEyes);
             ovrAppState.getGuiNode().setPositioningMode(OculusGuiNode.POSITIONING_MODE.AUTO);
             inputManager.addRawInputListener(oculusListener);
-
+            inputManager.addListener(new OculusListener(), new String[]{TOGGLE_AUTO_FLUSH, TOGGLE_DIRECT_MODE});
+            inputManager.addMapping(TOGGLE_AUTO_FLUSH, new KeyTrigger(KeyInput.KEY_F11));
+            inputManager.addMapping(TOGGLE_DIRECT_MODE, new KeyTrigger(KeyInput.KEY_F12));
             stateManager.attach(ovrAppState);
         }
         
+        
     }
-    
+
     @Override
     protected void finalize() throws Throwable {
         super.finalize(); //To change body of generated methods, choose Tools | Templates.
@@ -106,6 +134,5 @@ public class OVRApplication extends SimpleApplication{
         OculusRift.loadedHmd.dismissHSWDisplay();
         inputManager.removeRawInputListener(oculusListener);
     }
-    
-    
+
 }

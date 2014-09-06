@@ -106,29 +106,32 @@ public class StereoCameraControl extends CameraControl {
         TempVars vars = TempVars.get();
         Camera camera = getCamera();
         
-        vars.vect4.set(pos);
+        lookDirection.set(OculusRift.getOrientation());                    
+        vars.quat1.set(look).multLocal(lookDirection);
+        
+        // positional tracking
+        vars.vect4.set(OculusRift.getPosition());
+        look.mult(vars.vect4, vars.vect4);
+        vars.vect4.addLocal(pos);
         if( spatialOffset != null && useOffset ) {
             vars.vect4.x += spatialOffset.x;
             vars.vect4.y += spatialOffset.y;
             vars.vect4.z += spatialOffset.z;
         }
         
-        // positional tracking
-        vars.vect4.addLocal(OculusRift.getPosition());
-
-        lookDirection.set(OculusRift.getOrientation());                    
-        vars.quat1.set(look).multLocal(lookDirection);
         camera.setRotation(vars.quat1); //spatial.getWorldRotation().mult(lookDirection));
-        vars.vect1.set(vars.vect4).addLocal(vars.quat1.mult(cameraOffset, vars.vect2)); //camera.setLocation(spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset)));                    
-        camera.setLocation(vars.vect1);
+        vars.vect6.set(vars.quat1.mult(cameraOffset, vars.vect2)).addLocal(vars.vect4);
+        camera.setLocation(vars.vect6);
 
         // negate cameraOffset
         vars.vect3.x = -cameraOffset.x;
         vars.vect3.y = -cameraOffset.y;
         vars.vect3.z = -cameraOffset.z;
 
-        camera2.setLocation(vars.vect1.set(vars.vect4).addLocal(camera.getRotation().mult(vars.vect3, vars.vect2))); //spatial.getWorldTranslation().add(camera.getRotation().mult(cameraOffset.negate())));
+        vars.vect5.set(camera.getRotation().mult(vars.vect3, vars.vect2)).addLocal(vars.vect4);
+        camera2.setLocation(vars.vect5);
         camera2.setRotation(camera.getRotation());
+        
         vars.release();
         
         // update gui node?

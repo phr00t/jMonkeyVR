@@ -159,7 +159,7 @@ public class OculusRift {
             return Vector3f.ZERO;
         }
         OvrVector3f pos = loadedHmd.getEyePose(0).Position;
-        position.set(pos.x, pos.y, pos.z);
+        position.set(-pos.x, pos.y, -pos.z);
         return position;
     }
     

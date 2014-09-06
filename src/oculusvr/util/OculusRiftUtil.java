@@ -45,9 +45,9 @@ public class OculusRiftUtil {
 
         int distortionCaps =   OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic
                              | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_TimeWarp
-                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette; //  | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_NoSwapBuffers
-
-
+                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette
+                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Overdrive;
+        
         configureResult = hmd.configureRendering(rc, distortionCaps, fovPorts);
 
         System.out.println(configureResult[0]);

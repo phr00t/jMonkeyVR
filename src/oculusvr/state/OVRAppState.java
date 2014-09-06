@@ -125,12 +125,14 @@ public class OVRAppState extends AbstractAppState {
         setupFiltersAndViews();
         
         if( guiNode != null ) guiNode.setupGui(viewPortLeft, viewPortRight, origWidth, origHeight);
-                
+                        
         float offset = info.getInterpupillaryDistance() * 0.5f;
         camControl.setCamHalfDistance(offset);
         
         cloneProcessors();        
         if( flipEyes ) camControl.swapCameras();
+        
+        app.getContext().setAutoFlushFrames(false);
     }  
     
     private void setupFiltersAndViews() {

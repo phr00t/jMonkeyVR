@@ -34,11 +34,6 @@ public class OVRApplication extends SimpleApplication{
     
     private DismissWarningListener oculusListener = new DismissWarningListener();
     
-    private boolean directMode;
-    private boolean autoFlushFrames = true;
-    public static String TOGGLE_DIRECT_MODE = "F12";
-    public static String TOGGLE_AUTO_FLUSH = "F11";
-    
     private class DismissWarningListener implements RawInputListener {
 
         public void beginInput() {
@@ -69,22 +64,6 @@ public class OVRApplication extends SimpleApplication{
             dismissWarning();
         }
     }
-    
-    private class OculusListener implements ActionListener{
-
-        public void onAction(String name, boolean isPressed, float tpf) {
-            if(name.equals(TOGGLE_DIRECT_MODE) && !isPressed){
-//                directMode = !directMode;
-                
-            } else if(name.equals(TOGGLE_AUTO_FLUSH) && !isPressed){
-                autoFlushFrames = !autoFlushFrames;
-                
-                context.setAutoFlushFrames(autoFlushFrames);
-            }
-        }
-    }
-    
-
     public OVRApplication() {
         guiNode = new OculusGuiNode();        
         OculusRift.initialize();
@@ -115,13 +94,9 @@ public class OVRApplication extends SimpleApplication{
             ovrAppState = new OVRAppState((OculusGuiNode)guiNode, flipEyes);
             ovrAppState.getGuiNode().setPositioningMode(OculusGuiNode.POSITIONING_MODE.AUTO);
             inputManager.addRawInputListener(oculusListener);
-            inputManager.addListener(new OculusListener(), new String[]{TOGGLE_AUTO_FLUSH, TOGGLE_DIRECT_MODE});
-            inputManager.addMapping(TOGGLE_AUTO_FLUSH, new KeyTrigger(KeyInput.KEY_F11));
-            inputManager.addMapping(TOGGLE_DIRECT_MODE, new KeyTrigger(KeyInput.KEY_F12));
             stateManager.attach(ovrAppState);
+            
         }
-        
-        
     }
 
     @Override

@@ -27,6 +27,7 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
+import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import java.util.Collection;
 import oculusvr.app.OVRApplication;
@@ -91,6 +92,14 @@ public class TestOVRApplication extends OVRApplication {
         
         // aniscopic filtering really helps!
         setFilter(scene);
+        
+        // gui element
+        Picture test = new Picture("testpic");
+        test.setImage(assetManager, "Textures/crosshair.png", true);
+        test.setWidth(128f);
+        test.setHeight(128f);
+        test.setPosition(settings.getWidth() * 0.5f - 64f, settings.getHeight() * 0.5f - 64f);
+        guiNode.attachChild(test);
         
         box.setMaterial(m);
         

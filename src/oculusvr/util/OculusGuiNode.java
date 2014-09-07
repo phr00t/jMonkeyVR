@@ -27,12 +27,13 @@ public class OculusGuiNode extends Node {
     
     private Camera cam;
     private float guiDistance;
-    private float guiRatioW, guiRatioH;
     private POSITIONING_MODE posMode = POSITIONING_MODE.MANUAL;
     
     private Vector3f look = new Vector3f(), left = new Vector3f();
     private Matrix3f orient = new Matrix3f();
     private Quaternion tempq = new Quaternion();
+    
+    private int oHeight, oWidth;
     
     public OculusGuiNode() {
         super("ogui");
@@ -54,10 +55,11 @@ public class OculusGuiNode extends Node {
     
     public void positionGui() {
         Vector3f guiPos = getLocalTranslation();
-        setLocalScale(guiDistance * 0.0025f * guiRatioW, guiDistance * 0.0025f * guiRatioH, guiDistance * 0.005f);
+        setLocalScale(guiDistance * 0.0035f, guiDistance * 0.0035f, guiDistance * 0.0035f);
         if( cam != null ) {
             Vector3f campos = cam.getLocation();
-            guiPos.set(guiDistance * 1.6333f, -guiDistance, guiDistance);
+            guiPos.set(guiDistance * 1.395f * oWidth / 800f,
+                      -guiDistance * oHeight / 600f, guiDistance);
             cam.getRotation().mult(guiPos, guiPos);
             guiPos.x += campos.x;
             guiPos.y += campos.y;
@@ -89,12 +91,12 @@ public class OculusGuiNode extends Node {
         guiDistance += adjustAmount;
     }
     
-    public void setupGui(ViewPort left, ViewPort right, int screenResWidth, int screenResHeight) {
+    public void setupGui(ViewPort left, ViewPort right, int origWidth, int origHeight) {
         left.attachScene(this);
         right.attachScene(this);
         cam = left.getCamera();
-        guiRatioW = 1280f / screenResWidth;
-        guiRatioH = 800f / screenResHeight;
+        oHeight = origHeight;
+        oWidth = origWidth;
         setPositioningMode(posMode);
         positionGui();
     }

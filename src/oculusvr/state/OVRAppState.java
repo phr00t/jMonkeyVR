@@ -133,6 +133,7 @@ public class OVRAppState extends AbstractAppState {
         if( flipEyes ) camControl.swapCameras();
         
         app.getContext().setAutoFlushFrames(false);
+        app.setPauseOnLostFocus(false);
     }  
     
     private void setupFiltersAndViews() {

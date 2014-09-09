@@ -26,7 +26,7 @@ public class OculusGuiNode extends Node {
     }
     
     private Camera cam;
-    private float guiDistance;
+    private float guiDistance, guiScale = 1f;
     private POSITIONING_MODE posMode = POSITIONING_MODE.MANUAL;
     
     private Vector3f look = new Vector3f(), left = new Vector3f();
@@ -55,11 +55,13 @@ public class OculusGuiNode extends Node {
     
     public void positionGui() {
         Vector3f guiPos = getLocalTranslation();
-        setLocalScale(guiDistance * 0.0035f, guiDistance * 0.0035f, guiDistance * 0.0035f);
+        setLocalScale(guiDistance * 0.0035f * guiScale,
+                      guiDistance * 0.0035f * guiScale,
+                      guiDistance * 0.0035f * guiScale);
         if( cam != null ) {
             Vector3f campos = cam.getLocation();
-            guiPos.set(guiDistance * 1.395f * oWidth / 800f,
-                      -guiDistance * oHeight / 600f, guiDistance);
+            guiPos.set(guiDistance * 1.395f * oWidth / 800f * guiScale,
+                      -guiDistance * oHeight * guiScale / 600f, guiDistance);
             cam.getRotation().mult(guiPos, guiPos);
             guiPos.x += campos.x;
             guiPos.y += campos.y;
@@ -85,6 +87,10 @@ public class OculusGuiNode extends Node {
     
     public void setGuiDistance(float newGuiDistance) {
         guiDistance = newGuiDistance;                
+    }
+    
+    public void setGuiScale(float scale) {
+        guiScale = scale;
     }
     
     public void adjustGuiDistance(float adjustAmount) {

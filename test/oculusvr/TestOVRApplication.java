@@ -99,6 +99,7 @@ public class TestOVRApplication extends OVRApplication {
         test.setWidth(128f);
         test.setHeight(128f);
         test.setPosition(settings.getWidth() * 0.5f - 64f, settings.getHeight() * 0.5f - 64f);
+        OculusRift.getAppState().getGuiNode().setGuiScale(0.6f);
         guiNode.attachChild(test);
         
         box.setMaterial(m);

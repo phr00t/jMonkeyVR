@@ -202,16 +202,16 @@ public class TestOVRApplication extends OVRApplication {
          boxes.setLocalTranslation(0, 0, 200f+ distance);
          
          if(moveForward){
-             observer.move(ovrAppState.getCameraControl().getLookDirection().getRotationColumn(2).mult(10f*tpf));
+             observer.move(ovrAppState.getCameraControl().getForwardDirection().multLocal(tpf*8f));
          }
          if(moveBackwards){
-             observer.move(ovrAppState.getCameraControl().getLookDirection().getRotationColumn(2).mult(-tpf*10f));
+             observer.move(ovrAppState.getCameraControl().getForwardDirection().multLocal(-tpf*8f));
          }
          if(rotateLeft){
-             observer.rotate(0, 0.5f*tpf, 0);
+             observer.rotate(0, 0.75f*tpf, 0);
          }
          if(rotateRight){
-             observer.rotate(0, -0.5f*tpf, 0);
+             observer.rotate(0, -0.75f*tpf, 0);
          }
      }
 

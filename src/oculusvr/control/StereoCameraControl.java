@@ -59,7 +59,7 @@ public class StereoCameraControl extends CameraControl {
     private Quaternion lookDirection = new Quaternion();
     protected Camera camera2;
     private float camHalfDistance = 0f;
-    private Vector3f cameraOffset = new Vector3f(), spatialOffset;
+    private Vector3f cameraOffset = new Vector3f(), spatialOffset, tempf = new Vector3f();
 
     public StereoCameraControl(){
         super();
@@ -172,13 +172,13 @@ public class StereoCameraControl extends CameraControl {
     }
 
     public Quaternion getLookDirection() {
-        return lookDirection;
-    }
-
-    public void setLookDirection(Quaternion lookDirection) {
-        this.lookDirection = lookDirection;
+        return getCamera().getRotation();
     }
     
+    public Vector3f getForwardDirection() {
+        return getLookDirection().getRotationColumn(2, tempf);
+    }
+
     private static final String CONTROL_DIR_NAME = "controlDir";
     private static final String CAMERA_NAME = "camera";
     

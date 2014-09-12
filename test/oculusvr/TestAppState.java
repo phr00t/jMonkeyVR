@@ -75,7 +75,7 @@ public class TestAppState extends SimpleApplication implements AnalogListener{
     @Override
     public void simpleUpdate(float tpf) {
        
-        camControl.setLookDirection(new Quaternion().fromAngles(camDirection.x, camDirection.y, camDirection.z));
+        //camControl.setLookDirection(new Quaternion().fromAngles(camDirection.x, camDirection.y, camDirection.z));
     }
     
     public void onAnalog(String binding, float value, float tpf) {

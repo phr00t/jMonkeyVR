@@ -64,17 +64,16 @@ public class OculusDirectionalLightShadowRenderer extends DirectionalLightShadow
     @Override
     public OculusDirectionalLightShadowRenderer clone() {
         OculusDirectionalLightShadowRenderer clone = new OculusDirectionalLightShadowRenderer(assetManager, (int)shadowMapSize, nbShadowMaps);
-        clone.assetManager = assetManager;
-        clone.setEdgeFilteringMode(edgeFilteringMode);
-        clone.setEdgesThickness((int)edgesThickness);
-        clone.setEnabledStabilization(this.isEnabledStabilization());
-        clone.setFlushQueues(flushQueues);
-        clone.setLambda(lambda);
-        clone.setLight(light);
-        clone.setShadowCompareMode(shadowCompareMode);
-        clone.setShadowIntensity(shadowIntensity);
-        clone.setShadowZExtend(zFarOverride);
-        clone.setShadowZFadeLength(fadeLength);                
+        clone.setEdgeFilteringMode(getEdgeFilteringMode());
+        clone.setEdgesThickness(getEdgesThickness());
+        clone.setEnabledStabilization(isEnabledStabilization());
+        clone.setFlushQueues(isFlushQueues());
+        clone.setLambda(getLambda());
+        clone.setLight(getLight());
+        clone.setShadowCompareMode(getShadowCompareMode());
+        clone.setShadowIntensity(getShadowIntensity());
+        clone.setShadowZExtend(getShadowZExtend());
+        clone.setShadowZFadeLength(getShadowZFadeLength());
         return clone;
     }
 }

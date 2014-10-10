@@ -20,6 +20,8 @@ import com.oculusvr.capi.RenderAPIConfig;
 public class OculusRiftUtil {
 
     private static boolean maxFOV = false;
+    private static boolean customFOV = false;
+    private static FovPort[] customFovPorts;
     
     public static void useMaxEyeFov(boolean enable) {
         maxFOV = enable;
@@ -33,9 +35,14 @@ public class OculusRiftUtil {
         if( maxFOV ) {
             fovPorts[0] = hmd.MaxEyeFov[0];
             fovPorts[1] = hmd.MaxEyeFov[1];
+        } else if (customFOV) {
+            fovPorts[0] = hmd.DefaultEyeFov[0];
+            fovPorts[1] = hmd.DefaultEyeFov[1];
+            applyFovPort(customFovPorts[0], fovPorts[0]);
+            applyFovPort(customFovPorts[1], fovPorts[1]);
         } else {
             fovPorts[0] = hmd.DefaultEyeFov[0];
-            fovPorts[1] = hmd.DefaultEyeFov[1];            
+            fovPorts[1] = hmd.DefaultEyeFov[1];
         }
         
         RenderAPIConfig rc = new RenderAPIConfig();
@@ -50,7 +57,6 @@ public class OculusRiftUtil {
         
         configureResult = hmd.configureRendering(rc, distortionCaps, fovPorts);
 
-        System.out.println(configureResult[0]);
         if (null == configureResult) {
             throw new IllegalStateException("Unable to configure rendering");
         }
@@ -59,5 +65,18 @@ public class OculusRiftUtil {
     
     public static Matrix4f toMatrix4f(OvrMatrix4f m) {
         return new Matrix4f(m.M).transpose();
+    }
+    
+    public static void setCustomFovPorts(FovPort[] fovPorts){
+        customFOV = true;
+        customFovPorts = fovPorts;
+    }
+    
+    private static void applyFovPort(FovPort source, FovPort target){
+        target.LeftTan = source.LeftTan;
+        target.RightTan = source.RightTan;
+        target.UpTan = source.UpTan;
+        target.DownTan = source.DownTan;
+        
     }
 }

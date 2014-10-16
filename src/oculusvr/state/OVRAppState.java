@@ -86,7 +86,7 @@ public class OVRAppState extends AbstractAppState {
 
     private OvrSizei prepareCameraResolution(int eyeIndex, Camera cam) {
         Matrix4f projMat = OculusRiftUtil.toMatrix4f(Hmd.getPerspectiveProjection(
-                OculusRift.getEyeRenderDesc(eyeIndex).Fov, 0.1f, 1000000f, true));              
+                OculusRift.getEyeRenderDesc(eyeIndex).Fov, cam.getFrustumNear(), cam.getFrustumFar(), true));              
         OvrSizei size = OculusRift.loadedHmd.getFovTextureSize(eyeIndex, OculusRift.getEyeRenderDesc(eyeIndex).Fov, 1.0f); 
         if( size.w < app.getContext().getSettings().getWidth() ) {
             size.w = app.getContext().getSettings().getWidth();
@@ -97,7 +97,7 @@ public class OVRAppState extends AbstractAppState {
         if( cam.getWidth() != size.w || cam.getHeight() != size.h ) cam.resize(size.w, size.h, true);
         
         cam.setProjectionMatrix(projMat);
-        return size;
+        return size;   
     }
     
     @Override

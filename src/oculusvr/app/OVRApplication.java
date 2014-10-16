@@ -107,6 +107,7 @@ public class OVRApplication extends SimpleApplication{
     
     public void dismissWarning(){
         OculusRift.loadedHmd.dismissHSWDisplay();
+        OculusRift.reset(); // reset position when the warning gets removed
         inputManager.removeRawInputListener(oculusListener);
     }
 

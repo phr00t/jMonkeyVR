@@ -98,6 +98,12 @@ public class StereoCameraControl extends CameraControl {
         setCamera2(mycam);
     }
     
+    public Vector3f getRotatedPositionalTracking(Vector3f store) {
+        store.set(OculusRift.getPosition());
+        spatial.getWorldRotation().mult(store, store);
+        return store;
+    }
+    
     public void setView(float tpf, Vector3f pos, Quaternion look) {
         setView(tpf, pos, look, false);
     }

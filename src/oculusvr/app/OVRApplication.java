@@ -110,5 +110,24 @@ public class OVRApplication extends SimpleApplication{
         OculusRift.reset(); // reset position when the warning gets removed
         inputManager.removeRawInputListener(oculusListener);
     }
+    
+    @Override
+    public void gainFocus(){
+        if (pauseOnFocus) {
+            paused = false;
+            //context.setAutoFlushFrames(true);
+            if (inputManager != null) {
+                inputManager.reset();
+            }
+        }
+    }
 
+    @Override
+    public void loseFocus(){
+        if (pauseOnFocus){
+            paused = true;
+            //context.setAutoFlushFrames(false);
+        }
+    }
+    
 }

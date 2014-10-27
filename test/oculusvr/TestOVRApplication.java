@@ -1,40 +1,25 @@
 package oculusvr;
 
-import com.jme3.app.SimpleApplication;
-import com.jme3.asset.AssetEventListener;
-import com.jme3.asset.AssetKey;
-import com.jme3.asset.TextureKey;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import oculusvr.state.OVRAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Caps;
-import com.jme3.renderer.Renderer;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.shader.VarType;
-import com.jme3.texture.FrameBuffer;
-import com.jme3.texture.Image;
-import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
-import com.jme3.texture.Texture2D;
 import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
-import java.util.Collection;
 import oculusvr.app.OVRApplication;
 import oculusvr.input.OculusRift;
-import oculusvr.util.OculusGuiNode;
-import oculusvr.util.OculusGuiNode.POSITIONING_MODE;
-import oculusvr.util.OculusRiftUtil;
 
 public class TestOVRApplication extends OVRApplication {
 
@@ -47,10 +32,8 @@ public class TestOVRApplication extends OVRApplication {
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Node scene;
     public static void main(String[] args) {
-        
-        
         myApp = new TestOVRApplication();
-        myApp.configureOVRApp(false, false, true);
+        myApp.preconfigureOVRApp(false, false, false, true);
         myApp.start();
         
     }

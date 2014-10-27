@@ -29,7 +29,7 @@ import oculusvr.util.OculusRiftUtil;
  */
 public class OVRApplication extends SimpleApplication{
 
-    protected boolean useFOVMax, flipEyes;
+    protected boolean useFOVMax, flipEyes, disable_vignette;
     protected OVRAppState ovrAppState;
     
     private DismissWarningListener oculusListener = new DismissWarningListener();
@@ -69,12 +69,13 @@ public class OVRApplication extends SimpleApplication{
         OculusRift.initialize();
     }
     
-    public void configureOVRApp(boolean fovMax, boolean flipEyes, boolean forceOculus) {
+    public void preconfigureOVRApp(boolean disable_vignette, boolean force_max_fov, boolean flip_eyes, boolean force_oculus) {
         
-        useFOVMax = fovMax;
-        this.flipEyes = flipEyes;
+        useFOVMax = force_max_fov;
+        flipEyes = flip_eyes;
+        this.disable_vignette = disable_vignette;
         
-        if( forceOculus ) {
+        if( force_oculus ) {
             // this will make it work even if an HMD isn't present
             OculusRift.forceInitializeSuccess();
         }               
@@ -90,6 +91,7 @@ public class OVRApplication extends SimpleApplication{
         // maximum FOV rendering
         if( OculusRift.isInitialized() ) {
             OculusRiftUtil.useMaxEyeFov(useFOVMax);
+            OculusRiftUtil.disableVignette(disable_vignette);
 
             ovrAppState = new OVRAppState((OculusGuiNode)guiNode, flipEyes);
             ovrAppState.getGuiNode().setPositioningMode(OculusGuiNode.POSITIONING_MODE.AUTO);

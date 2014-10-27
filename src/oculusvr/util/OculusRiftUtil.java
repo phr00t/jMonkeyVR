@@ -19,12 +19,16 @@ import com.oculusvr.capi.RenderAPIConfig;
  */
 public class OculusRiftUtil {
 
-    private static boolean maxFOV = false;
+    private static boolean maxFOV = false, dis_vig = false;
     private static boolean customFOV = false;
     private static FovPort[] customFovPorts;
     
     public static void useMaxEyeFov(boolean enable) {
         maxFOV = enable;
+    }
+    
+    public static void disableVignette(boolean disable) {
+        dis_vig = disable;
     }
     
     public static EyeRenderDesc[] configureRendering(Hmd hmd, int width, int height, int samples) {
@@ -50,10 +54,18 @@ public class OculusRiftUtil {
         rc.Header.RTSize = new OvrSizei(width, height);
         rc.Header.Multisample = samples;
 
-        int distortionCaps =   OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic
+        int distortionCaps;
+        
+        if( dis_vig ) {
+            distortionCaps =   OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic
+                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_TimeWarp
+                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Overdrive;                    
+        } else {
+            distortionCaps =   OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic
                              | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_TimeWarp
                              | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette
-                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Overdrive;
+                             | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Overdrive;            
+        }
         
         configureResult = hmd.configureRendering(rc, distortionCaps, fovPorts);
 

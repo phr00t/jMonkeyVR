@@ -83,7 +83,7 @@ public class OculusFilter extends Filter {
                 textureId = id;
             }
         }
-        if (STATE == 0 && OculusRift.getRenderInit()) {
+        if (STATE == 0) {
             hmd.beginFrame(frameIndex++);
             eye = hmd.EyeRenderOrder[eyeIndex];
             eyePoses = hmd.getEyePoses(frameIndex, eyeOffsets);

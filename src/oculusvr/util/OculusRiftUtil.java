@@ -15,9 +15,7 @@ import com.oculusvr.capi.OvrSizei;
 import com.oculusvr.capi.RenderAPIConfig;
 import com.sun.jna.Pointer;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.logging.Logger;
 import oculusvr.input.OculusRift;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.opengl.Display;
@@ -78,10 +76,8 @@ public class OculusRiftUtil {
 
         configureResult = hmd.configureRendering(rc, distortionCaps, fovPorts);
 
-        int caps = OculusRift.loadedHmd.getEnabledCaps();
-
         if (LWJGLUtil.PLATFORM_LINUX == LWJGLUtil.getPlatform()) {
- // Native window support currently only available on windows
+            // Native window support currently only available on windows
             System.out.println("Direct HMD mode not supported on linux");
         } else if (LWJGLUtil.PLATFORM_WINDOWS == LWJGLUtil.getPlatform()) {
             long nativeWindow = getNativeWindow();

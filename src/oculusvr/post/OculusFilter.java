@@ -33,21 +33,15 @@ public class OculusFilter extends Filter {
     private Posef pose;
     int textureId = -1;
     int eye;
-    private static int frameIndex;
     private static final Posef poses[] = (Posef[]) new Posef().toArray(2);
-    private static Posef[] eyePoses;
     private static final Texture eyeTextures[] = (Texture[]) new Texture().toArray(2);
-    private static final OvrVector3f eyeOffsets[] = (OvrVector3f[]) new OvrVector3f().toArray(2);
+    
     private static int STATE = 0;
 
     public OculusFilter(Hmd hmd, int eyeIndex) {
         this.hmd = hmd;
         this.eyeIndex = eyeIndex;
         eyeTexture = eyeTextures[eyeIndex];
-        EyeRenderDesc eyeRenderDesc = OculusRift.getEyeRenderDesc(eyeIndex);
-        this.eyeOffsets[eyeIndex].x = eyeRenderDesc.HmdToEyeViewOffset.x;
-        this.eyeOffsets[eyeIndex].y = eyeRenderDesc.HmdToEyeViewOffset.y;
-        this.eyeOffsets[eyeIndex].z = eyeRenderDesc.HmdToEyeViewOffset.z;
     }
 
     @Override
@@ -83,10 +77,9 @@ public class OculusFilter extends Filter {
                 textureId = id;
             }
         }
+        eye = hmd.EyeRenderOrder[eyeIndex];
         if (STATE == 0) {
-            hmd.beginFrame(frameIndex++);
-            eye = hmd.EyeRenderOrder[eyeIndex];
-            eyePoses = hmd.getEyePoses(frameIndex, eyeOffsets);
+            // anything to do?
             STATE++;
         }
     }
@@ -96,7 +89,7 @@ public class OculusFilter extends Filter {
         super.postFrame(renderManager, viewPort, prevFilterBuffer, sceneBuffer);
         // for both:
         if (STATE != 0) {
-            pose = eyePoses[eye];
+            pose = OculusRift.getEyePoses()[eye];
             poses[eye].Orientation = pose.Orientation;
             poses[eye].Position = pose.Position;
             STATE++;
@@ -117,7 +110,4 @@ public class OculusFilter extends Filter {
         return eyeTexture;
     }
 
-    public Posef getPosef() {
-        return pose;
-    }
 }

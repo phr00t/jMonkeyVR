@@ -22,9 +22,11 @@ import com.jme3.scene.control.CameraControl;
 import oculusvr.util.FilterUtil;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.system.AppSettings;
+import com.jme3.util.SafeArrayList;
 import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.OvrSizei;
 import com.oculusvr.capi.OvrVector2i;
+import com.oculusvr.capi.OvrVector3f;
 import com.oculusvr.capi.Posef;
 import com.oculusvr.capi.Texture;
 import com.oculusvr.capi.TextureHeader;
@@ -53,30 +55,24 @@ public class OVRAppState extends AbstractAppState {
     private boolean flipEyes;
     private OculusGuiNode guiNode;
     
-    
-        
-    public OVRAppState(boolean flipEyes) {
-        OculusRift.setAppState(this);
-        this.flipEyes = flipEyes;
-        this.guiNode = null;
-    }
+    private static final OvrVector3f eyeOffsets[] = (OvrVector3f[]) new OvrVector3f().toArray(2);
     
     public OVRAppState(OculusGuiNode guiNode, boolean flipEyes) {
         OculusRift.setAppState(this);
         this.flipEyes = flipEyes;
         this.guiNode = guiNode;
     }
+        
+    public OVRAppState(boolean flipEyes) {
+        this(null, flipEyes);
+    }
     
     public OVRAppState(OculusGuiNode guiNode) {
-        OculusRift.setAppState(this);
-        flipEyes = false;
-        this.guiNode = guiNode;
+        this(guiNode, false);
     }   
     
     public OVRAppState() {
-        OculusRift.setAppState(this);
-        flipEyes = false;
-        this.guiNode = null;
+        this(null, false);
         
     }
     
@@ -146,7 +142,7 @@ public class OVRAppState extends AbstractAppState {
         camControl.setControlDir(CameraControl.ControlDirection.SpatialToCamera);
 //        camLeft.setViewPort(0.0f, 0.5f, 0.0f, 1.0f);
 //        camRight.setViewPort(0.5f, 1f, 0.0f, 1f);
-        viewPortRight = app.getRenderManager().createPostView("Right viewport", camRight);
+        viewPortRight = app.getRenderManager().createMainView("Right viewport", camRight);
         viewPortRight.setClearFlags(true, true, true);
         viewPortRight.attachScene(this.app.getRootNode());
 
@@ -160,8 +156,8 @@ public class OVRAppState extends AbstractAppState {
         
         ppLeft.addFilter(filterLeft);
         boolean hasTransFilter = false;
-        
-        for(SceneProcessor sceneProcessor : viewPortLeft.getProcessors()){
+        SafeArrayList<SceneProcessor> processors = viewPortLeft.getProcessors();
+        for(SceneProcessor sceneProcessor : processors){
             if(sceneProcessor instanceof FilterPostProcessor){
                 for(Filter f : ((FilterPostProcessor)sceneProcessor).getFilterList() ) {
                     ppLeft.addFilter(f);
@@ -180,15 +176,16 @@ public class OVRAppState extends AbstractAppState {
                 
         viewPortLeft.addProcessor(ppLeft);
         viewPortRight.addProcessor(ppRight);        
-        
         ppRight.addFilter(filterRight);          
-        
+        //app.getContext().setAutoFlushFrames(false);
     }
     
     @Override
     public void update(float tpf) {
         super.update(tpf);        
+        OculusRift.loadedHmd.beginFrame(OculusRift.frameIndex++);
         
+        OculusRift.setEyePoses(OculusRift.loadedHmd.getEyePoses(OculusRift.frameIndex, OculusRift.getEyeOffsets()));
     }
     
     @Override

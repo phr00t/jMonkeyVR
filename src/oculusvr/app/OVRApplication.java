@@ -16,8 +16,6 @@ import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
-import com.jme3.system.JmeContext;
-import com.oculusvr.capi.OvrLibrary;
 import oculusvr.input.OculusRift;
 import oculusvr.state.OVRAppState;
 import oculusvr.util.OculusGuiNode;
@@ -31,6 +29,8 @@ public class OVRApplication extends SimpleApplication{
 
     protected boolean useFOVMax, flipEyes, disable_vignette;
     protected OVRAppState ovrAppState;
+    private String TOGGLE_LOW_PERSISTENCE = "ToggleLowPersistence";
+    private String RESET_HMD = "ResetHMD";
     
     private DismissWarningListener oculusListener = new DismissWarningListener();
     
@@ -64,7 +64,21 @@ public class OVRApplication extends SimpleApplication{
             dismissWarning();
         }
     }
+    
+    private class OculusListener implements ActionListener{
+
+        public void onAction(String name, boolean isPressed, float tpf) {
+            if(name.equals(TOGGLE_LOW_PERSISTENCE) && !isPressed){
+                OculusRift.toggleLowPersistence();
+            } else if (name.equals(RESET_HMD) && !isPressed){
+                reset();
+            }
+        }
+    }
+    
+
     public OVRApplication() {
+        super();
         guiNode = new OculusGuiNode();        
         OculusRift.initialize();
     }
@@ -96,6 +110,9 @@ public class OVRApplication extends SimpleApplication{
             ovrAppState = new OVRAppState((OculusGuiNode)guiNode, flipEyes);
             ovrAppState.getGuiNode().setPositioningMode(OculusGuiNode.POSITIONING_MODE.AUTO);
             inputManager.addRawInputListener(oculusListener);
+            inputManager.addListener(new OculusListener(), new String[]{TOGGLE_LOW_PERSISTENCE, RESET_HMD});
+            inputManager.addMapping(TOGGLE_LOW_PERSISTENCE, new KeyTrigger(KeyInput.KEY_F10));
+            inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));
             stateManager.attach(ovrAppState);
             
         }
@@ -109,7 +126,7 @@ public class OVRApplication extends SimpleApplication{
     
     public void dismissWarning(){
         OculusRift.loadedHmd.dismissHSWDisplay();
-        OculusRift.reset(); // reset position when the warning gets removed
+        reset(); // reset position when the warning gets removed
         inputManager.removeRawInputListener(oculusListener);
     }
     
@@ -132,4 +149,8 @@ public class OVRApplication extends SimpleApplication{
         }
     }
     
+    
+    public void reset(){
+        OculusRift.reset();
+    }
 }

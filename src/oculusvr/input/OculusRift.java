@@ -226,7 +226,7 @@ public class OculusRift {
     public static float getEyeHeight(){
         float eyeHeight = 0;
         
-        loadedHmd.getFloat(OvrLibrary.OVR_KEY_EYE_HEIGHT, eyeHeight);
+        eyeHeight = loadedHmd.getFloat(OvrLibrary.OVR_KEY_EYE_HEIGHT, eyeHeight);
         return eyeHeight;
     }
     

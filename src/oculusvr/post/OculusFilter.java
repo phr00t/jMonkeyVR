@@ -11,13 +11,11 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.texture.FrameBuffer;
-import com.oculusvr.capi.EyeRenderDesc;
+import com.oculusvr.capi.GLTexture;
 import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.OvrSizei;
 import com.oculusvr.capi.OvrVector2i;
-import com.oculusvr.capi.OvrVector3f;
 import com.oculusvr.capi.Posef;
-import com.oculusvr.capi.Texture;
 import com.oculusvr.capi.TextureHeader;
 import oculusvr.input.OculusRift;
 
@@ -29,12 +27,12 @@ public class OculusFilter extends Filter {
 
     private int eyeIndex = 0;
     private Hmd hmd;
-    private Texture eyeTexture;
+    private GLTexture eyeTexture;
     private Posef pose;
     int textureId = -1;
     int eye;
     private static final Posef poses[] = (Posef[]) new Posef().toArray(2);
-    private static final Texture eyeTextures[] = (Texture[]) new Texture().toArray(2);
+    private static final GLTexture eyeTextures[] = (GLTexture[]) new GLTexture().toArray(2);
     
     private static int STATE = 0;
 
@@ -57,9 +55,8 @@ public class OculusFilter extends Filter {
     }
 
     public void setEyeTextureSize(OvrSizei size) {
-
-        TextureHeader eth = eyeTexture.Header;
-        eyeTexture.Header.TextureSize = size;
+        TextureHeader eth = eyeTexture.texture.Header;
+        eyeTexture.texture.Header.TextureSize = size;
         eth.RenderViewport.Size = eth.TextureSize;
         eth.RenderViewport.Pos = new OvrVector2i(0, 0);
         //System.out.println(eth.TextureSize.w + " " + eth.TextureSize.h);
@@ -73,7 +70,7 @@ public class OculusFilter extends Filter {
             if (material.getTextureParam("Texture") != null) {
                 com.jme3.texture.Texture t = material.getTextureParam("Texture").getTextureValue();
                 int id = t.getImage().getId();
-                eyeTexture.TextureId = id;
+                eyeTexture.ogl.TexId = id;
                 textureId = id;
             }
         }
@@ -106,7 +103,7 @@ public class OculusFilter extends Filter {
         }
     }
 
-    public Texture getEyeTexture() {
+    public GLTexture getEyeTexture() {
         return eyeTexture;
     }
 

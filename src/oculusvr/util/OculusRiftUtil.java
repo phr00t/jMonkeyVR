@@ -58,7 +58,7 @@ public class OculusRiftUtil {
 
         RenderAPIConfig rc = new RenderAPIConfig();
         rc.Header.API = OvrLibrary.ovrRenderAPIType.ovrRenderAPI_OpenGL;
-        rc.Header.RTSize = new OvrSizei(width, height);
+        rc.Header.BackBufferSize = new OvrSizei(width, height);
         rc.Header.Multisample = samples;
 
         int distortionCaps;

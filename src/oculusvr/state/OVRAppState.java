@@ -137,7 +137,6 @@ public class OVRAppState extends AbstractAppState {
 
         camRight = camLeft.clone();
         OvrSizei rightsize = prepareCameraResolution(1, camRight);
-        System.out.println(rightsize);
         camControl.setCamera2(camRight);
         camControl.setControlDir(CameraControl.ControlDirection.SpatialToCamera);
 //        camLeft.setViewPort(0.0f, 0.5f, 0.0f, 1.0f);

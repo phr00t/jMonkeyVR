@@ -55,11 +55,13 @@ public class OculusFilter extends Filter {
     }
 
     public void setEyeTextureSize(OvrSizei size) {
-        TextureHeader eth = eyeTexture.texture.Header;
-        eyeTexture.texture.Header.TextureSize = size;
-        eth.RenderViewport.Size = eth.TextureSize;
-        eth.RenderViewport.Pos = new OvrVector2i(0, 0);
-        //System.out.println(eth.TextureSize.w + " " + eth.TextureSize.h);
+        TextureHeader eth = eyeTexture.ogl.Header;
+        eth.TextureSize.w = size.w;
+        eth.TextureSize.h = size.h;
+        eth.RenderViewport.Size.w = eth.TextureSize.w;
+        eth.RenderViewport.Size.h = eth.TextureSize.h;
+        eth.RenderViewport.Pos.x = 0;
+        eth.RenderViewport.Pos.y = 0;
     }
 
     @Override

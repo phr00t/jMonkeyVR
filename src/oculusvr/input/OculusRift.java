@@ -121,8 +121,8 @@ public class OculusRift {
         return initHMDSuccess;
     }
     public static Hmd loadedHmd;
-    private static Quaternion orientation = new Quaternion(), orientationi = new Quaternion();
-    private static Vector3f position = new Vector3f(), positioni = new Vector3f(), posAcc = new Vector3f(), angAcc = new Vector3f();
+    private final static Quaternion orientation = new Quaternion(), orientationi = new Quaternion();
+    private final static Vector3f position = new Vector3f(), positioni = new Vector3f(), posAcc = new Vector3f(), angAcc = new Vector3f();
 
     // HMDInfo
     public static int getHResolution() {

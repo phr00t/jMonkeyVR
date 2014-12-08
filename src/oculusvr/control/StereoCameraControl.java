@@ -56,7 +56,7 @@ import oculusvr.util.OculusGuiNode.POSITIONING_MODE;
  */
 public class StereoCameraControl extends CameraControl {
 
-    private Quaternion lookDirection = new Quaternion();
+    private final Quaternion lookDirection = new Quaternion();
     protected Camera camera2;
     private float camHalfDistance = 0f;
     private Vector3f cameraOffset = new Vector3f(), spatialOffset, tempf = new Vector3f();
@@ -192,13 +192,13 @@ public class StereoCameraControl extends CameraControl {
     public void increaseDistance(){
         camHalfDistance += 0.001f;
         cameraOffset.setX(camHalfDistance);
-        Logger.getLogger(StereoCameraControl.class.getName()).log(Level.INFO, "Cam offset: " + camHalfDistance);
+        //Logger.getLogger(StereoCameraControl.class.getName()).log(Level.INFO, "Cam offset: " + camHalfDistance);
     }
     
     public void decreaseDistance(){
         camHalfDistance -= 0.001f;
         cameraOffset.setX(camHalfDistance);
-        Logger.getLogger(StereoCameraControl.class.getName()).log(Level.INFO, "Cam offset: " + camHalfDistance);
+        //Logger.getLogger(StereoCameraControl.class.getName()).log(Level.INFO, "Cam offset: " + camHalfDistance);
     }
 
     public float getCamHalfDistance() {

@@ -25,11 +25,7 @@ import com.jme3.system.AppSettings;
 import com.jme3.util.SafeArrayList;
 import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.OvrSizei;
-import com.oculusvr.capi.OvrVector2i;
 import com.oculusvr.capi.OvrVector3f;
-import com.oculusvr.capi.Posef;
-import com.oculusvr.capi.Texture;
-import com.oculusvr.capi.TextureHeader;
 import oculusvr.shadow.OculusDirectionalLightShadowRenderer;
 import java.util.List;
 import oculusvr.input.HMDInfo;
@@ -54,8 +50,6 @@ public class OVRAppState extends AbstractAppState {
     private HMDInfo info;
     private boolean flipEyes;
     private OculusGuiNode guiNode;
-    
-    private static final OvrVector3f eyeOffsets[] = (OvrVector3f[]) new OvrVector3f().toArray(2);
     
     public OVRAppState(OculusGuiNode guiNode, boolean flipEyes) {
         OculusRift.setAppState(this);
@@ -82,7 +76,7 @@ public class OVRAppState extends AbstractAppState {
 
     private OvrSizei prepareCameraResolution(int eyeIndex, Camera cam) {
         Matrix4f projMat = OculusRiftUtil.toMatrix4f(Hmd.getPerspectiveProjection(
-                OculusRift.getEyeRenderDesc(eyeIndex).Fov, cam.getFrustumNear(), cam.getFrustumFar(), true));              
+                 OculusRift.getEyeRenderDesc(eyeIndex).Fov, cam.getFrustumNear(), cam.getFrustumFar(), true));              
         OvrSizei size = OculusRift.loadedHmd.getFovTextureSize(eyeIndex, OculusRift.getEyeRenderDesc(eyeIndex).Fov, 1.0f); 
         if( size.w < app.getContext().getSettings().getWidth() ) {
             size.w = app.getContext().getSettings().getWidth();
@@ -139,8 +133,8 @@ public class OVRAppState extends AbstractAppState {
         OvrSizei rightsize = prepareCameraResolution(1, camRight);
         camControl.setCamera2(camRight);
         camControl.setControlDir(CameraControl.ControlDirection.SpatialToCamera);
-//        camLeft.setViewPort(0.0f, 0.5f, 0.0f, 1.0f);
-//        camRight.setViewPort(0.5f, 1f, 0.0f, 1f);
+        //camLeft.setViewPort(0.0f, 0.5f, 0.0f, 1.0f);
+        //camRight.setViewPort(0.5f, 1f, 0.0f, 1f);
         viewPortRight = app.getRenderManager().createMainView("Right viewport", camRight);
         viewPortRight.setClearFlags(true, true, true);
         viewPortRight.attachScene(this.app.getRootNode());

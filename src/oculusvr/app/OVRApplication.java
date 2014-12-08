@@ -5,7 +5,6 @@
 package oculusvr.app;
 
 import com.jme3.app.SimpleApplication;
-import static com.jme3.app.SimpleApplication.INPUT_MAPPING_EXIT;
 import com.jme3.input.KeyInput;
 import com.jme3.input.RawInputListener;
 import com.jme3.input.controls.ActionListener;
@@ -29,10 +28,10 @@ public class OVRApplication extends SimpleApplication{
 
     protected boolean useFOVMax, flipEyes, disable_vignette;
     protected OVRAppState ovrAppState;
-    private String TOGGLE_LOW_PERSISTENCE = "ToggleLowPersistence";
-    private String RESET_HMD = "ResetHMD";
+    private final String TOGGLE_LOW_PERSISTENCE = "ToggleLowPersistence";
+    private final String RESET_HMD = "ResetHMD";
     
-    private DismissWarningListener oculusListener = new DismissWarningListener();
+    private final DismissWarningListener oculusListener = new DismissWarningListener();
     
     private class DismissWarningListener implements RawInputListener {
 

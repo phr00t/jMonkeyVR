@@ -11,12 +11,10 @@ import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.OvrLibrary;
 import com.oculusvr.capi.OvrLibrary.ovrHmdCaps;
 import com.oculusvr.capi.OvrMatrix4f;
-import com.oculusvr.capi.OvrSizei;
 import com.oculusvr.capi.RenderAPIConfig;
 import com.sun.jna.Pointer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import oculusvr.input.OculusRift;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.opengl.Display;
 
@@ -58,7 +56,8 @@ public class OculusRiftUtil {
 
         RenderAPIConfig rc = new RenderAPIConfig();
         rc.Header.API = OvrLibrary.ovrRenderAPIType.ovrRenderAPI_OpenGL;
-        rc.Header.BackBufferSize = new OvrSizei(width, height);
+        rc.Header.BackBufferSize.w = width;
+        rc.Header.BackBufferSize.h = height;
         rc.Header.Multisample = samples;
 
         int distortionCaps;

@@ -29,9 +29,9 @@ public class OculusGuiNode extends Node {
     private float guiDistance, guiScale = 1f;
     private POSITIONING_MODE posMode = POSITIONING_MODE.MANUAL;
     
-    private Vector3f look = new Vector3f(), left = new Vector3f();
-    private Matrix3f orient = new Matrix3f();
-    private Quaternion tempq = new Quaternion();
+    private final Vector3f look = new Vector3f(), left = new Vector3f();
+    private final Matrix3f orient = new Matrix3f();
+    private final Quaternion tempq = new Quaternion();
     
     private int oHeight, oWidth;
     

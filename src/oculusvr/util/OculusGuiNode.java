@@ -60,7 +60,7 @@ public class OculusGuiNode extends Node {
                       guiDistance * 0.0035f * guiScale);
         if( cam != null ) {
             Vector3f campos = cam.getLocation();
-            guiPos.set(guiDistance * 1.35f * oWidth / 800f * guiScale,
+            guiPos.set(guiDistance * 1.3f * oWidth / 800f * guiScale,
                       -guiDistance * oHeight * guiScale / 600f, guiDistance);
             cam.getRotation().mult(guiPos, guiPos);
             guiPos.x += campos.x;

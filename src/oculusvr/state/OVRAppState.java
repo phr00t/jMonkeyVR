@@ -137,6 +137,7 @@ public class OVRAppState extends AbstractAppState {
         //camRight.setViewPort(0.5f, 1f, 0.0f, 1f);
         viewPortRight = app.getRenderManager().createMainView("Right viewport", camRight);
         viewPortRight.setClearFlags(true, true, true);
+        viewPortRight.setBackgroundColor(viewPortLeft.getBackgroundColor());
         viewPortRight.attachScene(this.app.getRootNode());
 
         filterLeft=new OculusFilter(OculusRift.loadedHmd, 0);

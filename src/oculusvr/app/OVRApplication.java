@@ -15,6 +15,8 @@ import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
+import com.jme3.system.JmeSystem;
+import com.jme3.system.Platform;
 import oculusvr.input.OculusRift;
 import oculusvr.state.OVRAppState;
 import oculusvr.util.OculusGuiNode;
@@ -78,8 +80,11 @@ public class OVRApplication extends SimpleApplication{
 
     public OVRApplication() {
         super();
-        guiNode = new OculusGuiNode();        
-        OculusRift.initialize();
+        guiNode = new OculusGuiNode();       
+        // if we are linux 32bit, don't try and init Rift, since no native exists
+        if( JmeSystem.getPlatform() != Platform.Linux32 ) {
+            OculusRift.initialize();
+        }
     }
     
     public void preconfigureOVRApp(boolean disable_vignette, boolean force_max_fov, boolean flip_eyes, boolean force_oculus) {

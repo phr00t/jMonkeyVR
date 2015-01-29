@@ -42,9 +42,7 @@ public class OculusRift {
         initHMDSuccess = loadedHmd != null;
         if (initHMDSuccess) {
             updateHMDInfo();
-            System.out.println("Oculus Rift initialized: " + info);
-            
-            
+            System.out.println("Oculus Rift initialized: " + info);                        
         } else {
             System.out.println("Oculus Rift NOT found or initialized; virtual DK2 created.");
             loadedHmd = Hmd.createDebug(OvrLibrary.ovrHmdType.ovrHmd_DK2);
@@ -255,6 +253,7 @@ public class OculusRift {
     }
     
     public static void toggleLowPersistence(){
+        if( loadedHmd == null ) return;
         int caps = loadedHmd.getEnabledCaps();
         if (0 != (caps & OvrLibrary.ovrHmdCaps.ovrHmdCap_LowPersistence)) {
             System.out.println("LOW PERSISTENCE OFF");

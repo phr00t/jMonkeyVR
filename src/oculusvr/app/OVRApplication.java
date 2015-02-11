@@ -4,6 +4,7 @@
  */
 package oculusvr.app;
 
+import com.jme3.app.LostFocusBehavior;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.RawInputListener;
@@ -119,6 +120,7 @@ public class OVRApplication extends SimpleApplication{
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));
             stateManager.attach(ovrAppState);
             
+            setLostFocusBehavior(LostFocusBehavior.Disabled);
         }
     }
 
@@ -133,26 +135,6 @@ public class OVRApplication extends SimpleApplication{
         reset(); // reset position when the warning gets removed
         inputManager.removeRawInputListener(oculusListener);
     }
-    
-    @Override
-    public void gainFocus(){
-        if (pauseOnFocus) {
-            paused = false;
-            //context.setAutoFlushFrames(true);
-            if (inputManager != null) {
-                inputManager.reset();
-            }
-        }
-    }
-
-    @Override
-    public void loseFocus(){
-        if (pauseOnFocus){
-            paused = true;
-            //context.setAutoFlushFrames(false);
-        }
-    }
-    
     
     public void reset(){
         OculusRift.reset();

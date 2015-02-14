@@ -13,7 +13,6 @@ MaterialDef FastSSAO {
         Float Bias
 
         Vector2 FrustumNearFar
-        Vector3Array Samples
     }
 
         Technique {

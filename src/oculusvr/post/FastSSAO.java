@@ -27,20 +27,6 @@ public class FastSSAO extends Filter{
 private Pass normalPass;
 private Vector3f frustumCorner;
 private Vector2f frustumNearFar;
-private Vector3f[] samples = {
-new Vector3f(0.5f, 0.0f, 0.5f),
-new Vector3f(-0.5f, 0.0f, 0.5f),
-new Vector3f(0.0f, 0.5f, 0.5f),
-new Vector3f(0.0f, -0.5f, 0.5f),
-new Vector3f(0.5f, 0.0f, 0.0f),
-new Vector3f(-0.5f, 0.0f, 0.0f),
-new Vector3f(0.0f, 0.5f, 0.0f),
-new Vector3f(0.0f, -0.5f, 0.0f),
-new Vector3f(0.5f, 0.0f, -0.5f),
-new Vector3f(-0.5f, 0.0f, -0.5f),
-new Vector3f(0.0f, 0.5f, -0.5f),
-new Vector3f(0.0f, -0.5f, -0.5f)
-};
 // Wide area occlusion settings
 private float sampleRadius = 3.0f;
 private float intensity = 10.2f;
@@ -147,7 +133,6 @@ material.setFloat("Bias", bias);
 
 material.setVector3("FrustumCorner", frustumCorner);
 material.setVector2("FrustumNearFar", frustumNearFar);
-material.setParam("Samples", VarType.Vector3Array, samples);
 }
 
 /**

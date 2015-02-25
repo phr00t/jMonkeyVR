@@ -16,6 +16,7 @@ import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
+import com.jme3.system.AppSettings;
 import com.jme3.system.JmeSystem;
 import com.jme3.system.Platform;
 import oculusvr.input.OculusRift;
@@ -111,7 +112,6 @@ public class OVRApplication extends SimpleApplication{
         if( OculusRift.isInitialized() ) {
             OculusRiftUtil.useMaxEyeFov(useFOVMax);
             OculusRiftUtil.disableVignette(disable_vignette);
-
             ovrAppState = new OVRAppState((OculusGuiNode)guiNode, flipEyes);
             ovrAppState.getGuiNode().setPositioningMode(OculusGuiNode.POSITIONING_MODE.AUTO);
             inputManager.addRawInputListener(oculusListener);
@@ -124,6 +124,15 @@ public class OVRApplication extends SimpleApplication{
         }
     }
 
+    @Override
+    public void start() {
+        super.start();
+        // if rift is initialized, don't have jme3 swap buffers
+        settings.setSwapBuffers(!OculusRift.isInitialized());
+        //re-setting settings they can have been merged from the registry.
+        setSettings(settings);
+    }
+    
     @Override
     protected void finalize() throws Throwable {
         super.finalize(); //To change body of generated methods, choose Tools | Templates.

@@ -121,8 +121,7 @@ public class OVRAppState extends AbstractAppState {
         
         cloneProcessors();        
         if( flipEyes ) camControl.swapCameras();
-        
-        app.getContext().setAutoFlushFrames(false);
+
         app.setPauseOnLostFocus(false);
     }  
     

@@ -42,6 +42,7 @@ public class Main extends VRApplication {
 <i>PRO-TIP: Use anisotropic filtering! Textures will be very blurry otherwise!</i>
 
 <b>Using the GUI</b>
+
 The GUI system has two options: automatic & manual positioning. Automatic positioning will always keep the GUI elements floating infront of the view, while manual will let you center it manually, where it will stay as the player moves their head. The default is manual positioning.
 
 You can change options like so:

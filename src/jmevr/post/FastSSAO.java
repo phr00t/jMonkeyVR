@@ -111,7 +111,7 @@ frustumNearFar.x = vp.getCamera().getFrustumNear();
 frustumNearFar.y = vp.getCamera().getFrustumFar();
 
 //ssao Pass
-material = new Material(manager, "oculusvr/shaders/FastSSAO.j3md");
+material = new Material(manager, "jmevr/shaders/FastSSAO.j3md");
 material.setTexture("Normals", normalPass.getRenderedTexture());
 
 ssaoPass = new Pass() {

@@ -4,6 +4,7 @@
  */
 package jmevr.app;
 
+import com.jme3.app.Application;
 import com.jme3.app.LostFocusBehavior;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
@@ -17,9 +18,9 @@ import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
 import com.jme3.system.Platform;
-import com.oculusvr.capi.Hmd;
 import jmevr.input.OculusRift;
 import jmevr.input.VRHMD;
 import jmevr.state.VRAppState;
@@ -141,11 +142,25 @@ public class VRApplication extends SimpleApplication{
 
     @Override
     public void start() {
-        super.start();
-        // if rift is initialized, don't have jme3 swap buffers
-        settings.setSwapBuffers(VRhardware.isInitialized());
+        // set some default settings in-case
+        // settings dialog is not shown
+        boolean loadSettings = false;
+        if (settings == null) {
+            setSettings(new AppSettings(true));
+            loadSettings = true;
+        }
+
+        // show settings dialog
+        if (showSettings) {
+            if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
+                return;
+            }
+        }
+        //swap buffers setting
+        settings.setSwapBuffers(!VRhardware.isInitialized());
         //re-setting settings they can have been merged from the registry.
         setSettings(settings);
+        start(JmeContext.Type.Display, false);
     }
     
     @Override

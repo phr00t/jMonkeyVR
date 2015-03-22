@@ -180,7 +180,6 @@ public class VRAppState extends AbstractAppState {
         viewPortLeft.addProcessor(ppLeft);
         viewPortRight.addProcessor(ppRight);        
         ppRight.addFilter(filterRight);          
-        //app.getContext().setAutoFlushFrames(false);
     }
     
     @Override

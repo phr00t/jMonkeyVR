@@ -12,33 +12,27 @@ import com.jme3.math.Vector3f;
  *
  * @author phr00t
  */
-public interface VRHMD {
+public interface VRInput {
     
-    // identification
+    // identification for input
     public String getName();
     
     // init & de-init
-    public boolean initialize();   
-    public void forceInitializeSuccess();    
-    public void initRendering(int width, int height, int samples);
-    public HMDInfo updateHMDInfo();
-    public HMDInfo getHMDInfo();
-    public void destroy();    
+    public boolean initialize();    
+    public boolean destroy();    
     public boolean isInitialized();
     public void reset();
-
-    // HMDInfo
-    public int getHResolution();    
-    public float getFOV();
-    public int getVResolution();
-    public float getInterpupillaryDistance();
-    public float getEyeHeight();
-
-    // orientation and pos info
+    
+    // orientation/pos info
     public Quaternion getOrientation();    
     public Vector3f getPosition();    
     public Vector3f getAngularAcceleration();
     public Vector3f getPositionalAcceleration();    
     public Vector3f getAccelerometer();
-
+    
+    // controller input options
+    public Vector3f getAnalogButton(int index, Vector3f store);
+    public boolean getDigitalButton(int index);
+    public int getDigitalButtonCount();
+    public int getAnalogButtonCount();
 }

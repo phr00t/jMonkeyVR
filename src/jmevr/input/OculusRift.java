@@ -256,4 +256,9 @@ public class OculusRift implements VRHMD {
             loadedHmd.setEnabledCaps(caps | OvrLibrary.ovrHmdCaps.ovrHmdCap_LowPersistence);
         }
     }
+
+    @Override
+    public String getName() {
+        return "Oculus Rift";
+    }
 }

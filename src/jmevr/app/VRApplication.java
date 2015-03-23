@@ -21,8 +21,10 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
 import com.jme3.system.Platform;
+import java.util.ArrayList;
 import jmevr.input.OculusRift;
 import jmevr.input.VRHMD;
+import jmevr.input.VRInput;
 import jmevr.state.VRAppState;
 import jmevr.util.VRGuiNode;
 import jmevr.util.OculusRiftUtil;
@@ -35,6 +37,7 @@ public class VRApplication extends SimpleApplication{
 
     private static VRHMD VRhardware;    
     private static VRAppState VRappstate;
+    private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     protected boolean useFOVMax, flipEyes, disable_vignette;
     private final String TOGGLE_LOW_PERSISTENCE = "ToggleLowPersistence";
@@ -44,30 +47,38 @@ public class VRApplication extends SimpleApplication{
     
     private class DismissWarningListener implements RawInputListener {
 
+        @Override
         public void beginInput() {
         }
 
+        @Override
         public void endInput() {
         }
 
+        @Override
         public void onJoyAxisEvent(JoyAxisEvent evt) {
         }
 
+        @Override
         public void onJoyButtonEvent(JoyButtonEvent evt) {
             dismissWarning();
         }
 
+        @Override
         public void onMouseMotionEvent(MouseMotionEvent evt) {
         }
 
+        @Override
         public void onMouseButtonEvent(MouseButtonEvent evt) {
             dismissWarning();
         }
 
+        @Override
         public void onKeyEvent(KeyInputEvent evt) {
             dismissWarning();
         }
 
+        @Override
         public void onTouchEvent(TouchEvent evt) {
             dismissWarning();
         }
@@ -111,12 +122,21 @@ public class VRApplication extends SimpleApplication{
         }               
     }
     
+    public static ArrayList<VRInput> getVRinputs() {
+        return VRinput;
+    }
+    
     public static VRAppState getVRAppState() {
         return VRappstate;
     }
     
     public static VRHMD getVRHardware() {
         return VRhardware;
+    }
+    
+    private static void initVRinput() {
+        // try and detect any VR input controllers
+        // check for Vive controllers, add as needed etc.
     }
     
     @Override
@@ -135,7 +155,7 @@ public class VRApplication extends SimpleApplication{
             inputManager.addMapping(TOGGLE_LOW_PERSISTENCE, new KeyTrigger(KeyInput.KEY_F10));
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));
             stateManager.attach(VRappstate);
-            
+            initVRinput();
             setLostFocusBehavior(LostFocusBehavior.Disabled);
         }
     }
@@ -167,6 +187,9 @@ public class VRApplication extends SimpleApplication{
     protected void finalize() throws Throwable {
         super.finalize(); //To change body of generated methods, choose Tools | Templates.
         VRhardware.destroy();
+        for(int i=0;i<VRinput.size();i++) {
+            VRinput.get(i).destroy();
+        }
     }
     
     public void dismissWarning(){
@@ -179,5 +202,8 @@ public class VRApplication extends SimpleApplication{
     
     public void reset(){
         VRhardware.reset();
+        for(int i=0;i<VRinput.size();i++) {
+            VRinput.get(i).reset();
+        }
     }
 }

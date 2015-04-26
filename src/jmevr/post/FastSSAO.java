@@ -121,8 +121,8 @@ return true;
 }
 };
 ssaoPass.init(renderManager.getRenderer(), screenWidth, screenHeight, Format.RGBA8, Format.Depth, 1, material);
-ssaoPass.getRenderedTexture().setMinFilter(Texture.MinFilter.Trilinear);
-ssaoPass.getRenderedTexture().setMagFilter(Texture.MagFilter.Bilinear);
+ssaoPass.getRenderedTexture().setMinFilter(Texture.MinFilter.NearestNoMipMaps);
+ssaoPass.getRenderedTexture().setMagFilter(Texture.MagFilter.Nearest);
 postRenderPasses.add(ssaoPass);
 
 material.setFloat("SampleRadius", sampleRadius);

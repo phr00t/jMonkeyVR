@@ -4,7 +4,6 @@
  */
 package jmevr.app;
 
-import com.jme3.app.Application;
 import com.jme3.app.LostFocusBehavior;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
@@ -20,9 +19,9 @@ import com.jme3.input.event.TouchEvent;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
-import com.jme3.system.Platform;
 import java.util.ArrayList;
 import jmevr.input.OculusRift;
+import jmevr.input.OpenVR;
 import jmevr.input.VRHMD;
 import jmevr.input.VRInput;
 import jmevr.state.VRAppState;
@@ -100,14 +99,10 @@ public class VRApplication extends SimpleApplication{
         super();
         guiNode = new VRGuiNode();       
         
-        // have to detect & pick which hardware we are going to use
-        // for now, just pick the Oculus Rift for obvious reasons :)
-        VRhardware = new OculusRift();
-        
-        // if we are linux 32bit, don't try and init Rift, since no native exists
-        if( JmeSystem.getPlatform() != Platform.Linux32 ) {
-            VRhardware.initialize();
-        }
+        // we are going to use OpenVR now, not the Oculus Rift
+        // OpenVR does support the Rift
+        VRhardware = new OpenVR();
+        VRhardware.initialize();
     }
     
     public void preconfigureVRApp(boolean disable_vignette, boolean force_max_fov, boolean flip_eyes, boolean force_vr) {

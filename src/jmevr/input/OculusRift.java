@@ -6,6 +6,8 @@ package jmevr.input;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.system.JmeSystem;
+import com.jme3.system.Platform;
 import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.OvrLibrary;
@@ -41,8 +43,12 @@ public class OculusRift implements VRHMD {
     
     // returns true if it was successfully loaded
     public boolean initialize() {
-        Hmd.initialize();
-        loadedHmd = Hmd.create(0);
+        if( JmeSystem.getPlatform() != Platform.Linux32 ) {
+            Hmd.initialize();
+            loadedHmd = Hmd.create(0);
+        } else {
+            loadedHmd = null;
+        }
         initHMDSuccess = loadedHmd != null;
         if (initHMDSuccess) {
             updateHMDInfo();

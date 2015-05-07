@@ -40,8 +40,8 @@ public class OpenVR implements VRHMD {
             return false;
         } else {
             System.out.println("OpenVR initialized & VR connected.");
-            hmdDeviceIndex = Pointer.allocateLong();
-            hmdDeviceIndex.setLong(Openvr_apiLibrary.k_unTrackedDeviceIndex_Hmd);
+            hmdDeviceIndex = Pointer.allocateInt();
+            hmdDeviceIndex.setInt(Openvr_apiLibrary.k_unTrackedDeviceIndex_Hmd);
             return true;
         }
     }

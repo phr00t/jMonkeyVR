@@ -10,8 +10,6 @@ import com.jme3.math.Vector3f;
 import openvr_api.IVRSystem;
 import openvr_api.Openvr_apiLibrary;
 import org.bridj.Pointer;
-import org.bridj.Pointer.StringType;
-import org.bridj.PointerIO;
 
 /**
  *
@@ -23,6 +21,9 @@ public class OpenVR implements VRHMD {
     private static IVRSystem vrsystem;
     private static boolean forceInitialize = false;
     
+    private static Pointer hmdDeviceIndex;
+    private static Pointer hmdErrorStore;
+    
     @Override
     public String getName() {
         return "OpenVR";
@@ -30,16 +31,17 @@ public class OpenVR implements VRHMD {
 
     @Override
     public boolean initialize() {
-        Pointer l = Pointer.allocateLong();
-        Pointer<IVRSystem> pvr = openvr.vRInit(l);
-        if( pvr != null ) vrsystem = pvr.get();        
-        long res = l.getLong();
-        if( res != 0 ) {
-            Pointer str = Pointer.pointerToAddress(openvr.vRGetStringForHmdError(res), (PointerIO)null);
-            System.out.println("OpenVR Initialize Result: " + str.getString(StringType.C));
+        hmdErrorStore = Pointer.allocateLong();
+        Pointer pvr = openvr.vRInit(hmdErrorStore);
+        if( pvr != null ) vrsystem = (IVRSystem)pvr.get();
+        if( hmdErrorStore.getLong() != 0 ) {
+            String errstr = openvr.vRGetStringForHmdError(hmdErrorStore);
+            System.out.println("OpenVR Initialize Result: " + errstr);
             return false;
         } else {
             System.out.println("OpenVR initialized & VR connected.");
+            hmdDeviceIndex = Pointer.allocateLong();
+            hmdDeviceIndex.setLong(Openvr_apiLibrary.k_unTrackedDeviceIndex_Hmd);
             return true;
         }
     }
@@ -87,7 +89,8 @@ public class OpenVR implements VRHMD {
 
     @Override
     public float getFOV() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if( vrsystem == null ) return 130f;
+        return vrsystem.getFloatTrackedDeviceProperty(hmdDeviceIndex, Openvr_apiLibrary.TrackedDeviceProperty.Prop_FieldOfViewBottomDegrees_Float, hmdErrorStore);
     }
 
     @Override
@@ -97,7 +100,8 @@ public class OpenVR implements VRHMD {
 
     @Override
     public float getInterpupillaryDistance() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if( vrsystem == null ) return 0.064f;
+        return vrsystem.getFloatTrackedDeviceProperty(hmdDeviceIndex, Openvr_apiLibrary.TrackedDeviceProperty.Prop_UserIpdMeters_Float, hmdErrorStore);
     }
 
     @Override

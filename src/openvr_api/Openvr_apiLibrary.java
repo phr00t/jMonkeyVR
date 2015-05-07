@@ -2,6 +2,7 @@ package openvr_api;
 import org.bridj.BridJ;
 import org.bridj.IntValuedEnum;
 import org.bridj.Pointer;
+import org.bridj.Pointer.StringType;
 import org.bridj.PointerIO;
 import org.bridj.ann.Library;
 import org.bridj.ann.Name;
@@ -56,8 +57,8 @@ public class Openvr_apiLibrary implements IOpenvr_api {
 	 * <i>native declaration : /usr/include/stdint.h:1357</i>
 	 */
 	@Name("VR_GetStringForHmdError") 
-	public Pointer<Byte > vRGetStringForHmdError(Pointer<IOpenvr_api.HmdError> error) {
-		return (Pointer)Pointer.pointerToAddress(vRGetStringForHmdError(Pointer.getPeer(error)), Byte.class, null);
+	public String vRGetStringForHmdError(Pointer error) {
+		return ((Pointer)Pointer.pointerToAddress(vRGetStringForHmdError(error.getLong()), Byte.class, null)).getString(StringType.C);
 	}
 	@Name("VR_GetStringForHmdError") 
 	@Ptr 

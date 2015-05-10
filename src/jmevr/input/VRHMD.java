@@ -5,6 +5,7 @@
  */
 package jmevr.input;
 
+import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
@@ -40,5 +41,7 @@ public interface VRHMD {
     public Vector3f getAngularAcceleration();
     public Vector3f getPositionalAcceleration();    
     public Vector3f getAccelerometer();
+    public Matrix4f getPositionAndOrientation();
+    public Matrix4f getEyeTransform(int eye);
 
 }

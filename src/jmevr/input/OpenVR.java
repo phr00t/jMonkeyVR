@@ -66,7 +66,6 @@ public class OpenVR implements VRHMD {
             System.out.println("OpenVR initialized & VR connected.");
             hmdDeviceIndex = Pointer.allocateInt();
             hmdDeviceIndex.setInt(Openvr_apiLibrary.k_unTrackedDeviceIndex_Hmd);
-            Pointer compositor = Pointer.allocateLong();
             
             // this was taken straight from https://raw.githubusercontent.com/ValveSoftware/openvr/master/headers/openvr.h
             // static const char * const IVRCompositor_Version = "IVRCompositor_005";
@@ -74,9 +73,8 @@ public class OpenVR implements VRHMD {
             Pointer ivr_comp_version = Pointer.allocateChars(ivr_string.length() + 1); // add one for null termination
             ivr_comp_version.setString(ivr_string, StringType.C);
             
-            compositor = openvr.vRGetGenericInterface(ivr_comp_version, hmdErrorStore);
-            if(compositor != null && hmdErrorStore.getLong() != 0){
-                
+            Pointer compositor = openvr.vRGetGenericInterface(ivr_comp_version, hmdErrorStore);
+            if(compositor != null && hmdErrorStore.getLong() != 0){                
                 vrCompositor = (IVRCompositor) compositor.get();
                 hmdDisplayFrequency = Pointer.allocateInt();
                 hmdDisplayFrequency.setInt( (int) Openvr_apiLibrary.TrackedDeviceProperty.Prop_DisplayFrequency_Float.value);

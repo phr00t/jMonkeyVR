@@ -26,6 +26,7 @@ public class IVRCompositor extends CPPObject {
 	static {
 		BridJ.register();
 	}
+        
 	/**
 	 * Original signature : <code>uint32_t GetLastError(char*, uint32_t)</code><br>
 	 * <i>native declaration : /usr/include/stdint.h:1119</i>

@@ -7,7 +7,9 @@ package jmevr.input;
 
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import jmevr.util.OpenVRUtil;
 import openvr_api.HmdMatrix34_t;
 import openvr_api.HmdMatrix44_t;
@@ -119,8 +121,21 @@ public class OpenVR implements VRHMD {
         vrsystem.resetSeatedZeroPose();
     }
 
+    public void getRenderSize(Vector2f store) {
+        if( vrsystem == null ) {
+            store.x = 1280f;
+            store.y = 800f;
+        } else {
+            Pointer x = Pointer.allocateInt();
+            Pointer y = Pointer.allocateInt();
+            vrsystem.getRecommendedRenderTargetSize(x, y);
+            store.x = x.getInt();
+            store.y = y.getInt();
+        }
+    }
+    
     @Override
-    public int getHResolution() {
+    public int getHResolution() {        
         return 1280; // i don't think this is used/needed...
     }
 
@@ -188,7 +203,7 @@ public class OpenVR implements VRHMD {
             float fSecondsUntilPhotons = fFrameDuration - fSecondsSinceLastVsync + vrsystem.getFloatTrackedDeviceProperty(hmdDeviceIndex, (IntValuedEnum<IOpenvr_api.TrackedDeviceProperty>) hmdDisplayFrequency, hmdErrorStore);
             vrsystem.getDeviceToAbsoluteTrackingPose(Openvr_apiLibrary.TrackingUniverseOrigin.TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePose, unMaxTrackedDeviceCount);
         }
-        //int validPoseCount = 0;
+        //int validPoseCount = 0; //not currently used... commenting for now
         //String poseClasses = "";
         for (int nDevice = 0; nDevice < unMaxTrackedDeviceCount; ++nDevice ){
             if(((TrackedDevicePose_t)hmdTrackedDevicePose.get(nDevice)).bPoseIsValid()){
@@ -228,15 +243,15 @@ public class OpenVR implements VRHMD {
         return null;
     }
     
-    private Matrix4f getHMDMatrixProjectionEye(int eye){
+    public Matrix4f getHMDMatrixProjectionEye(int eye, Camera cam){
         if(vrsystem == null){
             return new Matrix4f();
         }
-        HmdMatrix44_t mat = vrsystem.getProjectionMatrix(eye == 0 ? IOpenvr_api.Hmd_Eye.Eye_Left : IOpenvr_api.Hmd_Eye.Eye_Left, 0.1f, 1000f, IOpenvr_api.GraphicsAPIConvention.API_OpenGL);
+        HmdMatrix44_t mat = vrsystem.getProjectionMatrix(eye == 0 ? IOpenvr_api.Hmd_Eye.Eye_Left : IOpenvr_api.Hmd_Eye.Eye_Left, cam.getFrustumNear(), cam.getFrustumFar(), IOpenvr_api.GraphicsAPIConvention.API_OpenGL);
         return OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, eye == 0 ? hmdProjectionLeftEye : hmdProjectionRightEye);
     }
         
-    private Matrix4f getHMDMatrixPoseEye(int eye){
+    public Matrix4f getHMDMatrixPoseEye(int eye){
         if(vrsystem == null){
             return new Matrix4f();
         }

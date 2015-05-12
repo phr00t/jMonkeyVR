@@ -36,6 +36,7 @@ public interface VRHMD {
     public float getEyeHeight();
 
     // orientation and pos info
+    public void updatePose();
     public Quaternion getOrientation();    
     public Vector3f getPosition();    
     public Vector3f getAngularAcceleration();

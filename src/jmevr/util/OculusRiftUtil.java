@@ -22,6 +22,7 @@ import org.lwjgl.opengl.Display;
  *
  * @author reden
  */
+@Deprecated
 public class OculusRiftUtil {
 
     private static boolean maxFOV = false, dis_vig = false;

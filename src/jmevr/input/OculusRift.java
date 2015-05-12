@@ -4,6 +4,7 @@
  */
 package jmevr.input;
 
+import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.system.JmeSystem;
@@ -22,6 +23,7 @@ import jmevr.util.OculusRiftUtil;
  *
  * @author Rickard
  */
+@Deprecated
 public class OculusRift implements VRHMD {
 
     private final Quaternion orientation = new Quaternion(), orientationi = new Quaternion();
@@ -266,5 +268,20 @@ public class OculusRift implements VRHMD {
     @Override
     public String getName() {
         return "Oculus Rift";
+    }
+
+    @Override
+    public void updatePose() {
+        // not needed
+    }
+
+    @Override
+    public Matrix4f getPositionAndOrientation() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Matrix4f getEyeTransform(int eye) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

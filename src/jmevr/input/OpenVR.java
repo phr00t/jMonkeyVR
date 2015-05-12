@@ -36,6 +36,7 @@ public class OpenVR implements VRHMD {
     
     private static Pointer hmdErrorStore;
     
+    private final HMDInfo hmdinfo = new HMDInfo();
     private Matrix4f[] poseMatrices;
     private char[] devClassChar;
     private Matrix4f hmdPose;
@@ -87,17 +88,19 @@ public class OpenVR implements VRHMD {
 
     @Override
     public void initRendering(int width, int height, int samples) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO: this
     }
 
     @Override
     public HMDInfo updateHMDInfo() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         // i think this is the only value used...
+        hmdinfo.InterpupillaryDistance = getInterpupillaryDistance();
+        return hmdinfo;
     }
 
     @Override
     public HMDInfo getHMDInfo() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return hmdinfo;
     }
 
     @Override
@@ -118,7 +121,7 @@ public class OpenVR implements VRHMD {
 
     @Override
     public int getHResolution() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 1280; // i don't think this is used/needed...
     }
 
     @Override
@@ -129,7 +132,7 @@ public class OpenVR implements VRHMD {
 
     @Override
     public int getVResolution() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 800; // i don't think this is used/needed...
     }
 
     @Override
@@ -168,7 +171,8 @@ public class OpenVR implements VRHMD {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    private void updateHMDMatrixPose(){
+    @Override
+    public void updatePose(){
         if(vrsystem == null){
             return;
         }
@@ -177,18 +181,18 @@ public class OpenVR implements VRHMD {
             vrCompositor.waitGetPoses(hmdTrackedDevicePose, unMaxTrackedDeviceCount);
         } else {
             // We just got done with the glFinish - the seconds since last vsync should be 0.
-		float fSecondsSinceLastVsync = 0.0f;
+            float fSecondsSinceLastVsync = 0.0f;
                 
-                float fFrameDuration = 1.0f / vrsystem.getFloatTrackedDeviceProperty( hmdDeviceIndex, (IntValuedEnum<IOpenvr_api.TrackedDeviceProperty>) hmdDisplayFrequency, hmdErrorStore);
+            float fFrameDuration = 1.0f / vrsystem.getFloatTrackedDeviceProperty( hmdDeviceIndex, (IntValuedEnum<IOpenvr_api.TrackedDeviceProperty>) hmdDisplayFrequency, hmdErrorStore);
                 
-                float fSecondsUntilPhotons = fFrameDuration - fSecondsSinceLastVsync + vrsystem.getFloatTrackedDeviceProperty(hmdDeviceIndex, (IntValuedEnum<IOpenvr_api.TrackedDeviceProperty>) hmdDisplayFrequency, hmdErrorStore);
-                vrsystem.getDeviceToAbsoluteTrackingPose(Openvr_apiLibrary.TrackingUniverseOrigin.TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePose, unMaxTrackedDeviceCount);
+            float fSecondsUntilPhotons = fFrameDuration - fSecondsSinceLastVsync + vrsystem.getFloatTrackedDeviceProperty(hmdDeviceIndex, (IntValuedEnum<IOpenvr_api.TrackedDeviceProperty>) hmdDisplayFrequency, hmdErrorStore);
+            vrsystem.getDeviceToAbsoluteTrackingPose(Openvr_apiLibrary.TrackingUniverseOrigin.TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePose, unMaxTrackedDeviceCount);
         }
-        int validPoseCount = 0;
-        String poseClasses = "";
+        //int validPoseCount = 0;
+        //String poseClasses = "";
         for (int nDevice = 0; nDevice < unMaxTrackedDeviceCount; ++nDevice ){
             if(((TrackedDevicePose_t)hmdTrackedDevicePose.get(nDevice)).bPoseIsValid()){
-                validPoseCount++;
+                //validPoseCount++;
                 OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(((TrackedDevicePose_t)hmdTrackedDevicePose.get(nDevice)).mDeviceToAbsoluteTracking(), poseMatrices[nDevice]);
                 if(devClassChar[nDevice] == 0){
                     IntValuedEnum<IOpenvr_api.TrackedDeviceClass > trackedDeviceClass = vrsystem.getTrackedDeviceClass((Pointer<IOpenvr_api.TrackedDeviceIndex_t>) hmdDeviceIndex.get(nDevice));
@@ -206,7 +210,7 @@ public class OpenVR implements VRHMD {
                         devClassChar[nDevice] = '?';
                     }
                 }
-                poseClasses += devClassChar[nDevice];
+                //poseClasses += devClassChar[nDevice];
             }
         }
         if (((TrackedDevicePose_t)hmdTrackedDevicePose.get(hmdDeviceIndex.getInt())).bPoseIsValid()){

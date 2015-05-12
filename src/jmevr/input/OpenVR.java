@@ -20,6 +20,7 @@ import openvr_api.Openvr_apiLibrary;
 import openvr_api.TrackedDevicePose_t;
 import org.bridj.IntValuedEnum;
 import org.bridj.Pointer;
+import org.bridj.Pointer.StringType;
 
 /**
  *
@@ -66,7 +67,14 @@ public class OpenVR implements VRHMD {
             hmdDeviceIndex = Pointer.allocateInt();
             hmdDeviceIndex.setInt(Openvr_apiLibrary.k_unTrackedDeviceIndex_Hmd);
             Pointer compositor = Pointer.allocateLong();
-            //compositor = openvr.vRGetGenericInterface( /** IVRCompositor_Version */, hmdErrorStore); //TODO: how do i find out the Compositor_Version?
+            
+            // this was taken straight from https://raw.githubusercontent.com/ValveSoftware/openvr/master/headers/openvr.h
+            // static const char * const IVRCompositor_Version = "IVRCompositor_005";
+            String ivr_string = "IVRCompositor_005";
+            Pointer ivr_comp_version = Pointer.allocateChars(ivr_string.length() + 1); // add one for null termination
+            ivr_comp_version.setString(ivr_string, StringType.C);
+            
+            compositor = openvr.vRGetGenericInterface(ivr_comp_version, hmdErrorStore);
             if(compositor != null && hmdErrorStore.getLong() != 0){
                 
                 vrCompositor = (IVRCompositor) compositor.get();

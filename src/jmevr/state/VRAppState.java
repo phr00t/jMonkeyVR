@@ -90,9 +90,8 @@ public class VRAppState extends AbstractAppState {
             size.x = osize.w;
             size.y = osize.h;
         } else if( vrhmd instanceof OpenVR ) {
-            //debug TODO
-            size.x = 1280f;
-            size.y = 800f;
+            projMat = ((OpenVR)vrhmd).getHMDMatrixProjectionEye(eyeIndex, cam);
+            ((OpenVR)vrhmd).getRenderSize(size);
         }
         
         if( size.x < app.getContext().getSettings().getWidth() ) {

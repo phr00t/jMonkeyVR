@@ -6,6 +6,7 @@ package jmevr.post;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.math.Vector2f;
 import com.jme3.post.Filter;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
@@ -23,6 +24,7 @@ import jmevr.input.OculusRift;
  *
  * @author reden
  */
+@Deprecated
 public class OculusFilter extends Filter {
 
     private int eyeIndex = 0;
@@ -54,10 +56,10 @@ public class OculusFilter extends Filter {
 
     }
 
-    public void setEyeTextureSize(OvrSizei size) {
+    public void setEyeTextureSize(Vector2f size) {
         TextureHeader eth = eyeTexture.ogl.Header;
-        eth.TextureSize.w = size.w;
-        eth.TextureSize.h = size.h;
+        eth.TextureSize.w = (int)size.x;
+        eth.TextureSize.h = (int)size.y;
         eth.RenderViewport.Size.w = eth.TextureSize.w;
         eth.RenderViewport.Size.h = eth.TextureSize.h;
         eth.RenderViewport.Pos.x = 0;

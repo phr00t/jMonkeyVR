@@ -47,6 +47,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jmevr.app.VRApplication;
 import jmevr.input.OculusRift;
+import jmevr.input.VRHMD;
 import jmevr.state.VRAppState;
 import jmevr.util.VRGuiNode.POSITIONING_MODE;
 
@@ -113,12 +114,15 @@ public class StereoCameraControl extends CameraControl {
     public void setView(float tpf, Vector3f pos, Quaternion look, boolean useOffset) {
         TempVars vars = TempVars.get();
         Camera camera = getCamera();
+        VRHMD vrhmd = VRApplication.getVRHardware();
         
-        lookDirection.set(VRApplication.getVRHardware().getOrientation());                    
+        vrhmd.updatePose();
+        
+        lookDirection.set(vrhmd.getOrientation());                    
         vars.quat1.set(look).multLocal(lookDirection);
         
         // positional tracking
-        vars.vect4.set(VRApplication.getVRHardware().getPosition());
+        vars.vect4.set(vrhmd.getPosition());
         look.mult(vars.vect4, vars.vect4);
         vars.vect4.addLocal(pos);
         if( spatialOffset != null && useOffset ) {

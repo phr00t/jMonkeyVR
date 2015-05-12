@@ -9,6 +9,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.math.Matrix4f;
+import com.jme3.math.Vector2f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -31,6 +32,8 @@ import java.util.List;
 import jmevr.app.VRApplication;
 import jmevr.input.HMDInfo;
 import jmevr.input.OculusRift;
+import jmevr.input.OpenVR;
+import jmevr.input.VRHMD;
 import jmevr.post.FastSSAO;
 import jmevr.post.OculusFilter;
 import jmevr.util.VRGuiNode;
@@ -74,24 +77,31 @@ public class VRAppState extends AbstractAppState {
         return guiNode;
     }
 
-    private OvrSizei prepareCameraResolution(int eyeIndex, Camera cam) {
+    private Vector2f prepareCameraResolution(int eyeIndex, Camera cam) {
         Matrix4f projMat = null;
-        OvrSizei size = null;
+        Vector2f size = new Vector2f();
+        VRHMD vrhmd = VRApplication.getVRHardware();
         
-        if( VRApplication.getVRHardware() instanceof OculusRift ) {
+        if( vrhmd instanceof OculusRift ) {
             OculusRift or = (OculusRift)VRApplication.getVRHardware();
             projMat = OculusRiftUtil.toMatrix4f(Hmd.getPerspectiveProjection(
                       or.getEyeRenderDesc(eyeIndex).Fov, cam.getFrustumNear(), cam.getFrustumFar(), true));              
-            size = or.getHmd().getFovTextureSize(eyeIndex, or.getEyeRenderDesc(eyeIndex).Fov, 1.0f); 
+            OvrSizei osize = or.getHmd().getFovTextureSize(eyeIndex, or.getEyeRenderDesc(eyeIndex).Fov, 1.0f); 
+            size.x = osize.w;
+            size.y = osize.h;
+        } else if( vrhmd instanceof OpenVR ) {
+            //debug TODO
+            size.x = 1280f;
+            size.y = 800f;
         }
         
-        if( size.w < app.getContext().getSettings().getWidth() ) {
-            size.w = app.getContext().getSettings().getWidth();
+        if( size.x < app.getContext().getSettings().getWidth() ) {
+            size.x = app.getContext().getSettings().getWidth();
         }
-        if( size.h < app.getContext().getSettings().getHeight() ) {
-            size.h = app.getContext().getSettings().getHeight();
+        if( size.y < app.getContext().getSettings().getHeight() ) {
+            size.y = app.getContext().getSettings().getHeight();
         }
-        if( cam.getWidth() != size.w || cam.getHeight() != size.h ) cam.resize(size.w, size.h, true);
+        if( cam.getWidth() != size.x || cam.getHeight() != size.y ) cam.resize((int)size.x, (int)size.y, true);
         
         cam.setProjectionMatrix(projMat);
         return size;   
@@ -101,11 +111,11 @@ public class VRAppState extends AbstractAppState {
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
         this.app = (SimpleApplication) app;
-        
+        VRHMD vrhmd = VRApplication.getVRHardware();
         viewPortLeft = app.getViewPort();
         camLeft = app.getCamera();
         
-        camLeft.setFrustumPerspective(VRApplication.getVRHardware().getFOV(), 
+        camLeft.setFrustumPerspective(vrhmd.getFOV(), 
                                       (float) camLeft.getWidth() / camLeft.getHeight(),
                                       camLeft.getFrustumNear(), camLeft.getFrustumFar());                       
         
@@ -119,7 +129,7 @@ public class VRAppState extends AbstractAppState {
         int origWidth = camLeft.getWidth();
         int origHeight = camLeft.getHeight();
         
-        setupFiltersAndViews();
+        setupFiltersAndViews(vrhmd);
         
         if( guiNode != null ) guiNode.setupGui(viewPortLeft, viewPortRight, origWidth, origHeight);
                         
@@ -132,11 +142,11 @@ public class VRAppState extends AbstractAppState {
         app.setPauseOnLostFocus(false);
     }  
     
-    private void setupFiltersAndViews() {
-        OvrSizei leftsize = prepareCameraResolution(0, camLeft);
+    private void setupFiltersAndViews(VRHMD vrhmd) {      
+        Vector2f leftsize = prepareCameraResolution(0, camLeft);
 
         camRight = camLeft.clone();
-        OvrSizei rightsize = prepareCameraResolution(1, camRight);
+        Vector2f rightsize = prepareCameraResolution(1, camRight);
         camControl.setCamera2(camRight);
         camControl.setControlDir(CameraControl.ControlDirection.SpatialToCamera);
         //camLeft.setViewPort(0.0f, 0.5f, 0.0f, 1.0f);
@@ -146,12 +156,15 @@ public class VRAppState extends AbstractAppState {
         viewPortRight.setBackgroundColor(viewPortLeft.getBackgroundColor());
         viewPortRight.attachScene(this.app.getRootNode());
 
-        if( VRApplication.getVRHardware() instanceof OculusRift ) {
+        if( vrhmd instanceof OculusRift ) {
             OculusRift or = (OculusRift)VRApplication.getVRHardware();
             filterLeft=new OculusFilter(or.getHmd(), 0);
             ((OculusFilter)filterLeft).setEyeTextureSize(leftsize);
             filterRight =new OculusFilter(or.getHmd(), 1);
             ((OculusFilter)filterRight).setEyeTextureSize(rightsize);
+        } else if( vrhmd instanceof OpenVR ) {
+            // TODO: make filters...
+            return;
         }
 
         ppRight =new FilterPostProcessor(app.getAssetManager());               

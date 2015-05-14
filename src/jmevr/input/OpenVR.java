@@ -39,10 +39,13 @@ public class OpenVR implements VRHMD {
     
     private static Pointer hmdErrorStore;
     
+    private static final Quaternion rotStore = new Quaternion();
+    private static final Vector3f posStore = new Vector3f();
+    
     private final HMDInfo hmdinfo = new HMDInfo();
     private Matrix4f[] poseMatrices;
     private char[] devClassChar;
-    private Matrix4f hmdPose;
+    private final Matrix4f hmdPose = Matrix4f.IDENTITY.clone();
     private Matrix4f hmdProjectionLeftEye;
     private Matrix4f hmdProjectionRightEye;
     private Matrix4f hmdPoseLeftEye;
@@ -142,7 +145,7 @@ public class OpenVR implements VRHMD {
     
     @Override
     public int getHResolution() {        
-        return 1280; // i don't think this is used/needed...
+        return 1280; // i don't think this is used/needed... (shader perhaps)
     }
 
     @Override
@@ -153,7 +156,7 @@ public class OpenVR implements VRHMD {
 
     @Override
     public int getVResolution() {
-        return 800; // i don't think this is used/needed...
+        return 800; // i don't think this is used/needed... (shader perhaps)
     }
 
     @Override
@@ -169,12 +172,14 @@ public class OpenVR implements VRHMD {
 
     @Override
     public Quaternion getOrientation() {
-        return hmdPose.toRotationQuat();
+        hmdPose.toRotationQuat(rotStore);
+        return rotStore;
     }
 
     @Override
     public Vector3f getPosition() {
-        return hmdPose.toTranslationVector();
+        hmdPose.toTranslationVector(posStore);
+        return posStore;
     }
 
     @Override
@@ -235,7 +240,7 @@ public class OpenVR implements VRHMD {
             }
         }
         if (((TrackedDevicePose_t)hmdTrackedDevicePose.get(hmdDeviceIndex.getInt())).bPoseIsValid()){
-            hmdPose = poseMatrices[hmdDeviceIndex.getInt()].invert();
+            poseMatrices[hmdDeviceIndex.getInt()].invert(hmdPose);
         }
     }
 

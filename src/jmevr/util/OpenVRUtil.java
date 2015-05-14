@@ -5,7 +5,6 @@
 package jmevr.util;
 
 import com.jme3.math.Matrix4f;
-import com.jme3.util.TempVars;
 import openvr_api.HmdMatrix34_t;
 import openvr_api.HmdMatrix44_t;
 

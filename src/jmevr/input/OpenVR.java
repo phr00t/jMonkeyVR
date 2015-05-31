@@ -70,7 +70,7 @@ public class OpenVR implements VRHMD {
             hmdDeviceIndex = Pointer.allocateInt();
             hmdDeviceIndex.setInt(Openvr_apiLibrary.k_unTrackedDeviceIndex_Hmd);
             
-            // this was taken straight from C
+            // this was taken straight from https://raw.githubusercontent.com/ValveSoftware/openvr/master/headers/openvr.h
             // static const char * const IVRCompositor_Version = "IVRCompositor_005";
             String ivr_string = "IVRCompositor_005";
             Pointer ivr_comp_version = Pointer.allocateChars(ivr_string.length() + 1); // add one for null termination

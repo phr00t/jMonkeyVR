@@ -70,11 +70,14 @@ public class OpenVR implements VRHMD {
             hmdDeviceIndex = Pointer.allocateInt();
             hmdDeviceIndex.setInt(Openvr_apiLibrary.k_unTrackedDeviceIndex_Hmd);
             
-            // this was taken straight from https://raw.githubusercontent.com/ValveSoftware/openvr/master/headers/openvr.h
+            // this was taken straight from C
             // static const char * const IVRCompositor_Version = "IVRCompositor_005";
             String ivr_string = "IVRCompositor_005";
             Pointer ivr_comp_version = Pointer.allocateChars(ivr_string.length() + 1); // add one for null termination
             ivr_comp_version.setString(ivr_string, StringType.C);
+            
+            // clear error store
+            hmdErrorStore.setLong(0);
             
             Pointer compositor = openvr.vRGetGenericInterface(ivr_comp_version, hmdErrorStore);
             if(compositor != null && hmdErrorStore.getLong() != 0){                
@@ -86,6 +89,7 @@ public class OpenVR implements VRHMD {
                 hmdTrackedDevicePose = Pointer.allocateInts(Openvr_apiLibrary.k_unMaxTrackedDeviceCount);
                 return true;
             } else {
+                System.out.println("OpenVR Compositor error: " + openvr.vRGetStringForHmdError(hmdErrorStore));
                 return false;
             }
             

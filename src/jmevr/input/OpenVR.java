@@ -10,17 +10,15 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.NativeLongByReference;
+import com.sun.jna.ptr.PointerByReference;
+import java.nio.IntBuffer;
 import jmevr.util.OpenVRUtil;
-import openvr_api.HmdMatrix34_t;
-import openvr_api.HmdMatrix44_t;
-import openvr_api.IOpenvr_api;
-import openvr_api.IVRCompositor;
-import openvr_api.IVRSystem;
-import openvr_api.Openvr_apiLibrary;
-import openvr_api.TrackedDevicePose_t;
-import org.bridj.IntValuedEnum;
-import org.bridj.Pointer;
-import org.bridj.Pointer.StringType;
+import jopenvr.JOpenVRLibrary;
+import jopenvr.JOpenVRLibrary.IVRSystem;
 
 /**
  *
@@ -28,16 +26,14 @@ import org.bridj.Pointer.StringType;
  */
 public class OpenVR implements VRHMD {
 
-    private static final Openvr_apiLibrary openvr = new Openvr_apiLibrary();
-    private static IVRSystem vrsystem; //p_HMD
-    private static IVRCompositor vrCompositor;
+    private static PointerByReference vrsystem;
+    private static PointerByReference vrCompositor;
     private static boolean forceInitialize = false;
     
-    private static Pointer hmdDeviceIndex;
-    private static Pointer hmdDisplayFrequency;
-    private static Pointer hmdTrackedDevicePose;
+    private static IntBuffer hmdDisplayFrequency;
+    private static IntBuffer hmdTrackedDevicePose;
     
-    private static Pointer hmdErrorStore;
+    private static IntBuffer hmdErrorStore;
     
     private static final Quaternion rotStore = new Quaternion();
     private static final Vector3f posStore = new Vector3f();
@@ -58,41 +54,30 @@ public class OpenVR implements VRHMD {
 
     @Override
     public boolean initialize() {
-        hmdErrorStore = Pointer.allocateLong();
-        Pointer pvr = openvr.vRInit(hmdErrorStore);
-        if( pvr != null ) vrsystem = (IVRSystem)pvr.get();
-        if( hmdErrorStore.getLong() != 0 ) {
-            String errstr = openvr.vRGetStringForHmdError(hmdErrorStore);
-            System.out.println("OpenVR Initialize Result: " + errstr);
+        hmdErrorStore = IntBuffer.allocate(1);
+        vrsystem = JOpenVRLibrary.VR_Init(hmdErrorStore);
+        if( hmdErrorStore.get(0) != 0 ) {
+            Pointer errstr = JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0));
+            System.out.println("OpenVR Initialize Result: " + errstr.getString(0));
             return false;
         } else {
             System.out.println("OpenVR initialized & VR connected.");
-            hmdDeviceIndex = Pointer.allocateInt();
-            hmdDeviceIndex.setInt(Openvr_apiLibrary.k_unTrackedDeviceIndex_Hmd);
             
-            // this was taken straight from https://raw.githubusercontent.com/ValveSoftware/openvr/master/headers/openvr.h
-            // static const char * const IVRCompositor_Version = "IVRCompositor_005";
-            String ivr_string = "IVRCompositor_005";
-            Pointer ivr_comp_version = Pointer.allocateChars(ivr_string.length() + 1); // add one for null termination
-            ivr_comp_version.setString(ivr_string, StringType.C);
+            // this was taken straight from https://raw.githubusercontent.com/ValveSoftware/openvr/master/headers/openvr_capi.h
+            // char * const IVRCompositor_Version = "IVRCompositor_006";
             
-            // clear error store
-            hmdErrorStore.setLong(0);
-            
-            Pointer compositor = openvr.vRGetGenericInterface(ivr_comp_version, hmdErrorStore);
-            if(compositor != null && hmdErrorStore.getLong() != 0){                
-                vrCompositor = (IVRCompositor) compositor.get();
-                hmdDisplayFrequency = Pointer.allocateInt();
-                hmdDisplayFrequency.setInt( (int) Openvr_apiLibrary.TrackedDeviceProperty.Prop_DisplayFrequency_Float.value);
-                hmdDisplayFrequency = Pointer.allocateInt();
-                hmdDisplayFrequency.setInt( (int) Openvr_apiLibrary.TrackedDeviceProperty.Prop_SecondsFromVsyncToPhotons_Float.value);
-                hmdTrackedDevicePose = Pointer.allocateInts(Openvr_apiLibrary.k_unMaxTrackedDeviceCount);
+            vrCompositor = JOpenVRLibrary.VR_GetGenericInterface("IVRCompositor_006", hmdErrorStore);
+            if(vrCompositor != null && hmdErrorStore.get(0) != 0){                
+                hmdDisplayFrequency = IntBuffer.allocate(1);
+                hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_DisplayFrequency_Float);
+                hmdDisplayFrequency = IntBuffer.allocate(1);
+                hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float);
+                hmdTrackedDevicePose = IntBuffer.allocate(JOpenVRLibrary.k_unMaxTrackedDeviceCount);
                 return true;
             } else {
-                System.out.println("OpenVR Compositor error: " + openvr.vRGetStringForHmdError(hmdErrorStore));
+                System.out.println("OpenVR Compositor error: " + JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0)).getString(0));
                 return false;
             }
-            
         }
     }
 
@@ -120,18 +105,17 @@ public class OpenVR implements VRHMD {
 
     @Override
     public void destroy() {
-        openvr.vRShutdown();
+        JOpenVRLibrary.VR_Shutdown();
     }
 
     @Override
     public boolean isInitialized() {
-        return forceInitialize || vrsystem != null && openvr.vRIsHmdPresent();
+        return forceInitialize || JOpenVRLibrary.VR_IsHmdPresent() != 0;
     }
 
     @Override
     public void reset() {
-        if( vrsystem == null ) return;
-        vrsystem.resetSeatedZeroPose();
+        JOpenVRLibrary.VR_IVRSystem_ResetSeatedZeroPose(vrsystem);
     }
 
     public void getRenderSize(Vector2f store) {
@@ -139,11 +123,11 @@ public class OpenVR implements VRHMD {
             store.x = 1280f;
             store.y = 800f;
         } else {
-            Pointer x = Pointer.allocateInt();
-            Pointer y = Pointer.allocateInt();
-            vrsystem.getRecommendedRenderTargetSize(x, y);
-            store.x = x.getInt();
-            store.y = y.getInt();
+            IntBuffer x = IntBuffer.allocate(1);
+            IntBuffer y = IntBuffer.allocate(1);
+            JOpenVRLibrary.VR_IVRSystem_GetRecommendedRenderTargetSize(vrsystem, x, y);
+            store.x = x.get(0);
+            store.y = y.get(0);
         }
     }
     
@@ -155,7 +139,7 @@ public class OpenVR implements VRHMD {
     @Override
     public float getFOV() {
         if( vrsystem == null ) return 130f;
-        return vrsystem.getFloatTrackedDeviceProperty(hmdDeviceIndex, Openvr_apiLibrary.TrackedDeviceProperty.Prop_FieldOfViewBottomDegrees_Float, hmdErrorStore);
+        return JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewBottomDegrees_Float, hmdErrorStore);
     }
 
     @Override
@@ -166,7 +150,7 @@ public class OpenVR implements VRHMD {
     @Override
     public float getInterpupillaryDistance() {
         if( vrsystem == null ) return 0.064f;
-        return vrsystem.getFloatTrackedDeviceProperty(hmdDeviceIndex, Openvr_apiLibrary.TrackedDeviceProperty.Prop_UserIpdMeters_Float, hmdErrorStore);
+        return JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_UserIpdMeters_Float, hmdErrorStore);
     }
 
     @Override
@@ -206,7 +190,7 @@ public class OpenVR implements VRHMD {
         if(vrsystem == null){
             return;
         }
-        int unMaxTrackedDeviceCount = Openvr_apiLibrary.k_unMaxTrackedDeviceCount;
+        /*int unMaxTrackedDeviceCount = Openvr_apiLibrary.k_unMaxTrackedDeviceCount;
         if(vrCompositor != null){
             vrCompositor.waitGetPoses(hmdTrackedDevicePose, unMaxTrackedDeviceCount);
         } else {
@@ -245,7 +229,7 @@ public class OpenVR implements VRHMD {
         }
         if (((TrackedDevicePose_t)hmdTrackedDevicePose.get(hmdDeviceIndex.getInt())).bPoseIsValid()){
             poseMatrices[hmdDeviceIndex.getInt()].invert(hmdPose);
-        }
+        }*/
     }
 
     @Override
@@ -262,16 +246,18 @@ public class OpenVR implements VRHMD {
         if(vrsystem == null){
             return new Matrix4f();
         }
-        HmdMatrix44_t mat = vrsystem.getProjectionMatrix(eye == 0 ? IOpenvr_api.Hmd_Eye.Eye_Left : IOpenvr_api.Hmd_Eye.Eye_Left, cam.getFrustumNear(), cam.getFrustumFar(), IOpenvr_api.GraphicsAPIConvention.API_OpenGL);
-        return OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, eye == 0 ? hmdProjectionLeftEye : hmdProjectionRightEye);
+        //HmdMatrix44_t mat = vrsystem.getProjectionMatrix(eye == 0 ? IOpenvr_api.Hmd_Eye.Eye_Left : IOpenvr_api.Hmd_Eye.Eye_Left, cam.getFrustumNear(), cam.getFrustumFar(), IOpenvr_api.GraphicsAPIConvention.API_OpenGL);
+        //return OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, eye == 0 ? hmdProjectionLeftEye : hmdProjectionRightEye);
+        return null;
     }
         
     public Matrix4f getHMDMatrixPoseEye(int eye){
         if(vrsystem == null){
             return new Matrix4f();
         }
-        HmdMatrix34_t mat = vrsystem.getEyeToHeadTransform(eye == 0 ? IOpenvr_api.Hmd_Eye.Eye_Left : IOpenvr_api.Hmd_Eye.Eye_Left);
-        return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, eye == 0 ? hmdPoseLeftEye : hmdPoseRightEye);
+        //HmdMatrix34_t mat = vrsystem.getEyeToHeadTransform(eye == 0 ? IOpenvr_api.Hmd_Eye.Eye_Left : IOpenvr_api.Hmd_Eye.Eye_Left);
+        //return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, eye == 0 ? hmdPoseLeftEye : hmdPoseRightEye);
+        return null;
     }
 
     

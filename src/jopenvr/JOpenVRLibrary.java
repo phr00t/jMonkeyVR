@@ -7,7 +7,6 @@ import com.sun.jna.PointerType;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.PointerByReference;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -517,7 +516,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRSystem_GetWindowBounds(intptr_t, int32_t*, int32_t*, uint32_t*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:474</i>
 	 */
-	public static native void VR_IVRSystem_GetWindowBounds(PointerByReference instancePtr, IntBuffer pnX, IntBuffer pnY, IntBuffer pnWidth, IntBuffer pnHeight);
+	public static native void VR_IVRSystem_GetWindowBounds(Pointer instancePtr, IntBuffer pnX, IntBuffer pnY, IntBuffer pnWidth, IntBuffer pnHeight);
 	/**
 	 * Original signature : <code>void VR_IVRSystem_GetRecommendedRenderTargetSize(intptr_t, uint32_t*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:475</i><br>
@@ -529,7 +528,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRSystem_GetRecommendedRenderTargetSize(intptr_t, uint32_t*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:475</i>
 	 */
-	public static native void VR_IVRSystem_GetRecommendedRenderTargetSize(PointerByReference instancePtr, IntBuffer pnWidth, IntBuffer pnHeight);
+	public static native void VR_IVRSystem_GetRecommendedRenderTargetSize(Pointer instancePtr, IntBuffer pnWidth, IntBuffer pnHeight);
 	/**
 	 * Original signature : <code>void VR_IVRSystem_GetEyeOutputViewport(intptr_t, Hmd_Eye, uint32_t*, uint32_t*, uint32_t*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:476</i><br>
@@ -541,7 +540,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRSystem_GetEyeOutputViewport(intptr_t, Hmd_Eye, uint32_t*, uint32_t*, uint32_t*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:476</i>
 	 */
-	public static native void VR_IVRSystem_GetEyeOutputViewport(PointerByReference instancePtr, int eEye, IntBuffer pnX, IntBuffer pnY, IntBuffer pnWidth, IntBuffer pnHeight);
+	public static native void VR_IVRSystem_GetEyeOutputViewport(Pointer instancePtr, int eEye, IntBuffer pnX, IntBuffer pnY, IntBuffer pnWidth, IntBuffer pnHeight);
 	/**
 	 * Original signature : <code>HmdMatrix44_t VR_IVRSystem_GetProjectionMatrix(intptr_t, Hmd_Eye, float, float, GraphicsAPIConvention)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:477</i><br>
@@ -553,7 +552,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>HmdMatrix44_t VR_IVRSystem_GetProjectionMatrix(intptr_t, Hmd_Eye, float, float, GraphicsAPIConvention)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:477</i>
 	 */
-	public static native jopenvr.HmdMatrix44_t.ByValue VR_IVRSystem_GetProjectionMatrix(PointerByReference instancePtr, int eEye, float fNearZ, float fFarZ, int eProjType);
+	public static native jopenvr.HmdMatrix44_t.ByValue VR_IVRSystem_GetProjectionMatrix(Pointer instancePtr, int eEye, float fNearZ, float fFarZ, int eProjType);
 	/**
 	 * Original signature : <code>void VR_IVRSystem_GetProjectionRaw(intptr_t, Hmd_Eye, float*, float*, float*, float*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:478</i><br>
@@ -565,7 +564,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRSystem_GetProjectionRaw(intptr_t, Hmd_Eye, float*, float*, float*, float*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:478</i>
 	 */
-	public static native void VR_IVRSystem_GetProjectionRaw(PointerByReference instancePtr, int eEye, FloatBuffer pfLeft, FloatBuffer pfRight, FloatBuffer pfTop, FloatBuffer pfBottom);
+	public static native void VR_IVRSystem_GetProjectionRaw(Pointer instancePtr, int eEye, FloatBuffer pfLeft, FloatBuffer pfRight, FloatBuffer pfTop, FloatBuffer pfBottom);
 	/**
 	 * Original signature : <code>DistortionCoordinates_t VR_IVRSystem_ComputeDistortion(intptr_t, Hmd_Eye, float, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:479</i><br>
@@ -577,7 +576,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>DistortionCoordinates_t VR_IVRSystem_ComputeDistortion(intptr_t, Hmd_Eye, float, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:479</i>
 	 */
-	public static native jopenvr.DistortionCoordinates_t.ByValue VR_IVRSystem_ComputeDistortion(PointerByReference instancePtr, int eEye, float fU, float fV);
+	public static native jopenvr.DistortionCoordinates_t.ByValue VR_IVRSystem_ComputeDistortion(Pointer instancePtr, int eEye, float fU, float fV);
 	/**
 	 * Original signature : <code>HmdMatrix34_t VR_IVRSystem_GetEyeToHeadTransform(intptr_t, Hmd_Eye)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:480</i><br>
@@ -589,7 +588,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>HmdMatrix34_t VR_IVRSystem_GetEyeToHeadTransform(intptr_t, Hmd_Eye)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:480</i>
 	 */
-	public static native HmdMatrix34_t.ByValue VR_IVRSystem_GetEyeToHeadTransform(PointerByReference instancePtr, int eEye);
+	public static native HmdMatrix34_t.ByValue VR_IVRSystem_GetEyeToHeadTransform(Pointer instancePtr, int eEye);
 	/**
 	 * Original signature : <code>bool VR_IVRSystem_GetTimeSinceLastVsync(intptr_t, float*, uint64_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:481</i><br>
@@ -601,7 +600,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRSystem_GetTimeSinceLastVsync(intptr_t, float*, uint64_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:481</i>
 	 */
-	public static native byte VR_IVRSystem_GetTimeSinceLastVsync(PointerByReference instancePtr, FloatBuffer pfSecondsSinceLastVsync, LongBuffer pulFrameCounter);
+	public static native byte VR_IVRSystem_GetTimeSinceLastVsync(Pointer instancePtr, FloatBuffer pfSecondsSinceLastVsync, LongBuffer pulFrameCounter);
 	/**
 	 * Original signature : <code>int32_t VR_IVRSystem_GetD3D9AdapterIndex(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:482</i><br>
@@ -613,7 +612,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>int32_t VR_IVRSystem_GetD3D9AdapterIndex(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:482</i>
 	 */
-	public static native int VR_IVRSystem_GetD3D9AdapterIndex(PointerByReference instancePtr);
+	public static native int VR_IVRSystem_GetD3D9AdapterIndex(Pointer instancePtr);
 	/**
 	 * Original signature : <code>void VR_IVRSystem_GetDXGIOutputInfo(intptr_t, int32_t*, int32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:483</i><br>
@@ -625,7 +624,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRSystem_GetDXGIOutputInfo(intptr_t, int32_t*, int32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:483</i>
 	 */
-	public static native void VR_IVRSystem_GetDXGIOutputInfo(PointerByReference instancePtr, IntBuffer pnAdapterIndex, IntBuffer pnAdapterOutputIndex);
+	public static native void VR_IVRSystem_GetDXGIOutputInfo(Pointer instancePtr, IntBuffer pnAdapterIndex, IntBuffer pnAdapterOutputIndex);
 	/**
 	 * Original signature : <code>bool VR_IVRSystem_AttachToWindow(intptr_t, void*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:484</i><br>
@@ -637,7 +636,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRSystem_AttachToWindow(intptr_t, void*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:484</i>
 	 */
-	public static native byte VR_IVRSystem_AttachToWindow(PointerByReference instancePtr, Pointer hWnd);
+	public static native byte VR_IVRSystem_AttachToWindow(Pointer instancePtr, Pointer hWnd);
 	/**
 	 * Original signature : <code>void VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(intptr_t, TrackingUniverseOrigin, float, TrackedDevicePose_t*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:485</i><br>
@@ -649,7 +648,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(intptr_t, TrackingUniverseOrigin, float, TrackedDevicePose_t*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:485</i>
 	 */
-	public static native void VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(PointerByReference instancePtr, int eOrigin, float fPredictedSecondsToPhotonsFromNow, TrackedDevicePose_t pTrackedDevicePoseArray, int unTrackedDevicePoseArrayCount);
+	public static native void VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(Pointer instancePtr, int eOrigin, float fPredictedSecondsToPhotonsFromNow, Pointer pTrackedDevicePoseArray, int unTrackedDevicePoseArrayCount);
 	/**
 	 * Original signature : <code>void VR_IVRSystem_ResetSeatedZeroPose(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:486</i><br>
@@ -661,7 +660,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRSystem_ResetSeatedZeroPose(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:486</i>
 	 */
-	public static native void VR_IVRSystem_ResetSeatedZeroPose(PointerByReference instancePtr);
+	public static native void VR_IVRSystem_ResetSeatedZeroPose(Pointer instancePtr);
 	/**
 	 * Original signature : <code>HmdMatrix34_t VR_IVRSystem_GetSeatedZeroPoseToStandingAbsoluteTrackingPose(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:487</i><br>
@@ -673,7 +672,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>HmdMatrix34_t VR_IVRSystem_GetSeatedZeroPoseToStandingAbsoluteTrackingPose(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:487</i>
 	 */
-	public static native HmdMatrix34_t.ByValue VR_IVRSystem_GetSeatedZeroPoseToStandingAbsoluteTrackingPose(PointerByReference instancePtr);
+	public static native HmdMatrix34_t.ByValue VR_IVRSystem_GetSeatedZeroPoseToStandingAbsoluteTrackingPose(Pointer instancePtr);
 	/**
 	 * Original signature : <code>TrackedDeviceClass VR_IVRSystem_GetTrackedDeviceClass(intptr_t, TrackedDeviceIndex_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:488</i><br>
@@ -685,7 +684,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>TrackedDeviceClass VR_IVRSystem_GetTrackedDeviceClass(intptr_t, TrackedDeviceIndex_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:488</i>
 	 */
-	public static native int VR_IVRSystem_GetTrackedDeviceClass(PointerByReference instancePtr, int unDeviceIndex);
+	public static native int VR_IVRSystem_GetTrackedDeviceClass(Pointer instancePtr, int unDeviceIndex);
 	/**
 	 * Original signature : <code>bool VR_IVRSystem_IsTrackedDeviceConnected(intptr_t, TrackedDeviceIndex_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:489</i><br>
@@ -697,7 +696,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRSystem_IsTrackedDeviceConnected(intptr_t, TrackedDeviceIndex_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:489</i>
 	 */
-	public static native byte VR_IVRSystem_IsTrackedDeviceConnected(PointerByReference instancePtr, int unDeviceIndex);
+	public static native byte VR_IVRSystem_IsTrackedDeviceConnected(Pointer instancePtr, int unDeviceIndex);
 	/**
 	 * Original signature : <code>bool VR_IVRSystem_GetBoolTrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:490</i><br>
@@ -709,7 +708,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRSystem_GetBoolTrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:490</i>
 	 */
-	public static native byte VR_IVRSystem_GetBoolTrackedDeviceProperty(PointerByReference instancePtr, int unDeviceIndex, int prop, IntBuffer pError);
+	public static native byte VR_IVRSystem_GetBoolTrackedDeviceProperty(Pointer instancePtr, int unDeviceIndex, int prop, IntBuffer pError);
 	/**
 	 * Original signature : <code>float VR_IVRSystem_GetFloatTrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:491</i><br>
@@ -721,7 +720,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>float VR_IVRSystem_GetFloatTrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:491</i>
 	 */
-	public static native float VR_IVRSystem_GetFloatTrackedDeviceProperty(PointerByReference instancePtr, int unDeviceIndex, int prop, IntBuffer pError);
+	public static native float VR_IVRSystem_GetFloatTrackedDeviceProperty(Pointer instancePtr, int unDeviceIndex, int prop, IntBuffer pError);
 	/**
 	 * Original signature : <code>int32_t VR_IVRSystem_GetInt32TrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:492</i><br>
@@ -733,7 +732,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>int32_t VR_IVRSystem_GetInt32TrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:492</i>
 	 */
-	public static native int VR_IVRSystem_GetInt32TrackedDeviceProperty(PointerByReference instancePtr, int unDeviceIndex, int prop, IntBuffer pError);
+	public static native int VR_IVRSystem_GetInt32TrackedDeviceProperty(Pointer instancePtr, int unDeviceIndex, int prop, IntBuffer pError);
 	/**
 	 * Original signature : <code>uint64_t VR_IVRSystem_GetUint64TrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:493</i><br>
@@ -745,7 +744,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>uint64_t VR_IVRSystem_GetUint64TrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:493</i>
 	 */
-	public static native long VR_IVRSystem_GetUint64TrackedDeviceProperty(PointerByReference instancePtr, int unDeviceIndex, int prop, IntBuffer pError);
+	public static native long VR_IVRSystem_GetUint64TrackedDeviceProperty(Pointer instancePtr, int unDeviceIndex, int prop, IntBuffer pError);
 	/**
 	 * Original signature : <code>HmdMatrix34_t VR_IVRSystem_GetMatrix34TrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:494</i><br>
@@ -757,7 +756,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>HmdMatrix34_t VR_IVRSystem_GetMatrix34TrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:494</i>
 	 */
-	public static native HmdMatrix34_t.ByValue VR_IVRSystem_GetMatrix34TrackedDeviceProperty(PointerByReference instancePtr, int unDeviceIndex, int prop, IntBuffer pError);
+	public static native HmdMatrix34_t.ByValue VR_IVRSystem_GetMatrix34TrackedDeviceProperty(Pointer instancePtr, int unDeviceIndex, int prop, IntBuffer pError);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRSystem_GetStringTrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, char*, uint32_t, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:495</i><br>
@@ -769,7 +768,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>uint32_t VR_IVRSystem_GetStringTrackedDeviceProperty(intptr_t, TrackedDeviceIndex_t, TrackedDeviceProperty, char*, uint32_t, TrackedPropertyError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:495</i>
 	 */
-	public static native int VR_IVRSystem_GetStringTrackedDeviceProperty(PointerByReference instancePtr, int unDeviceIndex, int prop, ByteBuffer pchValue, int unBufferSize, IntBuffer pError);
+	public static native int VR_IVRSystem_GetStringTrackedDeviceProperty(Pointer instancePtr, int unDeviceIndex, int prop, ByteBuffer pchValue, int unBufferSize, IntBuffer pError);
 	/**
 	 * Original signature : <code>char* VR_IVRSystem_GetPropErrorNameFromEnum(intptr_t, TrackedPropertyError)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:496</i><br>
@@ -781,7 +780,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>char* VR_IVRSystem_GetPropErrorNameFromEnum(intptr_t, TrackedPropertyError)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:496</i>
 	 */
-	public static native Pointer VR_IVRSystem_GetPropErrorNameFromEnum(PointerByReference instancePtr, int error);
+	public static native Pointer VR_IVRSystem_GetPropErrorNameFromEnum(Pointer instancePtr, int error);
 	/**
 	 * Original signature : <code>bool VR_IVRSystem_PollNextEvent(intptr_t, VREvent_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:497</i><br>
@@ -793,7 +792,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRSystem_PollNextEvent(intptr_t, VREvent_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:497</i>
 	 */
-	public static native byte VR_IVRSystem_PollNextEvent(PointerByReference instancePtr, JOpenVRLibrary.VREvent_t pEvent);
+	public static native byte VR_IVRSystem_PollNextEvent(Pointer instancePtr, JOpenVRLibrary.VREvent_t pEvent);
 	/**
 	 * Original signature : <code>bool VR_IVRSystem_PollNextEventWithPose(intptr_t, TrackingUniverseOrigin, VREvent_t*, TrackedDevicePose_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:498</i><br>
@@ -805,7 +804,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRSystem_PollNextEventWithPose(intptr_t, TrackingUniverseOrigin, VREvent_t*, TrackedDevicePose_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:498</i>
 	 */
-	public static native byte VR_IVRSystem_PollNextEventWithPose(PointerByReference instancePtr, int eOrigin, JOpenVRLibrary.VREvent_t pEvent, TrackedDevicePose_t pTrackedDevicePose);
+	public static native byte VR_IVRSystem_PollNextEventWithPose(Pointer instancePtr, int eOrigin, JOpenVRLibrary.VREvent_t pEvent, TrackedDevicePose_t pTrackedDevicePose);
 	/**
 	 * Original signature : <code>char* VR_IVRSystem_GetEventTypeNameFromEnum(intptr_t, EVREventType)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:499</i><br>
@@ -817,7 +816,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>char* VR_IVRSystem_GetEventTypeNameFromEnum(intptr_t, EVREventType)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:499</i>
 	 */
-	public static native Pointer VR_IVRSystem_GetEventTypeNameFromEnum(PointerByReference instancePtr, int eType);
+	public static native Pointer VR_IVRSystem_GetEventTypeNameFromEnum(Pointer instancePtr, int eType);
 	/**
 	 * Original signature : <code>HiddenAreaMesh_t VR_IVRSystem_GetHiddenAreaMesh(intptr_t, Hmd_Eye)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:500</i><br>
@@ -829,7 +828,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>HiddenAreaMesh_t VR_IVRSystem_GetHiddenAreaMesh(intptr_t, Hmd_Eye)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:500</i>
 	 */
-	public static native jopenvr.HiddenAreaMesh_t.ByValue VR_IVRSystem_GetHiddenAreaMesh(PointerByReference instancePtr, int eEye);
+	public static native jopenvr.HiddenAreaMesh_t.ByValue VR_IVRSystem_GetHiddenAreaMesh(Pointer instancePtr, int eEye);
 	/**
 	 * Original signature : <code>bool VR_IVRSystem_GetControllerState(intptr_t, TrackedDeviceIndex_t, VRControllerState_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:501</i><br>
@@ -841,7 +840,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRSystem_GetControllerState(intptr_t, TrackedDeviceIndex_t, VRControllerState_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:501</i>
 	 */
-	public static native byte VR_IVRSystem_GetControllerState(PointerByReference instancePtr, int unControllerDeviceIndex, VRControllerState_t pControllerState);
+	public static native byte VR_IVRSystem_GetControllerState(Pointer instancePtr, int unControllerDeviceIndex, VRControllerState_t pControllerState);
 	/**
 	 * Original signature : <code>bool VR_IVRSystem_GetControllerStateWithPose(intptr_t, TrackingUniverseOrigin, TrackedDeviceIndex_t, VRControllerState_t*, TrackedDevicePose_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:502</i><br>
@@ -853,7 +852,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRSystem_GetControllerStateWithPose(intptr_t, TrackingUniverseOrigin, TrackedDeviceIndex_t, VRControllerState_t*, TrackedDevicePose_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:502</i>
 	 */
-	public static native byte VR_IVRSystem_GetControllerStateWithPose(PointerByReference instancePtr, int eOrigin, int unControllerDeviceIndex, VRControllerState_t pControllerState, TrackedDevicePose_t pTrackedDevicePose);
+	public static native byte VR_IVRSystem_GetControllerStateWithPose(Pointer instancePtr, int eOrigin, int unControllerDeviceIndex, VRControllerState_t pControllerState, TrackedDevicePose_t pTrackedDevicePose);
 	/**
 	 * Original signature : <code>void VR_IVRSystem_TriggerHapticPulse(intptr_t, TrackedDeviceIndex_t, uint32_t, unsigned short)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:503</i><br>
@@ -865,7 +864,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRSystem_TriggerHapticPulse(intptr_t, TrackedDeviceIndex_t, uint32_t, unsigned short)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:503</i>
 	 */
-	public static native void VR_IVRSystem_TriggerHapticPulse(PointerByReference instancePtr, int unControllerDeviceIndex, int unAxisId, short usDurationMicroSec);
+	public static native void VR_IVRSystem_TriggerHapticPulse(Pointer instancePtr, int unControllerDeviceIndex, int unAxisId, short usDurationMicroSec);
 	/**
 	 * Original signature : <code>char* VR_IVRSystem_GetButtonIdNameFromEnum(intptr_t, EVRButtonId)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:504</i><br>
@@ -877,7 +876,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>char* VR_IVRSystem_GetButtonIdNameFromEnum(intptr_t, EVRButtonId)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:504</i>
 	 */
-	public static native Pointer VR_IVRSystem_GetButtonIdNameFromEnum(PointerByReference instancePtr, int eButtonId);
+	public static native Pointer VR_IVRSystem_GetButtonIdNameFromEnum(Pointer instancePtr, int eButtonId);
 	/**
 	 * Original signature : <code>char* VR_IVRSystem_GetControllerAxisTypeNameFromEnum(intptr_t, EVRControllerAxisType)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:505</i><br>
@@ -889,7 +888,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>char* VR_IVRSystem_GetControllerAxisTypeNameFromEnum(intptr_t, EVRControllerAxisType)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:505</i>
 	 */
-	public static native Pointer VR_IVRSystem_GetControllerAxisTypeNameFromEnum(PointerByReference instancePtr, int eAxisType);
+	public static native Pointer VR_IVRSystem_GetControllerAxisTypeNameFromEnum(Pointer instancePtr, int eAxisType);
 	/**
 	 * Original signature : <code>bool VR_IVRSystem_CaptureInputFocus(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:506</i><br>
@@ -901,7 +900,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRSystem_CaptureInputFocus(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:506</i>
 	 */
-	public static native byte VR_IVRSystem_CaptureInputFocus(PointerByReference instancePtr);
+	public static native byte VR_IVRSystem_CaptureInputFocus(Pointer instancePtr);
 	/**
 	 * Original signature : <code>void VR_IVRSystem_ReleaseInputFocus(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:507</i><br>
@@ -913,7 +912,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRSystem_ReleaseInputFocus(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:507</i>
 	 */
-	public static native void VR_IVRSystem_ReleaseInputFocus(PointerByReference instancePtr);
+	public static native void VR_IVRSystem_ReleaseInputFocus(Pointer instancePtr);
 	/**
 	 * Original signature : <code>bool VR_IVRSystem_IsInputFocusCapturedByAnotherProcess(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:508</i><br>
@@ -925,7 +924,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRSystem_IsInputFocusCapturedByAnotherProcess(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:508</i>
 	 */
-	public static native byte VR_IVRSystem_IsInputFocusCapturedByAnotherProcess(PointerByReference instancePtr);
+	public static native byte VR_IVRSystem_IsInputFocusCapturedByAnotherProcess(Pointer instancePtr);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRSystem_DriverDebugRequest(intptr_t, TrackedDeviceIndex_t, const char*, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:509</i><br>
@@ -937,7 +936,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>uint32_t VR_IVRSystem_DriverDebugRequest(intptr_t, TrackedDeviceIndex_t, const char*, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:509</i>
 	 */
-	public static native int VR_IVRSystem_DriverDebugRequest(PointerByReference instancePtr, int unDeviceIndex, String pchRequest, ByteBuffer pchResponseBuffer, int unResponseBufferSize);
+	public static native int VR_IVRSystem_DriverDebugRequest(Pointer instancePtr, int unDeviceIndex, String pchRequest, ByteBuffer pchResponseBuffer, int unResponseBufferSize);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRCameraAccess_GetCameraCount(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:510</i><br>
@@ -949,7 +948,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>uint32_t VR_IVRCameraAccess_GetCameraCount(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:510</i>
 	 */
-	public static native int VR_IVRCameraAccess_GetCameraCount(PointerByReference instancePtr);
+	public static native int VR_IVRCameraAccess_GetCameraCount(Pointer instancePtr);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRCameraAccess_GetCameraId(intptr_t, uint32_t, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:511</i><br>
@@ -961,7 +960,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>uint32_t VR_IVRCameraAccess_GetCameraId(intptr_t, uint32_t, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:511</i>
 	 */
-	public static native int VR_IVRCameraAccess_GetCameraId(PointerByReference instancePtr, int unCameraIndex, ByteBuffer pchBuffer, int unBufferLen);
+	public static native int VR_IVRCameraAccess_GetCameraId(Pointer instancePtr, int unCameraIndex, ByteBuffer pchBuffer, int unBufferLen);
 	/**
 	 * Original signature : <code>bool VR_IVRCameraAccess_EnableCamera(intptr_t, uint32_t, bool)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:512</i><br>
@@ -973,7 +972,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRCameraAccess_EnableCamera(intptr_t, uint32_t, bool)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:512</i>
 	 */
-	public static native byte VR_IVRCameraAccess_EnableCamera(PointerByReference instancePtr, int unCameraIndex, byte bEnabled);
+	public static native byte VR_IVRCameraAccess_EnableCamera(Pointer instancePtr, int unCameraIndex, byte bEnabled);
 	/**
 	 * Original signature : <code>bool VR_IVRCameraAccess_GetCameraInfo(intptr_t, uint32_t, CameraInfo_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:513</i><br>
@@ -985,7 +984,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRCameraAccess_GetCameraInfo(intptr_t, uint32_t, CameraInfo_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:513</i>
 	 */
-	public static native byte VR_IVRCameraAccess_GetCameraInfo(PointerByReference instancePtr, int unCameraIndex, CameraInfo_t pCameraInfo);
+	public static native byte VR_IVRCameraAccess_GetCameraInfo(Pointer instancePtr, int unCameraIndex, CameraInfo_t pCameraInfo);
 	/**
 	 * Original signature : <code>bool VR_IVRCameraAccess_GetCameraImage(intptr_t, uint32_t, CameraImage_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:514</i><br>
@@ -997,7 +996,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRCameraAccess_GetCameraImage(intptr_t, uint32_t, CameraImage_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:514</i>
 	 */
-	public static native byte VR_IVRCameraAccess_GetCameraImage(PointerByReference instancePtr, int unCameraIndex, CameraImage_t pCameraImage);
+	public static native byte VR_IVRCameraAccess_GetCameraImage(Pointer instancePtr, int unCameraIndex, CameraImage_t pCameraImage);
 	/**
 	 * Original signature : <code>ChaperoneCalibrationState VR_IVRChaperone_GetCalibrationState(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:515</i><br>
@@ -1009,7 +1008,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>ChaperoneCalibrationState VR_IVRChaperone_GetCalibrationState(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:515</i>
 	 */
-	public static native int VR_IVRChaperone_GetCalibrationState(PointerByReference instancePtr);
+	public static native int VR_IVRChaperone_GetCalibrationState(Pointer instancePtr);
 	/**
 	 * Original signature : <code>bool VR_IVRChaperone_GetSoftBoundsInfo(intptr_t, ChaperoneSoftBoundsInfo_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:516</i><br>
@@ -1021,7 +1020,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRChaperone_GetSoftBoundsInfo(intptr_t, ChaperoneSoftBoundsInfo_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:516</i>
 	 */
-	public static native byte VR_IVRChaperone_GetSoftBoundsInfo(PointerByReference instancePtr, ChaperoneSoftBoundsInfo_t pInfo);
+	public static native byte VR_IVRChaperone_GetSoftBoundsInfo(Pointer instancePtr, ChaperoneSoftBoundsInfo_t pInfo);
 	/**
 	 * Original signature : <code>bool VR_IVRChaperone_GetHardBoundsInfo(intptr_t, HmdQuad_t*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:517</i><br>
@@ -1033,7 +1032,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRChaperone_GetHardBoundsInfo(intptr_t, HmdQuad_t*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:517</i>
 	 */
-	public static native byte VR_IVRChaperone_GetHardBoundsInfo(PointerByReference instancePtr, HmdQuad_t pQuadsBuffer, IntBuffer punQuadsCount);
+	public static native byte VR_IVRChaperone_GetHardBoundsInfo(Pointer instancePtr, HmdQuad_t pQuadsBuffer, IntBuffer punQuadsCount);
 	/**
 	 * Original signature : <code>bool VR_IVRChaperone_GetSeatedBoundsInfo(intptr_t, ChaperoneSeatedBoundsInfo_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:518</i><br>
@@ -1045,7 +1044,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRChaperone_GetSeatedBoundsInfo(intptr_t, ChaperoneSeatedBoundsInfo_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:518</i>
 	 */
-	public static native byte VR_IVRChaperone_GetSeatedBoundsInfo(PointerByReference instancePtr, ChaperoneSeatedBoundsInfo_t pInfo);
+	public static native byte VR_IVRChaperone_GetSeatedBoundsInfo(Pointer instancePtr, ChaperoneSeatedBoundsInfo_t pInfo);
 	/**
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_CommitWorkingCopy(intptr_t, const char*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:519</i><br>
@@ -1057,7 +1056,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_CommitWorkingCopy(intptr_t, const char*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:519</i>
 	 */
-	public static native byte VR_IVRChaperoneSetup_CommitWorkingCopy(PointerByReference instancePtr, String pchCalibrationName);
+	public static native byte VR_IVRChaperoneSetup_CommitWorkingCopy(Pointer instancePtr, String pchCalibrationName);
 	/**
 	 * Original signature : <code>void VR_IVRChaperoneSetup_RevertWorkingCopy(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:520</i><br>
@@ -1069,7 +1068,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRChaperoneSetup_RevertWorkingCopy(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:520</i>
 	 */
-	public static native void VR_IVRChaperoneSetup_RevertWorkingCopy(PointerByReference instancePtr);
+	public static native void VR_IVRChaperoneSetup_RevertWorkingCopy(Pointer instancePtr);
 	/**
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingSoftBoundsInfo(intptr_t, ChaperoneSoftBoundsInfo_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:521</i><br>
@@ -1081,7 +1080,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingSoftBoundsInfo(intptr_t, ChaperoneSoftBoundsInfo_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:521</i>
 	 */
-	public static native byte VR_IVRChaperoneSetup_GetWorkingSoftBoundsInfo(PointerByReference instancePtr, ChaperoneSoftBoundsInfo_t pInfo);
+	public static native byte VR_IVRChaperoneSetup_GetWorkingSoftBoundsInfo(Pointer instancePtr, ChaperoneSoftBoundsInfo_t pInfo);
 	/**
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingHardBoundsInfo(intptr_t, HmdQuad_t*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:522</i><br>
@@ -1093,7 +1092,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingHardBoundsInfo(intptr_t, HmdQuad_t*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:522</i>
 	 */
-	public static native byte VR_IVRChaperoneSetup_GetWorkingHardBoundsInfo(PointerByReference instancePtr, HmdQuad_t pQuadsBuffer, IntBuffer punQuadsCount);
+	public static native byte VR_IVRChaperoneSetup_GetWorkingHardBoundsInfo(Pointer instancePtr, HmdQuad_t pQuadsBuffer, IntBuffer punQuadsCount);
 	/**
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingSeatedZeroPoseToRawTrackingPose(intptr_t, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:523</i><br>
@@ -1105,7 +1104,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingSeatedZeroPoseToRawTrackingPose(intptr_t, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:523</i>
 	 */
-	public static native byte VR_IVRChaperoneSetup_GetWorkingSeatedZeroPoseToRawTrackingPose(PointerByReference instancePtr, HmdMatrix34_t pmatSeatedZeroPoseToRawTrackingPose);
+	public static native byte VR_IVRChaperoneSetup_GetWorkingSeatedZeroPoseToRawTrackingPose(Pointer instancePtr, HmdMatrix34_t pmatSeatedZeroPoseToRawTrackingPose);
 	/**
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingStandingZeroPoseToRawTrackingPose(intptr_t, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:524</i><br>
@@ -1117,7 +1116,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingStandingZeroPoseToRawTrackingPose(intptr_t, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:524</i>
 	 */
-	public static native byte VR_IVRChaperoneSetup_GetWorkingStandingZeroPoseToRawTrackingPose(PointerByReference instancePtr, HmdMatrix34_t pmatStandingZeroPoseToRawTrackingPose);
+	public static native byte VR_IVRChaperoneSetup_GetWorkingStandingZeroPoseToRawTrackingPose(Pointer instancePtr, HmdMatrix34_t pmatStandingZeroPoseToRawTrackingPose);
 	/**
 	 * Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingSoftBoundsInfo(intptr_t, ChaperoneSoftBoundsInfo_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:525</i><br>
@@ -1129,7 +1128,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingSoftBoundsInfo(intptr_t, ChaperoneSoftBoundsInfo_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:525</i>
 	 */
-	public static native void VR_IVRChaperoneSetup_SetWorkingSoftBoundsInfo(PointerByReference instancePtr, ChaperoneSoftBoundsInfo_t pInfo);
+	public static native void VR_IVRChaperoneSetup_SetWorkingSoftBoundsInfo(Pointer instancePtr, ChaperoneSoftBoundsInfo_t pInfo);
 	/**
 	 * Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingHardBoundsInfo(intptr_t, HmdQuad_t*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:526</i><br>
@@ -1141,7 +1140,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingHardBoundsInfo(intptr_t, HmdQuad_t*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:526</i>
 	 */
-	public static native void VR_IVRChaperoneSetup_SetWorkingHardBoundsInfo(PointerByReference instancePtr, HmdQuad_t pQuadsBuffer, int unQuadsCount);
+	public static native void VR_IVRChaperoneSetup_SetWorkingHardBoundsInfo(Pointer instancePtr, HmdQuad_t pQuadsBuffer, int unQuadsCount);
 	/**
 	 * Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingSeatedZeroPoseToRawTrackingPose(intptr_t, HmdMatrix34_t&)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:527</i><br>
@@ -1153,7 +1152,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingSeatedZeroPoseToRawTrackingPose(intptr_t, HmdMatrix34_t&)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:527</i>
 	 */
-	public static native void VR_IVRChaperoneSetup_SetWorkingSeatedZeroPoseToRawTrackingPose(PointerByReference instancePtr, HmdMatrix34_t matSeatedZeroPoseToRawTrackingPose);
+	public static native void VR_IVRChaperoneSetup_SetWorkingSeatedZeroPoseToRawTrackingPose(Pointer instancePtr, HmdMatrix34_t matSeatedZeroPoseToRawTrackingPose);
 	/**
 	 * Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingStandingZeroPoseToRawTrackingPose(intptr_t, HmdMatrix34_t&)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:528</i><br>
@@ -1165,7 +1164,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingStandingZeroPoseToRawTrackingPose(intptr_t, HmdMatrix34_t&)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:528</i>
 	 */
-	public static native void VR_IVRChaperoneSetup_SetWorkingStandingZeroPoseToRawTrackingPose(PointerByReference instancePtr, HmdMatrix34_t matStandingZeroPoseToRawTrackingPose);
+	public static native void VR_IVRChaperoneSetup_SetWorkingStandingZeroPoseToRawTrackingPose(Pointer instancePtr, HmdMatrix34_t matStandingZeroPoseToRawTrackingPose);
 	/**
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingTagPoses(intptr_t, HmdMatrix34_t*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:529</i><br>
@@ -1177,7 +1176,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingTagPoses(intptr_t, HmdMatrix34_t*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:529</i>
 	 */
-	public static native byte VR_IVRChaperoneSetup_GetWorkingTagPoses(PointerByReference instancePtr, HmdMatrix34_t pTagPosesBuffer, IntBuffer punTagPosesCount);
+	public static native byte VR_IVRChaperoneSetup_GetWorkingTagPoses(Pointer instancePtr, HmdMatrix34_t pTagPosesBuffer, IntBuffer punTagPosesCount);
 	/**
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingTagPoseScales(intptr_t, float*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:530</i><br>
@@ -1189,7 +1188,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingTagPoseScales(intptr_t, float*, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:530</i>
 	 */
-	public static native byte VR_IVRChaperoneSetup_GetWorkingTagPoseScales(PointerByReference instancePtr, FloatBuffer pflScaleBuffer, IntBuffer punTagPosesCount);
+	public static native byte VR_IVRChaperoneSetup_GetWorkingTagPoseScales(Pointer instancePtr, FloatBuffer pflScaleBuffer, IntBuffer punTagPosesCount);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRChaperoneSetup_GetWorkingTagPoseNameByIndex(intptr_t, uint32_t, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:531</i><br>
@@ -1201,7 +1200,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>uint32_t VR_IVRChaperoneSetup_GetWorkingTagPoseNameByIndex(intptr_t, uint32_t, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:531</i>
 	 */
-	public static native int VR_IVRChaperoneSetup_GetWorkingTagPoseNameByIndex(PointerByReference instancePtr, int nIndex, ByteBuffer pchBuffer, int unBufferSize);
+	public static native int VR_IVRChaperoneSetup_GetWorkingTagPoseNameByIndex(Pointer instancePtr, int nIndex, ByteBuffer pchBuffer, int unBufferSize);
 	/**
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingTagPoseByName(intptr_t, const char*, HmdMatrix34_t*, float*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:532</i><br>
@@ -1213,7 +1212,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetWorkingTagPoseByName(intptr_t, const char*, HmdMatrix34_t*, float*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:532</i>
 	 */
-	public static native byte VR_IVRChaperoneSetup_GetWorkingTagPoseByName(PointerByReference instancePtr, String pchTagName, HmdMatrix34_t pmatTagPose, FloatBuffer pflScale);
+	public static native byte VR_IVRChaperoneSetup_GetWorkingTagPoseByName(Pointer instancePtr, String pchTagName, HmdMatrix34_t pmatTagPose, FloatBuffer pflScale);
 	/**
 	 * Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingTagPoseByName(intptr_t, const char*, HmdMatrix34_t&, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:533</i><br>
@@ -1225,7 +1224,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingTagPoseByName(intptr_t, const char*, HmdMatrix34_t&, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:533</i>
 	 */
-	public static native void VR_IVRChaperoneSetup_SetWorkingTagPoseByName(PointerByReference instancePtr, String pchTagName, HmdMatrix34_t matSeatedZeroPoseToRawTrackingPose, float flScale);
+	public static native void VR_IVRChaperoneSetup_SetWorkingTagPoseByName(Pointer instancePtr, String pchTagName, HmdMatrix34_t matSeatedZeroPoseToRawTrackingPose, float flScale);
 	/**
 	 * Original signature : <code>void VR_IVRChaperoneSetup_RemoveWorkingTagPoseByName(intptr_t, const char*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:534</i><br>
@@ -1237,7 +1236,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRChaperoneSetup_RemoveWorkingTagPoseByName(intptr_t, const char*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:534</i>
 	 */
-	public static native void VR_IVRChaperoneSetup_RemoveWorkingTagPoseByName(PointerByReference instancePtr, String pchTagName);
+	public static native void VR_IVRChaperoneSetup_RemoveWorkingTagPoseByName(Pointer instancePtr, String pchTagName);
 	/**
 	 * Original signature : <code>void VR_IVRChaperoneSetup_RemoveAllWorkingTagPoses(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:535</i><br>
@@ -1249,7 +1248,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRChaperoneSetup_RemoveAllWorkingTagPoses(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:535</i>
 	 */
-	public static native void VR_IVRChaperoneSetup_RemoveAllWorkingTagPoses(PointerByReference instancePtr);
+	public static native void VR_IVRChaperoneSetup_RemoveAllWorkingTagPoses(Pointer instancePtr);
 	/**
 	 * Original signature : <code>void VR_IVRChaperoneSetup_ReloadFromDisk(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:536</i><br>
@@ -1261,7 +1260,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRChaperoneSetup_ReloadFromDisk(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:536</i>
 	 */
-	public static native void VR_IVRChaperoneSetup_ReloadFromDisk(PointerByReference instancePtr);
+	public static native void VR_IVRChaperoneSetup_ReloadFromDisk(Pointer instancePtr);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRCompositor_GetLastError(intptr_t, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:537</i><br>
@@ -1273,7 +1272,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>uint32_t VR_IVRCompositor_GetLastError(intptr_t, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:537</i>
 	 */
-	public static native int VR_IVRCompositor_GetLastError(PointerByReference instancePtr, ByteBuffer pchBuffer, int unBufferSize);
+	public static native int VR_IVRCompositor_GetLastError(Pointer instancePtr, ByteBuffer pchBuffer, int unBufferSize);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_SetVSync(intptr_t, bool)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:538</i><br>
@@ -1285,7 +1284,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRCompositor_SetVSync(intptr_t, bool)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:538</i>
 	 */
-	public static native void VR_IVRCompositor_SetVSync(PointerByReference instancePtr, byte bVSync);
+	public static native void VR_IVRCompositor_SetVSync(Pointer instancePtr, byte bVSync);
 	/**
 	 * Original signature : <code>bool VR_IVRCompositor_GetVSync(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:539</i><br>
@@ -1297,7 +1296,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRCompositor_GetVSync(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:539</i>
 	 */
-	public static native byte VR_IVRCompositor_GetVSync(PointerByReference instancePtr);
+	public static native byte VR_IVRCompositor_GetVSync(Pointer instancePtr);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_SetGamma(intptr_t, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:540</i><br>
@@ -1309,7 +1308,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRCompositor_SetGamma(intptr_t, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:540</i>
 	 */
-	public static native void VR_IVRCompositor_SetGamma(PointerByReference instancePtr, float fGamma);
+	public static native void VR_IVRCompositor_SetGamma(Pointer instancePtr, float fGamma);
 	/**
 	 * Original signature : <code>float VR_IVRCompositor_GetGamma(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:541</i><br>
@@ -1321,7 +1320,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>float VR_IVRCompositor_GetGamma(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:541</i>
 	 */
-	public static native float VR_IVRCompositor_GetGamma(PointerByReference instancePtr);
+	public static native float VR_IVRCompositor_GetGamma(Pointer instancePtr);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_SetGraphicsDevice(intptr_t, Compositor_DeviceType, void*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:542</i><br>
@@ -1333,19 +1332,19 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRCompositor_SetGraphicsDevice(intptr_t, Compositor_DeviceType, void*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:542</i>
 	 */
-	public static native void VR_IVRCompositor_SetGraphicsDevice(PointerByReference instancePtr, int eType, Pointer pDevice);
+	public static native void VR_IVRCompositor_SetGraphicsDevice(Pointer instancePtr, int eType, Pointer pDevice);
 	/**
 	 * Original signature : <code>VRCompositorError VR_IVRCompositor_WaitGetPoses(intptr_t, TrackedDevicePose_t*, uint32_t, TrackedDevicePose_t*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:543</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVRCompositor_WaitGetPoses(java.nio.IntBuffer, jopenvr.TrackedDevicePose_t, int, jopenvr.TrackedDevicePose_t, int)} and {@link #VR_IVRCompositor_WaitGetPoses(com.sun.jna.ptr.IntByReference, jopenvr.TrackedDevicePose_t, int, jopenvr.TrackedDevicePose_t, int)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVRCompositor_WaitGetPoses(IntByReference instancePtr, TrackedDevicePose_t pRenderPoseArray, int unRenderPoseArrayCount, TrackedDevicePose_t pGamePoseArray, int unGamePoseArrayCount);
+	public static native int VR_IVRCompositor_WaitGetPoses(IntByReference instancePtr, Pointer pRenderPoseArray, int unRenderPoseArrayCount, Pointer pGamePoseArray, int unGamePoseArrayCount);
 	/**
 	 * Original signature : <code>VRCompositorError VR_IVRCompositor_WaitGetPoses(intptr_t, TrackedDevicePose_t*, uint32_t, TrackedDevicePose_t*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:543</i>
 	 */
-	public static native int VR_IVRCompositor_WaitGetPoses(PointerByReference instancePtr, TrackedDevicePose_t pRenderPoseArray, int unRenderPoseArrayCount, TrackedDevicePose_t pGamePoseArray, int unGamePoseArrayCount);
+	public static native int VR_IVRCompositor_WaitGetPoses(Pointer instancePtr, Pointer pRenderPoseArray, int unRenderPoseArrayCount, Pointer pGamePoseArray, int unGamePoseArrayCount);
 	/**
 	 * Original signature : <code>VRCompositorError VR_IVRCompositor_Submit(intptr_t, Hmd_Eye, void*, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:544</i><br>
@@ -1357,7 +1356,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VRCompositorError VR_IVRCompositor_Submit(intptr_t, Hmd_Eye, void*, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:544</i>
 	 */
-	public static native int VR_IVRCompositor_Submit(PointerByReference instancePtr, int eEye, Pointer pTexture, VRTextureBounds_t pBounds);
+	public static native int VR_IVRCompositor_Submit(Pointer instancePtr, int eEye, Pointer pTexture, VRTextureBounds_t pBounds);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_ClearLastSubmittedFrame(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:545</i><br>
@@ -1369,7 +1368,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRCompositor_ClearLastSubmittedFrame(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:545</i>
 	 */
-	public static native void VR_IVRCompositor_ClearLastSubmittedFrame(PointerByReference instancePtr);
+	public static native void VR_IVRCompositor_ClearLastSubmittedFrame(Pointer instancePtr);
 	/**
 	 * Original signature : <code>bool VR_IVRCompositor_GetFrameTiming(intptr_t, Compositor_FrameTiming*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:546</i><br>
@@ -1381,7 +1380,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRCompositor_GetFrameTiming(intptr_t, Compositor_FrameTiming*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:546</i>
 	 */
-	public static native byte VR_IVRCompositor_GetFrameTiming(PointerByReference instancePtr, Compositor_FrameTiming pTiming, int unFramesAgo);
+	public static native byte VR_IVRCompositor_GetFrameTiming(Pointer instancePtr, Compositor_FrameTiming pTiming, int unFramesAgo);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_FadeToColor(intptr_t, float, float, float, float, float, bool)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:547</i><br>
@@ -1393,7 +1392,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRCompositor_FadeToColor(intptr_t, float, float, float, float, float, bool)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:547</i>
 	 */
-	public static native void VR_IVRCompositor_FadeToColor(PointerByReference instancePtr, float fSeconds, float fRed, float fGreen, float fBlue, float fAlpha, byte bBackground);
+	public static native void VR_IVRCompositor_FadeToColor(Pointer instancePtr, float fSeconds, float fRed, float fGreen, float fBlue, float fAlpha, byte bBackground);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_FadeGrid(intptr_t, float, bool)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:548</i><br>
@@ -1405,7 +1404,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRCompositor_FadeGrid(intptr_t, float, bool)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:548</i>
 	 */
-	public static native void VR_IVRCompositor_FadeGrid(PointerByReference instancePtr, float fSeconds, byte bFadeIn);
+	public static native void VR_IVRCompositor_FadeGrid(Pointer instancePtr, float fSeconds, byte bFadeIn);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_CompositorBringToFront(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:549</i><br>
@@ -1417,7 +1416,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRCompositor_CompositorBringToFront(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:549</i>
 	 */
-	public static native void VR_IVRCompositor_CompositorBringToFront(PointerByReference instancePtr);
+	public static native void VR_IVRCompositor_CompositorBringToFront(Pointer instancePtr);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_CompositorGoToBack(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:550</i><br>
@@ -1429,7 +1428,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRCompositor_CompositorGoToBack(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:550</i>
 	 */
-	public static native void VR_IVRCompositor_CompositorGoToBack(PointerByReference instancePtr);
+	public static native void VR_IVRCompositor_CompositorGoToBack(Pointer instancePtr);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_CompositorQuit(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:551</i><br>
@@ -1441,7 +1440,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRCompositor_CompositorQuit(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:551</i>
 	 */
-	public static native void VR_IVRCompositor_CompositorQuit(PointerByReference instancePtr);
+	public static native void VR_IVRCompositor_CompositorQuit(Pointer instancePtr);
 	/**
 	 * Original signature : <code>bool VR_IVRCompositor_IsFullscreen(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:552</i><br>
@@ -1453,7 +1452,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRCompositor_IsFullscreen(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:552</i>
 	 */
-	public static native byte VR_IVRCompositor_IsFullscreen(PointerByReference instancePtr);
+	public static native byte VR_IVRCompositor_IsFullscreen(Pointer instancePtr);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_SetTrackingSpace(intptr_t, TrackingUniverseOrigin)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:553</i><br>
@@ -1465,7 +1464,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRCompositor_SetTrackingSpace(intptr_t, TrackingUniverseOrigin)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:553</i>
 	 */
-	public static native void VR_IVRCompositor_SetTrackingSpace(PointerByReference instancePtr, int eOrigin);
+	public static native void VR_IVRCompositor_SetTrackingSpace(Pointer instancePtr, int eOrigin);
 	/**
 	 * Original signature : <code>TrackingUniverseOrigin VR_IVRCompositor_GetTrackingSpace(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:554</i><br>
@@ -1477,7 +1476,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>TrackingUniverseOrigin VR_IVRCompositor_GetTrackingSpace(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:554</i>
 	 */
-	public static native int VR_IVRCompositor_GetTrackingSpace(PointerByReference instancePtr);
+	public static native int VR_IVRCompositor_GetTrackingSpace(Pointer instancePtr);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRCompositor_GetCurrentSceneFocusProcess(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:555</i><br>
@@ -1489,7 +1488,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>uint32_t VR_IVRCompositor_GetCurrentSceneFocusProcess(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:555</i>
 	 */
-	public static native int VR_IVRCompositor_GetCurrentSceneFocusProcess(PointerByReference instancePtr);
+	public static native int VR_IVRCompositor_GetCurrentSceneFocusProcess(Pointer instancePtr);
 	/**
 	 * Original signature : <code>bool VR_IVRCompositor_CanRenderScene(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:556</i><br>
@@ -1501,7 +1500,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRCompositor_CanRenderScene(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:556</i>
 	 */
-	public static native byte VR_IVRCompositor_CanRenderScene(PointerByReference instancePtr);
+	public static native byte VR_IVRCompositor_CanRenderScene(Pointer instancePtr);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_FindOverlay(intptr_t, const char*, VROverlayHandle_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:557</i><br>
@@ -1513,7 +1512,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_FindOverlay(intptr_t, const char*, VROverlayHandle_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:557</i>
 	 */
-	public static native int VR_IVROverlay_FindOverlay(PointerByReference instancePtr, String pchOverlayKey, JOpenVRLibrary.VROverlayHandle_t pOverlayHandle);
+	public static native int VR_IVROverlay_FindOverlay(Pointer instancePtr, String pchOverlayKey, JOpenVRLibrary.VROverlayHandle_t pOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_CreateOverlay(intptr_t, const char*, const char*, VROverlayHandle_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:558</i><br>
@@ -1525,7 +1524,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_CreateOverlay(intptr_t, const char*, const char*, VROverlayHandle_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:558</i>
 	 */
-	public static native int VR_IVROverlay_CreateOverlay(PointerByReference instancePtr, String pchOverlayKey, String pchOverlayFriendlyName, JOpenVRLibrary.VROverlayHandle_t pOverlayHandle);
+	public static native int VR_IVROverlay_CreateOverlay(Pointer instancePtr, String pchOverlayKey, String pchOverlayFriendlyName, JOpenVRLibrary.VROverlayHandle_t pOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_DestroyOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:559</i><br>
@@ -1537,7 +1536,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_DestroyOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:559</i>
 	 */
-	public static native int VR_IVROverlay_DestroyOverlay(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_DestroyOverlay(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetHighQualityOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:560</i><br>
@@ -1549,7 +1548,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetHighQualityOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:560</i>
 	 */
-	public static native int VR_IVROverlay_SetHighQualityOverlay(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_SetHighQualityOverlay(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayHandle_t VR_IVROverlay_GetHighQualityOverlay(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:561</i><br>
@@ -1561,7 +1560,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayHandle_t VR_IVROverlay_GetHighQualityOverlay(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:561</i>
 	 */
-	public static native JOpenVRLibrary.VROverlayHandle_t VR_IVROverlay_GetHighQualityOverlay(PointerByReference instancePtr);
+	public static native JOpenVRLibrary.VROverlayHandle_t VR_IVROverlay_GetHighQualityOverlay(Pointer instancePtr);
 	/**
 	 * Original signature : <code>char* VR_IVROverlay_GetOverlayErrorNameFromEnum(intptr_t, VROverlayError)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:562</i><br>
@@ -1573,7 +1572,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>char* VR_IVROverlay_GetOverlayErrorNameFromEnum(intptr_t, VROverlayError)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:562</i>
 	 */
-	public static native Pointer VR_IVROverlay_GetOverlayErrorNameFromEnum(PointerByReference instancePtr, int error);
+	public static native Pointer VR_IVROverlay_GetOverlayErrorNameFromEnum(Pointer instancePtr, int error);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayFlag(intptr_t, VROverlayHandle_t, VROverlayFlags, bool)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:563</i><br>
@@ -1585,7 +1584,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayFlag(intptr_t, VROverlayHandle_t, VROverlayFlags, bool)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:563</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayFlag(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eOverlayFlag, byte bEnabled);
+	public static native int VR_IVROverlay_SetOverlayFlag(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eOverlayFlag, byte bEnabled);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayFlag(intptr_t, VROverlayHandle_t, VROverlayFlags, bool*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:564</i><br>
@@ -1597,7 +1596,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayFlag(intptr_t, VROverlayHandle_t, VROverlayFlags, bool*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:564</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayFlag(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eOverlayFlag, ByteBuffer pbEnabled);
+	public static native int VR_IVROverlay_GetOverlayFlag(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eOverlayFlag, ByteBuffer pbEnabled);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayAlpha(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:565</i><br>
@@ -1609,7 +1608,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayAlpha(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:565</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayAlpha(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fAlpha);
+	public static native int VR_IVROverlay_SetOverlayAlpha(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fAlpha);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayAlpha(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:566</i><br>
@@ -1621,7 +1620,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayAlpha(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:566</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayAlpha(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatBuffer pfAlpha);
+	public static native int VR_IVROverlay_GetOverlayAlpha(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatBuffer pfAlpha);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayGamma(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:567</i><br>
@@ -1633,7 +1632,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayGamma(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:567</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayGamma(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fGamma);
+	public static native int VR_IVROverlay_SetOverlayGamma(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fGamma);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayGamma(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:568</i><br>
@@ -1645,7 +1644,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayGamma(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:568</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayGamma(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatBuffer pfGamma);
+	public static native int VR_IVROverlay_GetOverlayGamma(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatBuffer pfGamma);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayWidthInMeters(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:569</i><br>
@@ -1657,7 +1656,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayWidthInMeters(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:569</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayWidthInMeters(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fWidthInMeters);
+	public static native int VR_IVROverlay_SetOverlayWidthInMeters(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fWidthInMeters);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayWidthInMeters(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:570</i><br>
@@ -1669,7 +1668,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayWidthInMeters(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:570</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayWidthInMeters(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatBuffer pfWidthInMeters);
+	public static native int VR_IVROverlay_GetOverlayWidthInMeters(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatBuffer pfWidthInMeters);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTextureBounds(intptr_t, VROverlayHandle_t, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:571</i><br>
@@ -1681,7 +1680,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTextureBounds(intptr_t, VROverlayHandle_t, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:571</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayTextureBounds(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
+	public static native int VR_IVROverlay_SetOverlayTextureBounds(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTextureBounds(intptr_t, VROverlayHandle_t, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:572</i><br>
@@ -1693,7 +1692,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTextureBounds(intptr_t, VROverlayHandle_t, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:572</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayTextureBounds(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
+	public static native int VR_IVROverlay_GetOverlayTextureBounds(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformType(intptr_t, VROverlayHandle_t, VROverlayTransformType*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:573</i><br>
@@ -1705,7 +1704,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformType(intptr_t, VROverlayHandle_t, VROverlayTransformType*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:573</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayTransformType(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer peTransformType);
+	public static native int VR_IVROverlay_GetOverlayTransformType(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer peTransformType);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTransformAbsolute(intptr_t, VROverlayHandle_t, TrackingUniverseOrigin, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:574</i><br>
@@ -1717,7 +1716,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTransformAbsolute(intptr_t, VROverlayHandle_t, TrackingUniverseOrigin, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:574</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayTransformAbsolute(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
+	public static native int VR_IVROverlay_SetOverlayTransformAbsolute(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformAbsolute(intptr_t, VROverlayHandle_t, TrackingUniverseOrigin*, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:575</i><br>
@@ -1729,7 +1728,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformAbsolute(intptr_t, VROverlayHandle_t, TrackingUniverseOrigin*, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:575</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayTransformAbsolute(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer peTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
+	public static native int VR_IVROverlay_GetOverlayTransformAbsolute(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer peTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:576</i><br>
@@ -1741,7 +1740,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:576</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
+	public static native int VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t*, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:577</i><br>
@@ -1753,7 +1752,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t*, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:577</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer punTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
+	public static native int VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer punTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayVisibility(intptr_t, VROverlayHandle_t, VROverlayVisibility*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:578</i><br>
@@ -1765,7 +1764,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayVisibility(intptr_t, VROverlayHandle_t, VROverlayVisibility*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:578</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayVisibility(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer peOverlayVisibility);
+	public static native int VR_IVROverlay_GetOverlayVisibility(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer peOverlayVisibility);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayVisibility(intptr_t, VROverlayHandle_t, VROverlayVisibility)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:579</i><br>
@@ -1777,7 +1776,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayVisibility(intptr_t, VROverlayHandle_t, VROverlayVisibility)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:579</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayVisibility(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eOverlayVisibility);
+	public static native int VR_IVROverlay_SetOverlayVisibility(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eOverlayVisibility);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_ShowOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:580</i><br>
@@ -1789,7 +1788,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_ShowOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:580</i>
 	 */
-	public static native int VR_IVROverlay_ShowOverlay(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_ShowOverlay(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_HideOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:581</i><br>
@@ -1801,7 +1800,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_HideOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:581</i>
 	 */
-	public static native int VR_IVROverlay_HideOverlay(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_HideOverlay(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_IsOverlayVisible(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:582</i><br>
@@ -1813,7 +1812,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVROverlay_IsOverlayVisible(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:582</i>
 	 */
-	public static native byte VR_IVROverlay_IsOverlayVisible(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native byte VR_IVROverlay_IsOverlayVisible(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_PollNextOverlayEvent(intptr_t, VROverlayHandle_t, VREvent_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:583</i><br>
@@ -1825,7 +1824,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVROverlay_PollNextOverlayEvent(intptr_t, VROverlayHandle_t, VREvent_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:583</i>
 	 */
-	public static native byte VR_IVROverlay_PollNextOverlayEvent(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, JOpenVRLibrary.VREvent_t pEvent);
+	public static native byte VR_IVROverlay_PollNextOverlayEvent(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, JOpenVRLibrary.VREvent_t pEvent);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayInputMethod(intptr_t, VROverlayHandle_t, VROverlayInputMethod*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:584</i><br>
@@ -1837,7 +1836,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayInputMethod(intptr_t, VROverlayHandle_t, VROverlayInputMethod*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:584</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayInputMethod(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer peInputMethod);
+	public static native int VR_IVROverlay_GetOverlayInputMethod(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer peInputMethod);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayInputMethod(intptr_t, VROverlayHandle_t, VROverlayInputMethod)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:585</i><br>
@@ -1849,7 +1848,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayInputMethod(intptr_t, VROverlayHandle_t, VROverlayInputMethod)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:585</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayInputMethod(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eInputMethod);
+	public static native int VR_IVROverlay_SetOverlayInputMethod(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eInputMethod);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayMouseScale(intptr_t, VROverlayHandle_t, HmdVector2_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:586</i><br>
@@ -1861,7 +1860,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayMouseScale(intptr_t, VROverlayHandle_t, HmdVector2_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:586</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayMouseScale(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, HmdVector2_t pvecMouseScale);
+	public static native int VR_IVROverlay_GetOverlayMouseScale(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, HmdVector2_t pvecMouseScale);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayMouseScale(intptr_t, VROverlayHandle_t, HmdVector2_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:587</i><br>
@@ -1873,7 +1872,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayMouseScale(intptr_t, VROverlayHandle_t, HmdVector2_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:587</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayMouseScale(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, HmdVector2_t pvecMouseScale);
+	public static native int VR_IVROverlay_SetOverlayMouseScale(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, HmdVector2_t pvecMouseScale);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_ComputeOverlayIntersection(intptr_t, VROverlayHandle_t, VROverlayIntersectionParams_t*, VROverlayIntersectionResults_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:588</i><br>
@@ -1885,7 +1884,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVROverlay_ComputeOverlayIntersection(intptr_t, VROverlayHandle_t, VROverlayIntersectionParams_t*, VROverlayIntersectionResults_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:588</i>
 	 */
-	public static native byte VR_IVROverlay_ComputeOverlayIntersection(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VROverlayIntersectionParams_t pParams, VROverlayIntersectionResults_t pResults);
+	public static native byte VR_IVROverlay_ComputeOverlayIntersection(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VROverlayIntersectionParams_t pParams, VROverlayIntersectionResults_t pResults);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:589</i><br>
@@ -1897,7 +1896,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:589</i>
 	 */
-	public static native byte VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unControllerDeviceIndex);
+	public static native byte VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unControllerDeviceIndex);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTexture(intptr_t, VROverlayHandle_t, void*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:590</i><br>
@@ -1909,7 +1908,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTexture(intptr_t, VROverlayHandle_t, void*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:590</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayTexture(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, Pointer pTexture);
+	public static native int VR_IVROverlay_SetOverlayTexture(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, Pointer pTexture);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayRaw(intptr_t, VROverlayHandle_t, void*, uint32_t, uint32_t, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:591</i><br>
@@ -1921,7 +1920,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayRaw(intptr_t, VROverlayHandle_t, void*, uint32_t, uint32_t, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:591</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayRaw(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, Pointer pvBuffer, int unWidth, int unHeight, int unDepth);
+	public static native int VR_IVROverlay_SetOverlayRaw(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, Pointer pvBuffer, int unWidth, int unHeight, int unDepth);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayFromFile(intptr_t, VROverlayHandle_t, const char*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:592</i><br>
@@ -1933,7 +1932,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayFromFile(intptr_t, VROverlayHandle_t, const char*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:592</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayFromFile(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, String pchFilePath);
+	public static native int VR_IVROverlay_SetOverlayFromFile(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, String pchFilePath);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_IsSystemOverlayVisible(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:593</i><br>
@@ -1945,7 +1944,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVROverlay_IsSystemOverlayVisible(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:593</i>
 	 */
-	public static native byte VR_IVROverlay_IsSystemOverlayVisible(PointerByReference instancePtr);
+	public static native byte VR_IVROverlay_IsSystemOverlayVisible(Pointer instancePtr);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_IsActiveSystemOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:594</i><br>
@@ -1957,7 +1956,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVROverlay_IsActiveSystemOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:594</i>
 	 */
-	public static native byte VR_IVROverlay_IsActiveSystemOverlay(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native byte VR_IVROverlay_IsActiveSystemOverlay(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetSystemOverlaySceneProcess(intptr_t, VROverlayHandle_t, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:595</i><br>
@@ -1969,7 +1968,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetSystemOverlaySceneProcess(intptr_t, VROverlayHandle_t, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:595</i>
 	 */
-	public static native int VR_IVROverlay_SetSystemOverlaySceneProcess(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unProcessId);
+	public static native int VR_IVROverlay_SetSystemOverlaySceneProcess(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unProcessId);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetSystemOverlaySceneProcess(intptr_t, VROverlayHandle_t, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:596</i><br>
@@ -1981,7 +1980,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetSystemOverlaySceneProcess(intptr_t, VROverlayHandle_t, uint32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:596</i>
 	 */
-	public static native int VR_IVROverlay_GetSystemOverlaySceneProcess(PointerByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer punProcessId);
+	public static native int VR_IVROverlay_GetSystemOverlaySceneProcess(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer punProcessId);
 	/**
 	 * Original signature : <code>bool VR_IVRRenderModels_LoadRenderModel(intptr_t, const char*, RenderModel_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:597</i><br>
@@ -1993,7 +1992,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRRenderModels_LoadRenderModel(intptr_t, const char*, RenderModel_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:597</i>
 	 */
-	public static native byte VR_IVRRenderModels_LoadRenderModel(PointerByReference instancePtr, String pchRenderModelName, RenderModel_t pRenderModel);
+	public static native byte VR_IVRRenderModels_LoadRenderModel(Pointer instancePtr, String pchRenderModelName, RenderModel_t pRenderModel);
 	/**
 	 * Original signature : <code>void VR_IVRRenderModels_FreeRenderModel(intptr_t, RenderModel_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:598</i><br>
@@ -2005,7 +2004,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRRenderModels_FreeRenderModel(intptr_t, RenderModel_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:598</i>
 	 */
-	public static native void VR_IVRRenderModels_FreeRenderModel(PointerByReference instancePtr, RenderModel_t pRenderModel);
+	public static native void VR_IVRRenderModels_FreeRenderModel(Pointer instancePtr, RenderModel_t pRenderModel);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRRenderModels_GetRenderModelName(intptr_t, uint32_t, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:599</i><br>
@@ -2017,7 +2016,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>uint32_t VR_IVRRenderModels_GetRenderModelName(intptr_t, uint32_t, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:599</i>
 	 */
-	public static native int VR_IVRRenderModels_GetRenderModelName(PointerByReference instancePtr, int unRenderModelIndex, ByteBuffer pchRenderModelName, int unRenderModelNameLen);
+	public static native int VR_IVRRenderModels_GetRenderModelName(Pointer instancePtr, int unRenderModelIndex, ByteBuffer pchRenderModelName, int unRenderModelNameLen);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRRenderModels_GetRenderModelCount(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:600</i><br>
@@ -2029,7 +2028,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>uint32_t VR_IVRRenderModels_GetRenderModelCount(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:600</i>
 	 */
-	public static native int VR_IVRRenderModels_GetRenderModelCount(PointerByReference instancePtr);
+	public static native int VR_IVRRenderModels_GetRenderModelCount(Pointer instancePtr);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRNotifications_GetLastError(intptr_t, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:601</i><br>
@@ -2041,7 +2040,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>uint32_t VR_IVRNotifications_GetLastError(intptr_t, char*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:601</i>
 	 */
-	public static native int VR_IVRNotifications_GetLastError(PointerByReference instancePtr, ByteBuffer pchBuffer, int unBufferSize);
+	public static native int VR_IVRNotifications_GetLastError(Pointer instancePtr, ByteBuffer pchBuffer, int unBufferSize);
 	/**
 	 * Original signature : <code>bool VR_IVRNotifications_NotificationStart(intptr_t, char*, NotificationBitmap, VRNotificationId*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:602</i><br>
@@ -2053,7 +2052,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRNotifications_NotificationStart(intptr_t, char*, NotificationBitmap, VRNotificationId*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:602</i>
 	 */
-	public static native byte VR_IVRNotifications_NotificationStart(PointerByReference instancePtr, ByteBuffer type, jopenvr.NotificationBitmap.ByValue texture, IntBuffer notificationId);
+	public static native byte VR_IVRNotifications_NotificationStart(Pointer instancePtr, ByteBuffer type, jopenvr.NotificationBitmap.ByValue texture, IntBuffer notificationId);
 	/**
 	 * Original signature : <code>bool VR_IVRNotifications_UpdateTexture(intptr_t, VRNotificationId, NotificationBitmap)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:603</i><br>
@@ -2065,7 +2064,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRNotifications_UpdateTexture(intptr_t, VRNotificationId, NotificationBitmap)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:603</i>
 	 */
-	public static native byte VR_IVRNotifications_UpdateTexture(PointerByReference instancePtr, int notificationId, jopenvr.NotificationBitmap.ByValue texture);
+	public static native byte VR_IVRNotifications_UpdateTexture(Pointer instancePtr, int notificationId, jopenvr.NotificationBitmap.ByValue texture);
 	/**
 	 * Original signature : <code>bool VR_IVRNotifications_UpdateBitmap(intptr_t, VRNotificationId, NotificationBitmap)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:604</i><br>
@@ -2077,7 +2076,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRNotifications_UpdateBitmap(intptr_t, VRNotificationId, NotificationBitmap)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:604</i>
 	 */
-	public static native byte VR_IVRNotifications_UpdateBitmap(PointerByReference instancePtr, int notificationId, jopenvr.NotificationBitmap.ByValue texture);
+	public static native byte VR_IVRNotifications_UpdateBitmap(Pointer instancePtr, int notificationId, jopenvr.NotificationBitmap.ByValue texture);
 	/**
 	 * Original signature : <code>bool VR_IVRNotifications_GetPointerLocation(intptr_t, VRNotificationId, bool*, int32_t*, int32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:605</i><br>
@@ -2089,7 +2088,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRNotifications_GetPointerLocation(intptr_t, VRNotificationId, bool*, int32_t*, int32_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:605</i>
 	 */
-	public static native byte VR_IVRNotifications_GetPointerLocation(PointerByReference instancePtr, int notificationId, ByteBuffer pointerActive, IntBuffer pointerX, IntBuffer pointerY);
+	public static native byte VR_IVRNotifications_GetPointerLocation(Pointer instancePtr, int notificationId, ByteBuffer pointerActive, IntBuffer pointerX, IntBuffer pointerY);
 	/**
 	 * Original signature : <code>bool VR_IVRNotifications_DismissNotification(intptr_t, VRNotificationId)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:606</i><br>
@@ -2101,7 +2100,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>bool VR_IVRNotifications_DismissNotification(intptr_t, VRNotificationId)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:606</i>
 	 */
-	public static native byte VR_IVRNotifications_DismissNotification(PointerByReference instancePtr, int notificationId);
+	public static native byte VR_IVRNotifications_DismissNotification(Pointer instancePtr, int notificationId);
 	public static class VROverlayHandle_t extends PointerType {
 		public VROverlayHandle_t(Pointer address) {
 			super(address);
@@ -2166,7 +2165,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>IVRSystem* VR_Init(HmdError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr-simple.h:1370</i>
 	 */
-	public static native PointerByReference VR_Init(IntBuffer peError);
+	public static native Pointer VR_Init(IntBuffer peError);
 	/**
 	 * Original signature : <code>void VR_Shutdown()</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr-simple.h:1374</i>
@@ -2193,7 +2192,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void* VR_GetGenericInterface(const char*, HmdError*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr-simple.h:1388</i>
 	 */
-	public static native PointerByReference VR_GetGenericInterface(String pchInterfaceVersion, IntBuffer peError);
+	public static native Pointer VR_GetGenericInterface(String pchInterfaceVersion, IntBuffer peError);
 	public static class IVRSystem extends PointerType {
 		public IVRSystem(Pointer address) {
 			super(address);

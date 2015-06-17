@@ -11,16 +11,11 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.NativeLongByReference;
-import com.sun.jna.ptr.PointerByReference;
 import java.nio.IntBuffer;
 import jmevr.util.OpenVRUtil;
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdMatrix44_t;
 import jopenvr.JOpenVRLibrary;
-import jopenvr.JOpenVRLibrary.IVRSystem;
 import jopenvr.TrackedDevicePose_t;
 
 /**
@@ -41,14 +36,14 @@ public class OpenVR implements VRHMD {
     private static final Quaternion rotStore = new Quaternion();
     private static final Vector3f posStore = new Vector3f();
     
-    private final HMDInfo hmdinfo = new HMDInfo();
+    private static final HMDInfo hmdinfo = new HMDInfo();
     private static Matrix4f[] poseMatrices;
     
-    private final Matrix4f hmdPose = Matrix4f.IDENTITY.clone();
-    private static Matrix4f hmdProjectionLeftEye = Matrix4f.IDENTITY.clone();
-    private static Matrix4f hmdProjectionRightEye = Matrix4f.IDENTITY.clone();
-    private static Matrix4f hmdPoseLeftEye = Matrix4f.IDENTITY.clone();
-    private static Matrix4f hmdPoseRightEye = Matrix4f.IDENTITY.clone();
+    private static final Matrix4f hmdPose = Matrix4f.IDENTITY.clone();
+    private static final Matrix4f hmdProjectionLeftEye = Matrix4f.IDENTITY.clone();
+    private static final Matrix4f hmdProjectionRightEye = Matrix4f.IDENTITY.clone();
+    private static final Matrix4f hmdPoseLeftEye = Matrix4f.IDENTITY.clone();
+    private static final Matrix4f hmdPoseRightEye = Matrix4f.IDENTITY.clone();
     
     @Override
     public String getName() {
@@ -131,7 +126,7 @@ public class OpenVR implements VRHMD {
         } else {
             IntBuffer x = IntBuffer.allocate(1);
             IntBuffer y = IntBuffer.allocate(1);
-            //JOpenVRLibrary.VR_IVRSystem_GetRecommendedRenderTargetSize(vrsystem, x, y);
+            JOpenVRLibrary.VR_IVRSystem_GetRecommendedRenderTargetSize(vrsystem, x, y);
             store.x = x.get(0);
             store.y = y.get(0);
         }
@@ -197,7 +192,7 @@ public class OpenVR implements VRHMD {
             return;
         }
         if(vrCompositor != null){
-           JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePose[0].getPointer(), hmdTrackedDevicePose.length, null, 0);
+           JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePose[0], hmdTrackedDevicePose.length, null, 0);
         } else {
             // We just got done with the glFinish - the seconds since last vsync should be 0.
             float fSecondsSinceLastVsync = 0.0f;
@@ -205,7 +200,7 @@ public class OpenVR implements VRHMD {
             float fFrameDuration = 1.0f / JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_DisplayFrequency_Float, hmdErrorStore);
             float fSecondsUntilPhotons = fFrameDuration - fSecondsSinceLastVsync + JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
             
-            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePose[0].getPointer(), JOpenVRLibrary.k_unMaxTrackedDeviceCount);
+            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePose[0], JOpenVRLibrary.k_unMaxTrackedDeviceCount);
         }
         for (int nDevice = 0; nDevice < JOpenVRLibrary.k_unMaxTrackedDeviceCount; ++nDevice ){
             if( hmdTrackedDevicePose[nDevice].bPoseIsValid != 0 ){

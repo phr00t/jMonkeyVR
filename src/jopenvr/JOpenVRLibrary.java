@@ -648,7 +648,7 @@ public class JOpenVRLibrary implements Library {
 	 * Original signature : <code>void VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(intptr_t, TrackingUniverseOrigin, float, TrackedDevicePose_t*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:485</i>
 	 */
-	public static native void VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(Pointer instancePtr, int eOrigin, float fPredictedSecondsToPhotonsFromNow, Pointer pTrackedDevicePoseArray, int unTrackedDevicePoseArrayCount);
+	public static native void VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(Pointer instancePtr, int eOrigin, float fPredictedSecondsToPhotonsFromNow, TrackedDevicePose_t pTrackedDevicePoseArray, int unTrackedDevicePoseArrayCount);
 	/**
 	 * Original signature : <code>void VR_IVRSystem_ResetSeatedZeroPose(intptr_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:486</i><br>
@@ -1339,12 +1339,12 @@ public class JOpenVRLibrary implements Library {
 	 * @deprecated use the safer methods {@link #VR_IVRCompositor_WaitGetPoses(java.nio.IntBuffer, jopenvr.TrackedDevicePose_t, int, jopenvr.TrackedDevicePose_t, int)} and {@link #VR_IVRCompositor_WaitGetPoses(com.sun.jna.ptr.IntByReference, jopenvr.TrackedDevicePose_t, int, jopenvr.TrackedDevicePose_t, int)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVRCompositor_WaitGetPoses(IntByReference instancePtr, Pointer pRenderPoseArray, int unRenderPoseArrayCount, Pointer pGamePoseArray, int unGamePoseArrayCount);
+	public static native int VR_IVRCompositor_WaitGetPoses(IntByReference instancePtr, TrackedDevicePose_t pRenderPoseArray, int unRenderPoseArrayCount, Pointer pGamePoseArray, int unGamePoseArrayCount);
 	/**
 	 * Original signature : <code>VRCompositorError VR_IVRCompositor_WaitGetPoses(intptr_t, TrackedDevicePose_t*, uint32_t, TrackedDevicePose_t*, uint32_t)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:543</i>
 	 */
-	public static native int VR_IVRCompositor_WaitGetPoses(Pointer instancePtr, Pointer pRenderPoseArray, int unRenderPoseArrayCount, Pointer pGamePoseArray, int unGamePoseArrayCount);
+	public static native int VR_IVRCompositor_WaitGetPoses(Pointer instancePtr, TrackedDevicePose_t pRenderPoseArray, int unRenderPoseArrayCount, Pointer pGamePoseArray, int unGamePoseArrayCount);
 	/**
 	 * Original signature : <code>VRCompositorError VR_IVRCompositor_Submit(intptr_t, Hmd_Eye, void*, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : /home/phr00t/OpenVR/headers/openvr_capi.h:544</i><br>

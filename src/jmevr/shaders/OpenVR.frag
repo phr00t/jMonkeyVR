@@ -5,7 +5,7 @@ varying vec2 UVgreen;
 varying vec2 UVblue;
 
 void main() {
-    float fBoundsCheck = ( (dot( vec2( lessThan( v2UVgreen.xy, vec2(0.05, 0.05)) ), vec2(1.0, 1.0))+dot( vec2( greaterThan( v2UVgreen.xy, vec2( 0.95, 0.95)) ), vec2(1.0, 1.0))) );
+    float fBoundsCheck = ( (dot( vec2( lessThan( UVgreen.xy, vec2(0.05, 0.05)) ), vec2(1.0, 1.0))+dot( vec2( greaterThan( UVgreen.xy, vec2( 0.95, 0.95)) ), vec2(1.0, 1.0))) );
 
     if( fBoundsCheck > 1.0 ) {
         gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 );

@@ -36,6 +36,7 @@ import jmevr.input.OpenVR;
 import jmevr.input.VRHMD;
 import jmevr.post.FastSSAO;
 import jmevr.post.OculusFilter;
+import jmevr.post.OpenVRFilter;
 import jmevr.util.VRGuiNode;
 import jmevr.util.OculusRiftUtil;
 
@@ -162,8 +163,8 @@ public class VRAppState extends AbstractAppState {
             filterRight =new OculusFilter(or.getHmd(), 1);
             ((OculusFilter)filterRight).setEyeTextureSize(rightsize);
         } else if( vrhmd instanceof OpenVR ) {
-            // TODO: make filters...
-            return;
+            filterLeft = new OpenVRFilter();
+            filterRight = new OpenVRFilter();
         }
 
         ppRight =new FilterPostProcessor(app.getAssetManager());               
@@ -223,7 +224,7 @@ public class VRAppState extends AbstractAppState {
         for(SceneProcessor sp: processors){
             if(sp instanceof FilterPostProcessor){
                 FilterPostProcessor fpp1 = (FilterPostProcessor) sp;
-                OculusFilter bdf = ppRight.getFilter(OculusFilter.class);
+                OpenVRFilter bdf = ppRight.getFilter(OpenVRFilter.class);
                 ppRight.removeFilter(bdf);
                 for(Filter filter: fpp1.getFilterList()){
                                         
@@ -243,7 +244,7 @@ public class VRAppState extends AbstractAppState {
                     } else if (filter instanceof DirectionalLightShadowFilter){
                         f2 = FilterUtil.cloneDirectionalLightShadowFilter(app.getAssetManager(), (DirectionalLightShadowFilter)filter);
                     } 
-                    else if (!(filter instanceof OculusFilter)){
+                    else if (!(filter instanceof OpenVRFilter)){
                         f2 = filter; // dof, bloom, lightscattering
                     }
                     

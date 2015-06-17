@@ -1,8 +1,8 @@
-MaterialDef Simple {
+MaterialDef OpenVR {
     MaterialParameters {
         Int NumSamples
         Texture2D Texture
-
+    
         Vector2 inUVred
         Vector2 inUVblue
         Vector2 inUVgreen

@@ -29,7 +29,8 @@ public class OpenVR implements VRHMD {
     private static boolean forceInitialize = false;
     
     private static IntBuffer hmdDisplayFrequency;
-    private static TrackedDevicePose_t hmdTrackedDevicePose[];
+    private static final TrackedDevicePose_t.ByReference hmdTrackedDevicePoseReference = new TrackedDevicePose_t.ByReference();
+    private static TrackedDevicePose_t[] hmdTrackedDevicePoses;
     
     private static IntBuffer hmdErrorStore;
     
@@ -65,8 +66,7 @@ public class OpenVR implements VRHMD {
             hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_DisplayFrequency_Float);
             hmdDisplayFrequency = IntBuffer.allocate(1);
             hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float);
-            hmdTrackedDevicePose = new TrackedDevicePose_t[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
-            for(int i=0;i<hmdTrackedDevicePose.length;i++) hmdTrackedDevicePose[i] = new TrackedDevicePose_t();
+            hmdTrackedDevicePoses = (TrackedDevicePose_t[])hmdTrackedDevicePoseReference.toArray(JOpenVRLibrary.k_unMaxTrackedDeviceCount);
             
             // this was taken straight from https://raw.githubusercontent.com/ValveSoftware/openvr/master/headers/openvr_capi.h
             // char * const IVRCompositor_Version = "IVRCompositor_006";
@@ -140,7 +140,9 @@ public class OpenVR implements VRHMD {
     @Override
     public float getFOV() {
         if( vrsystem == null ) return 130f;
-        return JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewBottomDegrees_Float, hmdErrorStore);
+        float val = JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewBottomDegrees_Float, hmdErrorStore);
+        if( val <= 0f ) return 130f;
+        return val;
     }
 
     @Override
@@ -192,7 +194,7 @@ public class OpenVR implements VRHMD {
             return;
         }
         if(vrCompositor != null){
-           JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePose[0], hmdTrackedDevicePose.length, null, 0);
+           JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePoseReference, hmdTrackedDevicePoses.length, null, 0);
         } else {
             // We just got done with the glFinish - the seconds since last vsync should be 0.
             float fSecondsSinceLastVsync = 0.0f;
@@ -200,14 +202,14 @@ public class OpenVR implements VRHMD {
             float fFrameDuration = 1.0f / JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_DisplayFrequency_Float, hmdErrorStore);
             float fSecondsUntilPhotons = fFrameDuration - fSecondsSinceLastVsync + JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
             
-            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePose[0], JOpenVRLibrary.k_unMaxTrackedDeviceCount);
+            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);
         }
         for (int nDevice = 0; nDevice < JOpenVRLibrary.k_unMaxTrackedDeviceCount; ++nDevice ){
-            if( hmdTrackedDevicePose[nDevice].bPoseIsValid != 0 ){
-                OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(hmdTrackedDevicePose[nDevice].mDeviceToAbsoluteTracking, poseMatrices[nDevice]);
+            if( hmdTrackedDevicePoses[nDevice].bPoseIsValid != 0 ){
+                OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(hmdTrackedDevicePoses[nDevice].mDeviceToAbsoluteTracking, poseMatrices[nDevice]);
             }
         }
-        if ( hmdTrackedDevicePose[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd].bPoseIsValid != 0 ){
+        if ( hmdTrackedDevicePoses[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd].bPoseIsValid != 0 ){
             poseMatrices[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd].invert(hmdPose);
         }
     }

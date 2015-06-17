@@ -1,4 +1,4 @@
-MaterialDef Simple {
+MaterialDef Oculus {
     MaterialParameters {
         Int NumSamples
         Texture2D Texture

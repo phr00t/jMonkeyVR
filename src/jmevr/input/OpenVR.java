@@ -68,18 +68,22 @@ public class OpenVR implements VRHMD {
             hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float);
             hmdTrackedDevicePoses = (TrackedDevicePose_t[])hmdTrackedDevicePoseReference.toArray(JOpenVRLibrary.k_unMaxTrackedDeviceCount);
             
-            // this was taken straight from https://raw.githubusercontent.com/ValveSoftware/openvr/master/headers/openvr_capi.h
-            // char * const IVRCompositor_Version = "IVRCompositor_006";
-            
-            vrCompositor = JOpenVRLibrary.VR_GetGenericInterface("IVRCompositor_006", hmdErrorStore);
-            if(vrCompositor != null && hmdErrorStore.get(0) != 0){                
-                System.out.println("OpenVR Compositor initialized OK.");
-                return true;
-            } else {
-                System.out.println("OpenVR Compositor error: " + JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0)).getString(0));
-                return false;
-            }
+            return true;
         }
+    }
+    
+    public boolean initOpenVRCompositor() {
+        // this was taken straight from https://raw.githubusercontent.com/ValveSoftware/openvr/master/headers/openvr_capi.h
+        // char * const IVRCompositor_Version = "IVRCompositor_006";
+
+        vrCompositor = JOpenVRLibrary.VR_GetGenericInterface("IVRCompositor_006", hmdErrorStore);
+        if(vrCompositor != null && hmdErrorStore.get(0) == 0){                
+            System.out.println("OpenVR Compositor initialized OK.");
+            return true;
+        } else {
+            System.out.println("OpenVR Compositor error: " + JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0)).getString(0));
+            return false;
+        }        
     }
 
     @Override

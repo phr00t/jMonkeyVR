@@ -142,6 +142,8 @@ public class VRApplication extends SimpleApplication{
             if( VRhardware instanceof OculusRift ) {
                 OculusRiftUtil.useMaxEyeFov(useFOVMax);
                 OculusRiftUtil.disableVignette(disable_vignette);
+            } else if( VRhardware instanceof OpenVR ) {
+                ((OpenVR)VRhardware).initOpenVRCompositor();
             }
             VRappstate = new VRAppState((VRGuiNode)guiNode, flipEyes);
             VRappstate.getGuiNode().setPositioningMode(VRGuiNode.POSITIONING_MODE.AUTO);

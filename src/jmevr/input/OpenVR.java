@@ -26,7 +26,7 @@ public class OpenVR implements VRHMD {
 
     private static Pointer vrsystem;
     private static Pointer vrCompositor;
-    private static boolean forceInitialize = false;
+    private static boolean forceInitialize = false, initSuccess = false;
     
     private static IntBuffer hmdDisplayFrequency;
     private static final TrackedDevicePose_t.ByReference hmdTrackedDevicePoseReference = new TrackedDevicePose_t.ByReference();
@@ -68,6 +68,7 @@ public class OpenVR implements VRHMD {
             hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float);
             hmdTrackedDevicePoses = (TrackedDevicePose_t[])hmdTrackedDevicePoseReference.toArray(JOpenVRLibrary.k_unMaxTrackedDeviceCount);
             
+            initSuccess = true;
             return true;
         }
     }
@@ -115,7 +116,7 @@ public class OpenVR implements VRHMD {
 
     @Override
     public boolean isInitialized() {
-        return forceInitialize || JOpenVRLibrary.VR_IsHmdPresent() != 0;
+        return forceInitialize || initSuccess;
     }
 
     @Override

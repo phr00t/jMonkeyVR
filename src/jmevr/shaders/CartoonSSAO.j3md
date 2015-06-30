@@ -1,0 +1,29 @@
+MaterialDef CartoonSSAO {
+
+    MaterialParameters {
+        Int NumSamples
+        Int NumSamplesDepth
+        Texture2D DepthTexture
+        Texture2D Texture
+        Texture2D Normals
+        Vector3 FrustumCorner
+        Float SampleRadius
+        Float Intensity
+        Float Scale
+        Float Bias
+
+        Vector2 FrustumNearFar
+    }
+
+        Technique {
+            VertexShader GLSL100:   Common/MatDefs/Post/Post.vert
+            FragmentShader GLSL100: jmevr/shaders/CartoonSSAO.frag
+
+            WorldParameters {
+            WorldViewProjectionMatrix
+            WorldViewMatrix
+            Resolution
+            ResolutionInverse
+        }
+    }
+}

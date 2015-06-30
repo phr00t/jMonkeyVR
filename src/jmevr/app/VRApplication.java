@@ -16,6 +16,7 @@ import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
+import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
@@ -24,6 +25,7 @@ import jmevr.input.OculusRift;
 import jmevr.input.OpenVR;
 import jmevr.input.VRHMD;
 import jmevr.input.VRInput;
+import jmevr.post.PreNormalCaching;
 import jmevr.state.VRAppState;
 import jmevr.util.VRGuiNode;
 import jmevr.util.OculusRiftUtil;
@@ -94,6 +96,11 @@ public class VRApplication extends SimpleApplication{
         }
     }
     
+    @Override
+    public void simpleRender(RenderManager renderManager) {
+        super.simpleRender(renderManager);
+        PreNormalCaching.resetCache();
+    }
 
     public VRApplication() {
         super();
@@ -106,7 +113,6 @@ public class VRApplication extends SimpleApplication{
     }
     
     public void preconfigureVRApp(boolean disable_vignette, boolean force_max_fov, boolean flip_eyes, boolean force_vr) {
-        
         useFOVMax = force_max_fov;
         flipEyes = flip_eyes;
         this.disable_vignette = disable_vignette;
@@ -156,7 +162,7 @@ public class VRApplication extends SimpleApplication{
             setLostFocusBehavior(LostFocusBehavior.Disabled);
         }
     }
-
+        
     @Override
     public void start() {
         // set some default settings in-case

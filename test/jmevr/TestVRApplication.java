@@ -65,10 +65,10 @@ public class TestVRApplication extends VRApplication {
         super.simpleInitApp();
         this.flyCam.setMoveSpeed(10);
         Node mainScene=new Node();
-        scene = new Node();
-        assetManager.registerLocator("assets/Scenes/wildhouse.zip", ZipLocator.class);        
-        scene.attachChild(assetManager.loadModel("main.scene"));
-        rootNode.attachChild(scene);
+        //scene = new Node();
+        //assetManager.registerLocator("assets/Scenes/wildhouse.zip", ZipLocator.class);        
+        //scene.attachChild(assetManager.loadModel("main.scene"));
+        //rootNode.attachChild(scene);
         rootNode.attachChild(SkyFactory.createSky(
                     assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
         
@@ -76,7 +76,7 @@ public class TestVRApplication extends VRApplication {
         Material m = new Material(getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         
         // aniscopic filtering really helps!
-        setFilter(scene);
+        setFilter(rootNode);
         
         // gui element
         Picture test = new Picture("testpic");
@@ -100,7 +100,7 @@ public class TestVRApplication extends VRApplication {
         boxes.attachChild(box);
         boxes.attachChild(box2);
         boxes.attachChild(box3);
-        scene.attachChild(boxes);
+        rootNode.attachChild(boxes);
         
         observer.setLocalTranslation(new Vector3f(0.0f, 0.0f, -10.0f));//observer.setLocalTranslation(new Vector3f(0,0,5));
         
@@ -112,9 +112,9 @@ public class TestVRApplication extends VRApplication {
         Vector3f lightDir=new Vector3f(-0.37352666f, -0.50444174f, -0.7784704f);
         sun.setDirection(lightDir);
         sun.setColor(ColorRGBA.White.clone().multLocal(2));
-        scene.addLight(sun);
+        rootNode.addLight(sun);
 
-        mainScene.attachChild(scene);
+        //mainScene.attachChild(scene);
         rootNode.attachChild(mainScene);
 
         initInputs();

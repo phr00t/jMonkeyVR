@@ -22,7 +22,7 @@ import com.jme3.texture.Texture;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class FastSSAO extends Filter{
+public class CartoonSSAO extends Filter{
     private Pass normalPass;
     private Vector3f frustumCorner;
     private Vector2f frustumNearFar;
@@ -42,8 +42,8 @@ public class FastSSAO extends Filter{
     /**
     * Create a Screen Space Ambient Occlusion Filter
     */
-    public FastSSAO() {
-        super("FastSSAO");
+    public CartoonSSAO() {
+        super("CartoonSSAO");
     }
 
     /**
@@ -54,7 +54,7 @@ public class FastSSAO extends Filter{
     * @param bias the width of the occlusion cone considered by the occludee. default 0.025f
     * @param downsample factor to divide resolution by for filter, >1 increases speed but degrades quality
     */
-    public FastSSAO(float sampleRadius, float intensity, float scale, float bias, float downsample) {
+    public CartoonSSAO(float sampleRadius, float intensity, float scale, float bias, float downsample) {
         this();
         this.sampleRadius = sampleRadius;
         this.intensity = intensity;
@@ -63,7 +63,7 @@ public class FastSSAO extends Filter{
         this.downsample = downsample;
     }
     
-    public FastSSAO(FastSSAO cloneFrom) {
+    public CartoonSSAO(CartoonSSAO cloneFrom) {
         this();
         this.sampleRadius = cloneFrom.sampleRadius;
         this.intensity = cloneFrom.intensity;
@@ -115,7 +115,7 @@ public class FastSSAO extends Filter{
         frustumNearFar.y = vp.getCamera().getFrustumFar();
 
         //ssao Pass
-        material = new Material(manager, "jmevr/shaders/FastSSAO.j3md");
+        material = new Material(manager, "jmevr/shaders/CartoonSSAO.j3md");
         material.setTexture("Normals", normalPass.getRenderedTexture());
 
         ssaoPass = new Pass() {
@@ -225,15 +225,10 @@ public class FastSSAO extends Filter{
 
     public void scaleSettings(float aoScale) {
         setBias(getBias()*aoScale);
-        //setDetailBias(getDetailBias()*aoScale);
         setIntensity(getIntensity()*aoScale);
-        //setDetailIntensity(getDetailIntensity()*aoScale);
         setScale(getScale()*aoScale);
-        //setDetailScale(getDetailScale()*aoScale);
         setScale(getScale()*aoScale);
-        //setDetailScale(getDetailScale()*aoScale);
         setSampleRadius(getSampleRadius()*aoScale);
-        //setDetailSampleRadius(getDetailSampleRadius()*aoScale);
     }
 
     @Override
@@ -245,10 +240,6 @@ public class FastSSAO extends Filter{
             oc.write(intensity, "intensity", 10.2f);
             oc.write(scale, "scale", 3.15f);
             oc.write(bias, "bias", 0.025f);
-            //oc.write(sampleRadiusFD, "sampleRadiusFD", 0.55f);
-            //oc.write(intensityFD, "intensityFD", 2.5f);
-            //oc.write(scaleFD, "scaleFD", 1.15f);
-            //oc.write(biasFD, "biasFD", 0.025f);
     }
 
     @Override

@@ -46,6 +46,14 @@ public class OpenVR implements VRHMD {
     private static final Matrix4f hmdPoseLeftEye = Matrix4f.IDENTITY.clone();
     private static final Matrix4f hmdPoseRightEye = Matrix4f.IDENTITY.clone();
     
+    public static Pointer getVRSystemInstance() {
+        return vrsystem;
+    }
+    
+    public static Pointer getVRCompositorInstance() {
+        return vrCompositor;
+    }
+    
     @Override
     public String getName() {
         return "OpenVR";
@@ -262,5 +270,5 @@ public class OpenVR implements VRHMD {
 //	}
 //
 //	return matMVP;
-//}
+//}   
 }

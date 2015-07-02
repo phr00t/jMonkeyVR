@@ -132,7 +132,7 @@ public class OpenVRFilter extends Filter {
         // have UV coordinates & positions, now to setup indices
         
 	//std::vector<GLushort> vIndices;
-        int[] indices = new int[(int)(m_iLensGridSegmentCountV - 1 * m_iLensGridSegmentCountH - 1) * 6];
+        int[] indices = new int[(int)((m_iLensGridSegmentCountV - 1) * (m_iLensGridSegmentCountH - 1)) * 6];
         int indexPos = 0;
 	int a,b,c,d;
 

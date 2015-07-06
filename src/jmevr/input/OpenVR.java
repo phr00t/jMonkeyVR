@@ -92,7 +92,7 @@ public class OpenVR implements VRHMD {
         } else {
             System.out.println("OpenVR Compositor error: " + JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0)).getString(0));
             return false;
-        }        
+        }   
     }
 
     @Override
@@ -250,6 +250,7 @@ public class OpenVR implements VRHMD {
             return new Matrix4f();
         }
         HmdMatrix34_t mat = JOpenVRLibrary.VR_IVRSystem_GetEyeToHeadTransform(vrsystem, eye == 0 ? JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left :JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right);
+        
         return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, eye == 0 ? hmdPoseLeftEye : hmdPoseRightEye);
     }
 

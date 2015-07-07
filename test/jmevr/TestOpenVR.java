@@ -42,12 +42,12 @@ public class TestOpenVR extends SimpleApplication{
     private OpenVRAppState vrAppState;
     
     public TestOpenVR(){
-        guiNode = new VRGuiNode();
+        //guiNode = new VRGuiNode();
     }
     
     @Override
     public void simpleInitApp() {
-        vrAppState = new OpenVRAppState((VRGuiNode) guiNode);
+        vrAppState = new OpenVRAppState();
         stateManager.attach(vrAppState);
         vrAppState.setObserver(observer);
         initTestScene();
@@ -121,14 +121,14 @@ public class TestOpenVR extends SimpleApplication{
         ActionListener acl = new ActionListener() {
 
             public void onAction(String name, boolean keyPressed, float tpf) {
-                if(name.equals("incShift") && keyPressed){
-                    vrAppState.getGuiNode().adjustGuiDistance(-0.1f);
-                }else if(name.equals("decShift") && keyPressed){
-                    vrAppState.getGuiNode().adjustGuiDistance(0.1f);
-                }
-                if( name.equals("toggle") ) {
-                    vrAppState.getGuiNode().positionGui();
-                }
+//                if(name.equals("incShift") && keyPressed){
+//                    vrAppState.getGuiNode().adjustGuiDistance(-0.1f);
+//                }else if(name.equals("decShift") && keyPressed){
+//                    vrAppState.getGuiNode().adjustGuiDistance(0.1f);
+//                }
+//                if( name.equals("toggle") ) {
+//                    vrAppState.getGuiNode().positionGui();
+//                }
                 if(name.equals("forward")){
                     if(keyPressed){
                         moveForward = true;

@@ -1,6 +1,5 @@
 package jmevr;
 
-import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
@@ -15,7 +14,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.shader.VarType;
-import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
@@ -105,7 +103,7 @@ public class TestVRApplication extends VRApplication {
         observer.setLocalTranslation(new Vector3f(0.0f, 0.0f, -10.0f));//observer.setLocalTranslation(new Vector3f(0,0,5));
         
         //observer.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-        observer.addControl(VRApplication.getVRAppState().getCameraControl());
+        VRApplication.getVRAppState().setObserver(observer);
         mainScene.attachChild(observer);
         
         DirectionalLight sun = new DirectionalLight();
@@ -187,10 +185,10 @@ public class TestVRApplication extends VRApplication {
          boxes.setLocalTranslation(0, 0, 200f+ distance);
          
          if(moveForward){
-             observer.move(VRApplication.getVRAppState().getCameraControl().getForwardDirection().multLocal(tpf*8f));
+             observer.move(observer.getLocalRotation().getRotationColumn(2).mult(tpf*8f));
          }
          if(moveBackwards){
-             observer.move(VRApplication.getVRAppState().getCameraControl().getForwardDirection().multLocal(-tpf*8f));
+             observer.move(observer.getLocalRotation().getRotationColumn(2).mult(-tpf*8f));
          }
          if(rotateLeft){
              observer.rotate(0, 0.75f*tpf, 0);

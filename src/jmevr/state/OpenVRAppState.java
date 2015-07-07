@@ -5,10 +5,11 @@
 package jmevr.state;
 
 import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
+import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
@@ -18,11 +19,14 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
+import com.jme3.scene.shape.Box;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.util.TempVars;
+import jmevr.app.VRApplication;
 import jmevr.input.OpenVR;
 import jmevr.input.VRHMD;
 import jmevr.util.MeshUtil;
@@ -34,59 +38,36 @@ import jmevr.util.VRGuiNode;
  */
 public class OpenVRAppState extends AbstractAppState{
 
-    private SimpleApplication app;
+    private VRApplication app;
     Camera camLeft,camRight;
     //ViewPort viewPortLeft, viewPortRight;
     private Matrix4f transformMatrix;
     private Quaternion directionQuat;
-    private static VRHMD VRhardware; 
-    //private VRGuiNode guiNode;
     private Spatial observer;
     
     private final static String LEFT_VIEW_NAME = "Left View";
     private final static String RIGHT_VIEW_NAME = "Right View";
-    
-    public OpenVRAppState(){
-        VRhardware = new OpenVR();
-        VRhardware.initialize();
+
+    public OpenVRAppState(VRApplication forVRApp){
         transformMatrix = new Matrix4f();
         directionQuat = new Quaternion();
-    }
-
-    public OpenVRAppState(VRGuiNode guiNode){
-        this();
-        guiNode = new VRGuiNode();    
+        app = forVRApp;
     }
 
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
-        this.app = (SimpleApplication) app;
-        
-        if( VRhardware.isInitialized()) {
-            initializeHardware();
-        }
-        
-        
+            
         setupFiltersAndViews();
-        observer.lookAt(Vector3f.UNIT_Z.negate(), Vector3f.UNIT_Y);
-        transformMatrix.setRotationQuaternion(observer.getLocalRotation());
         
         setupVRScene();
-    }
-    
-    private void initializeHardware(){
-        
-        if( VRhardware instanceof OpenVR ) {
-            ((OpenVR)VRhardware).initOpenVRCompositor();
-        }
     }
     
     /**
      * Replaces rootNode as the main cameras scene with the distortion mesh
      */
     private void setupVRScene(){
-        ((SimpleApplication)app).getFlyByCamera().setEnabled(false);
+        app.getFlyByCamera().setEnabled(false);
         Node distortionScene = new Node();
         Material leftMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
         leftMat.setTexture("Texture", app.getRenderManager().getPreView(LEFT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture());
@@ -102,33 +83,35 @@ public class OpenVRAppState extends AbstractAppState{
         
         distortionScene.updateGeometricState();
         
-        ((SimpleApplication)app).getViewPort().detachScene(app.getRootNode());
-        ((SimpleApplication)app).getViewPort().attachScene(distortionScene);
+        app.getViewPort().detachScene(app.getRootNode());
+        app.getViewPort().attachScene(distortionScene);
     }
     
     
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        VRhardware.updatePose();
-        transformMatrix.setRotationQuaternion(observer.getLocalRotation());
-        transformMatrix.setTranslation(observer.getLocalTranslation());
-         if (VRhardware instanceof OpenVR){
-             TempVars tempVars = TempVars.get();
-                    // left eye
-            tempVars.tempMat4.set(((OpenVR)VRhardware).getHMDMatrixPoseEye(0));
-            tempVars.tempMat4.multLocal(transformMatrix);
-            tempVars.tempMat4.toTranslationVector(tempVars.vect1);
-            tempVars.tempMat4.toRotationQuat(tempVars.quat1);
-            camLeft.setFrame(tempVars.vect1, tempVars.quat1);
-            // right eye
-            tempVars.tempMat4.set(((OpenVR)VRhardware).getHMDMatrixPoseEye(1));
-            tempVars.tempMat4.multLocal(transformMatrix);
-            tempVars.tempMat4.toTranslationVector(tempVars.vect1);
-            tempVars.tempMat4.toRotationQuat(tempVars.quat1);
-            camRight.setFrame(tempVars.vect1, tempVars.quat1);
-            tempVars.release();
+        VRApplication.getVRHardware().updatePose();
+        if( observer == null ) {
+            transformMatrix.set(Matrix4f.IDENTITY);
+        } else {
+            transformMatrix.setRotationQuaternion(observer.getWorldRotation());
+            transformMatrix.setTranslation(observer.getWorldTranslation());
         }
+        TempVars tempVars = TempVars.get();
+        // left eye
+        tempVars.tempMat4.set(((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(0));
+        tempVars.tempMat4.multLocal(transformMatrix);
+        tempVars.tempMat4.toTranslationVector(tempVars.vect1);
+        tempVars.tempMat4.toRotationQuat(tempVars.quat1);
+        camLeft.setFrame(tempVars.vect1, tempVars.quat1);
+        // right eye
+        tempVars.tempMat4.set(((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(1));
+        tempVars.tempMat4.multLocal(transformMatrix);
+        tempVars.tempMat4.toTranslationVector(tempVars.vect1);
+        tempVars.tempMat4.toRotationQuat(tempVars.quat1);
+        camRight.setFrame(tempVars.vect1, tempVars.quat1);
+        tempVars.release();
     }
     
     private void setupFiltersAndViews() {
@@ -151,8 +134,7 @@ public class OpenVRAppState extends AbstractAppState{
 
         //setup framebuffer to use texture
         offBufferLeft.setDepthBuffer(Image.Format.Depth);
-        offBufferLeft.setColorTexture(offTex);
-        
+        offBufferLeft.setColorTexture(offTex);        
         
         ViewPort offViewLeft = app.getRenderManager().createPreView(viewName, cam);
         offViewLeft.setClearFlags(true, true, true);
@@ -162,9 +144,9 @@ public class OpenVRAppState extends AbstractAppState{
         offViewLeft.setOutputFrameBuffer(offBufferLeft);
     }
     
-//    public VRGuiNode getGuiNode(){
-        //return guiNode;
-//    }
+    public VRGuiNode getGuiNode(){
+        return (VRGuiNode)app.getGuiNode();
+    }
     
     public void setDirection(Quaternion direction){
         directionQuat.set(direction);

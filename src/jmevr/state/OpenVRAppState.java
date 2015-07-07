@@ -40,17 +40,21 @@ public class OpenVRAppState extends AbstractAppState{
     private Matrix4f transformMatrix;
     private Quaternion directionQuat;
     private static VRHMD VRhardware; 
-    private VRGuiNode guiNode;
+    //private VRGuiNode guiNode;
     private Spatial observer;
     
     private final static String LEFT_VIEW_NAME = "Left View";
     private final static String RIGHT_VIEW_NAME = "Right View";
     
-    public OpenVRAppState(VRGuiNode guiNode){
+    public OpenVRAppState(){
         VRhardware = new OpenVR();
         VRhardware.initialize();
         transformMatrix = new Matrix4f();
         directionQuat = new Quaternion();
+    }
+
+    public OpenVRAppState(VRGuiNode guiNode){
+        this();
         guiNode = new VRGuiNode();    
     }
 
@@ -158,9 +162,9 @@ public class OpenVRAppState extends AbstractAppState{
         offViewLeft.setOutputFrameBuffer(offBufferLeft);
     }
     
-    public VRGuiNode getGuiNode(){
-        return guiNode;
-    }
+//    public VRGuiNode getGuiNode(){
+        //return guiNode;
+//    }
     
     public void setDirection(Quaternion direction){
         directionQuat.set(direction);

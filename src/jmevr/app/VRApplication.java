@@ -26,6 +26,7 @@ import jmevr.input.OpenVR;
 import jmevr.input.VRHMD;
 import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
+import jmevr.state.OpenVRAppState;
 import jmevr.state.VRAppState;
 import jmevr.util.VRGuiNode;
 import jmevr.util.OculusRiftUtil;
@@ -37,7 +38,7 @@ import jmevr.util.OculusRiftUtil;
 public class VRApplication extends SimpleApplication{
 
     private static VRHMD VRhardware;    
-    private static VRAppState VRappstate;
+    private static OpenVRAppState VRappstate;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     protected boolean useFOVMax, flipEyes, disable_vignette;
@@ -127,7 +128,7 @@ public class VRApplication extends SimpleApplication{
         return VRinput;
     }
     
-    public static VRAppState getVRAppState() {
+    public static OpenVRAppState getVRAppState() {
         return VRappstate;
     }
     
@@ -151,13 +152,13 @@ public class VRApplication extends SimpleApplication{
             } else if( VRhardware instanceof OpenVR ) {
                 ((OpenVR)VRhardware).initOpenVRCompositor();
             }
-            VRappstate = new VRAppState((VRGuiNode)guiNode, flipEyes);
-            VRappstate.getGuiNode().setPositioningMode(VRGuiNode.POSITIONING_MODE.AUTO);
+            // TODO: implement flipeyes?
+            VRappstate = new OpenVRAppState(this);
+            stateManager.attach(VRappstate);
             inputManager.addRawInputListener(oculusWarningListener);
             inputManager.addListener(new OculusListener(), new String[]{TOGGLE_LOW_PERSISTENCE, RESET_HMD});
             inputManager.addMapping(TOGGLE_LOW_PERSISTENCE, new KeyTrigger(KeyInput.KEY_F10));
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));
-            stateManager.attach(VRappstate);
             initVRinput();
             setLostFocusBehavior(LostFocusBehavior.Disabled);
         }

@@ -48,6 +48,7 @@ import java.util.logging.Logger;
 import jmevr.app.VRApplication;
 import jmevr.input.OculusRift;
 import jmevr.input.VRHMD;
+import jmevr.state.OpenVRAppState;
 import jmevr.state.VRAppState;
 import jmevr.util.VRGuiNode.POSITIONING_MODE;
 
@@ -147,7 +148,7 @@ public class StereoCameraControl extends CameraControl {
         vars.release();
         
         // update gui node?
-        VRAppState vrapp = VRApplication.getVRAppState();
+        OpenVRAppState vrapp = VRApplication.getVRAppState();
         if( vrapp != null && vrapp.getGuiNode() != null &&
             vrapp.getGuiNode().getPositioningMode() != POSITIONING_MODE.MANUAL ) {
             vrapp.getGuiNode().positionGui();

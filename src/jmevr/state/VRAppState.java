@@ -44,6 +44,7 @@ import jmevr.util.OculusRiftUtil;
  *
  * @author reden
  */
+@Deprecated
 public class VRAppState extends AbstractAppState {
     
     private SimpleApplication app;

@@ -19,14 +19,15 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
-import jmevr.state.OpenVRAppState;
+import jmevr.app.VRApplication;
+import jmevr.state.OpenVRCamControl;
 import jmevr.util.VRGuiNode;
 
 /**
  *
  * @author reden
  */
-public class TestOpenVR extends SimpleApplication{
+public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
@@ -39,17 +40,10 @@ public class TestOpenVR extends SimpleApplication{
     Material mat;
     Node mainScene;
     
-    private OpenVRAppState vrAppState;
-    
-    public TestOpenVR(){
-        guiNode = new VRGuiNode();
-    }
-    
     @Override
     public void simpleInitApp() {
-        vrAppState = new OpenVRAppState((VRGuiNode) guiNode);
-        stateManager.attach(vrAppState);
-        vrAppState.setObserver(observer);
+        super.simpleInitApp();
+        VRApplication.setObserver(observer);
         initTestScene();
     }
     
@@ -72,7 +66,7 @@ public class TestOpenVR extends SimpleApplication{
         test.setWidth(128f);
         test.setHeight(128f);
         test.setPosition(settings.getWidth() * 0.5f - 64f, settings.getHeight() * 0.5f - 64f);
-        //VRApplication.getVRAppState().getGuiNode().setGuiScale(0.6f);
+        VRApplication.getVRGuiNode().setGuiScale(0.6f);
         guiNode.attachChild(test);
         
         box.setMaterial(mat);
@@ -122,12 +116,12 @@ public class TestOpenVR extends SimpleApplication{
 
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if(name.equals("incShift") && keyPressed){
-                    vrAppState.getGuiNode().adjustGuiDistance(-0.1f);
+                    VRApplication.getVRGuiNode().adjustGuiDistance(-0.1f);
                 }else if(name.equals("decShift") && keyPressed){
-                    vrAppState.getGuiNode().adjustGuiDistance(0.1f);
+                    VRApplication.getVRGuiNode().adjustGuiDistance(0.1f);
                 }
                 if( name.equals("toggle") ) {
-                    vrAppState.getGuiNode().positionGui();
+                    VRApplication.getVRGuiNode().positionGui();
                 }
                 if(name.equals("forward")){
                     if(keyPressed){

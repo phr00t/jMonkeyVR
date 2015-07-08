@@ -4,7 +4,6 @@
  */
 package jmevr;
 
-import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -20,8 +19,6 @@ import com.jme3.scene.shape.Box;
 import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
-import jmevr.state.OpenVRCamControl;
-import jmevr.util.VRGuiNode;
 
 /**
  *

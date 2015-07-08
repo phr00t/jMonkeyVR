@@ -58,14 +58,15 @@ public class VRGuiNode extends Node {
         Vector3f guiPos = getLocalTranslation();
         setLocalScale(guiDistance * 0.0035f * guiScale,
                       guiDistance * 0.0035f * guiScale, 0.05f);
-        if( cam != null ) {
-            Vector3f campos = VRApplication.getObserver().getWorldTranslation();
+        Spatial observer = VRApplication.getObserver();
+        if( observer != null ) {
+            Vector3f opos = VRApplication.getObserver().getWorldTranslation();
             guiPos.set(guiDistance * 1.375f * oWidth / 800f * guiScale,
                       -guiDistance * oHeight * guiScale / 600f, guiDistance);
-            cam.getRotation().mult(guiPos, guiPos);
-            guiPos.x += campos.x;
-            guiPos.y += campos.y;
-            guiPos.z += campos.z;
+            observer.getWorldRotation().mult(guiPos, guiPos);
+            guiPos.x += opos.x;
+            guiPos.y += opos.y;
+            guiPos.z += opos.z;
             rotateScreen();
         }
     }

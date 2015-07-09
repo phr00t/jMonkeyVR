@@ -151,7 +151,7 @@ public class OpenVRViewManager extends AbstractAppState {
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        VRApplication.getVRHardware().updatePose();
+        // first grab our observer's position & orientation
         Spatial obs = VRApplication.getObserver();
         if( obs == null ) {
             transformMatrix.set(Matrix4f.IDENTITY);
@@ -159,15 +159,21 @@ public class OpenVRViewManager extends AbstractAppState {
             transformMatrix.setRotationQuaternion(obs.getWorldRotation());
             transformMatrix.setTranslation(obs.getWorldTranslation());
         }        
+        // update the HMD's position & orientation
+        VRApplication.getVRHardware().updatePose();
+        Matrix4f posAndRot = ((OpenVR)VRApplication.getVRHardware()).getPositionAndOrientation();
+        // combine the two for each eye
         TempVars tempVars = TempVars.get();
         // left eye
         tempVars.tempMat4.set(leftMatrix);
+        tempVars.tempMat4.multLocal(posAndRot);
         tempVars.tempMat4.multLocal(transformMatrix);
         tempVars.tempMat4.toTranslationVector(tempVars.vect1);
         tempVars.tempMat4.toRotationQuat(tempVars.quat1);
         camLeft.setFrame(tempVars.vect1, tempVars.quat1);
         // right eye
         tempVars.tempMat4.set(rightMatrix);
+        tempVars.tempMat4.multLocal(posAndRot);
         tempVars.tempMat4.multLocal(transformMatrix);
         tempVars.tempMat4.toTranslationVector(tempVars.vect1);
         tempVars.tempMat4.toRotationQuat(tempVars.quat1);

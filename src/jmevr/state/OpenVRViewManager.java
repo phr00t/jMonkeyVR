@@ -43,7 +43,7 @@ import jmevr.util.VRGuiNode;
  *
  * @author reden
  */
-public class OpenVRCamControl extends AbstractAppState {
+public class OpenVRViewManager extends AbstractAppState {
 
     private VRApplication app;
     private Camera camLeft,camRight;
@@ -54,7 +54,7 @@ public class OpenVRCamControl extends AbstractAppState {
     private final static String LEFT_VIEW_NAME = "Left View";
     private final static String RIGHT_VIEW_NAME = "Right View";
 
-    public OpenVRCamControl(VRApplication forVRApp){
+    public OpenVRViewManager(VRApplication forVRApp){
         transformMatrix = new Matrix4f();
         app = forVRApp;
     }
@@ -196,7 +196,13 @@ public class OpenVRCamControl extends AbstractAppState {
         prepareCameraResolution(1, camRight);
         viewPortLeft = setupViewBuffers(camLeft, LEFT_VIEW_NAME);
         viewPortRight = setupViewBuffers(camRight, RIGHT_VIEW_NAME);
+        
+        // setup gui
         VRApplication.getVRGuiNode().setupGui(viewPortLeft, viewPortRight, (int)origWidth, (int)origHeight);
+        // make sure the gui node isn't in the distortion scene
+        for(ViewPort v : app.getRenderManager().getPostViews()) {
+            v.detachScene(VRApplication.getVRGuiNode());
+        }
         
         leftMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(0);
         rightMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(1);

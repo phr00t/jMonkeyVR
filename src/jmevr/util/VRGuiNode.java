@@ -37,13 +37,15 @@ public class VRGuiNode extends Node {
     private int oHeight, oWidth;
     
     public VRGuiNode() {
-        super("ogui");
+        super("vrgui");
         guiDistance = 2f;
+        setQueueBucket(Bucket.Translucent);
     }
     
     public VRGuiNode(float dist) {
-        super("ogui");
+        super("vrgui");
         guiDistance = dist;
+        setQueueBucket(Bucket.Translucent);
     }
     
     public void setPositioningMode(POSITIONING_MODE mode) {
@@ -56,13 +58,13 @@ public class VRGuiNode extends Node {
     
     public void positionGui() {
         Vector3f guiPos = getLocalTranslation();
-        setLocalScale(guiDistance * 0.0035f * guiScale,
-                      guiDistance * 0.0035f * guiScale, 0.05f);
+        float useScale = guiScale * 0.6f * 0.0035f;
+        setLocalScale(guiDistance * useScale, guiDistance * useScale, 0.05f);
         Spatial observer = VRApplication.getObserver();
         if( observer != null ) {
             Vector3f opos = VRApplication.getObserver().getWorldTranslation();
-            guiPos.set(guiDistance * 1.375f * oWidth / 800f * guiScale,
-                      -guiDistance * oHeight * guiScale / 600f, guiDistance);
+            guiPos.set(guiDistance * 1.375f * oWidth / 800f * guiScale * 0.6f,
+                      -guiDistance * oHeight * guiScale * 0.6f / 600f, guiDistance);
             observer.getWorldRotation().mult(guiPos, guiPos);
             guiPos.x += opos.x;
             guiPos.y += opos.y;

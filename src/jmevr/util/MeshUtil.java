@@ -33,7 +33,6 @@ public class MeshUtil {
 
         int vertPos = 0, coordPos = 0;
 
-        //left eye distortion verts
         float Xoffset = eye == 0 ? -1f : 0;
         for (int y = 0; y < m_iLensGridSegmentCountV; y++) {
             for (int x = 0; x < m_iLensGridSegmentCountH; x++) {
@@ -53,16 +52,12 @@ public class MeshUtil {
                 texcoordB[coordPos] = dc0.rfBlue[0];
                 texcoordB[coordPos + 1] = 1 - dc0.rfBlue[1];
                 
-                System.out.println("R: " + texcoordR[coordPos] + ", " + texcoordR[coordPos+1]);
-                System.out.println("G: " + texcoordG[coordPos] + ", " + texcoordG[coordPos+1]);
-                System.out.println("B: " + texcoordB[coordPos] + ", " + texcoordB[coordPos+1]);
                 coordPos += 2;
             }
         }
 
         // have UV coordinates & positions, now to setup indices
 
-        //std::vector<GLushort> vIndices;
         int[] indices = new int[(int) ((m_iLensGridSegmentCountV - 1) * (m_iLensGridSegmentCountH - 1)) * 6];
         int indexPos = 0;
         int a, b, c, d;

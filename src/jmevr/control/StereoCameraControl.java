@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 import jmevr.app.VRApplication;
 import jmevr.input.OculusRift;
 import jmevr.input.VRHMD;
-import jmevr.state.OpenVRCamControl;
+import jmevr.state.OpenVRViewManager;
 import jmevr.state.VRAppState;
 import jmevr.util.VRGuiNode.POSITIONING_MODE;
 

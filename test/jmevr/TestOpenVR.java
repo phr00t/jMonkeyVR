@@ -12,12 +12,15 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.ui.Picture;
+import com.jme3.util.SafeArrayList;
 import com.jme3.util.SkyFactory;
+import com.sun.javafx.webkit.theme.Renderer;
 import jmevr.app.VRApplication;
 
 /**
@@ -63,7 +66,6 @@ public class TestOpenVR extends VRApplication {
         test.setWidth(128f);
         test.setHeight(128f);
         test.setPosition(settings.getWidth() * 0.5f - 64f, settings.getHeight() * 0.5f - 64f);
-        VRApplication.getVRGuiNode().setGuiScale(0.6f);
         guiNode.attachChild(test);
         
         box.setMaterial(mat);

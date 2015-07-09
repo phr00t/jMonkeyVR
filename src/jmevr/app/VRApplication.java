@@ -10,13 +10,15 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import jmevr.input.OpenVR;
 import jmevr.input.VRHMD;
 import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
-import jmevr.state.OpenVRCamControl;
+import jmevr.state.OpenVRViewManager;
 import jmevr.util.VRGuiNode;
 
 /**
@@ -26,7 +28,7 @@ import jmevr.util.VRGuiNode;
 public class VRApplication extends SimpleApplication{
 
     private static OpenVR VRhardware;    
-    private static OpenVRCamControl VRappstate;
+    private static OpenVRViewManager VRappstate;
     private static VRGuiNode primaryGuiNode;
     private static Spatial observer;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
@@ -105,7 +107,7 @@ public class VRApplication extends SimpleApplication{
                 ((OpenVR)VRhardware).initOpenVRCompositor();
             }
             // TODO: implement flipeyes?
-            VRappstate = new OpenVRCamControl(this);
+            VRappstate = new OpenVRViewManager(this);
             stateManager.attach(VRappstate);
             inputManager.addListener(new VRListener(), new String[]{RESET_HMD});
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));

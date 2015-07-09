@@ -21,6 +21,7 @@ import jopenvr.JOpenVRLibrary;
  *
  * @author phr00t
  */
+@Deprecated
 public class OpenVRFilter extends Filter {
 
     private Mesh distortionMesh;

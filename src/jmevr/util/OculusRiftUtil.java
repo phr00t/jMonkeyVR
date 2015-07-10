@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jmevr.util;
+/*package jmevr.util;
 
 import com.jme3.math.Matrix4f;
 import com.oculusvr.capi.EyeRenderDesc;
@@ -21,7 +21,7 @@ import org.lwjgl.opengl.Display;
 /**
  *
  * @author reden
- */
+ *//*
 @Deprecated
 public class OculusRiftUtil {
 
@@ -147,3 +147,4 @@ public class OculusRiftUtil {
         return window;
     }
 }
+*/

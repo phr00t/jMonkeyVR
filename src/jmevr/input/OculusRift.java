@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jmevr.input;
+/*package jmevr.input;
 
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
@@ -22,7 +22,7 @@ import jmevr.util.OculusRiftUtil;
 /**
  *
  * @author Rickard
- */
+ *//*
 @Deprecated
 public class OculusRift implements VRHMD {
 
@@ -284,4 +284,4 @@ public class OculusRift implements VRHMD {
     public Matrix4f getEyeTransform(int eye) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-}
+}*/

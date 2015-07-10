@@ -1,6 +1,6 @@
 I recommend using Phr00t's jMonkeyEngine build here: https://github.com/phr00t/jmonkeyengine (the main jME3 build may work, but OpenVR-specific changes will be made first on Phr00t's build) -- you can just use the JAR/libs under the dist/ and lib/ folders
 
-See TestOpenVR.java to see a full example of how to set up an application to use VR hardware & jME3.
+See <a href="https://github.com/phr00t/jmonkeyengine-virtual-reality/blob/master/test/jmevr/TestOpenVR.java">TestOpenVR.java</a> to see a full example of how to set up an application to use VR hardware & jME3.
 
 <b>Adding OpenVR support to your application:</b>
 

@@ -66,7 +66,7 @@ public class VRApplication extends SimpleApplication{
         // we are going to use OpenVR now, not the Oculus Rift
         // OpenVR does support the Rift
         String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-        VRSupportedOS = !OS.contains("nux"); // linux/unix doesn't have OpenVR support at the moment...
+        VRSupportedOS = true; //!OS.contains("nux"); //for the moment, linux/unix is supported enough to run
         
         VRhardware = new OpenVR();
         if( VRSupportedOS ) VRhardware.initialize();

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jmevr.state;
+/*package jmevr.state;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
@@ -43,7 +43,7 @@ import jmevr.util.OculusRiftUtil;
 /**
  *
  * @author reden
- */
+ *//*
 @Deprecated
 public class VRAppState extends AbstractAppState {
     
@@ -270,4 +270,4 @@ public class VRAppState extends AbstractAppState {
     public ViewPort getRightViewPort(){
         return viewPortRight;
     }
-}
+}*/

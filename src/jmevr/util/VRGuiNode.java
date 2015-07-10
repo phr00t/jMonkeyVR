@@ -13,7 +13,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import jmevr.app.VRApplication;
-import jmevr.input.OculusRift;
 
 /**
  *

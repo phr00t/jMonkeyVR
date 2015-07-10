@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jmevr.control;
+/*package jmevr.control;
 
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
@@ -57,7 +57,7 @@ import jmevr.util.VRGuiNode.POSITIONING_MODE;
  * which will be synched with the position (worldTranslation)
  * of the current spatial.
  * @author tim, reden
- */
+ *//*
 @Deprecated
 public class StereoCameraControl extends CameraControl {
 
@@ -245,4 +245,4 @@ public class StereoCameraControl extends CameraControl {
         oc.write(getCamera(), CAMERA_NAME, null);
     }
     
-}
+}*/

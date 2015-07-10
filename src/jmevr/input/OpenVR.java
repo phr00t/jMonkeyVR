@@ -76,6 +76,9 @@ public class OpenVR implements VRHMD {
             hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float);
             hmdTrackedDevicePoses = (TrackedDevicePose_t[])hmdTrackedDevicePoseReference.toArray(JOpenVRLibrary.k_unMaxTrackedDeviceCount);
             
+            poseMatrices = new Matrix4f[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
+            for(int i=0;i<poseMatrices.length;i++) poseMatrices[i] = new Matrix4f();
+            
             initSuccess = true;
             return true;
         }

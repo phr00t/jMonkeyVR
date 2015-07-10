@@ -10,6 +10,7 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix4f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
@@ -147,6 +148,10 @@ public class OpenVRViewManager extends AbstractAppState {
         app.getViewPort().attachScene(distortionScene);
     }
     
+    //final & temp values for camera calculations
+    private final Matrix4f tempMat = new Matrix4f();
+    private final Vector3f finalPosition = new Vector3f();
+    private final Quaternion finalRotation = new Quaternion();
     
     @Override
     public void update(float tpf) {
@@ -163,28 +168,34 @@ public class OpenVRViewManager extends AbstractAppState {
         VRApplication.getVRHardware().updatePose();
         Matrix4f posAndRot = ((OpenVR)VRApplication.getVRHardware()).getPositionAndOrientation();
         // combine the two for each eye
-        TempVars tempVars = TempVars.get();
         // left eye
-        tempVars.tempMat4.set(leftMatrix);
-        tempVars.tempMat4.multLocal(posAndRot);
-        tempVars.tempMat4.multLocal(transformMatrix);
-        tempVars.tempMat4.toTranslationVector(tempVars.vect1);
-        tempVars.tempMat4.toRotationQuat(tempVars.quat1);
-        camLeft.setFrame(tempVars.vect1, tempVars.quat1);
+        tempMat.set(leftMatrix);
+        tempMat.multLocal(posAndRot);
+        tempMat.multLocal(transformMatrix);
+        tempMat.toTranslationVector(finalPosition);
+        tempMat.toRotationQuat(finalRotation);
+        camLeft.setFrame(finalPosition, finalRotation);
         // right eye
-        tempVars.tempMat4.set(rightMatrix);
-        tempVars.tempMat4.multLocal(posAndRot);
-        tempVars.tempMat4.multLocal(transformMatrix);
-        tempVars.tempMat4.toTranslationVector(tempVars.vect1);
-        tempVars.tempMat4.toRotationQuat(tempVars.quat1);
-        camRight.setFrame(tempVars.vect1, tempVars.quat1);
-        tempVars.release();
+        tempMat.set(rightMatrix);
+        tempMat.multLocal(posAndRot);
+        tempMat.multLocal(transformMatrix);
+        tempMat.toTranslationVector(finalPosition);
+        tempMat.toRotationQuat(finalRotation);
+        camRight.setFrame(finalPosition, finalRotation);
         
         // update GUI position?
         VRGuiNode vrgn = VRApplication.getVRGuiNode();
         if( vrgn != null && vrgn.getPositioningMode() != VRGuiNode.POSITIONING_MODE.MANUAL ) {
             VRApplication.getVRGuiNode().positionGui();
         }
+    }
+    
+    public Vector3f getFinalPosition() {
+        return finalPosition;
+    }
+    
+    public Quaternion getFinalRotation() {
+        return finalRotation;
     }
     
     private void setupCamerasAndViews() {              

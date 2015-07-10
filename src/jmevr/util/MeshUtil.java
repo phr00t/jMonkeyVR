@@ -32,7 +32,7 @@ public class MeshUtil {
         float texcoordB[] = new float[(int) (m_iLensGridSegmentCountV * m_iLensGridSegmentCountH) * 2];
 
         int vertPos = 0, coordPos = 0;
-
+        
         float Xoffset = eye == 0 ? -1f : 0;
         for (int y = 0; y < m_iLensGridSegmentCountV; y++) {
             for (int x = 0; x < m_iLensGridSegmentCountH; x++) {

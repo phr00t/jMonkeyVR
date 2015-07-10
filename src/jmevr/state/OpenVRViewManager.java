@@ -38,6 +38,7 @@ import jmevr.post.OpenVRFilter;
 import jmevr.shadow.VRDirectionalLightShadowRenderer;
 import jmevr.util.FilterUtil;
 import jmevr.util.MeshUtil;
+import jmevr.util.OpenVRUtil;
 import jmevr.util.VRGuiNode;
 
 /**
@@ -173,14 +174,14 @@ public class OpenVRViewManager extends AbstractAppState {
         tempMat.multLocal(posAndRot);
         tempMat.multLocal(transformMatrix);
         tempMat.toTranslationVector(finalPosition);
-        tempMat.toRotationQuat(finalRotation);
+        OpenVRUtil.convertMatrix4toQuat(tempMat, finalRotation);
         camLeft.setFrame(finalPosition, finalRotation);
         // right eye
         tempMat.set(rightMatrix);
         tempMat.multLocal(posAndRot);
         tempMat.multLocal(transformMatrix);
         tempMat.toTranslationVector(finalPosition);
-        tempMat.toRotationQuat(finalRotation);
+        OpenVRUtil.convertMatrix4toQuat(tempMat, finalRotation);
         camRight.setFrame(finalPosition, finalRotation);
         
         // update GUI position?

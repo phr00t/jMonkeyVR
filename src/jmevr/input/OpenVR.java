@@ -85,10 +85,7 @@ public class OpenVR implements VRHMD {
     }
     
     public boolean initOpenVRCompositor() {
-        // this was taken straight from https://raw.githubusercontent.com/ValveSoftware/openvr/master/headers/openvr_capi.h
-        // char * const IVRCompositor_Version = "IVRCompositor_006";
-
-        vrCompositor = JOpenVRLibrary.VR_GetGenericInterface("IVRCompositor_006", hmdErrorStore);
+        vrCompositor = JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRCompositor_Version, hmdErrorStore);
         if(vrCompositor != null && hmdErrorStore.get(0) == 0){                
             System.out.println("OpenVR Compositor initialized OK.");
             return true;

@@ -12,10 +12,10 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.queue.RenderQueue;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
+import java.util.Locale;
 import jmevr.input.OpenVR;
 import jmevr.input.VRHMD;
 import jmevr.input.VRInput;
@@ -33,6 +33,7 @@ public class VRApplication extends SimpleApplication{
     private static OpenVRViewManager VRappstate;
     private static VRApplication mainApp;
     private static Spatial observer;
+    private static boolean VRSupportedOS;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     protected boolean useFOVMax, flipEyes, disable_vignette;
@@ -45,6 +46,10 @@ public class VRApplication extends SimpleApplication{
                 reset();
             }
         }
+    }
+    
+    public boolean isOSVRSupported() {
+        return VRSupportedOS;
     }
     
     @Override
@@ -60,11 +65,14 @@ public class VRApplication extends SimpleApplication{
         
         // we are going to use OpenVR now, not the Oculus Rift
         // OpenVR does support the Rift
+        String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+        VRSupportedOS = !OS.contains("nux"); // linux/unix doesn't have OpenVR support at the moment...
+        
         VRhardware = new OpenVR();
-        VRhardware.initialize();
+        if( VRSupportedOS ) VRhardware.initialize();
     }
     
-    public void preconfigureVRApp(boolean disable_vignette, boolean force_max_fov, boolean flip_eyes, boolean force_vr) {
+    public void preconfigureVRApp(boolean disable_vignette, boolean force_max_fov, boolean flip_eyes, boolean force_vr) {        
         useFOVMax = force_max_fov;
         flipEyes = flip_eyes;
         this.disable_vignette = disable_vignette;
@@ -77,6 +85,10 @@ public class VRApplication extends SimpleApplication{
     
     public static ArrayList<VRInput> getVRinputs() {
         return VRinput;
+    }
+    
+    public static boolean isInVR() {
+        return VRSupportedOS && VRhardware != null && VRhardware.isInitialized();
     }
     
     public static VRHMD getVRHardware() {
@@ -118,11 +130,21 @@ public class VRApplication extends SimpleApplication{
         return VRappstate.getFinalPosition();
     }
     
+    public static ViewPort getLeftViewPort() {
+        if( VRappstate == null ) return mainApp.getViewPort();
+        return VRappstate.getViewPortLeft();
+    }
+    
+    public static ViewPort getRightViewPort() {
+        if( VRappstate == null ) return mainApp.getViewPort();
+        return VRappstate.getViewPortRight();
+    }
+    
     @Override
     public void simpleInitApp() {
         // run this function before OVRAppState gets initialized to force
         // maximum FOV rendering
-        if( VRhardware.isInitialized() ) {
+        if( VRSupportedOS && VRhardware.isInitialized() ) {
             if( VRhardware instanceof OpenVR ) {
                 ((OpenVR)VRhardware).initOpenVRCompositor();
             }
@@ -139,13 +161,16 @@ public class VRApplication extends SimpleApplication{
     @Override
     protected void finalize() throws Throwable {
         super.finalize(); //To change body of generated methods, choose Tools | Templates.
-        VRhardware.destroy();
-        for(int i=0;i<VRinput.size();i++) {
-            VRinput.get(i).destroy();
+        if( VRSupportedOS ) {
+            VRhardware.destroy();
+            for(int i=0;i<VRinput.size();i++) {
+                VRinput.get(i).destroy();
+            }
         }
     }
     
     public void reset(){
+        if( VRSupportedOS == false ) return;
         VRhardware.reset();
         for(int i=0;i<VRinput.size();i++) {
             VRinput.get(i).reset();

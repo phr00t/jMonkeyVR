@@ -56,6 +56,7 @@ public class VRGuiNode extends Node {
     }    
     
     public void positionGui() {
+        if( VRApplication.isInVR() == false ) return;
         Vector3f guiPos = getLocalTranslation();
         float useScale = guiScale * 0.6f * 0.0035f;
         setLocalScale(guiDistance * useScale, guiDistance * useScale, 0.05f);

@@ -29,7 +29,7 @@ public class OpenVR implements VRHMD {
     private static boolean forceInitialize = false, initSuccess = false;
     
     private static IntBuffer hmdDisplayFrequency;
-    private static final TrackedDevicePose_t.ByReference hmdTrackedDevicePoseReference = new TrackedDevicePose_t.ByReference();
+    private static TrackedDevicePose_t.ByReference hmdTrackedDevicePoseReference;
     private static TrackedDevicePose_t[] hmdTrackedDevicePoses;
     
     private static IntBuffer hmdErrorStore;
@@ -74,8 +74,8 @@ public class OpenVR implements VRHMD {
             hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_DisplayFrequency_Float);
             hmdDisplayFrequency = IntBuffer.allocate(1);
             hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float);
+            hmdTrackedDevicePoseReference = new TrackedDevicePose_t.ByReference();
             hmdTrackedDevicePoses = (TrackedDevicePose_t[])hmdTrackedDevicePoseReference.toArray(JOpenVRLibrary.k_unMaxTrackedDeviceCount);
-            
             poseMatrices = new Matrix4f[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
             for(int i=0;i<poseMatrices.length;i++) poseMatrices[i] = new Matrix4f();
             

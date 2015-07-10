@@ -9,35 +9,25 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class HmdVector3d_t extends Structure {
-	/**
-	 * double[3]<br>
-	 * C type : double[3]
-	 */
-	public double[] v = new double[3];
-	public HmdVector3d_t() {
+public class NotificationItem extends Structure {
+	public int notificationId;
+	public NotificationItem() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("v");
+		return Arrays.asList("notificationId");
 	}
-	/**
-	 * @param v double[3]<br>
-	 * C type : double[3]
-	 */
-	public HmdVector3d_t(double v[]) {
+	public NotificationItem(int notificationId) {
 		super();
-		if ((v.length != this.v.length)) 
-			throw new IllegalArgumentException("Wrong array size !");
-		this.v = v;
+		this.notificationId = notificationId;
 	}
-	public HmdVector3d_t(Pointer peer) {
+	public NotificationItem(Pointer peer) {
 		super(peer);
 	}
-	public static class ByReference extends HmdVector3d_t implements Structure.ByReference {
+	public static class ByReference extends NotificationItem implements Structure.ByReference {
 		
 	};
-	public static class ByValue extends HmdVector3d_t implements Structure.ByValue {
+	public static class ByValue extends NotificationItem implements Structure.ByValue {
 		
 	};
 }

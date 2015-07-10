@@ -9,6 +9,8 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
@@ -29,7 +31,7 @@ public class VRApplication extends SimpleApplication{
 
     private static OpenVR VRhardware;    
     private static OpenVRViewManager VRappstate;
-    private static VRGuiNode primaryGuiNode;
+    private static VRApplication mainApp;
     private static Spatial observer;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
@@ -54,7 +56,7 @@ public class VRApplication extends SimpleApplication{
     public VRApplication() {
         super();
         guiNode = new VRGuiNode();   
-        primaryGuiNode = (VRGuiNode)guiNode;
+        mainApp = this;
         
         // we are going to use OpenVR now, not the Oculus Rift
         // OpenVR does support the Rift
@@ -87,7 +89,7 @@ public class VRApplication extends SimpleApplication{
     }
     
     public static VRGuiNode getVRGuiNode(){
-        return primaryGuiNode;
+        return (VRGuiNode)mainApp.guiNode;
     }
     
     public static Spatial getObserver() {
@@ -96,6 +98,24 @@ public class VRApplication extends SimpleApplication{
 
     public static void setObserver(Spatial observer) {
         VRApplication.observer = observer;
+    }
+    
+    public static Quaternion getFinalOberserverRotation() {
+        if( VRappstate == null ) {
+            if( VRApplication.observer == null ) {
+                return mainApp.getCamera().getRotation();
+            } else return VRApplication.observer.getWorldRotation();
+        }
+        return VRappstate.getFinalRotation();
+    }
+    
+    public static Vector3f getFinalOberserverPosition() {
+        if( VRappstate == null ) {
+            if( VRApplication.observer == null ) {
+                return mainApp.getCamera().getLocation();
+            } else return VRApplication.observer.getWorldTranslation();
+        }
+        return VRappstate.getFinalPosition();
     }
     
     @Override

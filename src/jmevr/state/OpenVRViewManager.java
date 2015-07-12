@@ -29,6 +29,8 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.util.TempVars;
+import com.sun.jna.ptr.IntByReference;
+import java.nio.IntBuffer;
 import java.util.List;
 import jmevr.app.VRApplication;
 import jmevr.input.OpenVR;
@@ -52,6 +54,8 @@ public class OpenVRViewManager extends AbstractAppState {
     private ViewPort viewPortLeft, viewPortRight;
     private Matrix4f transformMatrix, leftMatrix, rightMatrix;
     private FilterPostProcessor ppLeft, ppRight;
+    
+    private Texture leftEyeTex, rightEyeTex;
     
     private final static String LEFT_VIEW_NAME = "Left View";
     private final static String RIGHT_VIEW_NAME = "Right View";
@@ -132,13 +136,15 @@ public class OpenVRViewManager extends AbstractAppState {
         app.getFlyByCamera().setEnabled(false);
         Node distortionScene = new Node();
         Material leftMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
-        leftMat.setTexture("Texture", app.getRenderManager().getPreView(LEFT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture());
+        leftEyeTex = app.getRenderManager().getPreView(LEFT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
+        leftMat.setTexture("Texture", leftEyeTex);
         Geometry leftEye = new Geometry("box", MeshUtil.setupDistortionMesh(0));
         leftEye.setMaterial(leftMat);
         distortionScene.attachChild(leftEye);
         
         Material rightMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
-        rightMat.setTexture("Texture", app.getRenderManager().getPreView(RIGHT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture());
+        rightEyeTex = app.getRenderManager().getPreView(RIGHT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
+        rightMat.setTexture("Texture", rightEyeTex);
         Geometry rightEye = new Geometry("box", MeshUtil.setupDistortionMesh(1));
         rightEye.setMaterial(rightMat);
         distortionScene.attachChild(rightEye);
@@ -153,6 +159,14 @@ public class OpenVRViewManager extends AbstractAppState {
     private final Matrix4f tempMat = new Matrix4f();
     private final Vector3f finalPosition = new Vector3f();
     private final Quaternion finalRotation = new Quaternion();
+    
+    public int getRightTexId() {
+        return rightEyeTex.getImage().getId();
+    }
+    
+    public int getLeftTexId() {
+        return leftEyeTex.getImage().getId();
+    }
     
     @Override
     public void update(float tpf) {
@@ -229,7 +243,7 @@ public class OpenVRViewManager extends AbstractAppState {
     private ViewPort setupViewBuffers(Camera cam, String viewName){
         // create offscreen framebuffer
         FrameBuffer offBufferLeft = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);
-
+        
         //setup framebuffer's texture
         Texture2D offTex = new Texture2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);
         offTex.setMinFilter(Texture.MinFilter.Trilinear);

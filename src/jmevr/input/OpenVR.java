@@ -92,7 +92,7 @@ public class OpenVR implements VRHMD {
         } else {
             System.out.println("OpenVR Compositor error: " + JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0)).getString(0));
             return false;
-        }   
+        }
     }
 
     @Override

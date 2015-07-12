@@ -14,6 +14,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
+import com.jme3.texture.Texture2D;
+import com.sun.jna.Pointer;
 import java.util.ArrayList;
 import java.util.Locale;
 import jmevr.input.OpenVR;
@@ -22,6 +24,7 @@ import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
 import jmevr.state.OpenVRViewManager;
 import jmevr.util.VRGuiNode;
+import jopenvr.JOpenVRLibrary;
 
 /**
  *
@@ -55,6 +58,12 @@ public class VRApplication extends SimpleApplication{
     @Override
     public void simpleRender(RenderManager renderManager) {
         super.simpleRender(renderManager);
+        if( isInVR() && OpenVR.getVRSystemInstance() != null && VRappstate != null ) {
+            JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
+                                                   JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, VRappstate.getLeftTexId(), null);
+            JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
+                                                   JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, VRappstate.getRightTexId(), null);
+        }
         PreNormalCaching.resetCache();
     }
 

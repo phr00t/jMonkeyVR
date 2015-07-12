@@ -1041,12 +1041,12 @@ public class JOpenVRLibrary implements Library {
 	 * @deprecated use the safer methods {@link #VR_IVRCompositor_Submit(java.nio.IntBuffer, int, int, com.sun.jna.Pointer, jopenvr.VRTextureBounds_t)} and {@link #VR_IVRCompositor_Submit(com.sun.jna.ptr.IntByReference, int, int, com.sun.jna.Pointer, jopenvr.VRTextureBounds_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVRCompositor_Submit(IntByReference instancePtr, int eEye, int eTextureType, Pointer pTexture, VRTextureBounds_t pBounds);
+	public static native int VR_IVRCompositor_Submit(IntByReference instancePtr, int eEye, int eTextureType, int pTextureId, VRTextureBounds_t pBounds);
 	/**
 	 * Original signature : <code>VRCompositorError VR_IVRCompositor_Submit(intptr_t, Hmd_Eye, GraphicsAPIConvention, void*, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:526</i>
 	 */
-	public static native int VR_IVRCompositor_Submit(Pointer instancePtr, int eEye, int eTextureType, Pointer pTexture, VRTextureBounds_t pBounds);
+	public static native int VR_IVRCompositor_Submit(Pointer instancePtr, int eEye, int eTextureType, int pTextureId, VRTextureBounds_t pBounds);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_ClearLastSubmittedFrame(intptr_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:527</i><br>

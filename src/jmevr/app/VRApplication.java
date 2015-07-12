@@ -58,12 +58,6 @@ public class VRApplication extends SimpleApplication{
     @Override
     public void simpleRender(RenderManager renderManager) {
         super.simpleRender(renderManager);
-        if( isInVR() && OpenVR.getVRSystemInstance() != null && VRappstate != null ) {
-            JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
-                                                   JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, VRappstate.getLeftTexId(), null);
-            JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
-                                                   JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, VRappstate.getRightTexId(), null);
-        }
         PreNormalCaching.resetCache();
     }
 

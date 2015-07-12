@@ -33,6 +33,7 @@ import com.sun.jna.ptr.IntByReference;
 import java.nio.IntBuffer;
 import java.util.List;
 import jmevr.app.VRApplication;
+import static jmevr.app.VRApplication.isInVR;
 import jmevr.input.OpenVR;
 import jmevr.input.VRHMD;
 import jmevr.post.FastSSAO;
@@ -42,6 +43,7 @@ import jmevr.util.FilterUtil;
 import jmevr.util.MeshUtil;
 import jmevr.util.OpenVRUtil;
 import jmevr.util.VRGuiNode;
+import jopenvr.JOpenVRLibrary;
 
 /**
  *
@@ -64,7 +66,28 @@ public class OpenVRViewManager extends AbstractAppState {
         transformMatrix = new Matrix4f();
         app = forVRApp;
     }
-
+    
+    private int getRightTexId() {
+        return (int)rightEyeTex.getImage().getId();
+    }
+    
+    private int getLeftTexId() {
+        return (int)leftEyeTex.getImage().getId();
+    }
+    
+    @Override
+    public void postRender() {
+        if( isInVR() && OpenVR.getVRCompositorInstance() != null ) {
+            int err1 = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
+                                                   JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getLeftTexId(), null);
+            int err2 = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
+                                                   JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getRightTexId(), null);
+            if( err1 != 0 || err2 != 0 ) {
+                System.out.println("Compositor submit error: " + Integer.toString(err1) + ", " + Integer.toString(err2));
+            }
+        }        
+    }
+    
     public ViewPort getViewPortLeft() {
         return viewPortLeft;
     }
@@ -159,14 +182,6 @@ public class OpenVRViewManager extends AbstractAppState {
     private final Matrix4f tempMat = new Matrix4f();
     private final Vector3f finalPosition = new Vector3f();
     private final Quaternion finalRotation = new Quaternion();
-    
-    public int getRightTexId() {
-        return rightEyeTex.getImage().getId();
-    }
-    
-    public int getLeftTexId() {
-        return leftEyeTex.getImage().getId();
-    }
     
     @Override
     public void update(float tpf) {

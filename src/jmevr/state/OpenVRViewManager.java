@@ -225,9 +225,9 @@ public class OpenVRViewManager extends AbstractAppState {
         Matrix4f posAndRot = ((OpenVR)VRApplication.getVRHardware()).getPositionAndOrientation();
         // combine the two for each eye
         // left eye
-        tempMat.set(leftMatrix);
-        tempMat.multLocal(posAndRot);
-        tempMat.multLocal(transformMatrix);
+        tempMat.set(leftMatrix); // eye
+        tempMat.multLocal(posAndRot); // hmd pos & rotation
+        tempMat.multLocal(transformMatrix); // observer
         tempMat.toTranslationVector(finalPosition);
         OpenVRUtil.convertMatrix4toQuat(tempMat, finalRotation);
         camLeft.setFrame(finalPosition, finalRotation);
@@ -254,7 +254,7 @@ public class OpenVRViewManager extends AbstractAppState {
         return finalRotation;
     }
     
-    private void setupCamerasAndViews() {              
+    private void setupCamerasAndViews() {
         camLeft = app.getCamera().clone();        
         float origWidth = camLeft.getWidth();
         float origHeight = camLeft.getHeight();
@@ -262,12 +262,11 @@ public class OpenVRViewManager extends AbstractAppState {
                                       origWidth / origHeight,
                                       camLeft.getFrustumNear(), camLeft.getFrustumFar());                       
         
-        prepareCameraResolution(0, camLeft);
-        camLeft.setLocation(Vector3f.ZERO);
-        camLeft.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-        camRight = camLeft.clone();
-        prepareCameraResolution(1, camRight);
+        prepareCameraResolution(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left, camLeft);
         viewPortLeft = setupViewBuffers(camLeft, LEFT_VIEW_NAME);
+        
+        camRight = camLeft.clone();
+        prepareCameraResolution(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right, camRight);
         viewPortRight = setupViewBuffers(camRight, RIGHT_VIEW_NAME);
         
         // setup gui
@@ -277,8 +276,8 @@ public class OpenVRViewManager extends AbstractAppState {
             v.detachScene(VRApplication.getVRGuiNode());
         }
         
-        leftMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(0);
-        rightMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(1);
+        leftMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left);
+        rightMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right);
     }
     
     private ViewPort setupViewBuffers(Camera cam, String viewName){
@@ -287,8 +286,8 @@ public class OpenVRViewManager extends AbstractAppState {
         
         //setup framebuffer's texture
         Texture2D offTex = new Texture2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);
-        offTex.setMinFilter(Texture.MinFilter.Trilinear);
-        offTex.setMagFilter(Texture.MagFilter.Bilinear);
+        offTex.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
+        offTex.setMagFilter(Texture.MagFilter.Nearest);
 
         //setup framebuffer to use texture
         offBufferLeft.setDepthBuffer(Image.Format.Depth);

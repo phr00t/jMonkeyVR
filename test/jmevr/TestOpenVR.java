@@ -108,7 +108,6 @@ public class TestOpenVR extends VRApplication {
          inputManager.addMapping("back", new KeyTrigger(KeyInput.KEY_S));
          inputManager.addMapping("left", new KeyTrigger(KeyInput.KEY_A));
          inputManager.addMapping("right", new KeyTrigger(KeyInput.KEY_D));
-         inputManager.addMapping("mirror", new KeyTrigger(KeyInput.KEY_M));
         ActionListener acl = new ActionListener() {
 
             public void onAction(String name, boolean keyPressed, float tpf) {
@@ -119,8 +118,6 @@ public class TestOpenVR extends VRApplication {
                 }
                 if( name.equals("toggle") ) {
                     VRApplication.getVRGuiNode().positionGui();
-                } else if( name.equals("mirror") && keyPressed ) {
-                    VRApplication.setMirroring(!VRApplication.getMirroring());
                 }
                 if(name.equals("forward")){
                     if(keyPressed){
@@ -158,7 +155,6 @@ public class TestOpenVR extends VRApplication {
         inputManager.addListener(acl, "toggle");
         inputManager.addListener(acl, "incShift");
         inputManager.addListener(acl, "decShift");
-        inputManager.addListener(acl, "mirror");
     }
      
      private float distance = 100f;

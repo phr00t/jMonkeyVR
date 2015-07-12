@@ -12,6 +12,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.sun.jna.Pointer;
 import java.nio.IntBuffer;
+import jmevr.app.VRApplication;
 import jmevr.util.OpenVRUtil;
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdMatrix44_t;
@@ -85,6 +86,10 @@ public class OpenVR implements VRHMD {
     }
     
     public boolean initOpenVRCompositor() {
+        if( VRApplication.compositorAllowed() == false ) {
+            System.out.println("Skipping SteamVR compositor!");
+            return true;
+        }
         vrCompositor = JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRCompositor_Version, hmdErrorStore);
         if(vrCompositor != null && hmdErrorStore.get(0) == 0){                
             System.out.println("OpenVR Compositor initialized OK.");
@@ -241,35 +246,16 @@ public class OpenVR implements VRHMD {
         if(vrsystem == null){
             return new Matrix4f();
         }
-        HmdMatrix44_t mat = JOpenVRLibrary.VR_IVRSystem_GetProjectionMatrix(vrsystem, eye == 0 ? JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left :JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right, cam.getFrustumNear(), cam.getFrustumFar(), JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL);
-        return OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, eye == 0 ? hmdProjectionLeftEye : hmdProjectionRightEye);
+        HmdMatrix44_t mat = JOpenVRLibrary.VR_IVRSystem_GetProjectionMatrix(vrsystem, eye, cam.getFrustumNear(), cam.getFrustumFar(), JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL);
+        return OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, eye == JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left ? hmdProjectionLeftEye : hmdProjectionRightEye);
     }
         
     public Matrix4f getHMDMatrixPoseEye(int eye){
         if(vrsystem == null){
             return new Matrix4f();
         }
-        HmdMatrix34_t mat = JOpenVRLibrary.VR_IVRSystem_GetEyeToHeadTransform(vrsystem, eye == 0 ? JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left :JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right);
+        HmdMatrix34_t mat = JOpenVRLibrary.VR_IVRSystem_GetEyeToHeadTransform(vrsystem, eye);
         
-        return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, eye == 0 ? hmdPoseLeftEye : hmdPoseRightEye);
+        return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, eye == JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left ? hmdPoseLeftEye : hmdPoseRightEye);
     }
-
-    
-////-----------------------------------------------------------------------------
-//// Purpose:
-////-----------------------------------------------------------------------------
-//Matrix4 CMainApplication::GetCurrentViewProjectionMatrix( vr::Hmd_Eye nEye )
-//{
-//	Matrix4 matMVP;
-//	if( nEye == vr::Eye_Left )
-//	{
-//		matMVP = m_mat4ProjectionLeft * m_mat4eyePosLeft * m_mat4HMDPose;
-//	}
-//	else if( nEye == vr::Eye_Right )
-//	{
-//		matMVP = m_mat4ProjectionRight * m_mat4eyePosRight *  m_mat4HMDPose;
-//	}
-//
-//	return matMVP;
-//}   
 }

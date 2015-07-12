@@ -28,7 +28,7 @@ public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
-        test.preconfigureVRApp(false, false, false, true);
+        test.preconfigureVRApp(true, true);
         test.start();
     }
     
@@ -181,7 +181,7 @@ public class TestOpenVR extends VRApplication {
      }
      
      private void generateAlignmentCoords() {
-        float distance = 1;
+        float distance = 8;
         for (int x = 0; x < 35; x++) {
             float cos = FastMath.cos(x * FastMath.PI / 16f) * distance;
             float sin = FastMath.sin(x * FastMath.PI / 16f) * distance;
@@ -194,7 +194,7 @@ public class TestOpenVR extends VRApplication {
     }
 
     private void addBox(Vector3f location) {
-        Box b = new Box(0.01f, 0.01f, 0.01f);
+        Box b = new Box(0.3f, 0.3f, 0.3f);
 
         Geometry leftQuad = new Geometry("Box", b);
         leftQuad.rotate(0.5f, 0, 0);

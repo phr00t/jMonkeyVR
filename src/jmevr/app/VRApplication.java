@@ -36,7 +36,7 @@ public class VRApplication extends SimpleApplication{
     private static boolean VRSupportedOS;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
-    protected boolean useFOVMax, flipEyes, disable_vignette;
+    private static boolean useCompositor;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
         
     private class VRListener implements ActionListener{
@@ -52,7 +52,11 @@ public class VRApplication extends SimpleApplication{
         }
     }
     
-    public boolean isOSVRSupported() {
+    public static boolean compositorAllowed() {
+        return useCompositor;
+    }
+    
+    public static boolean isOSVRSupported() {
         return VRSupportedOS;
     }
     
@@ -76,12 +80,10 @@ public class VRApplication extends SimpleApplication{
         if( VRSupportedOS ) VRhardware.initialize();
     }
     
-    public void preconfigureVRApp(boolean disable_vignette, boolean force_max_fov, boolean flip_eyes, boolean force_vr) {        
-        useFOVMax = force_max_fov;
-        flipEyes = flip_eyes;
-        this.disable_vignette = disable_vignette;
+    public void preconfigureVRApp(boolean useCompositor, boolean forceVR) {        
+        this.useCompositor = useCompositor;
         
-        if( force_vr ) {
+        if( forceVR ) {
             // this will make it work even if an HMD isn't present
             VRhardware.forceInitializeSuccess();
         }               

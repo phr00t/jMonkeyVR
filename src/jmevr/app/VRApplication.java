@@ -37,13 +37,17 @@ public class VRApplication extends SimpleApplication{
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     protected boolean useFOVMax, flipEyes, disable_vignette;
-    private final String RESET_HMD = "ResetHMD";
+    private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
         
     private class VRListener implements ActionListener{
 
         public void onAction(String name, boolean isPressed, float tpf) {
-            if (name.equals(RESET_HMD) && !isPressed){
-                reset();
+            if( isPressed ) {
+                if (name.equals(RESET_HMD)){
+                    reset();
+                } else if( name.equals(MIRRORING) ) {
+                    VRApplication.setMirroring(!VRApplication.getMirroring());
+                }
             }
         }
     }
@@ -159,8 +163,9 @@ public class VRApplication extends SimpleApplication{
             // TODO: implement flipeyes?
             VRappstate = new OpenVRViewManager(this);
             stateManager.attach(VRappstate);
-            inputManager.addListener(new VRListener(), new String[]{RESET_HMD});
+            inputManager.addListener(new VRListener(), new String[]{RESET_HMD, MIRRORING});
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));
+            inputManager.addMapping(MIRRORING, new KeyTrigger(KeyInput.KEY_F10));
             initVRinput();
             setLostFocusBehavior(LostFocusBehavior.Disabled);
         }

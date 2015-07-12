@@ -55,7 +55,9 @@ public class OpenVRViewManager extends AbstractAppState {
     private ViewPort viewPortLeft, viewPortRight;
     private Matrix4f transformMatrix, leftMatrix, rightMatrix;
     private FilterPostProcessor ppLeft, ppRight;
+    
     private boolean mirrorEnabled;
+    private int mirrorFrame;
     
     private Texture leftEyeTex, rightEyeTex;
     
@@ -92,8 +94,12 @@ public class OpenVRViewManager extends AbstractAppState {
                                                    JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getRightTexId(), null);
             // mirroring?
             if( mirrorEnabled ) {
-                Renderer r = app.getRenderManager().getRenderer();
-                r.copyFrameBuffer(viewPortLeft.getOutputFrameBuffer(), app.getViewPort().getOutputFrameBuffer(), false);
+                // mirror once every 3 frames, to prioritize performance for the VR headset
+                mirrorFrame = (mirrorFrame + 1) % 3;
+                if( mirrorFrame == 0 ) {
+                    Renderer r = app.getRenderManager().getRenderer();
+                    r.copyFrameBuffer(viewPortLeft.getOutputFrameBuffer(), app.getViewPort().getOutputFrameBuffer(), false);
+                }
             }
         }        
     }
@@ -192,6 +198,9 @@ public class OpenVRViewManager extends AbstractAppState {
             distortionScene.updateGeometricState();
 
             app.getViewPort().attachScene(distortionScene);
+        } else {
+            // don't clear between mirroring frames
+            app.getViewPort().setClearFlags(false, false, false);            
         }
     }
     

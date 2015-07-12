@@ -14,8 +14,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
-import com.jme3.texture.Texture2D;
-import com.sun.jna.Pointer;
 import java.util.ArrayList;
 import java.util.Locale;
 import jmevr.input.OpenVR;
@@ -24,7 +22,6 @@ import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
 import jmevr.state.OpenVRViewManager;
 import jmevr.util.VRGuiNode;
-import jopenvr.JOpenVRLibrary;
 
 /**
  *
@@ -143,14 +140,22 @@ public class VRApplication extends SimpleApplication{
         return VRappstate.getViewPortRight();
     }
     
+    public static void setMirroring(boolean set) {
+        if( VRappstate == null ) return;
+        VRappstate.setMirroring(set);
+    }
+    
+    public static boolean getMirroring() {
+        if( VRappstate == null ) return false;
+        return VRappstate.getMirroring();
+    }
+    
     @Override
     public void simpleInitApp() {
         // run this function before OVRAppState gets initialized to force
         // maximum FOV rendering
         if( VRSupportedOS && VRhardware.isInitialized() ) {
-            if( VRhardware instanceof OpenVR ) {
-                ((OpenVR)VRhardware).initOpenVRCompositor();
-            }
+            if( VRhardware instanceof OpenVR ) ((OpenVR)VRhardware).initOpenVRCompositor();
             // TODO: implement flipeyes?
             VRappstate = new OpenVRViewManager(this);
             stateManager.attach(VRappstate);

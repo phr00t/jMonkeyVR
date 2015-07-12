@@ -19,6 +19,8 @@ import com.jme3.post.SceneProcessor;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -28,9 +30,6 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
-import com.jme3.util.TempVars;
-import com.sun.jna.ptr.IntByReference;
-import java.nio.IntBuffer;
 import java.util.List;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
@@ -56,6 +55,7 @@ public class OpenVRViewManager extends AbstractAppState {
     private ViewPort viewPortLeft, viewPortRight;
     private Matrix4f transformMatrix, leftMatrix, rightMatrix;
     private FilterPostProcessor ppLeft, ppRight;
+    private boolean mirrorEnabled;
     
     private Texture leftEyeTex, rightEyeTex;
     
@@ -75,15 +75,25 @@ public class OpenVRViewManager extends AbstractAppState {
         return (int)leftEyeTex.getImage().getId();
     }
     
+    public void setMirroring(boolean set) {
+        mirrorEnabled = set;
+    }
+    
+    public boolean getMirroring() {
+        return mirrorEnabled;
+    }
+    
     @Override
     public void postRender() {
         if( isInVR() && OpenVR.getVRCompositorInstance() != null ) {
-            int err1 = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
+            JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
                                                    JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getLeftTexId(), null);
-            int err2 = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
+            JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
                                                    JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getRightTexId(), null);
-            if( err1 != 0 || err2 != 0 ) {
-                System.out.println("Compositor submit error: " + Integer.toString(err1) + ", " + Integer.toString(err2));
+            // mirroring?
+            if( mirrorEnabled ) {
+                Renderer r = app.getRenderManager().getRenderer();
+                r.copyFrameBuffer(viewPortLeft.getOutputFrameBuffer(), app.getViewPort().getOutputFrameBuffer(), false);
             }
         }        
     }
@@ -157,25 +167,32 @@ public class OpenVRViewManager extends AbstractAppState {
      */
     private void setupVRScene(){
         app.getFlyByCamera().setEnabled(false);
-        Node distortionScene = new Node();
-        Material leftMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
         leftEyeTex = app.getRenderManager().getPreView(LEFT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
-        leftMat.setTexture("Texture", leftEyeTex);
-        Geometry leftEye = new Geometry("box", MeshUtil.setupDistortionMesh(0));
-        leftEye.setMaterial(leftMat);
-        distortionScene.attachChild(leftEye);
-        
-        Material rightMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
         rightEyeTex = app.getRenderManager().getPreView(RIGHT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
-        rightMat.setTexture("Texture", rightEyeTex);
-        Geometry rightEye = new Geometry("box", MeshUtil.setupDistortionMesh(1));
-        rightEye.setMaterial(rightMat);
-        distortionScene.attachChild(rightEye);
         
-        distortionScene.updateGeometricState();
-        
+        // main viewport is either going to be a distortion scene or nothing
+        // mirroring is handled by copying framebuffers
         app.getViewPort().detachScene(app.getRootNode());
-        app.getViewPort().attachScene(distortionScene);
+        
+        // only setup distortion scene if compositor isn't running
+        if( OpenVR.getVRCompositorInstance() == null ) {
+            Node distortionScene = new Node();
+            Material leftMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
+            leftMat.setTexture("Texture", leftEyeTex);
+            Geometry leftEye = new Geometry("box", MeshUtil.setupDistortionMesh(0));
+            leftEye.setMaterial(leftMat);
+            distortionScene.attachChild(leftEye);
+
+            Material rightMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
+            rightMat.setTexture("Texture", rightEyeTex);
+            Geometry rightEye = new Geometry("box", MeshUtil.setupDistortionMesh(1));
+            rightEye.setMaterial(rightMat);
+            distortionScene.attachChild(rightEye);
+
+            distortionScene.updateGeometricState();
+
+            app.getViewPort().attachScene(distortionScene);
+        }
     }
     
     //final & temp values for camera calculations

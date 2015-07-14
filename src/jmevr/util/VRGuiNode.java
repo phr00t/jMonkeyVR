@@ -27,7 +27,7 @@ public class VRGuiNode extends Node {
     
     private Camera cam;
     private float guiDistance, guiScale = 1f;
-    private POSITIONING_MODE posMode = POSITIONING_MODE.MANUAL;
+    private POSITIONING_MODE posMode = POSITIONING_MODE.AUTO;
     
     private final Vector3f look = new Vector3f(), left = new Vector3f();
     private final Matrix3f orient = new Matrix3f();

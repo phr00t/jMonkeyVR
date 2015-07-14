@@ -6,7 +6,7 @@ See <a href="https://github.com/phr00t/jmonkeyengine-virtual-reality/blob/master
 
 1. Add the latest jna-x.x.x & JMonkeyVR.jar to the project.
 
-2. Instead of extending SimpleApplication/BaseApplication for your Main class, extend VRApplication. This sets up a few things including the special VR GUI node. If you want to configure a few things, use the configureVRApp function as follows (all those options default to "false").
+2. Instead of extending SimpleApplication/BaseApplication for your Main class, extend VRApplication. This sets up a few things including the special VR GUI node. If you want to configure a few things, use the preconfigureVRApp function as follows (useSteamVRCompositor defaults to true, forceDebugEnableVR defaults to false).
 
 ```
 public class Main extends VRApplication {
@@ -15,7 +15,7 @@ public class Main extends VRApplication {
  
     public static void main(String[] args) {
          MyApp = new Main();
-         MyApp.preconfigureVRApp(disableVignette, maxFov, flipEyes, forceDebugEnableVR);
+         MyApp.preconfigureVRApp(useSteamVRCompositor, forceDebugEnableVR);
          MyApp.start();
      }
  }

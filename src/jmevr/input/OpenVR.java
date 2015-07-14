@@ -11,7 +11,9 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.sun.jna.Pointer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import jmevr.app.VRApplication;
 import jmevr.util.OpenVRUtil;
 import jopenvr.HmdMatrix34_t;
@@ -23,7 +25,7 @@ import jopenvr.TrackedDevicePose_t;
  *
  * @author phr00t
  */
-public class OpenVR implements VRHMD {
+public class OpenVR {
 
     private static Pointer vrsystem;
     private static Pointer vrCompositor;
@@ -38,7 +40,9 @@ public class OpenVR implements VRHMD {
     private static final Quaternion rotStore = new Quaternion();
     private static final Vector3f posStore = new Vector3f();
     
-    private static final HMDInfo hmdinfo = new HMDInfo();
+    private static FloatBuffer tlastVsync;
+    private static LongBuffer tframeCount;
+    
     private static Matrix4f[] poseMatrices;
     
     private static final Matrix4f hmdPose = Matrix4f.IDENTITY.clone();
@@ -55,12 +59,10 @@ public class OpenVR implements VRHMD {
         return vrCompositor;
     }
     
-    @Override
     public String getName() {
         return "OpenVR";
     }
 
-    @Override
     public boolean initialize() {
         hmdErrorStore = IntBuffer.allocate(1);
         vrsystem = JOpenVRLibrary.VR_Init(hmdErrorStore);
@@ -70,6 +72,9 @@ public class OpenVR implements VRHMD {
             return false;
         } else {
             System.out.println("OpenVR initialized & VR connected.");
+            
+            tlastVsync = FloatBuffer.allocate(1);
+            tframeCount = LongBuffer.allocate(1);
             
             hmdDisplayFrequency = IntBuffer.allocate(1);
             hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_DisplayFrequency_Float);
@@ -100,39 +105,18 @@ public class OpenVR implements VRHMD {
         }
     }
 
-    @Override
     public void forceInitializeSuccess() {
         forceInitialize = true;
     }
 
-    @Override
-    public void initRendering(int width, int height, int samples) {
-        // TODO: this
-    }
-
-    @Override
-    public HMDInfo updateHMDInfo() {
-         // i think this is the only value used...
-        hmdinfo.InterpupillaryDistance = getInterpupillaryDistance();
-        return hmdinfo;
-    }
-
-    @Override
-    public HMDInfo getHMDInfo() {
-        return hmdinfo;
-    }
-
-    @Override
     public void destroy() {
         JOpenVRLibrary.VR_Shutdown();
     }
 
-    @Override
     public boolean isInitialized() {
         return forceInitialize || initSuccess;
     }
 
-    @Override
     public void reset() {
         JOpenVRLibrary.VR_IVRSystem_ResetSeatedZeroPose(vrsystem);
     }
@@ -150,12 +134,6 @@ public class OpenVR implements VRHMD {
         }
     }
     
-    @Override
-    public int getHResolution() {        
-        return 1280; // i don't think this is used/needed... (shader perhaps)
-    }
-
-    @Override
     public float getFOV() {
         if( vrsystem == null ) return 130f;
         float val = JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewBottomDegrees_Float, hmdErrorStore);
@@ -163,50 +141,21 @@ public class OpenVR implements VRHMD {
         return val;
     }
 
-    @Override
-    public int getVResolution() {
-        return 800; // i don't think this is used/needed... (shader perhaps)
-    }
-
-    @Override
     public float getInterpupillaryDistance() {
         if( vrsystem == null ) return 0.064f;
         return JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_UserIpdMeters_Float, hmdErrorStore);
     }
-
-    @Override
-    public float getEyeHeight() {
-        return 1f;
-    }
-
-    @Override
+    
     public Quaternion getOrientation() {
-        hmdPose.toRotationQuat(rotStore);
+        OpenVRUtil.convertMatrix4toQuat(hmdPose, rotStore);
         return rotStore;
     }
 
-    @Override
     public Vector3f getPosition() {
         hmdPose.toTranslationVector(posStore);
         return posStore;
     }
 
-    @Override
-    public Vector3f getAngularAcceleration() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Vector3f getPositionalAcceleration() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Vector3f getAccelerometer() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    @Override
     public void updatePose(float fFrameDuration){
         if(vrsystem == null){
             return;
@@ -214,9 +163,8 @@ public class OpenVR implements VRHMD {
         if(vrCompositor != null){
            JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePoseReference, hmdTrackedDevicePoses.length, null, 0);
         } else {
-            // TODO: better time this?
-            float fSecondsSinceLastVsync = 0.0f; // should be almost done with this frame
-            float fSecondsUntilPhotons = fFrameDuration - fSecondsSinceLastVsync + JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
+            JOpenVRLibrary.VR_IVRSystem_GetTimeSinceLastVsync(vrsystem, tlastVsync, tframeCount);
+            float fSecondsUntilPhotons = fFrameDuration - tlastVsync.get(0) + JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
             
             JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);
         }
@@ -230,16 +178,10 @@ public class OpenVR implements VRHMD {
         }
     }
 
-    @Override
     public Matrix4f getPositionAndOrientation() {
         return hmdPose;
     }
 
-    @Override
-    public Matrix4f getEyeTransform(int eye) {
-        return null;
-    }
-    
     public Matrix4f getHMDMatrixProjectionEye(int eye, Camera cam){
         if(vrsystem == null){
             return new Matrix4f();

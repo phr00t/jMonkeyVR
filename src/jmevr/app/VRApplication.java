@@ -17,7 +17,6 @@ import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.Locale;
 import jmevr.input.OpenVR;
-import jmevr.input.VRHMD;
 import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
 import jmevr.state.OpenVRViewManager;
@@ -97,7 +96,7 @@ public class VRApplication extends SimpleApplication{
         return VRSupportedOS && VRhardware != null && VRhardware.isInitialized();
     }
     
-    public static VRHMD getVRHardware() {
+    public static OpenVR getVRHardware() {
         return VRhardware;
     }
     

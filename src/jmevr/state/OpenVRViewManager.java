@@ -34,7 +34,6 @@ import java.util.List;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
 import jmevr.input.OpenVR;
-import jmevr.input.VRHMD;
 import jmevr.post.FastSSAO;
 import jmevr.post.OpenVRFilter;
 import jmevr.shadow.VRDirectionalLightShadowRenderer;
@@ -151,10 +150,10 @@ public class OpenVRViewManager extends AbstractAppState {
     private Vector2f prepareCameraResolution(int eyeIndex, Camera cam) {
         Matrix4f projMat = null;
         Vector2f size = new Vector2f();
-        VRHMD vrhmd = VRApplication.getVRHardware();
+        OpenVR vrhmd = VRApplication.getVRHardware();
         
-        projMat = ((OpenVR)vrhmd).getHMDMatrixProjectionEye(eyeIndex, cam);
-        ((OpenVR)vrhmd).getRenderSize(size);
+        projMat = vrhmd.getHMDMatrixProjectionEye(eyeIndex, cam);
+        vrhmd.getRenderSize(size);
         
         if( size.x < app.getContext().getSettings().getWidth() ) {
             size.x = app.getContext().getSettings().getWidth();

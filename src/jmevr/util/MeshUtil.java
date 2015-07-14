@@ -33,7 +33,7 @@ public class MeshUtil {
 
         int vertPos = 0, coordPos = 0;
         
-        float Xoffset = eye == 0 ? -1f : 0;
+        float Xoffset = eye == JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left ? -1f : 0;
         for (int y = 0; y < m_iLensGridSegmentCountV; y++) {
             for (int x = 0; x < m_iLensGridSegmentCountH; x++) {
                 u = x * w;
@@ -43,7 +43,7 @@ public class MeshUtil {
                 verts[vertPos + 2] = 0f; // z
                 vertPos += 3;
 
-                DistortionCoordinates_t dc0 = JOpenVRLibrary.VR_IVRSystem_ComputeDistortion(OpenVR.getVRSystemInstance(), eye == 0 ? JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left : JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right, u, v);
+                DistortionCoordinates_t dc0 = JOpenVRLibrary.VR_IVRSystem_ComputeDistortion(OpenVR.getVRSystemInstance(), eye, u, v);
 
                 texcoordR[coordPos] = dc0.rfRed[0];
                 texcoordR[coordPos + 1] = 1 - dc0.rfRed[1];

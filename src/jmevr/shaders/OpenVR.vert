@@ -9,8 +9,7 @@ varying vec2 UVgreen;
 varying vec2 UVblue;
 
 void main() {     
-    //vec2 pos = inPosition.xy ;//* 2.0 - 1.0;
-    gl_Position = inPosition ;//vec4(pos, 0.0, 1.0);    
+    gl_Position = inPosition;
     UVred = inTexCoord;
     UVgreen = inTexCoord2;
     UVblue = inTexCoord3;

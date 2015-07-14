@@ -17,10 +17,10 @@ import jopenvr.HmdMatrix44_t;
 public class OpenVRUtil {
     
     public static Matrix4f convertSteamVRMatrix3ToMatrix4f(HmdMatrix34_t hmdMatrix, Matrix4f mat){
-        mat.set(hmdMatrix.m[0], hmdMatrix.m[4], hmdMatrix.m[8], 0f, 
-                hmdMatrix.m[1], hmdMatrix.m[5], hmdMatrix.m[9], 0f, 
-                hmdMatrix.m[2], hmdMatrix.m[6], hmdMatrix.m[10], 0f, 
-                hmdMatrix.m[3], hmdMatrix.m[7], hmdMatrix.m[11], 1f);
+        mat.set(hmdMatrix.m[0], hmdMatrix.m[4], hmdMatrix.m[8], hmdMatrix.m[3], 
+                hmdMatrix.m[1], hmdMatrix.m[5], hmdMatrix.m[9], hmdMatrix.m[7], 
+                hmdMatrix.m[2], hmdMatrix.m[6], hmdMatrix.m[10], hmdMatrix.m[11], 
+                0f, 0f, 0f, 1f);
         return mat;
     }
     

@@ -4,11 +4,14 @@
  */
 package jmevr.util;
 
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdMatrix44_t;
+import org.lwjgl.LWJGLUtil;
+import org.lwjgl.opengl.Display;
 
 /**
  *
@@ -38,4 +41,42 @@ public class OpenVRUtil {
         // flip the pitch
         out.set(-out.getX(), out.getY(), -out.getZ(), out.getW());
     }
+
+    public static long getNativeWindow() {
+        long window = -1;
+        try {
+            Object displayImpl = null;
+            Method[] displayMethods = Display.class.getDeclaredMethods();
+            for (Method m : displayMethods) {
+                if (m.getName().equals("getImplementation")) {
+                    m.setAccessible(true);
+                    displayImpl = m.invoke(null, (Object[]) null);
+                    break;
+                }
+            }
+            String fieldName = null;
+            switch (LWJGLUtil.getPlatform()) {
+                case LWJGLUtil.PLATFORM_LINUX:
+                    fieldName = "current_window";
+                    break;
+                case LWJGLUtil.PLATFORM_WINDOWS:
+                    fieldName = "hwnd";
+                    break;
+            }
+            if (null != fieldName) {
+                Field[] windowsDisplayFields = displayImpl.getClass().getDeclaredFields();
+                for (Field f : windowsDisplayFields) {
+                    if (f.getName().equals(fieldName)) {
+                        f.setAccessible(true);
+                        window = (Long) f.get(displayImpl);
+                        continue;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        return window;
+    }
+
 }

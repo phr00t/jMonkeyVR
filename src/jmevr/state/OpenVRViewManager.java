@@ -30,6 +30,7 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
+import com.sun.jna.ptr.LongByReference;
 import java.util.List;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
@@ -118,6 +119,13 @@ public class OpenVRViewManager extends AbstractAppState {
         setupCamerasAndViews();
         
         setupVRScene();
+                    
+        long hWnd = OpenVRUtil.getNativeWindow();            
+        if( hWnd > 0 ) {
+            LongByReference phWnd = new LongByReference();
+            phWnd.setValue(hWnd);
+            JOpenVRLibrary.VR_IVRSystem_AttachToWindow(OpenVR.getVRSystemInstance(), phWnd.getPointer());
+        }
         
         // setup post processing filters
         // TODO: post processing

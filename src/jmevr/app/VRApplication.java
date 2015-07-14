@@ -145,6 +145,10 @@ public class VRApplication extends SimpleApplication{
         return VRappstate.getViewPortRight();
     }
     
+    public static VRApplication getMainVRApp() {
+        return mainApp;
+    }
+    
     public static void setMirroring(boolean set) {
         if( VRappstate == null ) return;
         VRappstate.setMirroring(set);

@@ -185,13 +185,13 @@ public class OpenVRViewManager extends AbstractAppState {
             Node distortionScene = new Node();
             Material leftMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
             leftMat.setTexture("Texture", leftEyeTex);
-            Geometry leftEye = new Geometry("box", MeshUtil.setupDistortionMesh(0));
+            Geometry leftEye = new Geometry("box", MeshUtil.setupDistortionMesh(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left));
             leftEye.setMaterial(leftMat);
             distortionScene.attachChild(leftEye);
 
             Material rightMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
             rightMat.setTexture("Texture", rightEyeTex);
-            Geometry rightEye = new Geometry("box", MeshUtil.setupDistortionMesh(1));
+            Geometry rightEye = new Geometry("box", MeshUtil.setupDistortionMesh(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right));
             rightEye.setMaterial(rightMat);
             distortionScene.attachChild(rightEye);
 

@@ -207,17 +207,15 @@ public class OpenVR implements VRHMD {
     }
     
     @Override
-    public void updatePose(){
+    public void updatePose(float fFrameDuration){
         if(vrsystem == null){
             return;
         }
         if(vrCompositor != null){
            JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePoseReference, hmdTrackedDevicePoses.length, null, 0);
         } else {
-            // We just got done with the glFinish - the seconds since last vsync should be 0.
-            float fSecondsSinceLastVsync = 0.0f;
-                
-            float fFrameDuration = 1.0f / JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_DisplayFrequency_Float, hmdErrorStore);
+            // TODO: better time this?
+            float fSecondsSinceLastVsync = 0.0f; // should be almost done with this frame
             float fSecondsUntilPhotons = fFrameDuration - fSecondsSinceLastVsync + JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
             
             JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);

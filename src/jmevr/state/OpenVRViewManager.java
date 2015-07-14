@@ -53,7 +53,8 @@ public class OpenVRViewManager extends AbstractAppState {
     private VRApplication app;
     private Camera camLeft,camRight;
     private ViewPort viewPortLeft, viewPortRight;
-    private Matrix4f transformMatrix, leftMatrix, rightMatrix;
+    private Vector3f leftEye, rightEye;
+    private Quaternion leftEyeRot, rightEyeRot;
     private FilterPostProcessor ppLeft, ppRight;
     
     private boolean mirrorEnabled;
@@ -65,7 +66,6 @@ public class OpenVRViewManager extends AbstractAppState {
     private final static String RIGHT_VIEW_NAME = "Right View";
 
     public OpenVRViewManager(VRApplication forVRApp){
-        transformMatrix = new Matrix4f();
         app = forVRApp;
     }
     
@@ -205,45 +205,44 @@ public class OpenVRViewManager extends AbstractAppState {
     }
     
     //final & temp values for camera calculations
-    private final Matrix4f tempMat = new Matrix4f();
     private final Vector3f finalPosition = new Vector3f();
     private final Quaternion finalRotation = new Quaternion();
+    private final Vector3f tempHead = new Vector3f();
+    private final Quaternion tempHeadRot = new Quaternion();
     
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        // first grab our observer's position & orientation
+        // grab the observer
         Spatial obs = VRApplication.getObserver();
-        if( obs == null ) {
-            transformMatrix.set(Matrix4f.IDENTITY);
-        } else {
-            transformMatrix.setRotationQuaternion(obs.getWorldRotation());
-            transformMatrix.setTranslation(obs.getWorldTranslation());
-        }        
         // update the HMD's position & orientation
-        VRApplication.getVRHardware().updatePose();
+        VRApplication.getVRHardware().updatePose(tpf);
         Matrix4f posAndRot = ((OpenVR)VRApplication.getVRHardware()).getPositionAndOrientation();
+        // prepare head rotation & position for updateCamera
+        OpenVRUtil.convertMatrix4toQuat(posAndRot, tempHeadRot);
+        posAndRot.toTranslationVector(tempHead);
+        tempHead.y = -tempHead.y; // why is Y position flipped? who knows! corrected here
         // combine the two for each eye
-        // left eye
-        tempMat.set(leftMatrix); // eye
-        tempMat.multLocal(posAndRot); // hmd pos & rotation
-        tempMat.multLocal(transformMatrix); // observer
-        tempMat.toTranslationVector(finalPosition);
-        OpenVRUtil.convertMatrix4toQuat(tempMat, finalRotation);
-        camLeft.setFrame(finalPosition, finalRotation);
-        // right eye
-        tempMat.set(rightMatrix);
-        tempMat.multLocal(posAndRot);
-        tempMat.multLocal(transformMatrix);
-        tempMat.toTranslationVector(finalPosition);
-        OpenVRUtil.convertMatrix4toQuat(tempMat, finalRotation);
-        camRight.setFrame(finalPosition, finalRotation);
+        updateCamera(camLeft, obs, leftEye, leftEyeRot);
+        updateCamera(camRight, obs, rightEye, rightEyeRot);
         
         // update GUI position?
         VRGuiNode vrgn = VRApplication.getVRGuiNode();
         if( vrgn != null && vrgn.getPositioningMode() != VRGuiNode.POSITIONING_MODE.MANUAL ) {
             VRApplication.getVRGuiNode().positionGui();
         }
+    }
+    
+    private void updateCamera(Camera cam, Spatial obs, Vector3f eyePos, Quaternion eyeRot) {
+        finalPosition.set(eyePos);
+        finalRotation.set(eyeRot);
+        finalPosition.addLocal(tempHead);
+        finalRotation.multLocal(tempHeadRot);
+        if( obs != null ) {
+            finalPosition.addLocal(obs.getWorldTranslation());
+            finalRotation.multLocal(obs.getWorldRotation());
+        }
+        cam.setFrame(finalPosition, finalRotation);
     }
     
     public Vector3f getFinalPosition() {
@@ -276,8 +275,13 @@ public class OpenVRViewManager extends AbstractAppState {
             v.detachScene(VRApplication.getVRGuiNode());
         }
         
-        leftMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left);
-        rightMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right);
+        // eyes were swapped for some reason.. that is why they are swapped here to correct
+        Matrix4f leftMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right);
+        Matrix4f rightMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left);
+        leftEyeRot = leftMatrix.toRotationQuat();
+        leftEye = leftMatrix.toTranslationVector();
+        rightEyeRot = rightMatrix.toRotationQuat();
+        rightEye = rightMatrix.toTranslationVector();
     }
     
     private ViewPort setupViewBuffers(Camera cam, String viewName){

@@ -4,6 +4,7 @@
  */
 package jmevr.app;
 
+import com.jme3.app.Application;
 import com.jme3.app.LostFocusBehavior;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
@@ -14,8 +15,16 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
+import com.jme3.system.AppSettings;
+import com.jme3.system.JmeCanvasContext;
+import com.jme3.system.JmeContext;
+import com.jme3.system.JmeSystem;
+import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Locale;
+import javax.swing.JFrame;
 import jmevr.input.OpenVR;
 import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
@@ -35,7 +44,9 @@ public class VRApplication extends SimpleApplication{
     private static boolean VRSupportedOS;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
-    private static boolean useCompositor;
+    private static JFrame VRwindow;
+    
+    private static boolean useCompositor = true, compositorOS, useJFrame = true;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
         
     private class VRListener implements ActionListener{
@@ -51,8 +62,12 @@ public class VRApplication extends SimpleApplication{
         }
     }
     
+    public static boolean usingJFrame() {
+        return VRwindow != null && isInVR() && useJFrame;
+    }
+    
     public static boolean compositorAllowed() {
-        return useCompositor;
+        return useCompositor && compositorOS;
     }
     
     public static boolean isOSVRSupported() {
@@ -74,13 +89,74 @@ public class VRApplication extends SimpleApplication{
         // OpenVR does support the Rift
         String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
         VRSupportedOS = true; //!OS.contains("nux"); //for the moment, linux/unix is supported enough to run
+        compositorOS = OS.contains("indows");
         
         VRhardware = new OpenVR();
         if( VRSupportedOS ) VRhardware.initialize();
     }
     
-    public void preconfigureVRApp(boolean useCompositor, boolean forceVR) {        
-        this.useCompositor = useCompositor;
+    @Override
+    public void start() {
+        // set some default settings in-case
+        // settings dialog is not shown
+        boolean loadSettings = false;
+        if (settings == null) {
+            setSettings(new AppSettings(true));
+            loadSettings = true;
+        }
+
+        if( isInVR() == false || compositorAllowed() || isInVR() && !useJFrame ) {
+            // show settings dialog, will be using the compositor
+            // or we are doing extended mode without a jframe
+            // settings are for possible mirroring
+            if (showSettings) {
+                if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
+                    return;
+                }
+            }
+            //re-setting settings they can have been merged from the registry.
+            setSettings(settings);
+            start(JmeContext.Type.Display, false);
+        } else {
+            // setup experimental JFrame on external device
+            // first, find the VR device
+            GraphicsDevice[] devs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+            // not sure what the rift looks like, just pick the second one for now
+            GraphicsDevice VRdev = devs[devs.length-1];
+            try {   
+                java.awt.DisplayMode useDM = null;
+                int max = 0;
+                for(java.awt.DisplayMode dm : VRdev.getDisplayModes()) {
+                    int check = dm.getHeight() + dm.getWidth() + dm.getRefreshRate();
+                    if( check > max ) {
+                        max = check;
+                        useDM = dm;
+                    }
+                }
+                // create a window for the VR device
+                VRwindow = new JFrame(VRdev.getDefaultConfiguration());
+                VRwindow.setSize(useDM.getWidth(), useDM.getHeight());
+                settings.setWidth(useDM.getWidth());
+                settings.setHeight(useDM.getHeight());
+                settings.setBitsPerPixel(useDM.getBitDepth());
+                settings.setFrequency(useDM.getRefreshRate());                
+                settings.setVSync(true);
+            } catch(Exception e) { }
+            setSettings(settings);
+            createCanvas();
+            JmeCanvasContext jmeCanvas = (JmeCanvasContext)getContext();
+            jmeCanvas.setSystemListener(this);
+            jmeCanvas.getCanvas().setPreferredSize(VRwindow.getSize());
+            VRwindow.add(jmeCanvas.getCanvas());
+            VRwindow.pack();
+            VRwindow.setVisible(true);
+            startCanvas();
+        }
+    }    
+    
+    public void preconfigureVRApp(boolean useCompositor, boolean forceVR, boolean useJFrame) {        
+        VRApplication.useCompositor = useCompositor;
+        VRApplication.useJFrame = useJFrame;
         
         if( forceVR ) {
             // this will make it work even if an HMD isn't present

@@ -31,7 +31,14 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.sun.jna.ptr.LongByReference;
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Window;
+import java.awt.image.BufferedImage;
 import java.util.List;
+import javax.swing.JFrame;
+import jme3tools.converters.ImageToAwt;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
 import jmevr.input.OpenVR;
@@ -43,6 +50,7 @@ import jmevr.util.MeshUtil;
 import jmevr.util.OpenVRUtil;
 import jmevr.util.VRGuiNode;
 import jopenvr.JOpenVRLibrary;
+import org.lwjgl.opengl.Display;
 
 /**
  *
@@ -87,18 +95,21 @@ public class OpenVRViewManager extends AbstractAppState {
     
     @Override
     public void postRender() {
-        if( isInVR() && OpenVR.getVRCompositorInstance() != null ) {
-            JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
-                                                   JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getLeftTexId(), null);
-            JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
-                                                   JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getRightTexId(), null);
-            // mirroring?
-            if( mirrorEnabled ) {
-                // mirror once every 3 frames, to prioritize performance for the VR headset
-                mirrorFrame = (mirrorFrame + 1) % 3;
-                if( mirrorFrame == 0 ) {
-                    Renderer r = app.getRenderManager().getRenderer();
-                    r.copyFrameBuffer(viewPortLeft.getOutputFrameBuffer(), app.getViewPort().getOutputFrameBuffer(), false);
+        if( isInVR() ) {
+            if( OpenVR.getVRCompositorInstance() != null ) {
+                // using the compositor...
+                JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
+                                                       JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getLeftTexId(), null);
+                JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
+                                                       JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getRightTexId(), null);
+                // mirroring?
+                if( mirrorEnabled ) {
+                    // mirror once every 3 frames, to prioritize performance for the VR headset
+                    mirrorFrame = (mirrorFrame + 1) % 3;
+                    if( mirrorFrame == 0 ) {
+                        Renderer r = app.getRenderManager().getRenderer();
+                        r.copyFrameBuffer(viewPortLeft.getOutputFrameBuffer(), app.getViewPort().getOutputFrameBuffer(), false);
+                    }
                 }
             }
         }        
@@ -120,13 +131,16 @@ public class OpenVRViewManager extends AbstractAppState {
         
         setupVRScene();
                     
-        long hWnd = OpenVRUtil.getNativeWindow();            
-        if( hWnd > 0 ) {
-            LongByReference phWnd = new LongByReference();
-            phWnd.setValue(hWnd);
-            JOpenVRLibrary.VR_IVRSystem_AttachToWindow(OpenVR.getVRSystemInstance(), phWnd.getPointer());
-        }
-        
+        /*if( VRApplication.compositorAllowed() == false ) {
+            // tell IVR_System what window we are using (not sure this has any use)
+            long hWnd = OpenVRUtil.getNativeWindow();            
+            if( hWnd > 0 ) {
+                LongByReference phWnd = new LongByReference();
+                phWnd.setValue(hWnd);
+                JOpenVRLibrary.VR_IVRSystem_AttachToWindow(OpenVR.getVRSystemInstance(), phWnd.getPointer());
+            }
+        }*/
+                   
         // setup post processing filters
         // TODO: post processing
         /*ppRight = new FilterPostProcessor(app.getAssetManager());               

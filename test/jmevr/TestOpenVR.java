@@ -28,7 +28,7 @@ public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
-        test.preconfigureVRApp(false, true);
+        test.preconfigureVRApp(false, true, true);
         test.start();
     }
     

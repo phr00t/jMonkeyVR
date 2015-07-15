@@ -105,56 +105,64 @@ public class VRApplication extends SimpleApplication{
             loadSettings = true;
         }
 
-        if( isInVR() == false || compositorAllowed() || isInVR() && !useJFrame ) {
-            // show settings dialog, will be using the compositor
-            // or we are doing extended mode without a jframe
-            // settings are for possible mirroring
-            if (showSettings) {
-                if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
-                    return;
-                }
-            }
-            //re-setting settings they can have been merged from the registry.
-            setSettings(settings);
-            start(JmeContext.Type.Display, false);
-        } else {
+        if( isInVR() && !compositorAllowed() && useJFrame ) {
             // setup experimental JFrame on external device
             // first, find the VR device
+            GraphicsDevice VRdev = null;
             GraphicsDevice[] devs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
             // not sure what the rift looks like, just pick the second one for now
-            GraphicsDevice VRdev = devs[devs.length-1];
-            try {   
-                java.awt.DisplayMode useDM = null;
-                int max = 0;
-                for(java.awt.DisplayMode dm : VRdev.getDisplayModes()) {
-                    int check = dm.getHeight() + dm.getWidth() + dm.getRefreshRate();
-                    if( check > max ) {
-                        max = check;
-                        useDM = dm;
+            VRdev = devs[devs.length-1];
+            // did we get the VR device?
+            if( VRdev != null ) {
+                try {   
+                    java.awt.DisplayMode useDM = null;
+                    int max = 0;
+                    for(java.awt.DisplayMode dm : VRdev.getDisplayModes()) {
+                        int check = dm.getHeight() + dm.getWidth() + dm.getRefreshRate();
+                        if( check > max ) {
+                            max = check;
+                            useDM = dm;
+                        }
                     }
-                }
-                // create a window for the VR device
-                VRwindow = new JFrame(VRdev.getDefaultConfiguration());
-                VRwindow.setSize(useDM.getWidth(), useDM.getHeight());
-                settings.setWidth(useDM.getWidth());
-                settings.setHeight(useDM.getHeight());
-                settings.setBitsPerPixel(useDM.getBitDepth());
-                settings.setFrequency(useDM.getRefreshRate());                
-                settings.setVSync(true);
-            } catch(Exception e) { }
-            setSettings(settings);
-            createCanvas();
-            JmeCanvasContext jmeCanvas = (JmeCanvasContext)getContext();
-            jmeCanvas.setSystemListener(this);
-            jmeCanvas.getCanvas().setPreferredSize(VRwindow.getSize());
-            VRwindow.add(jmeCanvas.getCanvas());
-            VRwindow.pack();
-            VRwindow.setVisible(true);
-            startCanvas();
+                    // create a window for the VR device
+                    VRwindow = new JFrame(VRdev.getDefaultConfiguration());
+                    VRwindow.setSize(useDM.getWidth(), useDM.getHeight());
+                    VRwindow.setUndecorated(true);
+                    VRwindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    settings.setWidth(useDM.getWidth());
+                    settings.setHeight(useDM.getHeight());
+                    settings.setBitsPerPixel(useDM.getBitDepth());
+                    settings.setFrequency(useDM.getRefreshRate());                
+                    settings.setVSync(true);
+                } catch(Exception e) { }
+                setSettings(settings);
+                createCanvas();
+                JmeCanvasContext jmeCanvas = (JmeCanvasContext)getContext();
+                jmeCanvas.setSystemListener(this);
+                jmeCanvas.getCanvas().setPreferredSize(VRwindow.getSize());
+                VRwindow.add(jmeCanvas.getCanvas());
+                VRwindow.pack();
+                VRwindow.setVisible(true);
+                startCanvas();
+                return;
+            } else {
+                // disable JFrame mode, start normally
+                useJFrame = false;
+            }
         }
+        
+        if (showSettings) {
+            if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
+                return;
+            }
+        }
+        
+        //re-setting settings they can have been merged from the registry.
+        setSettings(settings);
+        start(JmeContext.Type.Display, false);
     }    
     
-    public void preconfigureVRApp(boolean useCompositor, boolean forceVR, boolean useJFrame) {        
+    public void preconfigureVRApp(boolean useCompositor, boolean useJFrame, boolean forceVR) {        
         VRApplication.useCompositor = useCompositor;
         VRApplication.useJFrame = useJFrame;
         

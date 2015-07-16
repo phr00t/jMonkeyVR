@@ -1,7 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
+// TODO: check if SteamVR is even installed!
+
 package jmevr.app;
 
 import com.jme3.app.Application;
@@ -49,6 +48,12 @@ public class VRApplication extends SimpleApplication{
     private static boolean useCompositor = true, compositorOS, useJFrame = true;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
         
+    static {
+        // make sure we are using opengl acceleration
+        System.setProperty("sun.java2d.transaccel", "True");
+        System.setProperty("sun.java2d.opengl", "True");
+    }
+    
     private class VRListener implements ActionListener{
 
         public void onAction(String name, boolean isPressed, float tpf) {
@@ -110,8 +115,14 @@ public class VRApplication extends SimpleApplication{
             // first, find the VR device
             GraphicsDevice VRdev = null;
             GraphicsDevice[] devs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-            // not sure what the rift looks like, just pick the second one for now
-            VRdev = devs[devs.length-1];
+            GraphicsDevice defDev = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            // pick the display that isn't the default one
+            for(GraphicsDevice gd : devs) {
+                if( gd != defDev ) {
+                    VRdev = gd;
+                    break;
+                }
+            }
             // did we get the VR device?
             if( VRdev != null ) {
                 try {   
@@ -132,7 +143,7 @@ public class VRApplication extends SimpleApplication{
                     settings.setWidth(useDM.getWidth());
                     settings.setHeight(useDM.getHeight());
                     settings.setBitsPerPixel(useDM.getBitDepth());
-                    settings.setFrequency(useDM.getRefreshRate());                
+                    settings.setFrequency(useDM.getRefreshRate());
                     settings.setVSync(true);
                 } catch(Exception e) { }
                 setSettings(settings);
@@ -140,6 +151,7 @@ public class VRApplication extends SimpleApplication{
                 JmeCanvasContext jmeCanvas = (JmeCanvasContext)getContext();
                 jmeCanvas.setSystemListener(this);
                 jmeCanvas.getCanvas().setPreferredSize(VRwindow.getSize());
+                jmeCanvas.getCanvas().setIgnoreRepaint(true);
                 VRwindow.add(jmeCanvas.getCanvas());
                 VRwindow.pack();
                 VRwindow.setVisible(true);

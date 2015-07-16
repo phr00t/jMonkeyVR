@@ -236,7 +236,11 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_DashboardRequested = 505;
 		/** <i>native declaration : headers\openvr_capi.h:161</i> */
 		public static final int EVREventType_VREvent_ResetDashboard = 506;
-		/** <i>native declaration : headers\openvr_capi.h:162</i> */
+		/** <i>native declaration : headers\openvr_capi.h:166</i> */
+		public static final int EVREventType_VREvent_RenderToast = 507;
+		/** <i>native declaration : headers\openvr_capi.h:167</i> */
+		public static final int EVREventType_VREvent_ImageLoaded = 508;
+		/** <i>native declaration : headers\openvr_capi.h:168</i> */
 		public static final int EVREventType_VREvent_Notification_Show = 600;
 		/** <i>native declaration : headers\openvr_capi.h:163</i> */
 		public static final int EVREventType_VREvent_Notification_Dismissed = 601;
@@ -314,7 +318,47 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVRControllerEventOutputType_ControllerEventOutput_VREvents = 1;
 	};
 	/**
-	 * <i>native declaration : headers\openvr_capi.h:201</i><br>
+	 * <i>native declaration : headers\openvr_capi.h:207</i><br>
+	 * enum values
+	 */
+	public static interface VROverlayError {
+		/** <i>native declaration : headers\openvr_capi.h:209</i> */
+		public static final int VROverlayError_None = 0;
+		/** <i>native declaration : headers\openvr_capi.h:210</i> */
+		public static final int VROverlayError_UnknownOverlay = 10;
+		/** <i>native declaration : headers\openvr_capi.h:211</i> */
+		public static final int VROverlayError_InvalidHandle = 11;
+		/** <i>native declaration : headers\openvr_capi.h:212</i> */
+		public static final int VROverlayError_PermissionDenied = 12;
+		/** <i>native declaration : headers\openvr_capi.h:213</i> */
+		public static final int VROverlayError_OverlayLimitExceeded = 13;
+		/** <i>native declaration : headers\openvr_capi.h:214</i> */
+		public static final int VROverlayError_WrongVisibilityType = 14;
+		/** <i>native declaration : headers\openvr_capi.h:215</i> */
+		public static final int VROverlayError_KeyTooLong = 15;
+		/** <i>native declaration : headers\openvr_capi.h:216</i> */
+		public static final int VROverlayError_NameTooLong = 16;
+		/** <i>native declaration : headers\openvr_capi.h:217</i> */
+		public static final int VROverlayError_KeyInUse = 17;
+		/** <i>native declaration : headers\openvr_capi.h:218</i> */
+		public static final int VROverlayError_WrongTransformType = 18;
+		/** <i>native declaration : headers\openvr_capi.h:219</i> */
+		public static final int VROverlayError_InvalidTrackedDevice = 19;
+		/** <i>native declaration : headers\openvr_capi.h:220</i> */
+		public static final int VROverlayError_InvalidParameter = 20;
+		/** <i>native declaration : headers\openvr_capi.h:221</i> */
+		public static final int VROverlayError_ThumbnailCantBeDestroyed = 21;
+		/** <i>native declaration : headers\openvr_capi.h:222</i> */
+		public static final int VROverlayError_ArrayTooSmall = 22;
+		/** <i>native declaration : headers\openvr_capi.h:223</i> */
+		public static final int VROverlayError_RequestFailed = 23;
+		/** <i>native declaration : headers\openvr_capi.h:224</i> */
+		public static final int VROverlayError_InvalidTexture = 24;
+		/** <i>native declaration : headers\openvr_capi.h:225</i> */
+		public static final int VROverlayError_UnableToLoadFile = 25;
+	};
+	/**
+	 * <i>native declaration : headers\openvr_capi.h:227</i><br>
 	 * enum values
 	 */
 	public static interface HmdError {
@@ -424,45 +468,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int ChaperoneCalibrationState_Error_HardBoundsInvalid = 204;
 	};
 	/**
-	 * <i>native declaration : headers\openvr_capi.h:256</i><br>
-	 * enum values
-	 */
-	public static interface VROverlayError {
-		/** <i>native declaration : headers\openvr_capi.h:258</i> */
-		public static final int VROverlayError_None = 0;
-		/** <i>native declaration : headers\openvr_capi.h:259</i> */
-		public static final int VROverlayError_UnknownOverlay = 10;
-		/** <i>native declaration : headers\openvr_capi.h:260</i> */
-		public static final int VROverlayError_InvalidHandle = 11;
-		/** <i>native declaration : headers\openvr_capi.h:261</i> */
-		public static final int VROverlayError_PermissionDenied = 12;
-		/** <i>native declaration : headers\openvr_capi.h:262</i> */
-		public static final int VROverlayError_OverlayLimitExceeded = 13;
-		/** <i>native declaration : headers\openvr_capi.h:263</i> */
-		public static final int VROverlayError_WrongVisibilityType = 14;
-		/** <i>native declaration : headers\openvr_capi.h:264</i> */
-		public static final int VROverlayError_KeyTooLong = 15;
-		/** <i>native declaration : headers\openvr_capi.h:265</i> */
-		public static final int VROverlayError_NameTooLong = 16;
-		/** <i>native declaration : headers\openvr_capi.h:266</i> */
-		public static final int VROverlayError_KeyInUse = 17;
-		/** <i>native declaration : headers\openvr_capi.h:267</i> */
-		public static final int VROverlayError_WrongTransformType = 18;
-		/** <i>native declaration : headers\openvr_capi.h:268</i> */
-		public static final int VROverlayError_InvalidTrackedDevice = 19;
-		/** <i>native declaration : headers\openvr_capi.h:269</i> */
-		public static final int VROverlayError_InvalidParameter = 20;
-		/** <i>native declaration : headers\openvr_capi.h:270</i> */
-		public static final int VROverlayError_ThumbnailCantBeDestroyed = 21;
-		/** <i>native declaration : headers\openvr_capi.h:271</i> */
-		public static final int VROverlayError_ArrayTooSmall = 22;
-		/** <i>native declaration : headers\openvr_capi.h:272</i> */
-		public static final int VROverlayError_RequestFailed = 23;
-		/** <i>native declaration : headers\openvr_capi.h:273</i> */
-		public static final int VROverlayError_InvalidTexture = 24;
-	};
-	/**
-	 * <i>native declaration : headers\openvr_capi.h:275</i><br>
+	 * <i>native declaration : headers\openvr_capi.h:282</i><br>
 	 * enum values
 	 */
 	public static interface VROverlayInputMethod {
@@ -488,26 +494,12 @@ public class JOpenVRLibrary implements Library {
 	 * enum values
 	 */
 	public static interface VROverlayFlags {
-		/** <i>native declaration : headers\openvr_capi.h:288</i> */
-		public static final int VROverlayFlags_None = 0;
-		/** <i>native declaration : headers\openvr_capi.h:289</i> */
-		public static final int VROverlayFlags_Curved = 1;
-		/** <i>native declaration : headers\openvr_capi.h:290</i> */
-		public static final int VROverlayFlags_RGSS4X = 2;
-	};
-	/**
-	 * <i>native declaration : headers\openvr_capi.h:292</i><br>
-	 * enum values
-	 */
-	public static interface CameraImageResult {
-		/** <i>native declaration : headers\openvr_capi.h:294</i> */
-		public static final int CameraImageResult_OK = 0;
 		/** <i>native declaration : headers\openvr_capi.h:295</i> */
-		public static final int CameraImageResult_Uninitalized = 1;
+		public static final int VROverlayFlags_None = 0;
 		/** <i>native declaration : headers\openvr_capi.h:296</i> */
-		public static final int CameraImageResult_NotReady = 2;
+		public static final int VROverlayFlags_Curved = 1;
 		/** <i>native declaration : headers\openvr_capi.h:297</i> */
-		public static final int CameraImageResult_SameFrame = 3;
+		public static final int VROverlayFlags_RGSS4X = 2;
 	};
 	/**
 	 * <i>native declaration : headers\openvr_capi.h:299</i><br>
@@ -518,6 +510,20 @@ public class JOpenVRLibrary implements Library {
 		public static final int NotificationError_t_k_ENotificationError_OK = 0;
 		/** <i>native declaration : headers\openvr_capi.h:302</i> */
 		public static final int NotificationError_t_k_ENotificationError_Fail = 1;
+	};
+	/**
+	 * <i>native declaration : headers\openvr_capi.h:304</i><br>
+	 * enum values
+	 */
+	public static interface CameraImageResult {
+		/** <i>native declaration : headers\openvr_capi.h:306</i> */
+		public static final int CameraImageResult_OK = 0;
+		/** <i>native declaration : headers\openvr_capi.h:307</i> */
+		public static final int CameraImageResult_Uninitalized = 1;
+		/** <i>native declaration : headers\openvr_capi.h:308</i> */
+		public static final int CameraImageResult_NotReady = 2;
+		/** <i>native declaration : headers\openvr_capi.h:309</i> */
+		public static final int CameraImageResult_SameFrame = 3;
 	};
 	/**
 	 * Original signature : <code>void VR_IVRSystem_GetWindowBounds(intptr_t, int32_t*, int32_t*, uint32_t*, uint32_t*)</code><br>
@@ -1253,64 +1259,100 @@ public class JOpenVRLibrary implements Library {
 	public static native void VR_IVRChaperone_ReloadInfo(Pointer instancePtr);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_FindOverlay(intptr_t, const char*, VROverlayHandle_t*)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:544</i><br>
-	 * @deprecated use the safer methods {@link #VR_IVROverlay_FindOverlay(java.nio.IntBuffer, java.lang.String, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} and {@link #VR_IVROverlay_FindOverlay(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} instead
+	 * <i>native declaration : headers\openvr_capi.h:551</i><br>
+	 * @deprecated use the safer methods {@link #VR_IVROverlay_FindOverlay(java.nio.IntBuffer, java.lang.String, java.nio.LongBuffer)} and {@link #VR_IVROverlay_FindOverlay(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.LongByReference)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_FindOverlay(IntByReference instancePtr, Pointer pchOverlayKey, JOpenVRLibrary.VROverlayHandle_t pOverlayHandle);
+	public static native int VR_IVROverlay_FindOverlay(IntByReference instancePtr, Pointer pchOverlayKey, LongByReference pOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_FindOverlay(intptr_t, const char*, VROverlayHandle_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:544</i>
 	 */
-	public static native int VR_IVROverlay_FindOverlay(Pointer instancePtr, String pchOverlayKey, JOpenVRLibrary.VROverlayHandle_t pOverlayHandle);
+	public static native int VR_IVROverlay_FindOverlay(Pointer instancePtr, String pchOverlayKey, LongBuffer pOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_CreateOverlay(intptr_t, const char*, const char*, VROverlayHandle_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:545</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_CreateOverlay(java.nio.IntBuffer, java.lang.String, java.lang.String, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} and {@link #VR_IVROverlay_CreateOverlay(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.Pointer, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_CreateOverlay(IntByReference instancePtr, Pointer pchOverlayKey, Pointer pchOverlayFriendlyName, JOpenVRLibrary.VROverlayHandle_t pOverlayHandle);
+	public static native int VR_IVROverlay_CreateOverlay(IntByReference instancePtr, Pointer pchOverlayKey, Pointer pchOverlayFriendlyName, LongByReference pOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_CreateOverlay(intptr_t, const char*, const char*, VROverlayHandle_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:545</i>
 	 */
-	public static native int VR_IVROverlay_CreateOverlay(Pointer instancePtr, String pchOverlayKey, String pchOverlayFriendlyName, JOpenVRLibrary.VROverlayHandle_t pOverlayHandle);
+	public static native int VR_IVROverlay_CreateOverlay(Pointer instancePtr, String pchOverlayKey, String pchOverlayFriendlyName, LongBuffer pOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_DestroyOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:546</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_DestroyOverlay(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} and {@link #VR_IVROverlay_DestroyOverlay(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_DestroyOverlay(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_DestroyOverlay(IntByReference instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_DestroyOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:546</i>
 	 */
-	public static native int VR_IVROverlay_DestroyOverlay(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_DestroyOverlay(Pointer instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetHighQualityOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:547</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetHighQualityOverlay(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} and {@link #VR_IVROverlay_SetHighQualityOverlay(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetHighQualityOverlay(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_SetHighQualityOverlay(IntByReference instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetHighQualityOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:547</i>
 	 */
-	public static native int VR_IVROverlay_SetHighQualityOverlay(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_SetHighQualityOverlay(Pointer instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayHandle_t VR_IVROverlay_GetHighQualityOverlay(intptr_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:548</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetHighQualityOverlay(java.nio.IntBuffer)} and {@link #VR_IVROverlay_GetHighQualityOverlay(com.sun.jna.ptr.IntByReference)} instead
 	 */
 	@Deprecated 
-	public static native JOpenVRLibrary.VROverlayHandle_t VR_IVROverlay_GetHighQualityOverlay(IntByReference instancePtr);
+	public static native long VR_IVROverlay_GetHighQualityOverlay(IntByReference instancePtr);
 	/**
 	 * Original signature : <code>VROverlayHandle_t VR_IVROverlay_GetHighQualityOverlay(intptr_t)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:548</i>
+	 * <i>native declaration : headers\openvr_capi.h:555</i>
 	 */
-	public static native JOpenVRLibrary.VROverlayHandle_t VR_IVROverlay_GetHighQualityOverlay(Pointer instancePtr);
+	public static native long VR_IVROverlay_GetHighQualityOverlay(Pointer instancePtr);
+	/**
+	 * Original signature : <code>uint32_t VR_IVROverlay_GetOverlayKey(intptr_t, VROverlayHandle_t, char*, uint32_t, VROverlayError*)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:556</i><br>
+	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayKey(java.nio.IntBuffer, long, java.nio.ByteBuffer, int, java.nio.IntBuffer)} and {@link #VR_IVROverlay_GetOverlayKey(com.sun.jna.ptr.IntByReference, long, com.sun.jna.Pointer, int, com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVROverlay_GetOverlayKey(IntByReference instancePtr, long ulOverlayHandle, Pointer pchValue, int unBufferSize, IntByReference pError);
+	/**
+	 * Original signature : <code>uint32_t VR_IVROverlay_GetOverlayKey(intptr_t, VROverlayHandle_t, char*, uint32_t, VROverlayError*)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:556</i>
+	 */
+	public static native int VR_IVROverlay_GetOverlayKey(Pointer instancePtr, long ulOverlayHandle, ByteBuffer pchValue, int unBufferSize, IntBuffer pError);
+	/**
+	 * Original signature : <code>uint32_t VR_IVROverlay_GetOverlayName(intptr_t, VROverlayHandle_t, char*, uint32_t, VROverlayError*)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:557</i><br>
+	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayName(java.nio.IntBuffer, long, java.nio.ByteBuffer, int, java.nio.IntBuffer)} and {@link #VR_IVROverlay_GetOverlayName(com.sun.jna.ptr.IntByReference, long, com.sun.jna.Pointer, int, com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVROverlay_GetOverlayName(IntByReference instancePtr, long ulOverlayHandle, Pointer pchValue, int unBufferSize, IntByReference pError);
+	/**
+	 * Original signature : <code>uint32_t VR_IVROverlay_GetOverlayName(intptr_t, VROverlayHandle_t, char*, uint32_t, VROverlayError*)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:557</i>
+	 */
+	public static native int VR_IVROverlay_GetOverlayName(Pointer instancePtr, long ulOverlayHandle, ByteBuffer pchValue, int unBufferSize, IntBuffer pError);
+	/**
+	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayImageData(intptr_t, VROverlayHandle_t, void*, uint32_t, uint32_t*, uint32_t*)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:558</i><br>
+	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayImageData(java.nio.IntBuffer, long, com.sun.jna.Pointer, int, java.nio.IntBuffer, java.nio.IntBuffer)} and {@link #VR_IVROverlay_GetOverlayImageData(com.sun.jna.ptr.IntByReference, long, com.sun.jna.Pointer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVROverlay_GetOverlayImageData(IntByReference instancePtr, long ulOverlayHandle, Pointer pvBuffer, int unBufferSize, IntByReference punWidth, IntByReference punHeight);
+	/**
+	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayImageData(intptr_t, VROverlayHandle_t, void*, uint32_t, uint32_t*, uint32_t*)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:558</i>
+	 */
+	public static native int VR_IVROverlay_GetOverlayImageData(Pointer instancePtr, long ulOverlayHandle, Pointer pvBuffer, int unBufferSize, IntBuffer punWidth, IntBuffer punHeight);
 	/**
 	 * Original signature : <code>char* VR_IVROverlay_GetOverlayErrorNameFromEnum(intptr_t, VROverlayError)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:549</i><br>
@@ -1329,384 +1371,384 @@ public class JOpenVRLibrary implements Library {
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayFlag(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int, byte)} and {@link #VR_IVROverlay_SetOverlayFlag(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int, byte)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayFlag(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eOverlayFlag, byte bEnabled);
+	public static native int VR_IVROverlay_SetOverlayFlag(IntByReference instancePtr, long ulOverlayHandle, int eOverlayFlag, byte bEnabled);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayFlag(intptr_t, VROverlayHandle_t, VROverlayFlags, bool)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:550</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayFlag(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eOverlayFlag, byte bEnabled);
+	public static native int VR_IVROverlay_SetOverlayFlag(Pointer instancePtr, long ulOverlayHandle, int eOverlayFlag, byte bEnabled);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayFlag(intptr_t, VROverlayHandle_t, VROverlayFlags, bool*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:551</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayFlag(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int, java.nio.ByteBuffer)} and {@link #VR_IVROverlay_GetOverlayFlag(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int, com.sun.jna.Pointer)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetOverlayFlag(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eOverlayFlag, Pointer pbEnabled);
+	public static native int VR_IVROverlay_GetOverlayFlag(IntByReference instancePtr, long ulOverlayHandle, int eOverlayFlag, Pointer pbEnabled);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayFlag(intptr_t, VROverlayHandle_t, VROverlayFlags, bool*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:551</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayFlag(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eOverlayFlag, ByteBuffer pbEnabled);
+	public static native int VR_IVROverlay_GetOverlayFlag(Pointer instancePtr, long ulOverlayHandle, int eOverlayFlag, ByteBuffer pbEnabled);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayColor(intptr_t, VROverlayHandle_t, float, float, float)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:552</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayColor(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, float, float, float)} and {@link #VR_IVROverlay_SetOverlayColor(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, float, float, float)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayColor(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fRed, float fGreen, float fBlue);
+	public static native int VR_IVROverlay_SetOverlayColor(IntByReference instancePtr, long ulOverlayHandle, float fRed, float fGreen, float fBlue);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayColor(intptr_t, VROverlayHandle_t, float, float, float)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:552</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayColor(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fRed, float fGreen, float fBlue);
+	public static native int VR_IVROverlay_SetOverlayColor(Pointer instancePtr, long ulOverlayHandle, float fRed, float fGreen, float fBlue);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayColor(intptr_t, VROverlayHandle_t, float*, float*, float*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:553</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayColor(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, java.nio.FloatBuffer, java.nio.FloatBuffer, java.nio.FloatBuffer)} and {@link #VR_IVROverlay_GetOverlayColor(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.ptr.FloatByReference, com.sun.jna.ptr.FloatByReference, com.sun.jna.ptr.FloatByReference)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetOverlayColor(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatByReference pfRed, FloatByReference pfGreen, FloatByReference pfBlue);
+	public static native int VR_IVROverlay_GetOverlayColor(IntByReference instancePtr, long ulOverlayHandle, FloatByReference pfRed, FloatByReference pfGreen, FloatByReference pfBlue);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayColor(intptr_t, VROverlayHandle_t, float*, float*, float*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:553</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayColor(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatBuffer pfRed, FloatBuffer pfGreen, FloatBuffer pfBlue);
+	public static native int VR_IVROverlay_GetOverlayColor(Pointer instancePtr, long ulOverlayHandle, FloatBuffer pfRed, FloatBuffer pfGreen, FloatBuffer pfBlue);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayAlpha(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:554</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayAlpha(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, float)} and {@link #VR_IVROverlay_SetOverlayAlpha(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, float)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayAlpha(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fAlpha);
+	public static native int VR_IVROverlay_SetOverlayAlpha(IntByReference instancePtr, long ulOverlayHandle, float fAlpha);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayAlpha(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:554</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayAlpha(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fAlpha);
+	public static native int VR_IVROverlay_SetOverlayAlpha(Pointer instancePtr, long ulOverlayHandle, float fAlpha);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayAlpha(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:555</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayAlpha(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, java.nio.FloatBuffer)} and {@link #VR_IVROverlay_GetOverlayAlpha(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.ptr.FloatByReference)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetOverlayAlpha(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatByReference pfAlpha);
+	public static native int VR_IVROverlay_GetOverlayAlpha(IntByReference instancePtr, long ulOverlayHandle, FloatByReference pfAlpha);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayAlpha(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:555</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayAlpha(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatBuffer pfAlpha);
+	public static native int VR_IVROverlay_GetOverlayAlpha(Pointer instancePtr, long ulOverlayHandle, FloatBuffer pfAlpha);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayGamma(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:556</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayGamma(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, float)} and {@link #VR_IVROverlay_SetOverlayGamma(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, float)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayGamma(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fGamma);
+	public static native int VR_IVROverlay_SetOverlayGamma(IntByReference instancePtr, long ulOverlayHandle, float fGamma);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayGamma(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:556</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayGamma(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fGamma);
+	public static native int VR_IVROverlay_SetOverlayGamma(Pointer instancePtr, long ulOverlayHandle, float fGamma);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayGamma(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:557</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayGamma(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, java.nio.FloatBuffer)} and {@link #VR_IVROverlay_GetOverlayGamma(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.ptr.FloatByReference)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetOverlayGamma(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatByReference pfGamma);
+	public static native int VR_IVROverlay_GetOverlayGamma(IntByReference instancePtr, long ulOverlayHandle, FloatByReference pfGamma);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayGamma(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:557</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayGamma(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatBuffer pfGamma);
+	public static native int VR_IVROverlay_GetOverlayGamma(Pointer instancePtr, long ulOverlayHandle, FloatBuffer pfGamma);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayWidthInMeters(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:558</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayWidthInMeters(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, float)} and {@link #VR_IVROverlay_SetOverlayWidthInMeters(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, float)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayWidthInMeters(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fWidthInMeters);
+	public static native int VR_IVROverlay_SetOverlayWidthInMeters(IntByReference instancePtr, long ulOverlayHandle, float fWidthInMeters);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayWidthInMeters(intptr_t, VROverlayHandle_t, float)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:558</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayWidthInMeters(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, float fWidthInMeters);
+	public static native int VR_IVROverlay_SetOverlayWidthInMeters(Pointer instancePtr, long ulOverlayHandle, float fWidthInMeters);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayWidthInMeters(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:559</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayWidthInMeters(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, java.nio.FloatBuffer)} and {@link #VR_IVROverlay_GetOverlayWidthInMeters(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.ptr.FloatByReference)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetOverlayWidthInMeters(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatByReference pfWidthInMeters);
+	public static native int VR_IVROverlay_GetOverlayWidthInMeters(IntByReference instancePtr, long ulOverlayHandle, FloatByReference pfWidthInMeters);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayWidthInMeters(intptr_t, VROverlayHandle_t, float*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:559</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayWidthInMeters(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, FloatBuffer pfWidthInMeters);
+	public static native int VR_IVROverlay_GetOverlayWidthInMeters(Pointer instancePtr, long ulOverlayHandle, FloatBuffer pfWidthInMeters);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTextureBounds(intptr_t, VROverlayHandle_t, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:560</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayTextureBounds(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.VRTextureBounds_t)} and {@link #VR_IVROverlay_SetOverlayTextureBounds(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.VRTextureBounds_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayTextureBounds(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
+	public static native int VR_IVROverlay_SetOverlayTextureBounds(IntByReference instancePtr, long ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTextureBounds(intptr_t, VROverlayHandle_t, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:560</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayTextureBounds(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
+	public static native int VR_IVROverlay_SetOverlayTextureBounds(Pointer instancePtr, long ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTextureBounds(intptr_t, VROverlayHandle_t, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:561</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayTextureBounds(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.VRTextureBounds_t)} and {@link #VR_IVROverlay_GetOverlayTextureBounds(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.VRTextureBounds_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetOverlayTextureBounds(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
+	public static native int VR_IVROverlay_GetOverlayTextureBounds(IntByReference instancePtr, long ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTextureBounds(intptr_t, VROverlayHandle_t, VRTextureBounds_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:561</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayTextureBounds(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
+	public static native int VR_IVROverlay_GetOverlayTextureBounds(Pointer instancePtr, long ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformType(intptr_t, VROverlayHandle_t, VROverlayTransformType*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:562</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayTransformType(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, java.nio.IntBuffer)} and {@link #VR_IVROverlay_GetOverlayTransformType(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.ptr.IntByReference)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetOverlayTransformType(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntByReference peTransformType);
+	public static native int VR_IVROverlay_GetOverlayTransformType(IntByReference instancePtr, long ulOverlayHandle, IntByReference peTransformType);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformType(intptr_t, VROverlayHandle_t, VROverlayTransformType*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:562</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayTransformType(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer peTransformType);
+	public static native int VR_IVROverlay_GetOverlayTransformType(Pointer instancePtr, long ulOverlayHandle, IntBuffer peTransformType);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTransformAbsolute(intptr_t, VROverlayHandle_t, TrackingUniverseOrigin, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:563</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayTransformAbsolute(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int, jopenvr.HmdMatrix34_t)} and {@link #VR_IVROverlay_SetOverlayTransformAbsolute(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int, jopenvr.HmdMatrix34_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayTransformAbsolute(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
+	public static native int VR_IVROverlay_SetOverlayTransformAbsolute(IntByReference instancePtr, long ulOverlayHandle, int eTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTransformAbsolute(intptr_t, VROverlayHandle_t, TrackingUniverseOrigin, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:563</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayTransformAbsolute(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
+	public static native int VR_IVROverlay_SetOverlayTransformAbsolute(Pointer instancePtr, long ulOverlayHandle, int eTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformAbsolute(intptr_t, VROverlayHandle_t, TrackingUniverseOrigin*, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:564</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayTransformAbsolute(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, java.nio.IntBuffer, jopenvr.HmdMatrix34_t)} and {@link #VR_IVROverlay_GetOverlayTransformAbsolute(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.ptr.IntByReference, jopenvr.HmdMatrix34_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetOverlayTransformAbsolute(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntByReference peTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
+	public static native int VR_IVROverlay_GetOverlayTransformAbsolute(IntByReference instancePtr, long ulOverlayHandle, IntByReference peTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformAbsolute(intptr_t, VROverlayHandle_t, TrackingUniverseOrigin*, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:564</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayTransformAbsolute(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer peTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
+	public static native int VR_IVROverlay_GetOverlayTransformAbsolute(Pointer instancePtr, long ulOverlayHandle, IntBuffer peTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:565</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int, jopenvr.HmdMatrix34_t)} and {@link #VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int, jopenvr.HmdMatrix34_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
+	public static native int VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(IntByReference instancePtr, long ulOverlayHandle, int unTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:565</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
+	public static native int VR_IVROverlay_SetOverlayTransformTrackedDeviceRelative(Pointer instancePtr, long ulOverlayHandle, int unTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t*, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:566</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, java.nio.IntBuffer, jopenvr.HmdMatrix34_t)} and {@link #VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.ptr.IntByReference, jopenvr.HmdMatrix34_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntByReference punTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
+	public static native int VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(IntByReference instancePtr, long ulOverlayHandle, IntByReference punTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t*, HmdMatrix34_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:566</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer punTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
+	public static native int VR_IVROverlay_GetOverlayTransformTrackedDeviceRelative(Pointer instancePtr, long ulOverlayHandle, IntBuffer punTrackedDevice, HmdMatrix34_t pmatTrackedDeviceToOverlayTransform);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_ShowOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:567</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_ShowOverlay(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} and {@link #VR_IVROverlay_ShowOverlay(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_ShowOverlay(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_ShowOverlay(IntByReference instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_ShowOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:567</i>
 	 */
-	public static native int VR_IVROverlay_ShowOverlay(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_ShowOverlay(Pointer instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_HideOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:568</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_HideOverlay(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} and {@link #VR_IVROverlay_HideOverlay(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_HideOverlay(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_HideOverlay(IntByReference instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_HideOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:568</i>
 	 */
-	public static native int VR_IVROverlay_HideOverlay(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_HideOverlay(Pointer instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_IsOverlayVisible(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:569</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_IsOverlayVisible(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} and {@link #VR_IVROverlay_IsOverlayVisible(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} instead
 	 */
 	@Deprecated 
-	public static native byte VR_IVROverlay_IsOverlayVisible(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native byte VR_IVROverlay_IsOverlayVisible(IntByReference instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_IsOverlayVisible(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:569</i>
 	 */
-	public static native byte VR_IVROverlay_IsOverlayVisible(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native byte VR_IVROverlay_IsOverlayVisible(Pointer instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_PollNextOverlayEvent(intptr_t, VROverlayHandle_t, VREvent_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:570</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_PollNextOverlayEvent(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.JOpenVRLibrary.VREvent_t)} and {@link #VR_IVROverlay_PollNextOverlayEvent(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.JOpenVRLibrary.VREvent_t)} instead
 	 */
 	@Deprecated 
-	public static native byte VR_IVROverlay_PollNextOverlayEvent(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, JOpenVRLibrary.VREvent_t pEvent);
+	public static native byte VR_IVROverlay_PollNextOverlayEvent(IntByReference instancePtr, long ulOverlayHandle, JOpenVRLibrary.VREvent_t pEvent);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_PollNextOverlayEvent(intptr_t, VROverlayHandle_t, VREvent_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:570</i>
 	 */
-	public static native byte VR_IVROverlay_PollNextOverlayEvent(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, JOpenVRLibrary.VREvent_t pEvent);
+	public static native byte VR_IVROverlay_PollNextOverlayEvent(Pointer instancePtr, long ulOverlayHandle, JOpenVRLibrary.VREvent_t pEvent);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayInputMethod(intptr_t, VROverlayHandle_t, VROverlayInputMethod*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:571</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayInputMethod(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, java.nio.IntBuffer)} and {@link #VR_IVROverlay_GetOverlayInputMethod(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.ptr.IntByReference)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetOverlayInputMethod(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntByReference peInputMethod);
+	public static native int VR_IVROverlay_GetOverlayInputMethod(IntByReference instancePtr, long ulOverlayHandle, IntByReference peInputMethod);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayInputMethod(intptr_t, VROverlayHandle_t, VROverlayInputMethod*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:571</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayInputMethod(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer peInputMethod);
+	public static native int VR_IVROverlay_GetOverlayInputMethod(Pointer instancePtr, long ulOverlayHandle, IntBuffer peInputMethod);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayInputMethod(intptr_t, VROverlayHandle_t, VROverlayInputMethod)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:572</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayInputMethod(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int)} and {@link #VR_IVROverlay_SetOverlayInputMethod(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayInputMethod(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eInputMethod);
+	public static native int VR_IVROverlay_SetOverlayInputMethod(IntByReference instancePtr, long ulOverlayHandle, int eInputMethod);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayInputMethod(intptr_t, VROverlayHandle_t, VROverlayInputMethod)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:572</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayInputMethod(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eInputMethod);
+	public static native int VR_IVROverlay_SetOverlayInputMethod(Pointer instancePtr, long ulOverlayHandle, int eInputMethod);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayMouseScale(intptr_t, VROverlayHandle_t, HmdVector2_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:573</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetOverlayMouseScale(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.HmdVector2_t)} and {@link #VR_IVROverlay_GetOverlayMouseScale(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.HmdVector2_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetOverlayMouseScale(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, HmdVector2_t pvecMouseScale);
+	public static native int VR_IVROverlay_GetOverlayMouseScale(IntByReference instancePtr, long ulOverlayHandle, HmdVector2_t pvecMouseScale);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetOverlayMouseScale(intptr_t, VROverlayHandle_t, HmdVector2_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:573</i>
 	 */
-	public static native int VR_IVROverlay_GetOverlayMouseScale(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, HmdVector2_t pvecMouseScale);
+	public static native int VR_IVROverlay_GetOverlayMouseScale(Pointer instancePtr, long ulOverlayHandle, HmdVector2_t pvecMouseScale);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayMouseScale(intptr_t, VROverlayHandle_t, HmdVector2_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:574</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayMouseScale(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.HmdVector2_t)} and {@link #VR_IVROverlay_SetOverlayMouseScale(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.HmdVector2_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayMouseScale(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, HmdVector2_t pvecMouseScale);
+	public static native int VR_IVROverlay_SetOverlayMouseScale(IntByReference instancePtr, long ulOverlayHandle, HmdVector2_t pvecMouseScale);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayMouseScale(intptr_t, VROverlayHandle_t, HmdVector2_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:574</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayMouseScale(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, HmdVector2_t pvecMouseScale);
+	public static native int VR_IVROverlay_SetOverlayMouseScale(Pointer instancePtr, long ulOverlayHandle, HmdVector2_t pvecMouseScale);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_ComputeOverlayIntersection(intptr_t, VROverlayHandle_t, VROverlayIntersectionParams_t*, VROverlayIntersectionResults_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:575</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_ComputeOverlayIntersection(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.VROverlayIntersectionParams_t, jopenvr.VROverlayIntersectionResults_t)} and {@link #VR_IVROverlay_ComputeOverlayIntersection(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.VROverlayIntersectionParams_t, jopenvr.VROverlayIntersectionResults_t)} instead
 	 */
 	@Deprecated 
-	public static native byte VR_IVROverlay_ComputeOverlayIntersection(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VROverlayIntersectionParams_t pParams, VROverlayIntersectionResults_t pResults);
+	public static native byte VR_IVROverlay_ComputeOverlayIntersection(IntByReference instancePtr, long ulOverlayHandle, VROverlayIntersectionParams_t pParams, VROverlayIntersectionResults_t pResults);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_ComputeOverlayIntersection(intptr_t, VROverlayHandle_t, VROverlayIntersectionParams_t*, VROverlayIntersectionResults_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:575</i>
 	 */
-	public static native byte VR_IVROverlay_ComputeOverlayIntersection(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, VROverlayIntersectionParams_t pParams, VROverlayIntersectionResults_t pResults);
+	public static native byte VR_IVROverlay_ComputeOverlayIntersection(Pointer instancePtr, long ulOverlayHandle, VROverlayIntersectionParams_t pParams, VROverlayIntersectionResults_t pResults);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:576</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int)} and {@link #VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int)} instead
 	 */
 	@Deprecated 
-	public static native byte VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unControllerDeviceIndex);
+	public static native byte VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(IntByReference instancePtr, long ulOverlayHandle, int unControllerDeviceIndex);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(intptr_t, VROverlayHandle_t, TrackedDeviceIndex_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:576</i>
 	 */
-	public static native byte VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unControllerDeviceIndex);
+	public static native byte VR_IVROverlay_HandleControllerOverlayInteractionAsMouse(Pointer instancePtr, long ulOverlayHandle, int unControllerDeviceIndex);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTexture(intptr_t, VROverlayHandle_t, GraphicsAPIConvention, void*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:577</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayTexture(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int, com.sun.jna.Pointer)} and {@link #VR_IVROverlay_SetOverlayTexture(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int, com.sun.jna.Pointer)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayTexture(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eTextureType, Pointer pTexture);
+	public static native int VR_IVROverlay_SetOverlayTexture(IntByReference instancePtr, long ulOverlayHandle, int eTextureType, Pointer pTexture);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayTexture(intptr_t, VROverlayHandle_t, GraphicsAPIConvention, void*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:577</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayTexture(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int eTextureType, Pointer pTexture);
+	public static native int VR_IVROverlay_SetOverlayTexture(Pointer instancePtr, long ulOverlayHandle, int eTextureType, Pointer pTexture);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_ClearOverlayTexture(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:578</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_ClearOverlayTexture(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} and {@link #VR_IVROverlay_ClearOverlayTexture(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_ClearOverlayTexture(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_ClearOverlayTexture(IntByReference instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_ClearOverlayTexture(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:578</i>
 	 */
-	public static native int VR_IVROverlay_ClearOverlayTexture(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native int VR_IVROverlay_ClearOverlayTexture(Pointer instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayRaw(intptr_t, VROverlayHandle_t, void*, uint32_t, uint32_t, uint32_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:579</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayRaw(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.Pointer, int, int, int)} and {@link #VR_IVROverlay_SetOverlayRaw(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.Pointer, int, int, int)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayRaw(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, Pointer pvBuffer, int unWidth, int unHeight, int unDepth);
+	public static native int VR_IVROverlay_SetOverlayRaw(IntByReference instancePtr, long ulOverlayHandle, Pointer pvBuffer, int unWidth, int unHeight, int unDepth);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayRaw(intptr_t, VROverlayHandle_t, void*, uint32_t, uint32_t, uint32_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:579</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayRaw(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, Pointer pvBuffer, int unWidth, int unHeight, int unDepth);
+	public static native int VR_IVROverlay_SetOverlayRaw(Pointer instancePtr, long ulOverlayHandle, Pointer pvBuffer, int unWidth, int unHeight, int unDepth);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayFromFile(intptr_t, VROverlayHandle_t, const char*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:580</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetOverlayFromFile(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, java.lang.String)} and {@link #VR_IVROverlay_SetOverlayFromFile(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.Pointer)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetOverlayFromFile(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, Pointer pchFilePath);
+	public static native int VR_IVROverlay_SetOverlayFromFile(IntByReference instancePtr, long ulOverlayHandle, Pointer pchFilePath);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetOverlayFromFile(intptr_t, VROverlayHandle_t, const char*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:580</i>
 	 */
-	public static native int VR_IVROverlay_SetOverlayFromFile(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, String pchFilePath);
+	public static native int VR_IVROverlay_SetOverlayFromFile(Pointer instancePtr, long ulOverlayHandle, String pchFilePath);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_CreateDashboardOverlay(intptr_t, const char*, const char*, VROverlayHandle_t*, VROverlayHandle_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:581</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_CreateDashboardOverlay(java.nio.IntBuffer, java.lang.String, java.lang.String, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} and {@link #VR_IVROverlay_CreateDashboardOverlay(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.Pointer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_CreateDashboardOverlay(IntByReference instancePtr, Pointer pchOverlayKey, Pointer pchOverlayFriendlyName, JOpenVRLibrary.VROverlayHandle_t pMainHandle, JOpenVRLibrary.VROverlayHandle_t pThumbnailHandle);
+	public static native int VR_IVROverlay_CreateDashboardOverlay(IntByReference instancePtr, Pointer pchOverlayKey, Pointer pchOverlayFriendlyName, LongByReference pMainHandle, LongByReference pThumbnailHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_CreateDashboardOverlay(intptr_t, const char*, const char*, VROverlayHandle_t*, VROverlayHandle_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:581</i>
 	 */
-	public static native int VR_IVROverlay_CreateDashboardOverlay(Pointer instancePtr, String pchOverlayKey, String pchOverlayFriendlyName, JOpenVRLibrary.VROverlayHandle_t pMainHandle, JOpenVRLibrary.VROverlayHandle_t pThumbnailHandle);
+	public static native int VR_IVROverlay_CreateDashboardOverlay(Pointer instancePtr, String pchOverlayKey, String pchOverlayFriendlyName, LongBuffer pMainHandle, LongBuffer pThumbnailHandle);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_IsDashboardVisible(intptr_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:582</i><br>
@@ -1725,36 +1767,48 @@ public class JOpenVRLibrary implements Library {
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_IsActiveDashboardOverlay(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} and {@link #VR_IVROverlay_IsActiveDashboardOverlay(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t)} instead
 	 */
 	@Deprecated 
-	public static native byte VR_IVROverlay_IsActiveDashboardOverlay(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native byte VR_IVROverlay_IsActiveDashboardOverlay(IntByReference instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>bool VR_IVROverlay_IsActiveDashboardOverlay(intptr_t, VROverlayHandle_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:583</i>
 	 */
-	public static native byte VR_IVROverlay_IsActiveDashboardOverlay(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle);
+	public static native byte VR_IVROverlay_IsActiveDashboardOverlay(Pointer instancePtr, long ulOverlayHandle);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetDashboardOverlaySceneProcess(intptr_t, VROverlayHandle_t, uint32_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:584</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetDashboardOverlaySceneProcess(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int)} and {@link #VR_IVROverlay_SetDashboardOverlaySceneProcess(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, int)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_SetDashboardOverlaySceneProcess(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unProcessId);
+	public static native int VR_IVROverlay_SetDashboardOverlaySceneProcess(IntByReference instancePtr, long ulOverlayHandle, int unProcessId);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_SetDashboardOverlaySceneProcess(intptr_t, VROverlayHandle_t, uint32_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:584</i>
 	 */
-	public static native int VR_IVROverlay_SetDashboardOverlaySceneProcess(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, int unProcessId);
+	public static native int VR_IVROverlay_SetDashboardOverlaySceneProcess(Pointer instancePtr, long ulOverlayHandle, int unProcessId);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetDashboardOverlaySceneProcess(intptr_t, VROverlayHandle_t, uint32_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:585</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetDashboardOverlaySceneProcess(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, java.nio.IntBuffer)} and {@link #VR_IVROverlay_GetDashboardOverlaySceneProcess(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.ptr.IntByReference)} instead
 	 */
 	@Deprecated 
-	public static native int VR_IVROverlay_GetDashboardOverlaySceneProcess(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntByReference punProcessId);
+	public static native int VR_IVROverlay_GetDashboardOverlaySceneProcess(IntByReference instancePtr, long ulOverlayHandle, IntByReference punProcessId);
 	/**
 	 * Original signature : <code>VROverlayError VR_IVROverlay_GetDashboardOverlaySceneProcess(intptr_t, VROverlayHandle_t, uint32_t*)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:585</i>
+	 * <i>native declaration : headers\openvr_capi.h:595</i>
 	 */
-	public static native int VR_IVROverlay_GetDashboardOverlaySceneProcess(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, IntBuffer punProcessId);
+	public static native int VR_IVROverlay_GetDashboardOverlaySceneProcess(Pointer instancePtr, long ulOverlayHandle, IntBuffer punProcessId);
+	/**
+	 * Original signature : <code>void VR_IVROverlay_ShowDashboard(intptr_t, const char*)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:596</i><br>
+	 * @deprecated use the safer methods {@link #VR_IVROverlay_ShowDashboard(java.nio.IntBuffer, java.lang.String)} and {@link #VR_IVROverlay_ShowDashboard(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVROverlay_ShowDashboard(IntByReference instancePtr, Pointer pchOverlayToShow);
+	/**
+	 * Original signature : <code>void VR_IVROverlay_ShowDashboard(intptr_t, const char*)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:596</i>
+	 */
+	public static native void VR_IVROverlay_ShowDashboard(Pointer instancePtr, String pchOverlayToShow);
 	/**
 	 * Original signature : <code>bool VR_IVRRenderModels_LoadRenderModel(intptr_t, const char*, RenderModel_t*)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:586</i><br>
@@ -1932,9 +1986,45 @@ public class JOpenVRLibrary implements Library {
 	public static native byte VR_IVRControlPanel_QuitProcess(IntByReference instancePtr, int pidProcessToQuit);
 	/**
 	 * Original signature : <code>bool VR_IVRControlPanel_QuitProcess(intptr_t, uint32_t)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:600</i>
+	 * <i>native declaration : headers\openvr_capi.h:611</i>
 	 */
 	public static native byte VR_IVRControlPanel_QuitProcess(Pointer instancePtr, int pidProcessToQuit);
+	/**
+	 * Original signature : <code>uint32_t VR_IVRNotifications_GetErrorString(intptr_t, NotificationError_t, char*, uint32_t)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:612</i><br>
+	 * @deprecated use the safer methods {@link #VR_IVRNotifications_GetErrorString(java.nio.IntBuffer, int, java.nio.ByteBuffer, int)} and {@link #VR_IVRNotifications_GetErrorString(com.sun.jna.ptr.IntByReference, int, com.sun.jna.Pointer, int)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVRNotifications_GetErrorString(IntByReference instancePtr, int error, Pointer pchBuffer, int unBufferSize);
+	/**
+	 * Original signature : <code>uint32_t VR_IVRNotifications_GetErrorString(intptr_t, NotificationError_t, char*, uint32_t)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:612</i>
+	 */
+	public static native int VR_IVRNotifications_GetErrorString(Pointer instancePtr, int error, ByteBuffer pchBuffer, int unBufferSize);
+	/**
+	 * Original signature : <code>NotificationError_t VR_IVRNotifications_CreateNotification(intptr_t, VROverlayHandle_t, uint64_t, char*, char*, char*, NotificationBitmap*, VRNotificationId*)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:613</i><br>
+	 * @deprecated use the safer methods {@link #VR_IVRNotifications_CreateNotification(java.nio.IntBuffer, long, long, java.nio.ByteBuffer, java.nio.ByteBuffer, java.nio.ByteBuffer, jopenvr.NotificationBitmap, java.nio.IntBuffer)} and {@link #VR_IVRNotifications_CreateNotification(com.sun.jna.ptr.IntByReference, long, long, com.sun.jna.Pointer, com.sun.jna.Pointer, com.sun.jna.Pointer, jopenvr.NotificationBitmap, com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVRNotifications_CreateNotification(IntByReference instancePtr, long ulOverlayHandle, long ulUserValue, Pointer strType, Pointer strText, Pointer strCategory, NotificationBitmap photo, IntByReference notificationId);
+	/**
+	 * Original signature : <code>NotificationError_t VR_IVRNotifications_CreateNotification(intptr_t, VROverlayHandle_t, uint64_t, char*, char*, char*, NotificationBitmap*, VRNotificationId*)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:613</i>
+	 */
+	public static native int VR_IVRNotifications_CreateNotification(Pointer instancePtr, long ulOverlayHandle, long ulUserValue, ByteBuffer strType, ByteBuffer strText, ByteBuffer strCategory, NotificationBitmap photo, IntBuffer notificationId);
+	/**
+	 * Original signature : <code>NotificationError_t VR_IVRNotifications_DismissNotification(intptr_t, VRNotificationId)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:614</i><br>
+	 * @deprecated use the safer methods {@link #VR_IVRNotifications_DismissNotification(java.nio.IntBuffer, int)} and {@link #VR_IVRNotifications_DismissNotification(com.sun.jna.ptr.IntByReference, int)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVRNotifications_DismissNotification(IntByReference instancePtr, int notificationId);
+	/**
+	 * Original signature : <code>NotificationError_t VR_IVRNotifications_DismissNotification(intptr_t, VRNotificationId)</code><br>
+	 * <i>native declaration : headers\openvr_capi.h:614</i>
+	 */
+	public static native int VR_IVRNotifications_DismissNotification(Pointer instancePtr, int notificationId);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRCameraAccess_GetCameraCount(intptr_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:601</i><br>
@@ -2208,57 +2298,9 @@ public class JOpenVRLibrary implements Library {
 	public static native void VR_IVRChaperoneSetup_ReloadFromDisk(IntByReference instancePtr);
 	/**
 	 * Original signature : <code>void VR_IVRChaperoneSetup_ReloadFromDisk(intptr_t)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:623</i>
+	 * <i>native declaration : headers\openvr_capi.h:637</i>
 	 */
 	public static native void VR_IVRChaperoneSetup_ReloadFromDisk(Pointer instancePtr);
-	/**
-	 * Original signature : <code>uint32_t VR_IVRNotifications_GetErrorString(intptr_t, NotificationError_t, char*, uint32_t)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:624</i><br>
-	 * @deprecated use the safer methods {@link #VR_IVRNotifications_GetErrorString(java.nio.IntBuffer, int, java.nio.ByteBuffer, int)} and {@link #VR_IVRNotifications_GetErrorString(com.sun.jna.ptr.IntByReference, int, com.sun.jna.Pointer, int)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRNotifications_GetErrorString(IntByReference instancePtr, int error, Pointer pchBuffer, int unBufferSize);
-	/**
-	 * Original signature : <code>uint32_t VR_IVRNotifications_GetErrorString(intptr_t, NotificationError_t, char*, uint32_t)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:624</i>
-	 */
-	public static native int VR_IVRNotifications_GetErrorString(Pointer instancePtr, int error, ByteBuffer pchBuffer, int unBufferSize);
-	/**
-	 * Original signature : <code>NotificationError_t VR_IVRNotifications_NotificationStart(intptr_t, VROverlayHandle_t, char*, void*, uint64_t, VRNotificationId*)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:625</i><br>
-	 * @deprecated use the safer methods {@link #VR_IVRNotifications_NotificationStart(java.nio.IntBuffer, jopenvr.JOpenVRLibrary.VROverlayHandle_t, java.nio.ByteBuffer, com.sun.jna.Pointer, long, java.nio.IntBuffer)} and {@link #VR_IVRNotifications_NotificationStart(com.sun.jna.ptr.IntByReference, jopenvr.JOpenVRLibrary.VROverlayHandle_t, com.sun.jna.Pointer, com.sun.jna.Pointer, long, com.sun.jna.ptr.IntByReference)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRNotifications_NotificationStart(IntByReference instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, Pointer strType, Pointer pTexture, long ulUserValue, IntByReference pNotificationId);
-	/**
-	 * Original signature : <code>NotificationError_t VR_IVRNotifications_NotificationStart(intptr_t, VROverlayHandle_t, char*, void*, uint64_t, VRNotificationId*)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:625</i>
-	 */
-	public static native int VR_IVRNotifications_NotificationStart(Pointer instancePtr, JOpenVRLibrary.VROverlayHandle_t ulOverlayHandle, ByteBuffer strType, Pointer pTexture, long ulUserValue, IntBuffer pNotificationId);
-	/**
-	 * Original signature : <code>NotificationError_t VR_IVRNotifications_UpdateTexture(intptr_t, VRNotificationId, void*)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:626</i><br>
-	 * @deprecated use the safer methods {@link #VR_IVRNotifications_UpdateTexture(java.nio.IntBuffer, int, com.sun.jna.Pointer)} and {@link #VR_IVRNotifications_UpdateTexture(com.sun.jna.ptr.IntByReference, int, com.sun.jna.Pointer)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRNotifications_UpdateTexture(IntByReference instancePtr, int notificationId, Pointer pTexture);
-	/**
-	 * Original signature : <code>NotificationError_t VR_IVRNotifications_UpdateTexture(intptr_t, VRNotificationId, void*)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:626</i>
-	 */
-	public static native int VR_IVRNotifications_UpdateTexture(Pointer instancePtr, int notificationId, Pointer pTexture);
-	/**
-	 * Original signature : <code>NotificationError_t VR_IVRNotifications_DismissNotification(intptr_t, VRNotificationId)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:627</i><br>
-	 * @deprecated use the safer methods {@link #VR_IVRNotifications_DismissNotification(java.nio.IntBuffer, int)} and {@link #VR_IVRNotifications_DismissNotification(com.sun.jna.ptr.IntByReference, int)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRNotifications_DismissNotification(IntByReference instancePtr, int notificationId);
-	/**
-	 * Original signature : <code>NotificationError_t VR_IVRNotifications_DismissNotification(intptr_t, VRNotificationId)</code><br>
-	 * <i>native declaration : headers\openvr_capi.h:627</i>
-	 */
-	public static native int VR_IVRNotifications_DismissNotification(Pointer instancePtr, int notificationId);
 	/**
 	 * Global entry points<br>
 	 * Original signature : <code>intptr_t VR_Init(HmdError*)</code><br>
@@ -2300,14 +2342,6 @@ public class JOpenVRLibrary implements Library {
 	 * <i>native declaration : headers\openvr_capi.h:634</i>
 	 */
 	public static native Pointer VR_GetGenericInterface(String pchInterfaceVersion, IntBuffer peError);
-	public static class VROverlayHandle_t extends PointerType {
-		public VROverlayHandle_t(Pointer address) {
-			super(address);
-		}
-		public VROverlayHandle_t() {
-			super();
-		}
-	};
 	public static class VREvent_t extends PointerType {
 		public VREvent_t(Pointer address) {
 			super(address);
@@ -2340,7 +2374,7 @@ public class JOpenVRLibrary implements Library {
         public static int k_unVROverlayMaxKeyLength = 128;
         public static int k_unVROverlayMaxNameLength = 128;
         public static int k_unMaxOverlayCount = 32;
-        public static String IVROverlay_Version = "IVROverlay_002";
+        public static String IVROverlay_Version = "IVROverlay_003";
         public static String IVRRenderModels_Version = "IVRRenderModels_001";
         public static String IVRControlPanel_Version = "IVRControlPanel_001";
         public static String IVRCameraAccess_Version = "IVRCameraAccess_001";

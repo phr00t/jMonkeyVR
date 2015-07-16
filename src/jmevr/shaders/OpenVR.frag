@@ -11,9 +11,11 @@ void main() {
     //if( fBoundsCheck > 1.0 ) {
     //  gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 );
     //} else {
-        float red = texture(m_Texture, UVred).x;
-        float green = texture(m_Texture, UVgreen).y;
-        float blue = texture(m_Texture, UVblue).z;
+
+        float red = texture2D(m_Texture, UVred).x;
+        float green = texture2D(m_Texture, UVgreen).y;
+        float blue = texture2D(m_Texture, UVblue).z;
         gl_FragColor = vec4( red, green, blue, 1.0 );
+
     //}
 }

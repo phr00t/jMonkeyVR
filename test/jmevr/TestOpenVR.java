@@ -7,15 +7,16 @@ package jmevr;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture.MagFilter;
+import com.jme3.texture.Texture.MinFilter;
 import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
@@ -33,7 +34,7 @@ public class TestOpenVR extends VRApplication {
     }
     
     Node boxes = new Node("");
-    Spatial observer = new Node("");
+    Spatial observer;
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Material mat;
     Node mainScene;
@@ -41,22 +42,23 @@ public class TestOpenVR extends VRApplication {
     @Override
     public void simpleInitApp() {
         super.simpleInitApp();
-        VRApplication.setObserver(observer);
         initTestScene();
     }
     
     private void initTestScene(){
-    this.flyCam.setMoveSpeed(10);
-        mainScene=new Node();
-        //scene = new Node();
-        //assetManager.registerLocator("assets/Scenes/wildhouse.zip", ZipLocator.class);        
-        //scene.attachChild(assetManager.loadModel("main.scene"));
-        //rootNode.attachChild(scene);
+        this.flyCam.setMoveSpeed(10);
+        mainScene = new Node("scene");
+        observer = new Node("observer");
         mainScene.attachChild(SkyFactory.createSky(
-                    assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+                    assetManager, "Textures/Sky/Bright/spheremap.png", SkyFactory.EnvMapType.EquirectMap));
         
         Geometry box = new Geometry("", new Box(5,5,5));
-        mat = new Material(getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        mat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        Texture noise = getAssetManager().loadTexture("Textures/noise.png");
+        noise.setMagFilter(MagFilter.Nearest);
+        noise.setMinFilter(MinFilter.Trilinear);
+        noise.setAnisotropicFilter(16);
+        mat.setTexture("ColorMap", noise);
         
         // gui element
         Picture test = new Picture("testpic");
@@ -80,19 +82,10 @@ public class TestOpenVR extends VRApplication {
         boxes.attachChild(box3);
         rootNode.attachChild(boxes);
         
-        observer.setLocalTranslation(new Vector3f(0.0f, 0.0f, 0.0f));//observer.setLocalTranslation(new Vector3f(0,0,5));
+        observer.setLocalTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
         
-        //observer.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-        //observer.addControl(VRApplication.getVRAppState().getCameraControl());
+        VRApplication.setObserver(observer);
         mainScene.attachChild(observer);
-        
-        DirectionalLight sun = new DirectionalLight();
-        Vector3f lightDir=new Vector3f(-0.37352666f, -0.50444174f, -0.7784704f);
-        sun.setDirection(lightDir);
-        sun.setColor(ColorRGBA.White.clone().multLocal(2));
-        rootNode.addLight(sun);
-
-        //mainScene.attachChild(scene);
         rootNode.attachChild(mainScene);
         
         generateAlignmentCoords();

@@ -190,6 +190,12 @@ public class VRApplication extends SimpleApplication{
         return VRSupportedOS && VRhardware != null && VRhardware.isInitialized();
     }
     
+    public static void moveScreenProcessingToVR() {
+        if( isInVR() ) {
+            VRappstate.moveScreenProcessingToEyes();
+        }
+    }
+    
     public static OpenVR getVRHardware() {
         return VRhardware;
     }

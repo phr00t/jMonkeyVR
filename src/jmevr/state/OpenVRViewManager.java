@@ -62,7 +62,6 @@ public class OpenVRViewManager extends AbstractAppState {
     private Camera camLeft,camRight;
     private ViewPort viewPortLeft, viewPortRight;
     private Vector3f leftEye, rightEye;
-    private Quaternion leftEyeRot, rightEyeRot;
     private FilterPostProcessor ppLeft, ppRight;
     
     private boolean mirrorEnabled;
@@ -244,8 +243,8 @@ public class OpenVRViewManager extends AbstractAppState {
         posAndRot.toTranslationVector(tempHead);
         tempHead.y = -tempHead.y; // why is Y position flipped? who knows! corrected here
         // combine the two for each eye
-        updateCamera(camLeft, obs, leftEye, leftEyeRot);
-        updateCamera(camRight, obs, rightEye, rightEyeRot);
+        updateCamera(camLeft, obs, leftEye);
+        updateCamera(camRight, obs, rightEye);
         
         // update GUI position?
         VRGuiNode vrgn = VRApplication.getVRGuiNode();
@@ -254,24 +253,20 @@ public class OpenVRViewManager extends AbstractAppState {
         }
     }
     
-    private void updateCamera(Camera cam, Spatial obs, Vector3f eyePos, Quaternion eyeRot) {
-        finalPosition.set(eyePos);
-        finalRotation.set(eyeRot);
-        finalPosition.addLocal(tempHead);
-        finalRotation.multLocal(tempHeadRot);
-        if( obs != null ) {
-            finalPosition.addLocal(obs.getWorldTranslation());
-            finalRotation.multLocal(obs.getWorldRotation());
-        }
+    private void updateCamera(Camera cam, Spatial obs, Vector3f eyePos) {
+        finalRotation.set(tempHeadRot);
+        if( obs != null ) finalRotation.multLocal(obs.getWorldRotation());
+        finalRotation.mult(eyePos, finalPosition);
+        if( obs != null ) finalPosition.addLocal(obs.getWorldTranslation());
         cam.setFrame(finalPosition, finalRotation);
     }
     
     public Vector3f getFinalPosition() {
-        return finalPosition;
+        return camLeft.getLocation();
     }
     
     public Quaternion getFinalRotation() {
-        return finalRotation;
+        return camLeft.getRotation();
     }
     
     private void setupCamerasAndViews() {
@@ -299,10 +294,20 @@ public class OpenVRViewManager extends AbstractAppState {
         // eyes were swapped for some reason.. that is why they are swapped here to correct
         Matrix4f leftMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right);
         Matrix4f rightMatrix = ((OpenVR)VRApplication.getVRHardware()).getHMDMatrixPoseEye(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left);
-        leftEyeRot = leftMatrix.toRotationQuat();
         leftEye = leftMatrix.toTranslationVector();
-        rightEyeRot = rightMatrix.toRotationQuat();
         rightEye = rightMatrix.toTranslationVector();
+        // make sure we got a neck model
+        // set defaults for any missing values
+	// numbers taken from https://en.wikipedia.org/wiki/Human_head#/media/File:HeadAnthropometry.JPG
+	// insert average chin->eye height (~12cm) for Y
+        if( leftEye.y == 0f ) leftEye.y = 0.12f;
+        if( rightEye.y == 0f ) rightEye.y = 0.12f;
+	// insert average center of neck->eye length (~9cm) for Z
+        if( leftEye.z == 0f ) leftEye.z = 0.09f;
+        if( rightEye.z == 0f ) rightEye.z = 0.09f;
+	// IPD ~65mm for X (split from the center)
+        if( leftEye.x == 0f ) leftEye.x =    0.065f * 0.5f;
+        if( rightEye.x == 0f ) rightEye.x = -0.065f * 0.5f;        
     }
     
     private ViewPort setupViewBuffers(Camera cam, String viewName){

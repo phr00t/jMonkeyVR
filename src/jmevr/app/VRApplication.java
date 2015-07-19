@@ -3,7 +3,6 @@
 
 package jmevr.app;
 
-import com.jme3.app.Application;
 import com.jme3.app.LostFocusBehavior;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
@@ -18,7 +17,6 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
-import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;

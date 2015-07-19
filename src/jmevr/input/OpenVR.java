@@ -87,8 +87,8 @@ public class OpenVR {
 
             // disable all this stuff which kills performance
             hmdTrackedDevicePoseReference.setAutoRead(false);
-            hmdTrackedDevicePoseReference.setAutoSynch(false);
             hmdTrackedDevicePoseReference.setAutoWrite(false);
+            hmdTrackedDevicePoseReference.setAutoSynch(false);
             
             initSuccess = true;
             return true;
@@ -173,6 +173,9 @@ public class OpenVR {
             
             JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);            
         }
+        
+        hmdTrackedDevicePoseReference.read(); // pull updated pose information set in native memory from functions above
+        
         for (int nDevice = 0; nDevice < JOpenVRLibrary.k_unMaxTrackedDeviceCount; ++nDevice ){
             if( hmdTrackedDevicePoses[nDevice].bPoseIsValid != 0 ){
                 OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(hmdTrackedDevicePoses[nDevice].mDeviceToAbsoluteTracking, poseMatrices[nDevice]);

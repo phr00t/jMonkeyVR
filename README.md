@@ -67,3 +67,13 @@ The VRGuiNode will try and keep things in the "Translucent" render bucket. If so
 It should be safe to have all of the children of the root VRGuiNode also be VRGuiNode.
 
 The VRGuiNode will operate as a normal node if a VR headset isn't initialized. For testing purposes without a VR headset, you can set forceVR to "true" in the preconfigureVRApp(disableVignette, maxFov, flipEyes, forceVR) call in step #2 above.
+
+<b>Adding Filters during runtime</b>
+
+If you add filters during application intialization, they will be automatically moved to each eye <i>if</i> VR mode gets started. However, if after initialization, you add some filters, you will need to move them to the VR scene with this function:
+
+     VRApplication.moveScreenProcessingToVR();
+     
+This handles moving them out of the VR scene & cloning them for each eye.
+     
+See the TestOpenVR.java example for more usage information.

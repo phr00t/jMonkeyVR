@@ -84,6 +84,11 @@ public class OpenVR {
             hmdTrackedDevicePoses = (TrackedDevicePose_t[])hmdTrackedDevicePoseReference.toArray(JOpenVRLibrary.k_unMaxTrackedDeviceCount);
             poseMatrices = new Matrix4f[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
             for(int i=0;i<poseMatrices.length;i++) poseMatrices[i] = new Matrix4f();
+
+            // disable all this stuff which kills performance
+            hmdTrackedDevicePoseReference.setAutoRead(false);
+            hmdTrackedDevicePoseReference.setAutoSynch(false);
+            hmdTrackedDevicePoseReference.setAutoWrite(false);
             
             initSuccess = true;
             return true;
@@ -166,7 +171,7 @@ public class OpenVR {
             JOpenVRLibrary.VR_IVRSystem_GetTimeSinceLastVsync(vrsystem, tlastVsync, tframeCount);
             float fSecondsUntilPhotons = fFrameDuration - tlastVsync.get(0) + JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
             
-            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);
+            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);            
         }
         for (int nDevice = 0; nDevice < JOpenVRLibrary.k_unMaxTrackedDeviceCount; ++nDevice ){
             if( hmdTrackedDevicePoses[nDevice].bPoseIsValid != 0 ){
@@ -195,7 +200,6 @@ public class OpenVR {
             return new Matrix4f();
         }
         HmdMatrix34_t mat = JOpenVRLibrary.VR_IVRSystem_GetEyeToHeadTransform(vrsystem, eye);
-        
         return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, eye == JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left ? hmdPoseLeftEye : hmdPoseRightEye);
     }
 }

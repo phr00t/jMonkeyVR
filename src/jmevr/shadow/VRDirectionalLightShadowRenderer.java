@@ -67,7 +67,6 @@ public class VRDirectionalLightShadowRenderer extends DirectionalLightShadowRend
         clone.setEdgeFilteringMode(getEdgeFilteringMode());
         clone.setEdgesThickness(getEdgesThickness());
         clone.setEnabledStabilization(isEnabledStabilization());
-        clone.setFlushQueues(isFlushQueues());
         clone.setLambda(getLambda());
         clone.setLight(getLight());
         clone.setShadowCompareMode(getShadowCompareMode());

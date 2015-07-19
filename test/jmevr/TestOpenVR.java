@@ -10,6 +10,8 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.FXAAFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -20,6 +22,7 @@ import com.jme3.texture.Texture.MinFilter;
 import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
+import jmevr.post.CartoonSSAO;
 
 /**
  *
@@ -91,16 +94,26 @@ public class TestOpenVR extends VRApplication {
         generateAlignmentCoords();
 
         initInputs();
+        
+        // filter test (can be added here like this)
+        // but we are going to save them for the F key during runtime
+        /*
+        CartoonSSAO cartfilt = new CartoonSSAO();
+        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+        fpp.addFilter(cartfilt);
+        viewPort.addProcessor(fpp);        
+        */
     }
 
      private void initInputs() {
         inputManager.addMapping("toggle", new KeyTrigger(KeyInput.KEY_SPACE));
-         inputManager.addMapping("incShift", new KeyTrigger(KeyInput.KEY_Q));
-         inputManager.addMapping("decShift", new KeyTrigger(KeyInput.KEY_E));
-         inputManager.addMapping("forward", new KeyTrigger(KeyInput.KEY_W));
-         inputManager.addMapping("back", new KeyTrigger(KeyInput.KEY_S));
-         inputManager.addMapping("left", new KeyTrigger(KeyInput.KEY_A));
-         inputManager.addMapping("right", new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping("incShift", new KeyTrigger(KeyInput.KEY_Q));
+        inputManager.addMapping("decShift", new KeyTrigger(KeyInput.KEY_E));
+        inputManager.addMapping("forward", new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping("back", new KeyTrigger(KeyInput.KEY_S));
+        inputManager.addMapping("left", new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping("right", new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping("filter", new KeyTrigger(KeyInput.KEY_F));
         ActionListener acl = new ActionListener() {
 
             public void onAction(String name, boolean keyPressed, float tpf) {
@@ -108,10 +121,20 @@ public class TestOpenVR extends VRApplication {
                     VRApplication.getVRGuiNode().adjustGuiDistance(-0.1f);
                 }else if(name.equals("decShift") && keyPressed){
                     VRApplication.getVRGuiNode().adjustGuiDistance(0.1f);
+                }else if(name.equals("filter") && keyPressed){
+                    // adding filters in realtime
+                    CartoonSSAO cartfilt = new CartoonSSAO();
+                    FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+                    fpp.addFilter(cartfilt);
+                    viewPort.addProcessor(fpp);
+                    // filters added to main viewport during runtime,
+                    // move them into VR processing
+                    // (won't do anything if not in VR mode)
+                    VRApplication.moveScreenProcessingToVR();
                 }
                 if( name.equals("toggle") ) {
                     VRApplication.getVRGuiNode().positionGui();
-                }
+                }                
                 if(name.equals("forward")){
                     if(keyPressed){
                         moveForward = true;
@@ -148,6 +171,7 @@ public class TestOpenVR extends VRApplication {
         inputManager.addListener(acl, "toggle");
         inputManager.addListener(acl, "incShift");
         inputManager.addListener(acl, "decShift");
+        inputManager.addListener(acl, "filter");
     }
      
      private float distance = 100f;

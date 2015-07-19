@@ -91,7 +91,7 @@ public class TestOpenVR extends VRApplication {
         mainScene.attachChild(observer);
         rootNode.attachChild(mainScene);
         
-        generateAlignmentCoords();
+        addAllBoxes();
 
         initInputs();
         
@@ -197,7 +197,7 @@ public class TestOpenVR extends VRApplication {
          }
      }
      
-     private void generateAlignmentCoords() {
+     private void addAllBoxes() {
         float distance = 8;
         for (int x = 0; x < 35; x++) {
             float cos = FastMath.cos(x * FastMath.PI / 16f) * distance;

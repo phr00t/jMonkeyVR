@@ -74,6 +74,6 @@ If you add filters during application intialization, they will be automatically 
 
      VRApplication.moveScreenProcessingToVR();
      
-This handles moving them out of the VR scene & cloning them for each eye.
+This handles moving them out of the VR scene & cloning them for each eye. It is safe to call this function even if you are not in VR mode (it will do nothing & return immediately in that case).
      
 See the TestOpenVR.java example for more usage information.

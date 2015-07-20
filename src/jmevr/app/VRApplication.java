@@ -143,18 +143,25 @@ public class VRApplication extends SimpleApplication{
                     settings.setBitsPerPixel(useDM.getBitDepth());
                     settings.setFrequency(useDM.getRefreshRate());
                     settings.setVSync(true);
-                } catch(Exception e) { }
-                setSettings(settings);
-                createCanvas();
-                JmeCanvasContext jmeCanvas = (JmeCanvasContext)getContext();
-                jmeCanvas.setSystemListener(this);
-                jmeCanvas.getCanvas().setPreferredSize(VRwindow.getSize());
-                jmeCanvas.getCanvas().setIgnoreRepaint(true);
-                VRwindow.add(jmeCanvas.getCanvas());
-                VRwindow.pack();
-                VRwindow.setVisible(true);
-                startCanvas();
-                return;
+                    setSettings(settings);
+                    VRdev.setFullScreenWindow(VRwindow);
+                    // make sure we are in the right display mode
+                    if( VRdev.getDisplayMode().equals(useDM) == false ) {
+                        VRdev.setDisplayMode(useDM);
+                    }
+                    createCanvas();
+                    JmeCanvasContext jmeCanvas = (JmeCanvasContext)getContext();
+                    jmeCanvas.setSystemListener(this);
+                    jmeCanvas.getCanvas().setPreferredSize(VRwindow.getSize());
+                    jmeCanvas.getCanvas().setIgnoreRepaint(true);
+                    VRwindow.add(jmeCanvas.getCanvas());
+                    VRwindow.pack();
+                    VRwindow.setVisible(true);
+                    startCanvas();
+                    return;
+                } catch(Exception e) { 
+                    useJFrame = false;
+                }
             } else {
                 // disable JFrame mode, start normally
                 useJFrame = false;

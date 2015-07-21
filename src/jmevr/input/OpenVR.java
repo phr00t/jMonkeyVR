@@ -220,17 +220,11 @@ public class OpenVR {
         }
     }
     
-    private void verifyNeckModel(Vector3f v) {
-        //if( v.y == 0f ) v.y = -0.24f; // default chin->eye height (y flipped for convention)
-        //if( v.z == 0f ) v.z = 0.09f; // default neck->eye length
-    }
-    
     public Vector3f getHMDVectorPoseLeftEye() {
         if( hmdPoseLeftEyeVec == null ) {
             hmdPoseLeftEyeVec = getHMDMatrixPoseLeftEye().toTranslationVector();
             // set default IPD if none
             if( hmdPoseLeftEyeVec.x == 0f ) hmdPoseLeftEyeVec.x = 0.065f * 0.5f;
-            verifyNeckModel(hmdPoseLeftEyeVec);
         }
         return hmdPoseLeftEyeVec;
     }
@@ -240,7 +234,6 @@ public class OpenVR {
             hmdPoseRightEyeVec = getHMDMatrixPoseRightEye().toTranslationVector();
             // set default IPD if none
             if( hmdPoseRightEyeVec.x == 0f ) hmdPoseRightEyeVec.x = -0.065f * 0.5f;
-            verifyNeckModel(hmdPoseRightEyeVec);
         }
         return hmdPoseRightEyeVec;
     }

@@ -11,7 +11,6 @@ import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.FXAAFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -32,7 +31,7 @@ public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
-        test.preconfigureVRApp(false, true, true);
+        test.preconfigureVRApp(true, true, true);
         test.start();
     }
     

@@ -46,10 +46,12 @@ public class OpenVR {
     private static Matrix4f[] poseMatrices;
     
     private static final Matrix4f hmdPose = Matrix4f.IDENTITY.clone();
-    private static final Matrix4f hmdProjectionLeftEye = Matrix4f.IDENTITY.clone();
-    private static final Matrix4f hmdProjectionRightEye = Matrix4f.IDENTITY.clone();
-    private static final Matrix4f hmdPoseLeftEye = Matrix4f.IDENTITY.clone();
-    private static final Matrix4f hmdPoseRightEye = Matrix4f.IDENTITY.clone();
+    private static Matrix4f hmdProjectionLeftEye;
+    private static Matrix4f hmdProjectionRightEye;
+    private static Matrix4f hmdPoseLeftEye;
+    private static Matrix4f hmdPoseRightEye;
+    
+    private static Vector3f hmdPoseLeftEyeVec, hmdPoseRightEyeVec;
     
     public static Pointer getVRSystemInstance() {
         return vrsystem;
@@ -183,6 +185,8 @@ public class OpenVR {
         }
         if ( hmdTrackedDevicePoses[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd].bPoseIsValid != 0 ){
             poseMatrices[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd].invert(hmdPose);
+        } else {
+            hmdPose.set(Matrix4f.IDENTITY);
         }
     }
 
@@ -190,19 +194,79 @@ public class OpenVR {
         return hmdPose;
     }
 
-    public Matrix4f getHMDMatrixProjectionEye(int eye, Camera cam){
-        if(vrsystem == null){
-            return new Matrix4f();
+    public Matrix4f getHMDMatrixProjectionLeftEye(Camera cam){
+        if( hmdProjectionLeftEye != null ) {
+            return hmdProjectionLeftEye;
+        } else if(vrsystem == null){
+            return Matrix4f.IDENTITY;
+        } else {
+            // eyes seem to be flipped, swap them here
+            HmdMatrix44_t mat = JOpenVRLibrary.VR_IVRSystem_GetProjectionMatrix(vrsystem, JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left, cam.getFrustumNear(), cam.getFrustumFar(), JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL);
+            hmdProjectionLeftEye = new Matrix4f();
+            return OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, hmdProjectionLeftEye);
         }
-        HmdMatrix44_t mat = JOpenVRLibrary.VR_IVRSystem_GetProjectionMatrix(vrsystem, eye, cam.getFrustumNear(), cam.getFrustumFar(), JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL);
-        return OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, eye == JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left ? hmdProjectionLeftEye : hmdProjectionRightEye);
     }
         
-    public Matrix4f getHMDMatrixPoseEye(int eye){
-        if(vrsystem == null){
-            return new Matrix4f();
+    public Matrix4f getHMDMatrixProjectionRightEye(Camera cam){
+        if( hmdProjectionRightEye != null ) {
+            return hmdProjectionRightEye;
+        } else if(vrsystem == null){
+            return Matrix4f.IDENTITY;
+        } else {
+            // eyes seem to be swapped, flip them here
+            HmdMatrix44_t mat = JOpenVRLibrary.VR_IVRSystem_GetProjectionMatrix(vrsystem, JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right, cam.getFrustumNear(), cam.getFrustumFar(), JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL);
+            hmdProjectionRightEye = new Matrix4f();
+            return OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, hmdProjectionRightEye);
         }
-        HmdMatrix34_t mat = JOpenVRLibrary.VR_IVRSystem_GetEyeToHeadTransform(vrsystem, eye);
-        return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, eye == JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left ? hmdPoseLeftEye : hmdPoseRightEye);
     }
+    
+    private void verifyNeckModel(Vector3f v) {
+        //if( v.y == 0f ) v.y = -0.24f; // default chin->eye height (y flipped for convention)
+        //if( v.z == 0f ) v.z = 0.09f; // default neck->eye length
+    }
+    
+    public Vector3f getHMDVectorPoseLeftEye() {
+        if( hmdPoseLeftEyeVec == null ) {
+            hmdPoseLeftEyeVec = getHMDMatrixPoseLeftEye().toTranslationVector();
+            // set default IPD if none
+            if( hmdPoseLeftEyeVec.x == 0f ) hmdPoseLeftEyeVec.x = 0.065f * 0.5f;
+            verifyNeckModel(hmdPoseLeftEyeVec);
+        }
+        return hmdPoseLeftEyeVec;
+    }
+    
+    public Vector3f getHMDVectorPoseRightEye() {
+        if( hmdPoseRightEyeVec == null ) {
+            hmdPoseRightEyeVec = getHMDMatrixPoseRightEye().toTranslationVector();
+            // set default IPD if none
+            if( hmdPoseRightEyeVec.x == 0f ) hmdPoseRightEyeVec.x = -0.065f * 0.5f;
+            verifyNeckModel(hmdPoseRightEyeVec);
+        }
+        return hmdPoseRightEyeVec;
+    }
+    
+    public Matrix4f getHMDMatrixPoseLeftEye(){
+        if( hmdPoseLeftEye != null ) {
+            return hmdPoseLeftEye;
+        } else if(vrsystem == null) {
+            return Matrix4f.IDENTITY;
+        } else {
+            HmdMatrix34_t mat = JOpenVRLibrary.VR_IVRSystem_GetEyeToHeadTransform(vrsystem, JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left);
+            hmdPoseLeftEye = new Matrix4f();
+            return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, hmdPoseLeftEye);
+        }
+    }
+    
+    public Matrix4f getHMDMatrixPoseRightEye(){
+        if( hmdPoseRightEye != null ) {
+            return hmdPoseRightEye;
+        } else if(vrsystem == null) {
+            return Matrix4f.IDENTITY;
+        } else {
+            HmdMatrix34_t mat = JOpenVRLibrary.VR_IVRSystem_GetEyeToHeadTransform(vrsystem, JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right);
+            hmdPoseRightEye = new Matrix4f();
+            return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, hmdPoseRightEye);
+        }
+    }
+    
 }

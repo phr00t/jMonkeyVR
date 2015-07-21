@@ -28,10 +28,11 @@ public class JOpenVRLibrary implements Library {
 	 * enum values
 	 */
 	public static interface Hmd_Eye {
+                // i've noticed eyes are flipped, so changing the numbers here
 		/** <i>native declaration : headers\openvr_capi.h:58</i> */
-		public static final int Hmd_Eye_Eye_Left = 0;
+		public static final int Hmd_Eye_Eye_Left = 1;
 		/** <i>native declaration : headers\openvr_capi.h:59</i> */
-		public static final int Hmd_Eye_Eye_Right = 1;
+		public static final int Hmd_Eye_Eye_Right = 0;
 	};
 	/**
 	 * <i>native declaration : headers\openvr_capi.h:61</i><br>

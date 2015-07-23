@@ -22,6 +22,7 @@ import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
 import jmevr.post.CartoonSSAO;
+import jmevr.util.VRGuiNode;
 
 /**
  *
@@ -61,7 +62,7 @@ public class TestOpenVR extends VRApplication {
         noise.setMinFilter(MinFilter.Trilinear);
         noise.setAnisotropicFilter(16);
         mat.setTexture("ColorMap", noise);
-        
+                       
         // gui element
         Picture test = new Picture("testpic");
         test.setImage(assetManager, "Textures/crosshair.png", true);

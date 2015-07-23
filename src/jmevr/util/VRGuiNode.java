@@ -106,7 +106,6 @@ public class VRGuiNode extends Node {
         oHeight = origHeight;
         oWidth = origWidth;
         setPositioningMode(posMode);
-        positionGui();
     }
      
     public void fixBrokenElements() {

@@ -20,7 +20,6 @@ import com.jme3.post.filters.FogFilter;
 import com.jme3.post.filters.TranslucentBucketFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
-import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
@@ -32,29 +31,17 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.util.SafeArrayList;
-import com.sun.jna.ptr.LongByReference;
-import java.awt.DisplayMode;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Window;
-import java.awt.image.BufferedImage;
-import java.text.DecimalFormat;
-import java.util.List;
-import javax.swing.JFrame;
-import jme3tools.converters.ImageToAwt;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
 import jmevr.input.OpenVR;
 import jmevr.post.CartoonSSAO;
 import jmevr.post.FastSSAO;
-import jmevr.post.OpenVRFilter;
 import jmevr.shadow.VRDirectionalLightShadowRenderer;
 import jmevr.util.FilterUtil;
 import jmevr.util.MeshUtil;
 import jmevr.util.OpenVRUtil;
 import jmevr.util.VRGuiNode;
 import jopenvr.JOpenVRLibrary;
-import org.lwjgl.opengl.Display;
 
 /**
  *
@@ -153,6 +140,10 @@ public class OpenVRViewManager extends AbstractAppState {
                 JOpenVRLibrary.VR_IVRSystem_AttachToWindow(OpenVR.getVRSystemInstance(), phWnd.getPointer());
             }
         }*/
+        
+        // update the pose to position the gui correctly on start
+        update(0f);        
+        VRApplication.getVRGuiNode().positionGui();
     }
     
     private void prepareCameraSize(Camera cam) {

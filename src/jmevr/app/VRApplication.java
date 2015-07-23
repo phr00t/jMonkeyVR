@@ -10,6 +10,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
@@ -105,6 +106,25 @@ public class VRApplication extends SimpleApplication{
         
         VRhardware = new OpenVR();
         if( VRSupportedOS ) VRhardware.initialize();
+    }
+    
+    /*
+        we do NOT want to get & modify the distortion scene camera, so
+        return the left viewport camera instead if we are in VR mode
+    */
+    @Override
+    public Camera getCamera() {
+        if( isInVR() && VRappstate != null && VRappstate.getViewPortLeft() != null ) {
+            return VRappstate.getViewPortLeft().getCamera();
+        }
+        return super.getCamera();
+    }
+    
+    public Camera getRightCamera() {
+        if( isInVR() && VRappstate != null && VRappstate.getViewPortRight() != null ) {
+            return VRappstate.getViewPortRight().getCamera();
+        }
+        return super.getCamera();        
     }
     
     @Override

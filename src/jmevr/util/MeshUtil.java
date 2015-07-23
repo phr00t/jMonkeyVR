@@ -6,6 +6,7 @@ package jmevr.util;
 
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
+import com.sun.jna.Pointer;
 import jmevr.input.OpenVR;
 import jopenvr.DistortionCoordinates_t;
 import jopenvr.JOpenVRLibrary;
@@ -33,6 +34,7 @@ public class MeshUtil {
 
         int vertPos = 0, coordPos = 0;
         
+        Pointer vrsystem = OpenVR.getVRSystemInstance();
         float Xoffset = eye == JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left ? -1f : 0;
         for (int y = 0; y < m_iLensGridSegmentCountV; y++) {
             for (int x = 0; x < m_iLensGridSegmentCountH; x++) {
@@ -43,14 +45,25 @@ public class MeshUtil {
                 verts[vertPos + 2] = 0f; // z
                 vertPos += 3;
 
-                DistortionCoordinates_t dc0 = JOpenVRLibrary.VR_IVRSystem_ComputeDistortion(OpenVR.getVRSystemInstance(), eye, u, v);
-
-                texcoordR[coordPos] = dc0.rfRed[0];
-                texcoordR[coordPos + 1] = 1 - dc0.rfRed[1];
-                texcoordG[coordPos] = dc0.rfGreen[0];
-                texcoordG[coordPos + 1] = 1 - dc0.rfGreen[1];
-                texcoordB[coordPos] = dc0.rfBlue[0];
-                texcoordB[coordPos + 1] = 1 - dc0.rfBlue[1];
+                DistortionCoordinates_t dc0;
+                if( vrsystem == null ) {
+                    // default to no distortion
+                    texcoordR[coordPos] = u;
+                    texcoordR[coordPos + 1] = 1 - v;
+                    texcoordG[coordPos] = u;
+                    texcoordG[coordPos + 1] = 1 - v;
+                    texcoordB[coordPos] = u;
+                    texcoordB[coordPos + 1] = 1 - v;                    
+                } else {
+                    dc0 = JOpenVRLibrary.VR_IVRSystem_ComputeDistortion(vrsystem, eye, u, v);
+                    
+                    texcoordR[coordPos] = dc0.rfRed[0];
+                    texcoordR[coordPos + 1] = 1 - dc0.rfRed[1];
+                    texcoordG[coordPos] = dc0.rfGreen[0];
+                    texcoordG[coordPos + 1] = 1 - dc0.rfGreen[1];
+                    texcoordB[coordPos] = dc0.rfBlue[0];
+                    texcoordB[coordPos + 1] = 1 - dc0.rfBlue[1];
+                }                
                 
                 coordPos += 2;
             }

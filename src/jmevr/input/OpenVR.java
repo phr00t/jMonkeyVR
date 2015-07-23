@@ -121,6 +121,7 @@ public class OpenVR {
     }
 
     public void reset() {
+        if( vrsystem == null ) return;
         JOpenVRLibrary.VR_IVRSystem_ResetSeatedZeroPose(vrsystem);
     }
 
@@ -160,9 +161,7 @@ public class OpenVR {
     }
 
     public void updatePose(float fFrameDuration){
-        if(vrsystem == null){
-            return;
-        }
+        if(vrsystem == null) return;
         if(vrCompositor != null){
            JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePoseReference, hmdTrackedDevicePoses.length, null, 0);
         } else {

@@ -14,7 +14,6 @@ import com.sun.jna.Pointer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
-import jmevr.app.VRApplication;
 import jmevr.util.OpenVRUtil;
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdMatrix44_t;
@@ -68,7 +67,7 @@ public class OpenVR {
     public boolean initialize() {
         hmdErrorStore = IntBuffer.allocate(1);
         vrsystem = JOpenVRLibrary.VR_Init(hmdErrorStore);
-        if( hmdErrorStore.get(0) != 0 ) {
+        if( vrsystem == null || hmdErrorStore.get(0) != 0 ) {
             Pointer errstr = JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0));
             System.out.println("OpenVR Initialize Result: " + errstr.getString(0));
             return false;
@@ -139,9 +138,9 @@ public class OpenVR {
     }
     
     public float getFOV() {
-        if( vrsystem == null ) return 130f;
+        if( vrsystem == null ) return 70f;
         float val = JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewBottomDegrees_Float, hmdErrorStore);
-        if( val <= 0f ) return 130f;
+        if( val <= 0f ) return 95f;
         return val;
     }
 
@@ -193,7 +192,7 @@ public class OpenVR {
         if( hmdProjectionLeftEye != null ) {
             return hmdProjectionLeftEye;
         } else if(vrsystem == null){
-            return Matrix4f.IDENTITY;
+            return cam.getProjectionMatrix();
         } else {
             // eyes seem to be flipped, swap them here
             HmdMatrix44_t mat = JOpenVRLibrary.VR_IVRSystem_GetProjectionMatrix(vrsystem, JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left, cam.getFrustumNear(), cam.getFrustumFar(), JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL);
@@ -206,7 +205,7 @@ public class OpenVR {
         if( hmdProjectionRightEye != null ) {
             return hmdProjectionRightEye;
         } else if(vrsystem == null){
-            return Matrix4f.IDENTITY;
+            return cam.getProjectionMatrix();
         } else {
             // eyes seem to be swapped, flip them here
             HmdMatrix44_t mat = JOpenVRLibrary.VR_IVRSystem_GetProjectionMatrix(vrsystem, JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right, cam.getFrustumNear(), cam.getFrustumFar(), JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL);

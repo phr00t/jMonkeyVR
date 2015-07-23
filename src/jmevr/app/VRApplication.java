@@ -319,7 +319,7 @@ public class VRApplication extends SimpleApplication{
     @Override
     public void simpleInitApp() {
         if( isInVR() ) {
-            if( compositorAllowed() == false ) {
+            if( compositorAllowed() == false || OpenVR.getVRSystemInstance() == null ) {
                 System.out.println("Skipping SteamVR compositor!");
             } else {
                 VRhardware.initOpenVRCompositor();

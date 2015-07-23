@@ -171,6 +171,7 @@ public class VRApplication extends SimpleApplication{
                     settings.setHeight(useDM.getHeight());
                     settings.setBitsPerPixel(useDM.getBitDepth());
                     settings.setFrequency(useDM.getRefreshRate());
+                    settings.setSwapBuffers(true);
                     settings.setVSync(true);
                     setSettings(settings);
                     VRdev.setFullScreenWindow(VRwindow);
@@ -204,6 +205,7 @@ public class VRApplication extends SimpleApplication{
         }
         
         //re-setting settings they can have been merged from the registry.
+        settings.setSwapBuffers(true); // make sure this is set to true
         setSettings(settings);
         start(JmeContext.Type.Display, false);
     }    

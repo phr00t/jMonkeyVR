@@ -98,10 +98,6 @@ public class OpenVR {
     }
     
     public boolean initOpenVRCompositor() {
-        if( VRApplication.compositorAllowed() == false ) {
-            System.out.println("Skipping SteamVR compositor!");
-            return true;
-        }
         vrCompositor = JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRCompositor_Version, hmdErrorStore);
         if(vrCompositor != null && hmdErrorStore.get(0) == 0){                
             System.out.println("OpenVR Compositor initialized OK.");

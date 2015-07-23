@@ -69,6 +69,7 @@ public class OpenVRViewManager extends AbstractAppState {
     
     private boolean mirrorEnabled;
     private int mirrorFrame;
+    private float heightAdjustment;
     
     private Texture leftEyeTex, rightEyeTex;
     
@@ -93,6 +94,14 @@ public class OpenVRViewManager extends AbstractAppState {
     
     public boolean getMirroring() {
         return mirrorEnabled;
+    }
+    
+    public float getHeightAdjustment() {
+        return heightAdjustment;
+    }
+    
+    public void setHeightAdjustment(float amount) {
+        heightAdjustment = amount;
     }
     
     @Override
@@ -242,6 +251,7 @@ public class OpenVRViewManager extends AbstractAppState {
         finalRotation.mult(eyePos, finalPosition);
         finalPosition.addLocal(hmdPos);
         if( obs != null ) finalPosition.addLocal(obs.getWorldTranslation());
+        finalPosition.y += heightAdjustment;
         cam.setFrame(finalPosition, finalRotation);
     }
     

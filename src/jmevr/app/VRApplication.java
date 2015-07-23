@@ -65,14 +65,23 @@ public class VRApplication extends SimpleApplication{
         }
     }
     
+    /*
+        using "easy extended" mode
+    */
     public static boolean usingJFrame() {
         return VRwindow != null && isInVR() && useJFrame;
     }
     
+    /*
+        did we disable the SteamVR Compositor?
+    */
     public static boolean compositorAllowed() {
         return useCompositor && compositorOS;
     }
     
+    /*
+        does the current OS support VR?
+    */
     public static boolean isOSVRSupported() {
         return VRSupportedOS;
     }
@@ -179,6 +188,11 @@ public class VRApplication extends SimpleApplication{
         start(JmeContext.Type.Display, false);
     }    
     
+    /*
+        use the SteamVR Compositor? (defaults to true)
+        use the JFrame "easy extended" mode, if SteamVR Compositor isn't used? (defaults to true)
+        force VR mode, even if a device isn't detected? Good for testing (defaults to false)
+    */
     public void preconfigureVRApp(boolean useCompositor, boolean useJFrame, boolean forceVR) {        
         VRApplication.useCompositor = useCompositor;
         VRApplication.useJFrame = useJFrame;
@@ -193,16 +207,26 @@ public class VRApplication extends SimpleApplication{
         return VRinput;
     }
     
+    /*
+        quick check if VR mode is enabled
+    */
     public static boolean isInVR() {
         return VRSupportedOS && VRhardware != null && VRhardware.isInitialized();
     }
     
+    /*
+        move filters out of the main scene & into the eye's
+        this removes filters from the main scene!
+    */
     public static void moveScreenProcessingToVR() {
         if( isInVR() ) {
             VRappstate.moveScreenProcessingToEyes();
         }
     }
     
+    /*
+        access to the OpenVR stuff
+    */
     public static OpenVR getVRHardware() {
         return VRhardware;
     }
@@ -220,10 +244,17 @@ public class VRApplication extends SimpleApplication{
         return observer;
     }
 
+    /*
+        important to set this! the VR headset will be linked to it
+    */
     public static void setObserver(Spatial observer) {
         VRApplication.observer = observer;
     }
     
+    /*
+        where is the headset pointing, after all rotations are combined?
+        depends on observer rotation, if any
+    */
     public static Quaternion getFinalOberserverRotation() {
         if( VRappstate == null ) {
             if( VRApplication.observer == null ) {
@@ -233,6 +264,22 @@ public class VRApplication extends SimpleApplication{
         return VRappstate.getFinalRotation();
     }
     
+    /*
+        quick way to adjust the height of the VR view
+    */
+    public static void setVRHeightAdjustment(float amount) {
+        if( VRappstate != null ) VRappstate.setHeightAdjustment(amount);
+    }
+    
+    public static float getVRHeightAdjustment() {
+        if( VRappstate != null ) return VRappstate.getHeightAdjustment();
+        return 0f;
+    }
+       
+    /*
+        where is the headset, after all positional tracking is complete?
+        includes observer position, if any
+    */
     public static Vector3f getFinalOberserverPosition() {
         if( VRappstate == null ) {
             if( VRApplication.observer == null ) {
@@ -256,6 +303,9 @@ public class VRApplication extends SimpleApplication{
         return mainApp;
     }
     
+    /*
+        mirror output to main screen (only works with SteamVR Compositor)
+    */
     public static void setMirroring(boolean set) {
         if( VRappstate == null ) return;
         VRappstate.setMirroring(set);
@@ -268,11 +318,12 @@ public class VRApplication extends SimpleApplication{
     
     @Override
     public void simpleInitApp() {
-        // run this function before OVRAppState gets initialized to force
-        // maximum FOV rendering
-        if( VRSupportedOS && VRhardware.isInitialized() ) {
-            if( VRhardware instanceof OpenVR ) ((OpenVR)VRhardware).initOpenVRCompositor();
-            // TODO: implement flipeyes?
+        if( isInVR() ) {
+            if( compositorAllowed() == false ) {
+                System.out.println("Skipping SteamVR compositor!");
+            } else {
+                VRhardware.initOpenVRCompositor();
+            }
             VRappstate = new OpenVRViewManager(this);
             stateManager.attach(VRappstate);
             inputManager.addListener(new VRListener(), new String[]{RESET_HMD, MIRRORING});
@@ -294,6 +345,9 @@ public class VRApplication extends SimpleApplication{
         }
     }
     
+    /*
+        reset headset pose. defaults to F9 key!
+    */
     public void reset(){
         if( VRSupportedOS == false ) return;
         VRhardware.reset();

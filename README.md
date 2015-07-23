@@ -1,6 +1,8 @@
+<b>Want to see how good this library works?</b> <a href="https://drive.google.com/open?id=0Bza9ecEdICHGWkpUVnM2OWJDaTA">Free demo!</a>
+
 I recommend using Phr00t's jMonkeyEngine build here: https://github.com/phr00t/jmonkeyengine (the main jME3 build may work, but OpenVR-specific changes will be made first on Phr00t's build) -- you can just use the JAR/libs under the dist/ and lib/ folders
 
-SteamVR is required. You can download & install it free with the Steam client (under Tools).
+SteamVR is required. You can download & install it free with the Steam client (under Tools). Extended mode required (but don't worry, this library makes it work like Direct mode).
 
 If testing with a Rift, I recommend disabling the Steam VR Compositor in your application (using the preconfigureVRApp function below), since support is flaky. The JFrame "easy extended" backup mode will do a good job as a replacement.
 

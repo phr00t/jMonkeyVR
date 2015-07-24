@@ -52,6 +52,8 @@ public class OpenVR {
     
     private static Vector3f hmdPoseLeftEyeVec, hmdPoseRightEyeVec;
     
+    private static float vsyncToPhotons;
+    
     public static Pointer getVRSystemInstance() {
         return vrsystem;
     }
@@ -86,6 +88,8 @@ public class OpenVR {
             poseMatrices = new Matrix4f[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
             for(int i=0;i<poseMatrices.length;i++) poseMatrices[i] = new Matrix4f();
 
+            vsyncToPhotons = JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
+            
             // disable all this stuff which kills performance
             hmdTrackedDevicePoseReference.setAutoRead(false);
             hmdTrackedDevicePoseReference.setAutoWrite(false);
@@ -158,16 +162,16 @@ public class OpenVR {
         hmdPose.toTranslationVector(posStore);
         return posStore;
     }
-
+    
     public void updatePose(float fFrameDuration){
         if(vrsystem == null) return;
         if(vrCompositor != null){
            JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePoseReference, hmdTrackedDevicePoses.length, null, 0);
         } else {
             JOpenVRLibrary.VR_IVRSystem_GetTimeSinceLastVsync(vrsystem, tlastVsync, tframeCount);
-            float fSecondsUntilPhotons = fFrameDuration - tlastVsync.get(0) + JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
+            float fSecondsUntilPhotons = fFrameDuration - tlastVsync.get(0) + vsyncToPhotons;
             
-            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);            
+            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);   
         }
         
         hmdTrackedDevicePoseReference.read(); // pull updated pose information set in native memory from functions above

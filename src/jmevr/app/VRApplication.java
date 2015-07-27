@@ -18,6 +18,7 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
+import com.jme3.system.lwjgl.LwjglAbstractDisplay;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
@@ -343,6 +344,7 @@ public class VRApplication extends SimpleApplication{
         if( isInVR() ) {
             if( compositorAllowed() == false || OpenVR.getVRSystemInstance() == null ) {
                 System.out.println("Skipping SteamVR compositor!");
+                LwjglAbstractDisplay.enableWaitingForVSyncTiming = true;
             } else {
                 VRhardware.initOpenVRCompositor();
             }

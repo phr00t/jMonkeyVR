@@ -71,12 +71,12 @@ public class OpenVR {
         return "OpenVR";
     }
     
-    private static float latencyBufferTime = 0.005f;       
+    private static float latencyBufferTime = 0.006f;       
     
     /*
         set this lower to decrease latency, but risk dropping frames during frametime fluctuations
         set heigher to increase latency, but allow more time for frames to complete
-        defaults to 0.005f, which is 5ms
+        defaults to 0.006f, which is 6ms
     */
     public static void setLatencySafetyTime(float time) {
         latencyBufferTime = time;

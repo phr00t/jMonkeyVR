@@ -43,7 +43,7 @@ public class TestOpenVR extends VRApplication {
     Node mainScene;
     
     @Override
-    public void simpleInitApp() {
+    public void simpleInitApp() {        
         super.simpleInitApp();
         OpenVR.printLatencyInfoToConsole(true);
         initTestScene();

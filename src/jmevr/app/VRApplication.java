@@ -28,6 +28,7 @@ import jmevr.input.OpenVR;
 import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
 import jmevr.state.OpenVRViewManager;
+import jmevr.util.OpenVRUtil;
 import jmevr.util.VRGuiNode;
 
 /**
@@ -283,8 +284,33 @@ public class VRApplication extends SimpleApplication{
             if( VRApplication.observer == null ) {
                 return mainApp.getCamera().getRotation();
             } else return VRApplication.observer.getWorldRotation();
+        }        
+        return getHMDRotation().multLocal(VRApplication.observer.getWorldRotation());
+    }
+    
+    /*
+        where is the headset, after all positional tracking is complete?
+        includes observer position, if any
+    */
+    public static Vector3f getFinalOberserverPosition() {
+        if( VRappstate == null ) {
+            if( VRApplication.observer == null ) {
+                return mainApp.getCamera().getLocation();
+            } else return VRApplication.observer.getWorldTranslation();
         }
-        return VRappstate.getFinalRotation();
+        return getHMDPosition().addLocal(VRApplication.observer.getWorldTranslation());
+    }
+    
+    private static final Vector3f tempPos = new Vector3f();
+    public static Vector3f getHMDPosition() {
+        VRApplication.getVRHardware().getPositionAndOrientation().toTranslationVector(tempPos);
+        return tempPos;
+    }
+    
+    private static final Quaternion tempRot = new Quaternion();
+    public static Quaternion getHMDRotation() {
+        OpenVRUtil.convertMatrix4toQuat(VRApplication.getVRHardware().getPositionAndOrientation(), tempRot);
+        return tempRot;
     }
     
     /*
@@ -299,19 +325,6 @@ public class VRApplication extends SimpleApplication{
         return 0f;
     }
        
-    /*
-        where is the headset, after all positional tracking is complete?
-        includes observer position, if any
-    */
-    public static Vector3f getFinalOberserverPosition() {
-        if( VRappstate == null ) {
-            if( VRApplication.observer == null ) {
-                return mainApp.getCamera().getLocation();
-            } else return VRApplication.observer.getWorldTranslation();
-        }
-        return VRappstate.getFinalPosition();
-    }
-    
     public static ViewPort getLeftViewPort() {
         if( VRappstate == null ) return mainApp.getViewPort();
         return VRappstate.getViewPortLeft();

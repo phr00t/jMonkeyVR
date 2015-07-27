@@ -254,14 +254,6 @@ public class OpenVRViewManager extends AbstractAppState {
         cam.setFrame(finalPosition, finalRotation);
     }
     
-    public Vector3f getFinalPosition() {
-        return camLeft.getLocation();
-    }
-    
-    public Quaternion getFinalRotation() {
-        return camLeft.getRotation();
-    }
-    
     /*
         handles moving filters from the main view to each eye
     */
@@ -325,14 +317,21 @@ public class OpenVRViewManager extends AbstractAppState {
     }
     
     private void setupCamerasAndViews() {        
-        camLeft = app.getCamera().clone();        
-        app.getCamera().setFrustumFar(1000f);
-        app.getCamera().setFrustumNear(1f);
+        // get desired frustrum from original camera
+        Camera origCam = app.getCamera();
+        float fFar = origCam.getFrustumFar();
+        float fNear = origCam.getFrustumNear();
+        // restore frustrum on distortion scene cam
+        origCam.setFrustumFar(100f);
+        origCam.setFrustumNear(1f);
+        
+        camLeft = origCam.clone();  
         float origWidth = camLeft.getWidth();
         float origHeight = camLeft.getHeight();
+        
         camLeft.setFrustumPerspective(VRApplication.getVRHardware().getFOV(), 
                                       origWidth / origHeight,
-                                      camLeft.getFrustumNear(), camLeft.getFrustumFar());                       
+                                      fNear, fFar);                       
         
         prepareCameraSize(camLeft);
         camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));
@@ -342,7 +341,7 @@ public class OpenVRViewManager extends AbstractAppState {
         prepareCameraSize(camRight);
         camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
         viewPortRight = setupViewBuffers(camRight, RIGHT_VIEW_NAME);
-        
+                
         // setup gui
         VRApplication.getVRGuiNode().setupGui(viewPortLeft, viewPortRight, (int)origWidth, (int)origHeight);
         // make sure the gui node isn't in the distortion scene
@@ -353,20 +352,6 @@ public class OpenVRViewManager extends AbstractAppState {
         // call these to cache the results internally
         VRApplication.getVRHardware().getHMDMatrixPoseLeftEye();
         VRApplication.getVRHardware().getHMDMatrixPoseRightEye();
-        
-        // make sure we got a neck model
-        // set defaults for any missing values
-	// numbers taken from https://en.wikipedia.org/wiki/Human_head#/media/File:HeadAnthropometry.JPG
-	// insert average chin->eye height (~12cm) for Y
-        // NOTE: y is flipped for some reason in OpenVR, so it needs correction here too
-        //if( leftEye.y == 0f ) leftEye.y = -0.24f;
-        //if( rightEye.y == 0f ) rightEye.y = -0.24f;
-	// insert average center of neck->eye length (~9cm) for Z
-        //if( leftEye.z == 0f ) leftEye.z = 0.18f;
-        //if( rightEye.z == 0f ) rightEye.z = 0.18f;
-	// IPD ~65mm for X (split from the center)
-        //if( leftEye.x == 0f ) leftEye.x =    0.065f * 0.5f;
-        //if( rightEye.x == 0f ) rightEye.x = -0.065f * 0.5f;
     }
     
     private ViewPort setupViewBuffers(Camera cam, String viewName){

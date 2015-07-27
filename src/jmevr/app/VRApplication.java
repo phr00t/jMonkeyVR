@@ -115,15 +115,15 @@ public class VRApplication extends SimpleApplication{
     */
     @Override
     public Camera getCamera() {
-        if( isInVR() && VRappstate != null && VRappstate.getViewPortLeft() != null ) {
-            return VRappstate.getViewPortLeft().getCamera();
+        if( isInVR() && VRappstate != null && VRappstate.getCamLeft() != null ) {
+            return VRappstate.getCamLeft();
         }
         return super.getCamera();
     }
     
     public Camera getRightCamera() {
-        if( isInVR() && VRappstate != null && VRappstate.getViewPortRight() != null ) {
-            return VRappstate.getViewPortRight().getCamera();
+        if( isInVR() && VRappstate != null && VRappstate.getCamRight() != null ) {
+            return VRappstate.getCamRight();
         }
         return super.getCamera();        
     }

@@ -21,8 +21,8 @@ import com.jme3.texture.Texture.MinFilter;
 import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
+import jmevr.input.OpenVR;
 import jmevr.post.CartoonSSAO;
-import jmevr.util.VRGuiNode;
 
 /**
  *
@@ -45,6 +45,7 @@ public class TestOpenVR extends VRApplication {
     @Override
     public void simpleInitApp() {
         super.simpleInitApp();
+        OpenVR.printLatencyInfoToConsole(true);
         initTestScene();
     }
     

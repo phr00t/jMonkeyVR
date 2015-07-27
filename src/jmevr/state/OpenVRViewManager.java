@@ -113,6 +113,14 @@ public class OpenVRViewManager extends AbstractAppState {
         }        
     }
     
+    public Camera getCamLeft() {
+        return camLeft;
+    }
+    
+    public Camera getCamRight() {
+        return camRight;
+    }
+    
     public ViewPort getViewPortLeft() {
         return viewPortLeft;
     }
@@ -316,8 +324,10 @@ public class OpenVRViewManager extends AbstractAppState {
         ppRight.addFilter(new TranslucentBucketFilter());
     }
     
-    private void setupCamerasAndViews() {
+    private void setupCamerasAndViews() {        
         camLeft = app.getCamera().clone();        
+        app.getCamera().setFrustumFar(1000f);
+        app.getCamera().setFrustumNear(1f);
         float origWidth = camLeft.getWidth();
         float origHeight = camLeft.getHeight();
         camLeft.setFrustumPerspective(VRApplication.getVRHardware().getFOV(), 

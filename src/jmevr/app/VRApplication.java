@@ -3,16 +3,22 @@
 
 package jmevr.app;
 
+import com.jme3.app.Application;
 import com.jme3.app.LostFocusBehavior;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.AppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.profile.AppStep;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
@@ -23,28 +29,36 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import jmevr.input.OpenVR;
 import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
-import jmevr.state.OpenVRViewManager;
+import jmevr.util.OpenVRViewManager;
 import jmevr.util.OpenVRUtil;
 import jmevr.util.VRGuiNode;
+import jmevr.util.VRGuiNode.POSITIONING_MODE;
 
 /**
  *
  * @author reden
  */
-public class VRApplication extends SimpleApplication{
+public abstract class VRApplication extends Application {
 
     private static OpenVR VRhardware;    
-    private static OpenVRViewManager VRappstate;
+    private static OpenVRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
     private static boolean VRSupportedOS;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     private static JFrame VRwindow;
+    
+    protected VRGuiNode guiNode;
+    protected Node rootNode;
+    
+    private float fFar = 1000f, fNear = 1f;
     
     private static boolean useCompositor = true, compositorOS, useJFrame = true;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
@@ -89,14 +103,33 @@ public class VRApplication extends SimpleApplication{
         return VRSupportedOS;
     }
     
-    @Override
+    public void simpleUpdate(float tpf) {   }
+    
     public void simpleRender(RenderManager renderManager) {
-        super.simpleRender(renderManager);
         PreNormalCaching.resetCache();
+    }
+
+    public VRApplication( AppState... initialStates ) {
+        this();
+        
+        if (initialStates != null) {
+            for (AppState a : initialStates) {
+                if (a != null) {
+                    stateManager.attach(a);
+                }
+            }
+        }
+    }
+    
+    public void setFrustrumNearFar(float near, float far) {
+        fNear = near;
+        fFar = far;
     }
 
     public VRApplication() {
         super();
+        
+        rootNode = new Node("root");
         guiNode = new VRGuiNode();   
         mainApp = this;
         
@@ -116,15 +149,15 @@ public class VRApplication extends SimpleApplication{
     */
     @Override
     public Camera getCamera() {
-        if( isInVR() && VRappstate != null && VRappstate.getCamLeft() != null ) {
-            return VRappstate.getCamLeft();
+        if( isInVR() && VRviewmanager != null && VRviewmanager.getCamLeft() != null ) {
+            return VRviewmanager.getCamLeft();
         }
         return super.getCamera();
     }
     
     public Camera getRightCamera() {
-        if( isInVR() && VRappstate != null && VRappstate.getCamRight() != null ) {
-            return VRappstate.getCamRight();
+        if( isInVR() && VRviewmanager != null && VRviewmanager.getCamRight() != null ) {
+            return VRviewmanager.getCamRight();
         }
         return super.getCamera();        
     }
@@ -200,10 +233,8 @@ public class VRApplication extends SimpleApplication{
             }
         }
         
-        if (showSettings) {
-            if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
-                return;
-            }
+        if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
+            return;
         }
         
         //re-setting settings they can have been merged from the registry.
@@ -244,7 +275,7 @@ public class VRApplication extends SimpleApplication{
     */
     public static void moveScreenProcessingToVR() {
         if( isInVR() ) {
-            VRappstate.moveScreenProcessingToEyes();
+            VRviewmanager.moveScreenProcessingToEyes();
         }
     }
     
@@ -260,8 +291,16 @@ public class VRApplication extends SimpleApplication{
         // check for Vive controllers, add as needed etc.
     }
     
-    public static VRGuiNode getVRGuiNode(){
+    public VRGuiNode getGuiNode(){
+        return (VRGuiNode)guiNode;
+    }
+    
+    public static VRGuiNode getVRGuiNode() {
         return (VRGuiNode)mainApp.guiNode;
+    }
+
+    public Node getRootNode() {
+        return rootNode;
     }
     
     public static Spatial getObserver() {
@@ -280,7 +319,7 @@ public class VRApplication extends SimpleApplication{
         depends on observer rotation, if any
     */
     public static Quaternion getFinalOberserverRotation() {
-        if( VRappstate == null ) {
+        if( VRviewmanager == null ) {
             if( VRApplication.observer == null ) {
                 return mainApp.getCamera().getRotation();
             } else return VRApplication.observer.getWorldRotation();
@@ -293,7 +332,7 @@ public class VRApplication extends SimpleApplication{
         includes observer position, if any
     */
     public static Vector3f getFinalOberserverPosition() {
-        if( VRappstate == null ) {
+        if( VRviewmanager == null ) {
             if( VRApplication.observer == null ) {
                 return mainApp.getCamera().getLocation();
             } else return VRApplication.observer.getWorldTranslation();
@@ -317,22 +356,22 @@ public class VRApplication extends SimpleApplication{
         quick way to adjust the height of the VR view
     */
     public static void setVRHeightAdjustment(float amount) {
-        if( VRappstate != null ) VRappstate.setHeightAdjustment(amount);
+        if( VRviewmanager != null ) VRviewmanager.setHeightAdjustment(amount);
     }
     
     public static float getVRHeightAdjustment() {
-        if( VRappstate != null ) return VRappstate.getHeightAdjustment();
+        if( VRviewmanager != null ) return VRviewmanager.getHeightAdjustment();
         return 0f;
     }
        
     public static ViewPort getLeftViewPort() {
-        if( VRappstate == null ) return mainApp.getViewPort();
-        return VRappstate.getViewPortLeft();
+        if( VRviewmanager == null ) return mainApp.getViewPort();
+        return VRviewmanager.getViewPortLeft();
     }
     
     public static ViewPort getRightViewPort() {
-        if( VRappstate == null ) return mainApp.getViewPort();
-        return VRappstate.getViewPortRight();
+        if( VRviewmanager == null ) return mainApp.getViewPort();
+        return VRviewmanager.getViewPortRight();
     }
     
     public static VRApplication getMainVRApp() {
@@ -343,17 +382,70 @@ public class VRApplication extends SimpleApplication{
         mirror output to main screen (only works with SteamVR Compositor)
     */
     public static void setMirroring(boolean set) {
-        if( VRappstate == null ) return;
-        VRappstate.setMirroring(set);
+        if( VRviewmanager == null ) return;
+        VRviewmanager.setMirroring(set);
     }
     
     public static boolean getMirroring() {
-        if( VRappstate == null ) return false;
-        return VRappstate.getMirroring();
+        if( VRviewmanager == null ) return false;
+        return VRviewmanager.getMirroring();
     }
-    
+        
     @Override
-    public void simpleInitApp() {
+    public void update() {    
+        super.update(); // makes sure to execute AppTasks
+        
+        if (speed == 0 || paused) {
+            try {
+                Thread.sleep(50); // throttle the CPU when paused
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SimpleApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return;
+        }
+
+        float tpf = timer.getTimePerFrame() * speed;
+        
+        // update states
+        stateManager.update(tpf);
+
+        // simple update and root node
+        simpleUpdate(tpf);
+ 
+        rootNode.updateLogicalState(tpf);
+        guiNode.updateLogicalState(tpf);
+        
+        rootNode.updateGeometricState();
+        
+        if( VRApplication.isInVR() == false || VRApplication.getVRGuiNode().getPositioningMode() == POSITIONING_MODE.MANUAL ) {
+            // only update geometric state here if GUI is in manual mode, or not in VR
+            // it will get updated automatically in the viewmanager update otherwise
+            guiNode.updateGeometricState();
+        }
+        
+        // render states
+        stateManager.render(renderManager);
+        
+        // update VR pose & cameras
+        if( VRviewmanager != null ) {
+            VRviewmanager.update(tpf);           
+        }
+        
+        renderManager.render(tpf, context.isRenderable());
+        simpleRender(renderManager);
+        stateManager.postRender();
+        
+        // update compositor?
+        if( VRviewmanager != null ) {
+            VRviewmanager.postRender();
+        }
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        cam.setFrustumFar(fFar);
+        cam.setFrustumNear(fNear);
         if( isInVR() ) {
             if( compositorAllowed() == false || OpenVR.getVRSystemInstance() == null ) {
                 System.out.println("Skipping SteamVR compositor!");
@@ -361,15 +453,23 @@ public class VRApplication extends SimpleApplication{
             } else {
                 VRhardware.initOpenVRCompositor();
             }
-            VRappstate = new OpenVRViewManager(this);
-            stateManager.attach(VRappstate);
+            VRviewmanager = new OpenVRViewManager(this);
             inputManager.addListener(new VRListener(), new String[]{RESET_HMD, MIRRORING});
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));
             inputManager.addMapping(MIRRORING, new KeyTrigger(KeyInput.KEY_F10));
             initVRinput();
             setLostFocusBehavior(LostFocusBehavior.Disabled);
+        } else {
+            viewPort.attachScene(rootNode);
+            guiViewPort.attachScene(guiNode);
         }
+        
+        simpleInitApp();
+        
+        if( VRviewmanager != null ) VRviewmanager.initialize(this);
     }
+    
+    public abstract void simpleInitApp();
     
     @Override
     protected void finalize() throws Throwable {

@@ -235,8 +235,8 @@ public class OpenVRViewManager {
         
         // update GUI position?
         VRGuiNode vrgn = VRApplication.getVRGuiNode();
-        if( vrgn != null && vrgn.getPositioningMode() != VRGuiNode.POSITIONING_MODE.MANUAL ) {
-            VRApplication.getVRGuiNode().positionGui();
+        if( vrgn != null && (vrgn.wantsReposition || vrgn.getPositioningMode() != VRGuiNode.POSITIONING_MODE.MANUAL) ) {
+            VRApplication.getVRGuiNode().positionGuiNow();
             VRApplication.getVRGuiNode().updateGeometricState();
         }
     }

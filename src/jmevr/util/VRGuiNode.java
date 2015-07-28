@@ -32,6 +32,7 @@ public class VRGuiNode extends Node {
     private final Vector3f look = new Vector3f(), left = new Vector3f();
     private final Matrix3f orient = new Matrix3f();
     private final Quaternion tempq = new Quaternion();
+    protected boolean wantsReposition;
     
     private int oHeight, oWidth;
     
@@ -62,6 +63,11 @@ public class VRGuiNode extends Node {
     }    
     
     public void positionGui() {
+        wantsReposition = true;
+    }
+    
+    protected void positionGuiNow() {
+        wantsReposition = false;
         if( VRApplication.isInVR() == false ) return;
         Vector3f guiPos = getLocalTranslation();
         float useScale = guiScale * 0.6f * 0.0035f;

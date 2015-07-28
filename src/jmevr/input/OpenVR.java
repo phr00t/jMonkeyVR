@@ -195,7 +195,7 @@ public class OpenVR {
            JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePoseReference, hmdTrackedDevicePoses.length, null, 0);
         } else {
             // wait a bit before getting a pose
-            // let's keep a 5ms buffer for timing inaccuracies and frame time variances
+            // let's keep a buffer for timing inaccuracies and frame time variances
             if( LwjglAbstractDisplay.timeSpentWaitingForVSync > latencyBufferTime ) {
                 float curtime = (float)Sys.getTime() / (float)Sys.getTimerResolution();
                 float targetTime = curtime + LwjglAbstractDisplay.timeSpentWaitingForVSync - latencyBufferTime;

@@ -21,23 +21,14 @@ public class Main extends VRApplication {
  
     public static void main(String[] args) {
          MyApp = new Main();
-         MyApp.preconfigureVRApp(useSteamVRCompositor, useJFrame, forceDebugEnableVR);
+         MyApp.preconfigureVRApp(useSteamVRCompositor, useJFrame, forceDebugEnableVR); // optional
+         MyApp.setFrustrumNearFar(0.5f, 512f); // optional, set near/far rendering of cameras
          MyApp.start();
      }
  }
 ```
 
-3. In your simpleInitApp() function, make sure you call super.simpleInitApp()!
-
-```
-     @Override
-     public void simpleInitApp() {
-         super.simpleInitApp();
-         .....
-     }
-```
- 
-4. To add basic HMD sensing:
+3. To add basic HMD sensing:
 
 ```
  Spatial observer = new Node("Observer");

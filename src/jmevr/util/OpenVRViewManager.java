@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jmevr.state;
+package jmevr.util;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -31,6 +31,7 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.util.SafeArrayList;
+import com.sun.jna.ptr.LongByReference;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
 import jmevr.input.OpenVR;
@@ -47,7 +48,7 @@ import jopenvr.JOpenVRLibrary;
  *
  * @author reden
  */
-public class OpenVRViewManager extends AbstractAppState {
+public class OpenVRViewManager {
 
     private VRApplication app;
     private Camera camLeft,camRight;
@@ -91,7 +92,6 @@ public class OpenVRViewManager extends AbstractAppState {
         heightAdjustment = amount;
     }
     
-    @Override
     public void postRender() {
         if( isInVR() ) {
             if( OpenVR.getVRCompositorInstance() != null ) {
@@ -129,17 +129,14 @@ public class OpenVRViewManager extends AbstractAppState {
         return viewPortRight;
     }
     
-    @Override
-    public void initialize(AppStateManager stateManager, Application app) {
-        super.initialize(stateManager, app);
-            
+    public void initialize(VRApplication app) {            
         setupCamerasAndViews();
         
         setupVRScene();
                     
         moveScreenProcessingToEyes();
         
-        /*if( VRApplication.compositorAllowed() == false ) {
+        if( OpenVR.getVRCompositorInstance() == null && OpenVR.getVRSystemInstance() != null ) {
             // tell IVR_System what window we are using (not sure this has any use)
             long hWnd = OpenVRUtil.getNativeWindow();            
             if( hWnd > 0 ) {
@@ -147,7 +144,7 @@ public class OpenVRViewManager extends AbstractAppState {
                 phWnd.setValue(hWnd);
                 JOpenVRLibrary.VR_IVRSystem_AttachToWindow(OpenVR.getVRSystemInstance(), phWnd.getPointer());
             }
-        }*/
+        }
         
         // update the pose to position the gui correctly on start
         update(0f);        
@@ -173,7 +170,6 @@ public class OpenVRViewManager extends AbstractAppState {
      * Replaces rootNode as the main cameras scene with the distortion mesh
      */
     private void setupVRScene(){
-        app.getFlyByCamera().setEnabled(false);
         leftEyeTex = app.getRenderManager().getPreView(LEFT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
         rightEyeTex = app.getRenderManager().getPreView(RIGHT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
         
@@ -211,9 +207,7 @@ public class OpenVRViewManager extends AbstractAppState {
     private final Vector3f hmdPos = new Vector3f();
     private final Quaternion hmdRot = new Quaternion();
     
-    @Override
     public void update(float tpf) {
-        super.update(tpf);
         
         // grab the observer
         Spatial obs = VRApplication.getObserver();
@@ -243,6 +237,7 @@ public class OpenVRViewManager extends AbstractAppState {
         VRGuiNode vrgn = VRApplication.getVRGuiNode();
         if( vrgn != null && vrgn.getPositioningMode() != VRGuiNode.POSITIONING_MODE.MANUAL ) {
             VRApplication.getVRGuiNode().positionGui();
+            VRApplication.getVRGuiNode().updateGeometricState();
         }
     }
     

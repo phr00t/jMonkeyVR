@@ -38,13 +38,19 @@ public class VRGuiNode extends Node {
     public VRGuiNode() {
         super("vrgui");
         guiDistance = 2f;
-        setQueueBucket(Bucket.Translucent);
+        if( VRApplication.isInVR() ) {
+            setQueueBucket(Bucket.Translucent);
+        } else setQueueBucket(Bucket.Gui);
+        setCullHint(CullHint.Never);
     }
     
     public VRGuiNode(float dist) {
         super("vrgui");
         guiDistance = dist;
-        setQueueBucket(Bucket.Translucent);
+        if( VRApplication.isInVR() ) {
+            setQueueBucket(Bucket.Translucent);
+        } else setQueueBucket(Bucket.Gui);
+        setCullHint(CullHint.Never);
     }
     
     public void setPositioningMode(POSITIONING_MODE mode) {
@@ -113,6 +119,7 @@ public class VRGuiNode extends Node {
     }
     
     private void convertAll(Spatial s) {
+        if( VRApplication.isInVR() == false ) return;
         s.setQueueBucket(Bucket.Translucent);
         if( s instanceof Node ) {
             for(Spatial ns : ((Node)s).getChildren()) {
@@ -135,7 +142,7 @@ public class VRGuiNode extends Node {
      */
     @Override
     public int attachChild(Spatial child) {
-        if( VRApplication.getVRHardware().isInitialized() ) convertAll(child);
+        if( VRApplication.isInVR() ) convertAll(child);
         return super.attachChild(child);
     }
     
@@ -154,7 +161,7 @@ public class VRGuiNode extends Node {
      */
     @Override
     public int attachChildAt(Spatial child, int index) {
-        if( VRApplication.getVRHardware().isInitialized() ) convertAll(child);
+        if( VRApplication.isInVR() ) convertAll(child);
         return super.attachChildAt(child, index);
     }    
 }

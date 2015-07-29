@@ -146,6 +146,8 @@ public class OpenVRViewManager {
             }
         }
         
+        VRMouseManager.init();
+        
         // update the pose to position the gui correctly on start
         update(0f);        
         VRApplication.getVRGuiNode().positionGui();
@@ -232,6 +234,9 @@ public class OpenVRViewManager {
         }
         finalizeCamera(dev.getHMDVectorPoseLeftEye(), obs, camLeft);
         finalizeCamera(dev.getHMDVectorPoseRightEye(), obs, camRight);
+        
+        // update the mouse?
+        VRMouseManager.update(tpf);
         
         // update GUI position?
         VRGuiNode vrgn = VRApplication.getVRGuiNode();

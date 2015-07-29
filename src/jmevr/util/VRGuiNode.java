@@ -107,6 +107,10 @@ public class VRGuiNode extends Node {
         guiScale = scale;
     }
     
+    public float getGuiDistance() {
+        return guiDistance;
+    }
+    
     public void adjustGuiDistance(float adjustAmount) {
         guiDistance += adjustAmount;
     }

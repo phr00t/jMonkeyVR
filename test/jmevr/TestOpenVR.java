@@ -95,6 +95,8 @@ public class TestOpenVR extends VRApplication {
 
         initInputs();
         
+        inputManager.setCursorVisible(true);
+        
         // filter test (can be added here like this)
         // but we are going to save them for the F key during runtime
         /*

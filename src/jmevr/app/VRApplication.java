@@ -35,6 +35,7 @@ import javax.swing.JFrame;
 import jmevr.input.OpenVR;
 import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
+import jmevr.util.DirectVR;
 import jmevr.util.OpenVRViewManager;
 import jmevr.util.OpenVRUtil;
 import jmevr.util.VRGuiNode;
@@ -60,7 +61,7 @@ public abstract class VRApplication extends Application {
     
     private float fFar = 1000f, fNear = 1f;
     
-    private static boolean useCompositor = true, compositorOS, useJFrame = true;
+    private static boolean useCompositor = true, compositorOS, useJFrame = true, tryDirect = false;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
         
     static {
@@ -85,8 +86,12 @@ public abstract class VRApplication extends Application {
     /*
         using "easy extended" mode
     */
-    public static boolean usingJFrame() {
-        return VRwindow != null && isInVR() && useJFrame;
+    public static JFrame getJFrame() {
+        return VRwindow;
+    }
+    
+    public static boolean tryDirectMode() {
+        return tryDirect;
     }
     
     /*
@@ -173,6 +178,7 @@ public abstract class VRApplication extends Application {
         }
 
         if( isInVR() && !compositorAllowed() && useJFrame ) {
+            // "easy extended" mode
             // setup experimental JFrame on external device
             // first, find the VR device
             GraphicsDevice VRdev = null;
@@ -225,6 +231,7 @@ public abstract class VRApplication extends Application {
                     startCanvas();
                     return;
                 } catch(Exception e) { 
+                    System.out.println("JFrame exception: " + e.toString());
                     useJFrame = false;
                 }
             } else {
@@ -233,6 +240,7 @@ public abstract class VRApplication extends Application {
             }
         }
         
+        // show settings for mirroring
         if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
             return;
         }
@@ -248,10 +256,10 @@ public abstract class VRApplication extends Application {
         use the JFrame "easy extended" mode, if SteamVR Compositor isn't used? (defaults to true)
         force VR mode, even if a device isn't detected? Good for testing (defaults to false)
     */
-    public void preconfigureVRApp(boolean useCompositor, boolean useJFrame, boolean forceVR) {        
+    public void preconfigureVRApp(boolean useCompositor, boolean useJFrame, boolean forceVR, boolean tryDirect) {        
         VRApplication.useCompositor = useCompositor;
         VRApplication.useJFrame = useJFrame;
-        
+        VRApplication.tryDirect = tryDirect;        
         if( forceVR ) {
             // this will make it work even if an HMD isn't present
             VRhardware.forceInitializeSuccess();

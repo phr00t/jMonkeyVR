@@ -57,7 +57,7 @@ public class OpenVRUtil {
                     displayImpl = m.invoke(null, (Object[]) null);
                     break;
                 }
-            }
+            }            
             String fieldName = null;
             switch (LWJGLUtil.getPlatform()) {
                 case LWJGLUtil.PLATFORM_LINUX:

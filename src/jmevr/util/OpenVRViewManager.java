@@ -4,9 +4,6 @@
  */
 package jmevr.util;
 
-import com.jme3.app.Application;
-import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix4f;
@@ -31,6 +28,9 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.util.SafeArrayList;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.ptr.LongByReference;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
@@ -38,11 +38,9 @@ import jmevr.input.OpenVR;
 import jmevr.post.CartoonSSAO;
 import jmevr.post.FastSSAO;
 import jmevr.shadow.VRDirectionalLightShadowRenderer;
-import jmevr.util.FilterUtil;
-import jmevr.util.MeshUtil;
-import jmevr.util.OpenVRUtil;
-import jmevr.util.VRGuiNode;
 import jopenvr.JOpenVRLibrary;
+import jopenvr.VRTextureBounds_t;
+import org.lwjgl.LWJGLUtil;
 
 /**
  *
@@ -56,7 +54,7 @@ public class OpenVRViewManager {
     private FilterPostProcessor ppLeft, ppRight;
     
     private boolean mirrorEnabled;
-    private int mirrorFrame;
+    private int mirrorFrame, origWidth, origHeight;
     private float heightAdjustment;
     
     private Texture leftEyeTex, rightEyeTex;
@@ -136,13 +134,22 @@ public class OpenVRViewManager {
                     
         moveScreenProcessingToEyes();
         
-        if( OpenVR.getVRCompositorInstance() == null && OpenVR.getVRSystemInstance() != null ) {
-            // tell IVR_System what window we are using (not sure this has any use)
-            long hWnd = OpenVRUtil.getNativeWindow();            
-            if( hWnd > 0 ) {
-                LongByReference phWnd = new LongByReference();
-                phWnd.setValue(hWnd);
-                JOpenVRLibrary.VR_IVRSystem_AttachToWindow(OpenVR.getVRSystemInstance(), phWnd.getPointer());
+        if( OpenVR.getVRCompositorInstance() == null && OpenVR.getVRSystemInstance() != null && VRApplication.tryDirectMode() ) {
+            if( LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_WINDOWS ) {
+                // try to setup direct mode on windows
+                long hWnd;
+                if( VRApplication.getJFrame() == null ) {
+                    hWnd = OpenVRUtil.getNativeWindow();
+                } else {
+                    WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, VRApplication.getJFrame().getTitle());
+                    hWnd = Pointer.nativeValue(hwnd.getPointer());
+                }
+                if( hWnd > 0 && DirectVR.initDirectVR(origWidth, origHeight, hWnd) ) {                
+                    // tell IVR_System what window we are using
+                    LongByReference phWnd = new LongByReference();
+                    phWnd.setValue(hWnd);
+                    JOpenVRLibrary.VR_IVRSystem_AttachToWindow(OpenVR.getVRSystemInstance(), phWnd.getPointer());
+                }
             }
         }
         
@@ -318,7 +325,7 @@ public class OpenVRViewManager {
     
     private void setupCamerasAndViews() {        
         // get desired frustrum from original camera
-        Camera origCam = app.getCamera();
+        Camera origCam = app.getCamera();        
         float fFar = origCam.getFrustumFar();
         float fNear = origCam.getFrustumNear();
         // restore frustrum on distortion scene cam
@@ -326,8 +333,8 @@ public class OpenVRViewManager {
         origCam.setFrustumNear(1f);
         
         camLeft = origCam.clone();  
-        float origWidth = camLeft.getWidth();
-        float origHeight = camLeft.getHeight();
+        origWidth = camLeft.getWidth();
+        origHeight = camLeft.getHeight();
         
         camLeft.setFrustumPerspective(VRApplication.getVRHardware().getFOV(), 
                                       origWidth / origHeight,

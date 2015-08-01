@@ -51,6 +51,7 @@ public class DirectVR implements WindowProc {
     // https://github.com/jherico/OculusRiftInAction/blob/562a2e7e465e31a385c47313d44b946ccaddf15d/examples/cpp/Example_X_Direct3dInterop.cpp
     
     private static DirectVR instance;
+    private static ID3D11Texture2D backBuffer;
     
     private static ID3D11Device directVRDevice;
     
@@ -77,17 +78,22 @@ public class DirectVR implements WindowProc {
             IDXGIAdapter1 Adapter = DXGIDevice.GetParent(IDXGIAdapter1.class);
             IDXGIFactory1 DXGIFactory= Adapter.GetParent(IDXGIFactory1.class);
 
-            // create a window for us to use
-            WinDef.HWND Window = createWindow();
-            User32.INSTANCE.ShowWindow(Window, User32.SW_MAXIMIZE);
-            
             // swap chain information, taken from jherico link at top
             DXGI_SWAP_CHAIN_DESC scDesc = new DXGI_SWAP_CHAIN_DESC();
+            
+            // create a window for us to use, or use window
+            if( window == 0 ) {
+                WinDef.HWND Window = createWindow();                
+                User32.INSTANCE.ShowWindow(Window, User32.SW_SHOWMAXIMIZED);
+                scDesc.OutputWindow(new HWND(Pointer.nativeValue(Window.getPointer())));
+            } else {
+                scDesc.OutputWindow(new HWND(window));                
+            }
+            
             scDesc.BufferUsage(DXGI_USAGE.DXGI_USAGE_RENDER_TARGET_OUTPUT);
             scDesc.SwapEffect(DXGI_SWAP_EFFECT.DXGI_SWAP_EFFECT_SEQUENTIAL);
             scDesc.BufferCount(2);
             scDesc.Flags((int)DXGI_SWAP_CHAIN_FLAG.DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH.value());
-            scDesc.OutputWindow(new HWND(Pointer.nativeValue(Window.getPointer())));
             scDesc.Windowed(0);
             scDesc.BufferDesc().Format(DXGI_FORMAT.DXGI_FORMAT_R8G8B8A8_UNORM);
             scDesc.BufferDesc().Height(height);
@@ -97,9 +103,23 @@ public class DirectVR implements WindowProc {
             scDesc.SampleDesc().Count(1);
             scDesc.SampleDesc().Quality(0);
             
-            final IDXGISwapChain swapChain = DXGIFactory.CreateSwapChain(DXGIDevice, scDesc);
+            IDXGISwapChain swapChain = null;
+            
+            try {
+                // this might fail if fullscreen fails...
+                swapChain = DXGIFactory.CreateSwapChain(DXGIDevice, scDesc);
+            } catch(Exception e) {
+                System.out.println("SwapChain exception: " + e.toString());
+            }
 
-            ID3D11Texture2D backBuffer = swapChain.GetBuffer(0, ID3D11Texture2D.class);
+            if( swapChain == null ) {
+                // try creating it non-fullscreen
+                System.out.println("Can't DirectX fullscreen, fallback to windowed...");
+                scDesc.Windowed(1);            
+                swapChain = DXGIFactory.CreateSwapChain(DXGIDevice, scDesc);
+            }
+            
+            backBuffer = swapChain.GetBuffer(0, ID3D11Texture2D.class);
             final ID3D11RenderTargetView rtView = directVRDevice.CreateRenderTargetView(backBuffer, null);
             
             // not sure what these do
@@ -108,12 +128,11 @@ public class DirectVR implements WindowProc {
             
             // this gets the IDXIOuput of the virtual reality device
             IDXGIOutput useOut = DXGIFactory.EnumAdapters().get(pnAdapterIndex.get(0)).EnumOutputs().get(pnAdapterOutputIndex.get(0));
-            swapChain.SetFullscreenState(1, useOut);
             
-            DXGIDevice.Release();
-            DXGIFactory.Release();
-            backBuffer.Release();
-            
+            if( scDesc.Windowed() == 0 ) {
+                // try and set fullscreen mode
+                swapChain.SetFullscreenState(1, useOut);
+            }
             return true;
         } catch(Exception e) {
             System.out.println("DirectVR exception: " + e.toString());
@@ -139,14 +158,19 @@ public class DirectVR implements WindowProc {
                         .CreateWindowEx(
                                         User32.WS_EX_TOPMOST,
                                         windowClass,
-                                        "My hidden helper window, used only to catch the windows events",
+                                        "VR Output",
                                         User32.WS_POPUP | User32.WS_VISIBLE, 0, 0, 0, 0,
                                         null, // WM_DEVICECHANGE contradicts parent=WinUser.HWND_MESSAGE
                                         null, hInst, null);        
     }
     
-    public static boolean destroyDirectVR() {
-        return true;
+    public static void destroyDirectVR() {
+        if( directVRDevice != null ) {
+            directVRDevice.Release();
+        }
+        if( backBuffer != null ) {
+            backBuffer.Release();
+        }
     }
 
     @Override

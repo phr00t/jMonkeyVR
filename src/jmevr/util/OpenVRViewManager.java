@@ -144,7 +144,9 @@ public class OpenVRViewManager {
                     WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, VRApplication.getJFrame().getTitle());
                     hWnd = Pointer.nativeValue(hwnd.getPointer());
                 }
-                if( hWnd > 0 && DirectVR.initDirectVR(origWidth, origHeight, hWnd) ) {                
+                if( hWnd > 0 ) {                
+                    // try to make a D3D device for the output window
+                    DirectVR.initDirectVR(origWidth, origHeight, hWnd);
                     // tell IVR_System what window we are using
                     LongByReference phWnd = new LongByReference();
                     phWnd.setValue(hWnd);

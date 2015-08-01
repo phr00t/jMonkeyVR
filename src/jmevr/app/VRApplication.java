@@ -255,6 +255,7 @@ public abstract class VRApplication extends Application {
         use the SteamVR Compositor? (defaults to true)
         use the JFrame "easy extended" mode, if SteamVR Compositor isn't used? (defaults to true)
         force VR mode, even if a device isn't detected? Good for testing (defaults to false)
+        tryDirect, try direct mode (DOESNT WORK YET, TESTING ONLY)
     */
     public void preconfigureVRApp(boolean useCompositor, boolean useJFrame, boolean forceVR, boolean tryDirect) {        
         VRApplication.useCompositor = useCompositor;
@@ -487,6 +488,7 @@ public abstract class VRApplication extends Application {
             for(int i=0;i<VRinput.size();i++) {
                 VRinput.get(i).destroy();
             }
+            DirectVR.destroyDirectVR();
         }
     }
     

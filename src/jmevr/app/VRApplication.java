@@ -40,6 +40,8 @@ import jmevr.util.OpenVRViewManager;
 import jmevr.util.OpenVRUtil;
 import jmevr.util.VRGuiNode;
 import jmevr.util.VRGuiNode.POSITIONING_MODE;
+import jopenvr.JOpenVRLibrary;
+import org.lwjgl.Sys;
 
 /**
  *
@@ -458,7 +460,9 @@ public abstract class VRApplication extends Application {
         if( isInVR() ) {
             if( compositorAllowed() == false || OpenVR.getVRSystemInstance() == null ) {
                 System.out.println("Skipping SteamVR compositor!");
-                LwjglAbstractDisplay.enableWaitingForVSyncTiming = true;
+                LwjglAbstractDisplay.runRightBeforeVSync = () -> {
+                    OpenVR._enteringVSyncTime -= Sys.getTime();
+                };
             } else {
                 VRhardware.initOpenVRCompositor();
             }

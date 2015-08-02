@@ -225,7 +225,7 @@ public class OpenVRViewManager {
         // grab the OpenVR handle
         OpenVR dev = VRApplication.getVRHardware();
         // update the HMD's position & orientation
-        dev.updatePose(tpf);
+        dev.updatePose();
         Matrix4f posAndRot = dev.getPositionAndOrientation();
         // prepare head rotation & position for updateCamera
         posAndRot.toTranslationVector(hmdPos);               

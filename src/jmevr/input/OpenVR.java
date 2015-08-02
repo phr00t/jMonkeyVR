@@ -42,7 +42,7 @@ public class OpenVR {
     private static final Vector3f posStore = new Vector3f();
     
     private static FloatBuffer tlastVsync;
-    private static LongBuffer tframeCount;
+    public static LongBuffer _tframeCount;
     
     // for debugging latency
     private int frames = 0;    
@@ -57,7 +57,9 @@ public class OpenVR {
     
     private static Vector3f hmdPoseLeftEyeVec, hmdPoseRightEyeVec;
     
-    private static float vsyncToPhotons;
+    private static float vsyncToPhotons, timePerFrame;
+    public static long _enteringVSyncTime;
+    public static long _timerResolution, _frameCount;
     
     public static Pointer getVRSystemInstance() {
         return vrsystem;
@@ -71,7 +73,8 @@ public class OpenVR {
         return "OpenVR";
     }
     
-    private static float latencyBufferTime = 0.006f;       
+    // this will dynamically get larger until we are making vsync reliably
+    private static float latencyBufferTime = 0f;       
     
     /*
         set this lower to decrease latency, but risk dropping frames during frametime fluctuations
@@ -102,7 +105,9 @@ public class OpenVR {
             System.out.println("OpenVR initialized & VR connected.");
             
             tlastVsync = FloatBuffer.allocate(1);
-            tframeCount = LongBuffer.allocate(1);
+            _tframeCount = LongBuffer.allocate(1);
+            _timerResolution = Sys.getTimerResolution();
+            _enteringVSyncTime = 1; // set a >0 number so it doesn't try and wait the first frame
             
             hmdDisplayFrequency = IntBuffer.allocate(1);
             hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_DisplayFrequency_Float);
@@ -114,6 +119,7 @@ public class OpenVR {
             for(int i=0;i<poseMatrices.length;i++) poseMatrices[i] = new Matrix4f();
 
             vsyncToPhotons = JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
+            timePerFrame = 1f / JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_DisplayFrequency_Float, hmdErrorStore);
             
             // disable all this stuff which kills performance
             hmdTrackedDevicePoseReference.setAutoRead(false);
@@ -127,7 +133,7 @@ public class OpenVR {
     
     public boolean initOpenVRCompositor() {
         vrCompositor = JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRCompositor_Version, hmdErrorStore);
-        LwjglAbstractDisplay.enableWaitingForVSyncTiming = false;
+        LwjglAbstractDisplay.runRightBeforeVSync = null;
         if(vrCompositor != null && hmdErrorStore.get(0) == 0){                
             System.out.println("OpenVR Compositor initialized OK.");
             return true;
@@ -189,32 +195,55 @@ public class OpenVR {
         return posStore;
     }
     
-    public void updatePose(float fFrameDuration){
+    public void updatePose(){
         if(vrsystem == null) return;
-        if(vrCompositor != null){
+        if(vrCompositor != null) {
            JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePoseReference, hmdTrackedDevicePoses.length, null, 0);
         } else {
             // wait a bit before getting a pose
-            // let's keep a buffer for timing inaccuracies and frame time variances
-            if( LwjglAbstractDisplay.timeSpentWaitingForVSync > latencyBufferTime ) {
-                float curtime = (float)Sys.getTime() / (float)Sys.getTimerResolution();
-                float targetTime = curtime + LwjglAbstractDisplay.timeSpentWaitingForVSync - latencyBufferTime;
-                float timeres = (float)Sys.getTimerResolution();
-                while( (float)Sys.getTime() / timeres < targetTime ) {
-                    Thread.yield();
+            // how long do we have to wait?
+            if( _enteringVSyncTime <= 0 ) {
+                float renderTime = (float)-_enteringVSyncTime / _timerResolution;
+                float waitAvailable = timePerFrame - renderTime;                                
+                if( frames == 10 ) {
+                    System.out.println("Time available to wait: " + Float.toString(waitAvailable));
+                    System.out.println("Current buffer time: " + Float.toString(latencyBufferTime));
+                    System.out.println("Render time: " + Float.toString(renderTime));
+                }
+                if( waitAvailable > latencyBufferTime ) {
+                    long waitTime = Math.round(1000f * (waitAvailable - latencyBufferTime));
+                    if( frames == 10 ) {
+                        System.out.println("WAITING - Time: " + Long.toString(waitTime));
+                    }
+                    try {
+                        Thread.sleep(waitTime);
+                    } catch(Exception e) { }
                 }
             }
             
-            JOpenVRLibrary.VR_IVRSystem_GetTimeSinceLastVsync(vrsystem, tlastVsync, tframeCount);
-            float fSecondsUntilPhotons = fFrameDuration - tlastVsync.get(0) + vsyncToPhotons;
+            _enteringVSyncTime = Sys.getTime();
+            
+            JOpenVRLibrary.VR_IVRSystem_GetTimeSinceLastVsync(vrsystem, tlastVsync, _tframeCount);
+            float fSecondsUntilPhotons = timePerFrame - tlastVsync.get(0) + vsyncToPhotons;
+            
+            // handle skipping frame adjustment
+            long nowCount = _tframeCount.get(0);
+            if( nowCount - _frameCount > 1 ) {
+                // skipped a frame!
+                if( enableDebugLatency ) System.out.println("Frame skipped!");                
+                if( latencyBufferTime < 0.05f ) latencyBufferTime += 0.002f;
+            } else if( latencyBufferTime > 0f ) {
+                // no frame skipped
+                if( frames == 10 ) System.out.println("No frame skipped.");
+                latencyBufferTime -= 0.000001f;
+            }            
+            _frameCount = nowCount;
             
             if( enableDebugLatency ) {
-                frames++;
-                if( frames >= 60 ) {
+                if( frames == 10 ) {
                     System.out.println("Predict ahead time: " + Float.toString(fSecondsUntilPhotons));
-                    System.out.println("Time spent in vysnc: " + Float.toString(LwjglAbstractDisplay.timeSpentWaitingForVSync));
-                    frames = 0;
                 }
+                frames = (frames + 1) % 60;
             }
             
             JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);   
@@ -268,7 +297,7 @@ public class OpenVR {
         if( hmdPoseLeftEyeVec == null ) {
             hmdPoseLeftEyeVec = getHMDMatrixPoseLeftEye().toTranslationVector();
             // set default IPD if none
-            if( hmdPoseLeftEyeVec.x == 0f ) hmdPoseLeftEyeVec.x = 0.065f * 0.5f;
+            if( hmdPoseLeftEyeVec.x == 0f ) hmdPoseLeftEyeVec.x = 0.065f * -0.5f;
         }
         return hmdPoseLeftEyeVec;
     }
@@ -277,7 +306,7 @@ public class OpenVR {
         if( hmdPoseRightEyeVec == null ) {
             hmdPoseRightEyeVec = getHMDMatrixPoseRightEye().toTranslationVector();
             // set default IPD if none
-            if( hmdPoseRightEyeVec.x == 0f ) hmdPoseRightEyeVec.x = -0.065f * 0.5f;
+            if( hmdPoseRightEyeVec.x == 0f ) hmdPoseRightEyeVec.x = 0.065f * 0.5f;
         }
         return hmdPoseRightEyeVec;
     }

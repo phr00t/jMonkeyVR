@@ -231,11 +231,11 @@ public class OpenVR {
             if( nowCount - _frameCount > 1 ) {
                 // skipped a frame!
                 if( enableDebugLatency ) System.out.println("Frame skipped!");                
-                if( latencyBufferTime < 0.05f ) latencyBufferTime += 0.002f;
+                if( latencyBufferTime < timePerFrame ) latencyBufferTime += 0.002f;
             } else if( latencyBufferTime > 0f ) {
                 // no frame skipped
                 if( frames == 10 ) System.out.println("No frame skipped.");
-                latencyBufferTime -= 0.000001f;
+                latencyBufferTime -= 0.000002f;
             }            
             _frameCount = nowCount;
             

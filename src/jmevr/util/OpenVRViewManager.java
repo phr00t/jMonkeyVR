@@ -369,8 +369,8 @@ public class OpenVRViewManager {
         
         //setup framebuffer's texture
         Texture2D offTex = new Texture2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);
-        offTex.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
-        offTex.setMagFilter(Texture.MagFilter.Nearest);
+        offTex.setMinFilter(Texture.MinFilter.Trilinear);
+        offTex.setMagFilter(Texture.MagFilter.Bilinear);
 
         //setup framebuffer to use texture
         offBufferLeft.setDepthBuffer(Image.Format.Depth);
@@ -378,7 +378,7 @@ public class OpenVRViewManager {
         
         ViewPort viewPort = app.getRenderManager().createPreView(viewName, cam);
         viewPort.setClearFlags(true, true, true);
-        viewPort.setBackgroundColor(ColorRGBA.DarkGray);
+        viewPort.setBackgroundColor(ColorRGBA.Black);
         viewPort.attachScene(this.app.getRootNode());
         //set viewport to render to offscreen framebuffer
         viewPort.setOutputFrameBuffer(offBufferLeft);

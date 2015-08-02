@@ -128,6 +128,7 @@ public class DirectVR implements WindowProc {
             
             // this gets the IDXIOuput of the virtual reality device
             IDXGIOutput useOut = DXGIFactory.EnumAdapters().get(pnAdapterIndex.get(0)).EnumOutputs().get(pnAdapterOutputIndex.get(0));
+            //useOut.SetDisplaySurface(backBuffer.)
             
             if( scDesc.Windowed() == 0 ) {
                 // try and set fullscreen mode

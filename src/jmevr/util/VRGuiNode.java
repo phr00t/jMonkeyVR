@@ -74,8 +74,8 @@ public class VRGuiNode extends Node {
         setLocalScale(guiDistance * useScale, guiDistance * useScale, 0.05f);
         if( cam != null ) {
             Vector3f opos = cam.getLocation();
-            guiPos.set(guiDistance * 1.375f * oWidth / 800f * guiScale * 0.6f,
-                      -guiDistance * oHeight * guiScale * 0.6f / 600f, guiDistance);
+            guiPos.set(guiDistance * 1.415f * oWidth / 800f * guiScale * 0.6f,
+                      -guiDistance * oHeight * guiScale * 0.63f / 600f, guiDistance);
             cam.getRotation().mult(guiPos, guiPos);
             guiPos.x += opos.x;
             guiPos.y += opos.y;

@@ -7,9 +7,12 @@ import com.jme3.app.Application;
 import com.jme3.app.LostFocusBehavior;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppState;
+import com.jme3.cursors.plugins.JmeCursor;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.lwjgl.LwjglMouseInput;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -212,8 +215,7 @@ public abstract class VRApplication extends Application {
                     VRwindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     // make a blank cursor to hide it
                     BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-                    Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-                        cursorImg, new Point(0, 0), "blank cursor");                    
+                    Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");                    
                     VRwindow.setCursor(blankCursor);
                     settings.setWidth(useDM.getWidth());
                     settings.setHeight(useDM.getHeight());
@@ -229,6 +231,7 @@ public abstract class VRApplication extends Application {
                     }
                     createCanvas();
                     JmeCanvasContext jmeCanvas = (JmeCanvasContext)getContext();
+                    MouseInput mjme = jmeCanvas.getMouseInput();
                     jmeCanvas.setSystemListener(this);
                     jmeCanvas.getCanvas().setPreferredSize(VRwindow.getSize());
                     jmeCanvas.getCanvas().setIgnoreRepaint(true);
@@ -340,7 +343,11 @@ public abstract class VRApplication extends Application {
                 return mainApp.getCamera().getRotation();
             } else return VRApplication.observer.getWorldRotation();
         }        
-        return getHMDRotation().multLocal(VRApplication.observer.getWorldRotation());
+        if( VRApplication.observer != null ) {
+            return getHMDRotation().multLocal(VRApplication.observer.getWorldRotation());
+        } else {
+            return getHMDRotation();
+        }
     }
     
     /*
@@ -353,12 +360,19 @@ public abstract class VRApplication extends Application {
                 return mainApp.getCamera().getLocation();
             } else return VRApplication.observer.getWorldTranslation();
         }
-        return getHMDPosition().addLocal(VRApplication.observer.getWorldTranslation());
+        if( VRApplication.observer != null ) {
+            return getHMDPosition(true).addLocal(VRApplication.observer.getWorldTranslation());            
+        } else {
+            return getHMDPosition(true);                    
+        }
     }
     
     private static final Vector3f tempPos = new Vector3f();
-    public static Vector3f getHMDPosition() {
+    public static Vector3f getHMDPosition(boolean rotateWithObserver) {
         VRApplication.getVRHardware().getPositionAndOrientation().toTranslationVector(tempPos);
+        if( rotateWithObserver && VRApplication.observer != null ) {
+            VRApplication.observer.getWorldRotation().mult(tempPos, tempPos);
+        }
         return tempPos;
     }
     

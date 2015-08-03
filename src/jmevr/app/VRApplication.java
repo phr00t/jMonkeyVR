@@ -12,12 +12,9 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.profile.AppStep;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
-import com.jme3.renderer.queue.RenderQueue;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
@@ -25,8 +22,12 @@ import com.jme3.system.JmeCanvasContext;
 import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
 import com.jme3.system.lwjgl.LwjglAbstractDisplay;
+import java.awt.Cursor;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -40,7 +41,6 @@ import jmevr.util.OpenVRViewManager;
 import jmevr.util.OpenVRUtil;
 import jmevr.util.VRGuiNode;
 import jmevr.util.VRGuiNode.POSITIONING_MODE;
-import jopenvr.JOpenVRLibrary;
 import org.lwjgl.Sys;
 
 /**
@@ -210,6 +210,11 @@ public abstract class VRApplication extends Application {
                     VRwindow.setSize(useDM.getWidth(), useDM.getHeight());
                     VRwindow.setUndecorated(true);
                     VRwindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    // make a blank cursor to hide it
+                    BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+                    Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+                        cursorImg, new Point(0, 0), "blank cursor");                    
+                    VRwindow.setCursor(blankCursor);
                     settings.setWidth(useDM.getWidth());
                     settings.setHeight(useDM.getHeight());
                     settings.setBitsPerPixel(useDM.getBitDepth());

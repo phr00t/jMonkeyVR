@@ -5,6 +5,8 @@
  */
 package jmevr.util;
 
+import com.jme3.input.MouseInput;
+import com.jme3.input.lwjgl.LwjglMouseInput;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.Vector2f;
 import com.jme3.texture.Texture;
@@ -32,6 +34,8 @@ public class VRMouseManager {
         try {
             Cursor emptyCursor = new Cursor(1, 1, 0, 0, 1, BufferUtils.createIntBuffer(1), null);
             Mouse.setNativeCursor(emptyCursor);        
+            MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
+            if( mi instanceof LwjglMouseInput ) ((LwjglMouseInput)mi).setNativeCursor(emptyCursor);
         } catch(Exception e) { }
     }
     

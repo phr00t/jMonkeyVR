@@ -1,6 +1,10 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+    - test changing GUI distance, does it stay centered?
+      - why does 4089 seem so high & too the left?
+    - mouse cursor still visible in VR JFrame...
+    - filter problems in 4089 causing same eye to be shown
+      - narrow down which filter it is causing problems
+        - probably needs to be better cloned
  */
 package jmevr;
 
@@ -95,6 +99,7 @@ public class TestOpenVR extends VRApplication {
 
         initInputs();
         
+        // use magic VR mouse cusor (same usage as non-VR mouse cursor)
         inputManager.setCursorVisible(true);
         
         // filter test (can be added here like this)

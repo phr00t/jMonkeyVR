@@ -74,12 +74,12 @@ public class OpenVR {
     }
     
     // this will dynamically get larger until we are making vsync reliably
-    private static float latencyBufferTime = 0f;       
+    private static float latencyBufferTime = 0.004f;
     
     /*
         set this lower to decrease latency, but risk dropping frames during frametime fluctuations
         set heigher to increase latency, but allow more time for frames to complete
-        defaults to 0.006f, which is 6ms
+        defaults to 0.004f, which is 4ms
     */
     public static void setLatencySafetyTime(float time) {
         latencyBufferTime = time;
@@ -191,9 +191,21 @@ public class OpenVR {
     }
 
     public Vector3f getPosition() {
+        // the hmdPose comes in rotated funny, fix that here
         hmdPose.toTranslationVector(posStore);
+        posStore.y = -posStore.y; // flip Y access to account for different convention
+        getOrientation(); // update rotStore
+        rotStore.inverseLocal().mult(posStore, posStore);
         return posStore;
     }
+    
+    public void getPositionAndOrientation(Vector3f storePos, Quaternion storeRot) {
+        // the hmdPose comes in rotated funny, fix that here
+        hmdPose.toTranslationVector(storePos);
+        storePos.y = -storePos.y; // flip Y access to account for different convention
+        getOrientation(); // update rotStore
+        storeRot.set(rotStore).inverseLocal().mult(storePos, storePos);        
+    }    
     
     public void updatePose(){
         if(vrsystem == null) return;
@@ -213,7 +225,7 @@ public class OpenVR {
                 if( waitAvailable > latencyBufferTime ) {
                     long waitTime = Math.round(1000f * (waitAvailable - latencyBufferTime));
                     if( frames == 10 ) {
-                        System.out.println("WAITING - Time: " + Long.toString(waitTime));
+                        System.out.println("WAITING - Time: " + Long.toString(waitTime) + "ms");
                     }
                     try {
                         Thread.sleep(waitTime);
@@ -221,29 +233,24 @@ public class OpenVR {
                 }
             }
             
-            _enteringVSyncTime = Sys.getTime();
+            _enteringVSyncTime = Sys.getTime(); // pose -> vsync time start
             
             JOpenVRLibrary.VR_IVRSystem_GetTimeSinceLastVsync(vrsystem, tlastVsync, _tframeCount);
             float fSecondsUntilPhotons = timePerFrame - tlastVsync.get(0) + vsyncToPhotons;
-            
-            // handle skipping frame adjustment
-            long nowCount = _tframeCount.get(0);
-            if( nowCount - _frameCount > 1 ) {
-                // skipped a frame!
-                if( enableDebugLatency ) System.out.println("Frame skipped!");                
-                if( latencyBufferTime < timePerFrame ) latencyBufferTime += 0.002f;
-            } else if( latencyBufferTime > 0f ) {
-                // no frame skipped
-                if( frames == 10 ) System.out.println("No frame skipped.");
-                latencyBufferTime -= 0.000002f;
-            }            
-            _frameCount = nowCount;
             
             if( enableDebugLatency ) {
                 if( frames == 10 ) {
                     System.out.println("Predict ahead time: " + Float.toString(fSecondsUntilPhotons));
                 }
+                // handle skipping frame notification
+                long nowCount = _tframeCount.get(0);
+                if( nowCount - _frameCount > 1 ) {
+                    // skipped a frame!
+                    System.out.println("Frame skipped!");                
+                }            
+
                 frames = (frames + 1) % 60;
+                _frameCount = nowCount;
             }
             
             JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);   
@@ -261,10 +268,6 @@ public class OpenVR {
         } else {
             hmdPose.set(Matrix4f.IDENTITY);
         }
-    }
-
-    public Matrix4f getPositionAndOrientation() {
-        return hmdPose;
     }
 
     public Matrix4f getHMDMatrixProjectionLeftEye(Camera cam){

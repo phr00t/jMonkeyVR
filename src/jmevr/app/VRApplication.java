@@ -213,10 +213,6 @@ public abstract class VRApplication extends Application {
                     VRwindow.setSize(useDM.getWidth(), useDM.getHeight());
                     VRwindow.setUndecorated(true);
                     VRwindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                    // make a blank cursor to hide it
-                    BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-                    Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");                    
-                    VRwindow.setCursor(blankCursor);
                     settings.setWidth(useDM.getWidth());
                     settings.setHeight(useDM.getHeight());
                     settings.setBitsPerPixel(useDM.getBitDepth());
@@ -231,11 +227,15 @@ public abstract class VRApplication extends Application {
                     }
                     createCanvas();
                     JmeCanvasContext jmeCanvas = (JmeCanvasContext)getContext();
-                    MouseInput mjme = jmeCanvas.getMouseInput();
                     jmeCanvas.setSystemListener(this);
                     jmeCanvas.getCanvas().setPreferredSize(VRwindow.getSize());
                     jmeCanvas.getCanvas().setIgnoreRepaint(true);
                     VRwindow.add(jmeCanvas.getCanvas());
+                    // make a blank cursor to hide it
+                    BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+                    Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");                    
+                    VRwindow.setCursor(blankCursor);
+                    jmeCanvas.getCanvas().setCursor(blankCursor);
                     VRwindow.pack();
                     VRwindow.setVisible(true);
                     startCanvas();
@@ -337,16 +337,16 @@ public abstract class VRApplication extends Application {
         where is the headset pointing, after all rotations are combined?
         depends on observer rotation, if any
     */
-    public static Quaternion getFinalOberserverRotation() {
+    public static Quaternion getFinalObserverRotation() {
         if( VRviewmanager == null ) {
             if( VRApplication.observer == null ) {
                 return mainApp.getCamera().getRotation();
             } else return VRApplication.observer.getWorldRotation();
         }        
-        if( VRApplication.observer != null ) {
-            return getHMDRotation().multLocal(VRApplication.observer.getWorldRotation());
+        if( VRApplication.observer == null ) {
+            return VRhardware.getOrientation();
         } else {
-            return getHMDRotation();
+            return VRhardware.getOrientation().multLocal(VRApplication.observer.getWorldRotation());
         }
     }
     
@@ -354,32 +354,18 @@ public abstract class VRApplication extends Application {
         where is the headset, after all positional tracking is complete?
         includes observer position, if any
     */
-    public static Vector3f getFinalOberserverPosition() {
+    
+    public static Vector3f getFinalObserverPosition() {
         if( VRviewmanager == null ) {
             if( VRApplication.observer == null ) {
                 return mainApp.getCamera().getLocation();
-            } else return VRApplication.observer.getWorldTranslation();
+            } else return VRApplication.observer.getWorldTranslation();            
         }
-        if( VRApplication.observer != null ) {
-            return getHMDPosition(true).addLocal(VRApplication.observer.getWorldTranslation());            
+        if( VRApplication.observer == null ) {
+            return VRhardware.getPosition();
         } else {
-            return getHMDPosition(true);                    
+            return VRhardware.getPosition().addLocal(VRApplication.observer.getWorldTranslation());
         }
-    }
-    
-    private static final Vector3f tempPos = new Vector3f();
-    public static Vector3f getHMDPosition(boolean rotateWithObserver) {
-        VRApplication.getVRHardware().getPositionAndOrientation().toTranslationVector(tempPos);
-        if( rotateWithObserver && VRApplication.observer != null ) {
-            VRApplication.observer.getWorldRotation().mult(tempPos, tempPos);
-        }
-        return tempPos;
-    }
-    
-    private static final Quaternion tempRot = new Quaternion();
-    public static Quaternion getHMDRotation() {
-        OpenVRUtil.convertMatrix4toQuat(VRApplication.getVRHardware().getPositionAndOrientation(), tempRot);
-        return tempRot;
     }
     
     /*

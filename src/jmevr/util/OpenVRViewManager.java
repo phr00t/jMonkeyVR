@@ -226,13 +226,7 @@ public class OpenVRViewManager {
         OpenVR dev = VRApplication.getVRHardware();
         // update the HMD's position & orientation
         dev.updatePose();
-        Matrix4f posAndRot = dev.getPositionAndOrientation();
-        // prepare head rotation & position for updateCamera
-        posAndRot.toTranslationVector(hmdPos);               
-        hmdPos.y = -hmdPos.y; // flip Y access to account for different convention
-        OpenVRUtil.convertMatrix4toQuat(posAndRot, hmdRot);
-        // hmdPos comes in rotated by hmdRot, fix that here
-        finalRotation.set(hmdRot).inverseLocal().mult(hmdPos, hmdPos);
+        dev.getPositionAndOrientation(hmdPos, hmdRot);
         if( obs != null ) {
             // update hmdPos based on obs rotation
             finalRotation.set(obs.getWorldRotation());

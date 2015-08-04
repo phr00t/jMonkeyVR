@@ -191,10 +191,10 @@ public class TestOpenVR extends VRApplication {
          boxes.setLocalTranslation(0, 0, 200f+ distance);
          
          if(moveForward){
-             observer.move(VRApplication.getFinalOberserverRotation().getRotationColumn(2).mult(tpf*8f));
+             observer.move(VRApplication.getFinalObserverRotation().getRotationColumn(2).mult(tpf*8f));
          }
          if(moveBackwards){
-             observer.move(VRApplication.getFinalOberserverRotation().getRotationColumn(2).mult(-tpf*8f));
+             observer.move(VRApplication.getFinalObserverRotation().getRotationColumn(2).mult(-tpf*8f));
          }
          if(rotateLeft){
              observer.rotate(0, 0.75f*tpf, 0);

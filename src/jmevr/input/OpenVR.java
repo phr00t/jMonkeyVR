@@ -221,12 +221,12 @@ public class OpenVR {
                     System.out.println("Render time: " + Float.toString(renderTime));
                 }
                 if( waitAvailable > latencyBufferTime ) {
-                    long waitTime = Math.round(1000f * (waitAvailable - latencyBufferTime));
+                    long waitTime = 1000000 * Math.round(1000f * (waitAvailable - latencyBufferTime)); // convert seconds to nanoseconds
                     if( frames == 10 ) {
-                        System.out.println("WAITING - Time: " + Long.toString(waitTime) + "ms");
+                        System.out.println("WAITING - Time: " + Long.toString(waitTime) + "nanos");
                     }
                     try {
-                        Thread.sleep(waitTime);
+                        OpenVRUtil.sleepNanos(waitTime);
                     } catch(Exception e) { }
                 }
             }

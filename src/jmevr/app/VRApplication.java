@@ -353,8 +353,7 @@ public abstract class VRApplication extends Application {
     /*
         where is the headset, after all positional tracking is complete?
         includes observer position, if any
-    */
-    
+    */    
     public static Vector3f getFinalObserverPosition() {
         if( VRviewmanager == null ) {
             if( VRApplication.observer == null ) {
@@ -364,7 +363,9 @@ public abstract class VRApplication extends Application {
         if( VRApplication.observer == null ) {
             return VRhardware.getPosition();
         } else {
-            return VRhardware.getPosition().addLocal(VRApplication.observer.getWorldTranslation());
+            Vector3f pos = VRhardware.getPosition();
+            VRApplication.observer.getWorldRotation().mult(pos, pos);
+            return pos.addLocal(VRApplication.observer.getWorldTranslation());
         }
     }
     
@@ -490,15 +491,15 @@ public abstract class VRApplication extends Application {
     public abstract void simpleInitApp();
     
     @Override
-    protected void finalize() throws Throwable {
-        super.finalize(); //To change body of generated methods, choose Tools | Templates.
-        if( VRSupportedOS ) {
+    public void destroy() {
+        if( VRhardware != null ) {
             VRhardware.destroy();
             for(int i=0;i<VRinput.size();i++) {
                 VRinput.get(i).destroy();
             }
             DirectVR.destroyDirectVR();
         }
+        super.destroy(); 
     }
     
     /*

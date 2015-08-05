@@ -8,6 +8,7 @@ import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdMatrix44_t;
 import org.lwjgl.LWJGLUtil;
@@ -18,16 +19,24 @@ import org.lwjgl.opengl.Display;
  * @author reden
  */
 public class OpenVRUtil {
+
+    private static final long SLEEP_PRECISION = TimeUnit.MILLISECONDS.toNanos(3);
+    private static final long SPIN_YIELD_PRECISION = TimeUnit.MILLISECONDS.toNanos(1);
     
+    public static void sleepNanos(long nanoDuration) throws InterruptedException { 
+        final long end = System.nanoTime() + nanoDuration; 
+        long timeLeft = nanoDuration; 
+        do { 
+            if (timeLeft > SLEEP_PRECISION) {
+                Thread.sleep(1); 
+            } else if (timeLeft > SPIN_YIELD_PRECISION) {
+                Thread.sleep(0); 
+            }
+            timeLeft = end - System.nanoTime(); 
+        } while (timeLeft > 0); 
+    }
+        
     public static Matrix4f convertSteamVRMatrix3ToMatrix4f(HmdMatrix34_t hmdMatrix, Matrix4f mat){
-		/*matPose.m[0][0], matPose.m[1][0], matPose.m[2][0], 0.0,
-		matPose.m[0][1], matPose.m[1][1], matPose.m[2][1], 0.0,
-		matPose.m[0][2], matPose.m[1][2], matPose.m[2][2], 0.0,
-		matPose.m[0][3], matPose.m[1][3], matPose.m[2][3], 1.0f        */        
-        /*mat.set(hmdMatrix.m[0], hmdMatrix.m[4], hmdMatrix.m[8], hmdMatrix.m[3], 
-                hmdMatrix.m[1], hmdMatrix.m[5], hmdMatrix.m[9], hmdMatrix.m[7], 
-                hmdMatrix.m[2], hmdMatrix.m[6], hmdMatrix.m[10], hmdMatrix.m[11], 
-                0f, 0f, 0f, 1f);*/
         mat.set(hmdMatrix.m[0], hmdMatrix.m[1], hmdMatrix.m[2], hmdMatrix.m[3], 
                 hmdMatrix.m[4], hmdMatrix.m[5], hmdMatrix.m[6], hmdMatrix.m[7], 
                 hmdMatrix.m[8], hmdMatrix.m[9], hmdMatrix.m[10], hmdMatrix.m[11], 

@@ -193,18 +193,16 @@ public class OpenVR {
     public Vector3f getPosition() {
         // the hmdPose comes in rotated funny, fix that here
         hmdPose.toTranslationVector(posStore);
-        posStore.y = -posStore.y; // flip Y access to account for different convention
-        getOrientation(); // update rotStore
-        rotStore.inverseLocal().mult(posStore, posStore);
+        posStore.x = -posStore.x;
+        posStore.z = -posStore.z;
         return posStore;
     }
     
     public void getPositionAndOrientation(Vector3f storePos, Quaternion storeRot) {
-        // the hmdPose comes in rotated funny, fix that here
         hmdPose.toTranslationVector(storePos);
-        storePos.y = -storePos.y; // flip Y access to account for different convention
-        getOrientation(); // update rotStore
-        storeRot.set(rotStore).inverseLocal().mult(storePos, storePos);        
+        storePos.x = -storePos.x;
+        storePos.z = -storePos.z;
+        storeRot.set(getOrientation());
     }    
     
     public void updatePose(){
@@ -264,7 +262,7 @@ public class OpenVR {
             }
         }
         if ( hmdTrackedDevicePoses[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd].bPoseIsValid != 0 ){
-            poseMatrices[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd].invert(hmdPose);
+            hmdPose.set(poseMatrices[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd]);
         } else {
             hmdPose.set(Matrix4f.IDENTITY);
         }

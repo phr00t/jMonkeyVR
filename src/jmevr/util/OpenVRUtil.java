@@ -20,8 +20,8 @@ import org.lwjgl.opengl.Display;
  */
 public class OpenVRUtil {
 
-    private static final long SLEEP_PRECISION = TimeUnit.MILLISECONDS.toNanos(3);
-    private static final long SPIN_YIELD_PRECISION = TimeUnit.MILLISECONDS.toNanos(1);
+    private static final long SLEEP_PRECISION = TimeUnit.MILLISECONDS.toNanos(4);
+    private static final long SPIN_YIELD_PRECISION = TimeUnit.MILLISECONDS.toNanos(2);
     
     public static void sleepNanos(long nanoDuration) throws InterruptedException { 
         final long end = System.nanoTime() + nanoDuration; 

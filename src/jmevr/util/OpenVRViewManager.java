@@ -6,7 +6,6 @@ package jmevr.util;
 
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -27,7 +26,6 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
-import com.jme3.util.SafeArrayList;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
@@ -39,7 +37,6 @@ import jmevr.post.CartoonSSAO;
 import jmevr.post.FastSSAO;
 import jmevr.shadow.VRDirectionalLightShadowRenderer;
 import jopenvr.JOpenVRLibrary;
-import jopenvr.VRTextureBounds_t;
 import org.lwjgl.LWJGLUtil;
 
 /**
@@ -48,7 +45,7 @@ import org.lwjgl.LWJGLUtil;
  */
 public class OpenVRViewManager {
 
-    private VRApplication app;
+    private final VRApplication app;
     private Camera camLeft,camRight;
     private ViewPort viewPortLeft, viewPortRight;
     private FilterPostProcessor ppLeft, ppRight;
@@ -261,14 +258,14 @@ public class OpenVRViewManager {
         handles moving filters from the main view to each eye
     */
     public void moveScreenProcessingToEyes() {
-        syncScreenProcessing(VRApplication.getMainVRApp().getViewPort().getProcessors());
+        syncScreenProcessing(VRApplication.getMainVRApp().getViewPort());
         VRApplication.getMainVRApp().getViewPort().clearProcessors();
     }
     
     /*
         sets the two views to use the list of processors
     */
-    public void syncScreenProcessing(SafeArrayList<SceneProcessor> processors) {
+    public void syncScreenProcessing(ViewPort sourceViewport) {
         // setup post processing filters
         if( ppRight == null ) {
             ppRight = new FilterPostProcessor(app.getAssetManager());               
@@ -284,26 +281,31 @@ public class OpenVRViewManager {
         viewPortRight.addProcessor(ppRight);
         // go through all of the filters in the processors list
         // add them to the left viewport processor & clone them to the right
-        for(SceneProcessor sceneProcessor : processors) {
+        for(SceneProcessor sceneProcessor : sourceViewport.getProcessors()) {
             if (sceneProcessor instanceof FilterPostProcessor) {
                 for(Filter f : ((FilterPostProcessor)sceneProcessor).getFilterList() ) {
-                    ppLeft.addFilter(f);
-                    // clone to the right
-                    Filter f2;
-                    if(f instanceof FogFilter){
-                        f2 = FilterUtil.cloneFogFilter((FogFilter)f); 
-                    } else if (f instanceof CartoonSSAO ) {
-                        f2 = new CartoonSSAO((CartoonSSAO)f);
-                    } else if (f instanceof FastSSAO) {
-                        f2 = new FastSSAO((FastSSAO)f);
-                    } else if (f instanceof SSAOFilter){
-                        f2 = FilterUtil.cloneSSAOFilter((SSAOFilter)f);
-                    } else if (f instanceof DirectionalLightShadowFilter){
-                        f2 = FilterUtil.cloneDirectionalLightShadowFilter(app.getAssetManager(), (DirectionalLightShadowFilter)f);
+                    if( f instanceof TranslucentBucketFilter ) {
+                        // just remove this filter, we will add it at the end manually
+                        ((FilterPostProcessor)sceneProcessor).removeFilter(f);
                     } else {
-                        f2 = f; // dof, bloom, lightscattering etc.
-                    }                    
-                    ppRight.addFilter(f2);
+                        ppLeft.addFilter(f);
+                        // clone to the right
+                        Filter f2;
+                        if(f instanceof FogFilter){
+                            f2 = FilterUtil.cloneFogFilter((FogFilter)f); 
+                        } else if (f instanceof CartoonSSAO ) {
+                            f2 = new CartoonSSAO((CartoonSSAO)f);
+                        } else if (f instanceof FastSSAO) {
+                            f2 = new FastSSAO((FastSSAO)f);
+                        } else if (f instanceof SSAOFilter){
+                            f2 = FilterUtil.cloneSSAOFilter((SSAOFilter)f);
+                        } else if (f instanceof DirectionalLightShadowFilter){
+                            f2 = FilterUtil.cloneDirectionalLightShadowFilter(app.getAssetManager(), (DirectionalLightShadowFilter)f);
+                        } else {
+                            f2 = f; // dof, bloom, lightscattering etc.
+                        }                    
+                        ppRight.addFilter(f2);
+                    }
                 }
             } else if (sceneProcessor instanceof VRDirectionalLightShadowRenderer) {
                 // shadow processing
@@ -312,6 +314,7 @@ public class OpenVRViewManager {
                 VRDirectionalLightShadowRenderer dlsrRight = dlsr.clone();
                 dlsrRight.setLight(dlsr.getLight());
                 viewPortRight.getProcessors().add(0, dlsrRight);
+                viewPortLeft.getProcessors().add(0, sceneProcessor);
             }
         }
         // make sure each has a translucent filter renderer

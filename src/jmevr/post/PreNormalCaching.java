@@ -11,6 +11,7 @@ import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Texture2D;
+import jmevr.app.VRApplication;
 
 /**
  *
@@ -43,7 +44,12 @@ public class PreNormalCaching {
     }
     
     public static void resetCache() {
-        lastNormalPassesCount = curCount;
+        if( VRApplication.isInVR() == false ) {
+            // only use this feature if we are NOT in VR
+            // we can't use the same normal information for another eye,
+            // because it will be different!
+            lastNormalPassesCount = curCount;
+        }
         cachedPreNormals = null;
         curCount = 0;
     }

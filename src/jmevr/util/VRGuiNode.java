@@ -25,11 +25,11 @@ public class VRGuiNode extends Node {
         MANUAL, AUTO
     }
     
-    private Camera cam;
+    private Camera camLeft, camRight;
     private float guiDistance, guiScale = 1f;
     private POSITIONING_MODE posMode = POSITIONING_MODE.AUTO;
     
-    private final Vector3f look = new Vector3f(), left = new Vector3f();
+    private final Vector3f look = new Vector3f(), left = new Vector3f(), temppos = new Vector3f();
     private final Matrix3f orient = new Matrix3f();
     private final Quaternion tempq = new Quaternion();
     protected boolean wantsReposition;
@@ -72,24 +72,25 @@ public class VRGuiNode extends Node {
         Vector3f guiPos = getLocalTranslation();
         float useScale = guiScale * 0.6f * 0.0035f;
         setLocalScale(guiDistance * useScale, guiDistance * useScale, 0.05f);
-        if( cam != null ) {
-            Vector3f opos = cam.getLocation();
-            guiPos.set(guiDistance * 1.415f * oWidth / 800f * guiScale * 0.6f,
+        if( camLeft != null && camRight != null ) {
+            // get middle point
+            temppos.set(camLeft.getLocation()).interpolateLocal(camRight.getLocation(), 0.5f);
+            guiPos.set(guiDistance * 1.405f * oWidth / 800f * guiScale * 0.6f,
                       -guiDistance * oHeight * guiScale * 0.63f / 600f, guiDistance);
-            cam.getRotation().mult(guiPos, guiPos);
-            guiPos.x += opos.x;
-            guiPos.y += opos.y;
-            guiPos.z += opos.z;
+            camLeft.getRotation().mult(guiPos, guiPos);
+            guiPos.x += temppos.x;
+            guiPos.y += temppos.y;
+            guiPos.z += temppos.z;
             rotateScreen();
         }
     }
     
     private void rotateScreen() {
         // coopt diff for our in direction:
-        look.set(cam.getDirection()).negateLocal();
+        look.set(camLeft.getDirection()).negateLocal();
         // coopt loc for our left direction:
-        left.set(cam.getLeft()).negateLocal();
-        orient.fromAxes(left, cam.getUp(), look);
+        left.set(camLeft.getLeft()).negateLocal();
+        orient.fromAxes(left, camLeft.getUp(), look);
         Node myparent = getParent();
         Quaternion rot = tempq.fromRotationMatrix(orient);
         if ( myparent != null ) {
@@ -118,7 +119,8 @@ public class VRGuiNode extends Node {
     public void setupGui(ViewPort left, ViewPort right, int origWidth, int origHeight) {
         left.attachScene(this);
         right.attachScene(this);
-        cam = left.getCamera();
+        camLeft = left.getCamera();
+        camRight = right.getCamera();
         oHeight = origHeight;
         oWidth = origWidth;
         setPositioningMode(posMode);

@@ -7,12 +7,9 @@ import com.jme3.app.Application;
 import com.jme3.app.LostFocusBehavior;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppState;
-import com.jme3.cursors.plugins.JmeCursor;
 import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.lwjgl.LwjglMouseInput;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -41,7 +38,6 @@ import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
 import jmevr.util.DirectVR;
 import jmevr.util.OpenVRViewManager;
-import jmevr.util.OpenVRUtil;
 import jmevr.util.VRGuiNode;
 import jmevr.util.VRGuiNode.POSITIONING_MODE;
 import org.lwjgl.Sys;
@@ -212,7 +208,7 @@ public abstract class VRApplication extends Application {
                     VRwindow = new JFrame(VRdev.getDefaultConfiguration());
                     VRwindow.setSize(useDM.getWidth(), useDM.getHeight());
                     VRwindow.setUndecorated(true);
-                    VRwindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    VRwindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     settings.setWidth(useDM.getWidth());
                     settings.setHeight(useDM.getHeight());
                     settings.setBitsPerPixel(useDM.getBitDepth());
@@ -421,6 +417,11 @@ public abstract class VRApplication extends Application {
             return;
         }
 
+        // if we are using the VRwindow and it was disposed, exit the app
+        if( VRwindow != null && VRwindow.isDisplayable() == false ) {
+            destroy();
+        }
+        
         float tpf = timer.getTimePerFrame() * speed;
         
         // update states
@@ -498,8 +499,10 @@ public abstract class VRApplication extends Application {
                 VRinput.get(i).destroy();
             }
             DirectVR.destroyDirectVR();
-        }
-        super.destroy(); 
+            VRhardware = null;
+        }        
+        super.destroy();
+        Runtime.getRuntime().exit(0);
     }
     
     /*

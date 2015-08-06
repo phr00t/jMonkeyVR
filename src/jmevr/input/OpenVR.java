@@ -181,7 +181,7 @@ public class OpenVR {
     }
 
     public float getInterpupillaryDistance() {
-        if( vrsystem == null ) return 0.064f;
+        if( vrsystem == null ) return 0.065f;
         return JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_UserIpdMeters_Float, hmdErrorStore);
     }
     
@@ -297,8 +297,8 @@ public class OpenVR {
     public Vector3f getHMDVectorPoseLeftEye() {
         if( hmdPoseLeftEyeVec == null ) {
             hmdPoseLeftEyeVec = getHMDMatrixPoseLeftEye().toTranslationVector();
-            // set default IPD if none
-            if( hmdPoseLeftEyeVec.x == 0f ) hmdPoseLeftEyeVec.x = 0.065f * -0.5f;
+            // set default IPD if none or broken
+            if( hmdPoseLeftEyeVec.x >= 0.080f * 0.5f || hmdPoseLeftEyeVec.x <= 0.040f * 0.5f ) hmdPoseLeftEyeVec.x = 0.065f *  0.5f;
         }
         return hmdPoseLeftEyeVec;
     }
@@ -306,8 +306,8 @@ public class OpenVR {
     public Vector3f getHMDVectorPoseRightEye() {
         if( hmdPoseRightEyeVec == null ) {
             hmdPoseRightEyeVec = getHMDMatrixPoseRightEye().toTranslationVector();
-            // set default IPD if none
-            if( hmdPoseRightEyeVec.x == 0f ) hmdPoseRightEyeVec.x = 0.065f * 0.5f;
+            // set default IPD if none or broken
+            if( hmdPoseRightEyeVec.x <= 0.080f * -0.5f || hmdPoseRightEyeVec.x >= 0.040f * -0.5f ) hmdPoseRightEyeVec.x = 0.065f * -0.5f;
         }
         return hmdPoseRightEyeVec;
     }

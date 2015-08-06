@@ -1,10 +1,13 @@
 /*
-    - test changing GUI distance, does it stay centered?
-      - why does 4089 seem so high & too the left?
+    x test changing GUI distance, does it stay centered? *FIXED*
+    x exit better with JFrame
+    x filter problems in 4089 causing same eye to be shown
+    x shadows & SSAO filter problems
+    - set default IPD if given value is too low/high *NEEDS TESTING*
+    - needs dynamic, temporary latency fix when frames are dropped
+      - just to prevent a string of dropped frames
+    - new GUI positioning mode that follows spatial
     - mouse cursor still visible in VR JFrame...
-    - filter problems in 4089 causing same eye to be shown
-      - narrow down which filter it is causing problems
-        - probably needs to be better cloned
  */
 package jmevr;
 

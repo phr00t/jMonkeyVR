@@ -26,10 +26,6 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.ptr.LongByReference;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
 import jmevr.input.OpenVR;
@@ -37,7 +33,6 @@ import jmevr.post.CartoonSSAO;
 import jmevr.post.FastSSAO;
 import jmevr.shadow.VRDirectionalLightShadowRenderer;
 import jopenvr.JOpenVRLibrary;
-import org.lwjgl.LWJGLUtil;
 
 /**
  *
@@ -130,27 +125,6 @@ public class OpenVRViewManager {
         setupVRScene();
                     
         moveScreenProcessingToEyes();
-        
-        if( OpenVR.getVRCompositorInstance() == null && OpenVR.getVRSystemInstance() != null && VRApplication.tryDirectMode() ) {
-            if( LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_WINDOWS ) {
-                // try to setup direct mode on windows
-                long hWnd;
-                if( VRApplication.getJFrame() == null ) {
-                    hWnd = OpenVRUtil.getNativeWindow();
-                } else {
-                    WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, VRApplication.getJFrame().getTitle());
-                    hWnd = Pointer.nativeValue(hwnd.getPointer());
-                }
-                if( hWnd > 0 ) {                
-                    // try to make a D3D device for the output window
-                    DirectVR.initDirectVR(origWidth, origHeight, hWnd);
-                    // tell IVR_System what window we are using
-                    LongByReference phWnd = new LongByReference();
-                    phWnd.setValue(hWnd);
-                    JOpenVRLibrary.VR_IVRSystem_AttachToWindow(OpenVR.getVRSystemInstance(), phWnd.getPointer());
-                }
-            }
-        }
         
         VRMouseManager.init();
         

@@ -21,7 +21,6 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
-import com.jme3.system.lwjgl.LwjglAbstractDisplay;
 import java.awt.Cursor;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -36,11 +35,9 @@ import javax.swing.JFrame;
 import jmevr.input.OpenVR;
 import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
-import jmevr.util.DirectVR;
 import jmevr.util.OpenVRViewManager;
 import jmevr.util.VRGuiNode;
 import jmevr.util.VRGuiNode.POSITIONING_MODE;
-import org.lwjgl.Sys;
 
 /**
  *
@@ -62,7 +59,7 @@ public abstract class VRApplication extends Application {
     
     private float fFar = 1000f, fNear = 1f;
     
-    private static boolean useCompositor = true, compositorOS, useJFrame = true, tryDirect = false;
+    private static boolean useCompositor = true, compositorOS, useJFrame = true;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
         
     static {
@@ -89,10 +86,6 @@ public abstract class VRApplication extends Application {
     */
     public static JFrame getJFrame() {
         return VRwindow;
-    }
-    
-    public static boolean tryDirectMode() {
-        return tryDirect;
     }
     
     /*
@@ -261,12 +254,10 @@ public abstract class VRApplication extends Application {
         use the SteamVR Compositor? (defaults to true)
         use the JFrame "easy extended" mode, if SteamVR Compositor isn't used? (defaults to true)
         force VR mode, even if a device isn't detected? Good for testing (defaults to false)
-        tryDirect, try direct mode (DOESNT WORK YET, TESTING ONLY)
     */
-    public void preconfigureVRApp(boolean useCompositor, boolean useJFrame, boolean forceVR, boolean tryDirect) {        
+    public void preconfigureVRApp(boolean useCompositor, boolean useJFrame, boolean forceVR) {        
         VRApplication.useCompositor = useCompositor;
         VRApplication.useJFrame = useJFrame;
-        VRApplication.tryDirect = tryDirect;        
         if( forceVR ) {
             // this will make it work even if an HMD isn't present
             VRhardware.forceInitializeSuccess();
@@ -467,9 +458,6 @@ public abstract class VRApplication extends Application {
         if( isInVR() ) {
             if( compositorAllowed() == false || OpenVR.getVRSystemInstance() == null ) {
                 System.out.println("Skipping SteamVR compositor!");
-                LwjglAbstractDisplay.runRightBeforeVSync = () -> {
-                    OpenVR._enteringVSyncTime -= Sys.getTime();
-                };
             } else {
                 VRhardware.initOpenVRCompositor();
             }
@@ -498,7 +486,6 @@ public abstract class VRApplication extends Application {
             for(int i=0;i<VRinput.size();i++) {
                 VRinput.get(i).destroy();
             }
-            DirectVR.destroyDirectVR();
             VRhardware = null;
         }        
         super.destroy();

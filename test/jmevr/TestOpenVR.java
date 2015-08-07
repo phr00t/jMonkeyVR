@@ -3,7 +3,7 @@
     x exit better with JFrame
     x filter problems in 4089 causing same eye to be shown
     x shadows & SSAO filter problems
-    - set default IPD if given value is too low/high *NEEDS TESTING*
+    x set default IPD if given value is too low/high
     - needs dynamic, temporary latency fix when frames are dropped
       - just to prevent a string of dropped frames
     - new GUI positioning mode that follows spatial
@@ -39,7 +39,7 @@ public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
-        test.preconfigureVRApp(false, true, true, false);
+        test.preconfigureVRApp(false, true, true);
         OpenVR.printLatencyInfoToConsole(true);
         test.setFrustrumNearFar(0.5f, 512f);
         test.start();

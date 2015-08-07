@@ -219,7 +219,7 @@ public class OpenVR {
             } else if( latencyWaitTime < timePerFrame * 1000000000.0 ) {
                 // didn't skip a frame, lets try waiting longer to improve latency
                 frameCountRun++;
-                latencyWaitTime += Math.round(Math.pow(frameCountRun / 10.0, 3.0));
+                latencyWaitTime += Math.round(Math.pow(frameCountRun / 10.0, 2.0));
             }
 
             frameCount = nowCount;            

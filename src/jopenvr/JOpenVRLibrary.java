@@ -7,6 +7,7 @@ import com.sun.jna.PointerType;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.PointerByReference;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -189,7 +190,23 @@ public class JOpenVRLibrary implements Library {
 		public static final int TrackedPropertyError_TrackedProp_StringExceedsMaximumLength = 8;
 	};
 	/**
-	 * <i>native declaration : headers\openvr_capi.h:138</i><br>
+	 * <i>native declaration : D:\openvr\headers\openvr_capi.h:143</i><br>
+	 * enum values
+	 */
+	public static interface VRStatusState_t {
+		/** <i>native declaration : D:\openvr\headers\openvr_capi.h:145</i> */
+		public static final int VRStatusState_t_State_OK = 0;
+		/** <i>native declaration : D:\openvr\headers\openvr_capi.h:146</i> */
+		public static final int VRStatusState_t_State_Error = 1;
+		/** <i>native declaration : D:\openvr\headers\openvr_capi.h:147</i> */
+		public static final int VRStatusState_t_State_Warning = 2;
+		/** <i>native declaration : D:\openvr\headers\openvr_capi.h:148</i> */
+		public static final int VRStatusState_t_State_Undefined = 3;
+		/** <i>native declaration : D:\openvr\headers\openvr_capi.h:149</i> */
+		public static final int VRStatusState_t_State_NotSet = 4;
+	};
+	/**
+	 * <i>native declaration : D:\openvr\headers\openvr_capi.h:151</i><br>
 	 * enum values
 	 */
 	public static interface EVREventType {
@@ -253,6 +270,8 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_ProcessQuit = 701;
 		/** <i>native declaration : headers\openvr_capi.h:167</i> */
 		public static final int EVREventType_VREvent_ChaperoneDataHasChanged = 800;
+		public static final int EVREventType_VREvent_ChaperoneUniverseHasChanged = 801;
+		public static final int EVREventType_VREvent_StatusUpdate = 900;
 	};
 	/**
 	 * <i>native declaration : headers\openvr_capi.h:169</i><br>
@@ -396,6 +415,7 @@ public class JOpenVRLibrary implements Library {
 		/** <i>native declaration : headers\openvr_capi.h:218</i> */
 		public static final int HmdError_Init_PathRegistryNotWritable = 113;
 		/** <i>native declaration : headers\openvr_capi.h:219</i> */
+		public static final int HmdError_Init_AppInfoInitFailed = 114;
 		public static final int HmdError_Driver_Failed = 200;
 		/** <i>native declaration : headers\openvr_capi.h:220</i> */
 		public static final int HmdError_Driver_Unknown = 201;
@@ -501,6 +521,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int VROverlayFlags_Curved = 1;
 		/** <i>native declaration : headers\openvr_capi.h:297</i> */
 		public static final int VROverlayFlags_RGSS4X = 2;
+		public static final int VROverlayFlags_NoDashboardTab = 3;
 	};
 	/**
 	 * <i>native declaration : headers\openvr_capi.h:299</i><br>
@@ -511,6 +532,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int NotificationError_t_k_ENotificationError_OK = 0;
 		/** <i>native declaration : headers\openvr_capi.h:302</i> */
 		public static final int NotificationError_t_k_ENotificationError_Fail = 1;
+		public static final int NotificationError_t_k_eNotificationError_InvalidParam = 2;
 	};
 	/**
 	 * <i>native declaration : headers\openvr_capi.h:304</i><br>
@@ -1991,6 +2013,30 @@ public class JOpenVRLibrary implements Library {
 	 */
 	public static native byte VR_IVRControlPanel_QuitProcess(Pointer instancePtr, int pidProcessToQuit);
 	/**
+	 * Original signature : <code>uint32_t VR_IVRControlPanel_StartVRProcess(intptr_t, const char*, const char**, uint32_t, const char*)</code><br>
+	 * <i>native declaration : D:\openvr\headers\openvr_capi.h:626</i><br>
+	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_StartVRProcess(java.nio.IntBuffer, java.lang.String, java.lang.String[], int, java.lang.String)} and {@link #VR_IVRControlPanel_StartVRProcess(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.PointerByReference, int, com.sun.jna.Pointer)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVRControlPanel_StartVRProcess(IntByReference instancePtr, Pointer pchExecutable, PointerByReference pchArguments, int unArgumentCount, Pointer pchWorkingDirectory);
+	/**
+	 * Original signature : <code>uint32_t VR_IVRControlPanel_StartVRProcess(intptr_t, const char*, const char**, uint32_t, const char*)</code><br>
+	 * <i>native declaration : D:\openvr\headers\openvr_capi.h:626</i>
+	 */ // unfortunately String[] isn't supported by JNA...
+	//public static native int VR_IVRControlPanel_StartVRProcess(Pointer instancePtr, String pchExecutable, String pchArguments[], int unArgumentCount, String pchWorkingDirectory);
+	/**
+	 * Original signature : <code>void VR_IVRControlPanel_SetMasterProcessToThis(intptr_t)</code><br>
+	 * <i>native declaration : D:\openvr\headers\openvr_capi.h:627</i><br>
+	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_SetMasterProcessToThis(java.nio.IntBuffer)} and {@link #VR_IVRControlPanel_SetMasterProcessToThis(com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	//public static native void VR_IVRControlPanel_SetMasterProcessToThis(Pointer instancePtr);
+	/**
+	 * Original signature : <code>void VR_IVRControlPanel_SetMasterProcessToThis(intptr_t)</code><br>
+	 * <i>native declaration : D:\openvr\headers\openvr_capi.h:627</i>
+	 */
+	public static native void VR_IVRControlPanel_SetMasterProcessToThis(Pointer instancePtr);
+	/**
 	 * Original signature : <code>uint32_t VR_IVRNotifications_GetErrorString(intptr_t, NotificationError_t, char*, uint32_t)</code><br>
 	 * <i>native declaration : headers\openvr_capi.h:612</i><br>
 	 * @deprecated use the safer methods {@link #VR_IVRNotifications_GetErrorString(java.nio.IntBuffer, int, java.nio.ByteBuffer, int)} and {@link #VR_IVRNotifications_GetErrorString(com.sun.jna.ptr.IntByReference, int, com.sun.jna.Pointer, int)} instead
@@ -2361,6 +2407,7 @@ public class JOpenVRLibrary implements Library {
 	};
         
         // couple consts not autogenerated
+	public static int k_unNotificationCatagoryMaxSize = 32;
         public static int k_unTrackingStringSize = 32;
         public static int k_unMaxTrackedDeviceCount = 16;
         public static int k_unTrackedDeviceIndex_Hmd = 0;

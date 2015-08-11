@@ -1,4 +1,4 @@
-<b>Want to see how good this library works?</b> <a href="https://drive.google.com/open?id=0Bza9ecEdICHGWkpUVnM2OWJDaTA">Free demo!</a>
+<b>Want to see how good this library works?</b> <a href="https://drive.google.com/file/d/0Bza9ecEdICHGMTJNRDNzcG9yWmM/view?usp=sharing">Free demo!</a>
 
 I recommend using Phr00t's jMonkeyEngine build here: https://github.com/phr00t/jmonkeyengine (the main jME3 build may work, but OpenVR-specific changes will be made first on Phr00t's build) -- you can just use the JAR/libs under the dist/ and lib/ folders
 

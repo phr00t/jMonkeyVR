@@ -30,6 +30,8 @@ import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
 import jmevr.input.OpenVR;
 import jmevr.post.CartoonSSAO;
+import jmevr.util.VRGuiNode;
+import jmevr.util.VRGuiNode.POSITIONING_MODE;
 
 /**
  *
@@ -77,6 +79,9 @@ public class TestOpenVR extends VRApplication {
         test.setHeight(128f);
         test.setPosition(settings.getWidth() * 0.5f - 64f, settings.getHeight() * 0.5f - 64f);
         guiNode.attachChild(test);
+        
+        // test new positioning mode
+        VRApplication.getVRGuiNode().setPositioningMode(POSITIONING_MODE.AUTO_OBSERVER);
         
         box.setMaterial(mat);
         

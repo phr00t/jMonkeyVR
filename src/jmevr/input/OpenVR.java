@@ -81,7 +81,7 @@ public class OpenVR {
 
     public boolean initialize() {
         hmdErrorStore = IntBuffer.allocate(1);
-        vrsystem = JOpenVRLibrary.VR_Init(hmdErrorStore);
+        vrsystem = JOpenVRLibrary.VR_Init(hmdErrorStore, JOpenVRLibrary.EVRApplicationType.EVRApplicationType_VRApplication_Scene);
         if( vrsystem == null || hmdErrorStore.get(0) != 0 ) {
             Pointer errstr = JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0));
             System.out.println("OpenVR Initialize Result: " + errstr.getString(0));

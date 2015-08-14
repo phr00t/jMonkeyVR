@@ -1,4 +1,4 @@
-<b>Want to see how good this library works?</b> <a href="https://drive.google.com/open?id=0Bza9ecEdICHGWkpUVnM2OWJDaTA">Free demo!</a>
+<b>Want to see how good this library works?</b> <a href="https://drive.google.com/file/d/0Bza9ecEdICHGMTJNRDNzcG9yWmM/view?usp=sharing">Free demo!</a>
 
 I recommend using Phr00t's jMonkeyEngine build here: https://github.com/phr00t/jmonkeyengine (the main jME3 build may work, but OpenVR-specific changes will be made first on Phr00t's build) -- you can just use the JAR/libs under the dist/ and lib/ folders
 
@@ -59,7 +59,7 @@ The VRGuiNode will try and keep things in the "Translucent" render bucket. If so
 
 It should be safe to have all of the children of the root VRGuiNode also be VRGuiNode.
 
-The VRGuiNode will operate as a normal node if a VR headset isn't initialized. For testing purposes without a VR headset, you can set forceVR to "true" in the preconfigureVRApp(disableVignette, maxFov, flipEyes, forceVR) call in step #2 above.
+The VRGuiNode will operate as a normal node if a VR headset isn't initialized. For testing purposes without a VR headset, you can set forceDebugEnableVR to "true" in the preconfigureVRApp call in step #2 above.
 
 <b>Adding Filters during runtime</b>
 
@@ -70,3 +70,5 @@ If you add filters during application intialization, they will be automatically 
 This handles moving them out of the VR scene & cloning them for each eye. It is safe to call this function even if you are not in VR mode (it will do nothing & return immediately in that case).
      
 See the TestOpenVR.java example for more usage information.
+
+<b>Don't be afraid to use the mouse!</b> Using inputManager.setCursorVisislbe(true) will work fine! This library will monitor mouse usage & replace the cursor with a 3D version at the GUI distance automatically. Make sure to use local translation comparisons against getCursorPosition() when determining if something is under the mouse cursor.

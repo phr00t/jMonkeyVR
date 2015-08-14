@@ -22,7 +22,7 @@ import jmevr.app.VRApplication;
 public class VRGuiNode extends Node {
     
     public enum POSITIONING_MODE {
-        MANUAL, AUTO
+        MANUAL, AUTO, AUTO_OBSERVER
     }
     
     private Camera camLeft, camRight;
@@ -66,26 +66,41 @@ public class VRGuiNode extends Node {
         wantsReposition = true;
     }
     
+    private void positionTo(Vector3f pos, Quaternion dir) {
+        Vector3f guiPos = getLocalTranslation();
+        guiPos.set(guiDistance * 1.405f * oWidth / 800f * guiScale * 0.6f,
+                  -guiDistance * oHeight * guiScale * 0.63f / 600f, guiDistance);
+        dir.mult(guiPos, guiPos);
+        guiPos.x += pos.x;
+        guiPos.y += pos.y;
+        guiPos.z += pos.z;        
+    }
+    
     protected void positionGuiNow() {
         wantsReposition = false;
         if( VRApplication.isInVR() == false ) return;
-        Vector3f guiPos = getLocalTranslation();
         float useScale = guiScale * 0.6f * 0.0035f;
         setLocalScale(guiDistance * useScale, guiDistance * useScale, 0.05f);
-        if( camLeft != null && camRight != null ) {
-            // get middle point
-            temppos.set(camLeft.getLocation()).interpolateLocal(camRight.getLocation(), 0.5f);
-            guiPos.set(guiDistance * 1.405f * oWidth / 800f * guiScale * 0.6f,
-                      -guiDistance * oHeight * guiScale * 0.63f / 600f, guiDistance);
-            camLeft.getRotation().mult(guiPos, guiPos);
-            guiPos.x += temppos.x;
-            guiPos.y += temppos.y;
-            guiPos.z += temppos.z;
-            rotateScreen();
+        switch( posMode ) {
+            case MANUAL:
+            case AUTO:
+                if( camLeft != null && camRight != null ) {
+                    // get middle point
+                    temppos.set(camLeft.getLocation()).interpolateLocal(camRight.getLocation(), 0.5f);
+                    positionTo(temppos, camLeft.getRotation());
+                }
+                break;
+            case AUTO_OBSERVER:
+                Spatial obs = VRApplication.getObserver();
+                if( obs != null ) {
+                    positionTo(obs.getWorldTranslation(), obs.getWorldRotation());
+                }
+                break;
         }
+        rotateScreenToCamera();
     }
     
-    private void rotateScreen() {
+    private void rotateScreenToCamera() {
         // coopt diff for our in direction:
         look.set(camLeft.getDirection()).negateLocal();
         // coopt loc for our left direction:

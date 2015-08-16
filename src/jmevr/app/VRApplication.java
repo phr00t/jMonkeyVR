@@ -62,6 +62,10 @@ public abstract class VRApplication extends Application {
     private static boolean useCompositor = true, compositorOS, useJFrame = true;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
     
+    static {
+        System.setProperty("sun.java2d.opengl", "True");                        
+    }
+    
     private class VRListener implements ActionListener{
 
         public void onAction(String name, boolean isPressed, float tpf) {
@@ -182,8 +186,6 @@ public abstract class VRApplication extends Application {
             // did we get the VR device?
             if( VRdev != null ) {
                 // set properties for VR acceleration
-                System.setProperty("sun.java2d.transaccel", "True");
-                System.setProperty("sun.java2d.opengl", "True");                
                 try {   
                     java.awt.DisplayMode useDM = null;
                     int max = 0;

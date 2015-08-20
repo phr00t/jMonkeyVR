@@ -4,9 +4,8 @@
     x filter problems in 4089 causing same eye to be shown
     x shadows & SSAO filter problems
     x set default IPD if given value is too low/high
-    - needs dynamic, temporary latency fix when frames are dropped
-      - just to prevent a string of dropped frames
-    - new GUI positioning mode that follows spatial
+    x needs dynamic, temporary latency fix when frames are dropped
+    - new GUI positioning mode that follows spatial *BUGGY*
     - mouse cursor still visible in VR JFrame...
  */
 package jmevr;
@@ -30,7 +29,6 @@ import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
 import jmevr.input.OpenVR;
 import jmevr.post.CartoonSSAO;
-import jmevr.util.VRGuiNode;
 import jmevr.util.VRGuiNode.POSITIONING_MODE;
 
 /**
@@ -41,7 +39,7 @@ public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
-        test.preconfigureVRApp(false, true, true);
+        test.preconfigureVRApp(true, true, true);
         OpenVR.printLatencyInfoToConsole(true);
         test.setFrustrumNearFar(0.5f, 512f);
         test.start();
@@ -80,8 +78,8 @@ public class TestOpenVR extends VRApplication {
         test.setPosition(settings.getWidth() * 0.5f - 64f, settings.getHeight() * 0.5f - 64f);
         guiNode.attachChild(test);
         
-        // test new positioning mode
-        VRApplication.getVRGuiNode().setPositioningMode(POSITIONING_MODE.AUTO_OBSERVER);
+        // test any positioning mode here (defaults to AUTO)
+        VRApplication.getVRGuiNode().setPositioningMode(POSITIONING_MODE.AUTO);
         
         box.setMaterial(mat);
         

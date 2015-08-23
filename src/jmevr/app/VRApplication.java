@@ -1,6 +1,3 @@
-
-// TODO: check if SteamVR is even installed!
-
 package jmevr.app;
 
 import com.jme3.app.Application;
@@ -254,13 +251,9 @@ public abstract class VRApplication extends Application {
         use the JFrame "easy extended" mode, if SteamVR Compositor isn't used? (defaults to true)
         force VR mode, even if a device isn't detected? Good for testing (defaults to false)
     */
-    public void preconfigureVRApp(boolean useCompositor, boolean useJFrame, boolean forceVR) {        
+    public void preconfigureVRApp(boolean useCompositor, boolean useJFrame) {        
         VRApplication.useCompositor = useCompositor;
         VRApplication.useJFrame = useJFrame;
-        if( forceVR ) {
-            // this will make it work even if an HMD isn't present
-            VRhardware.forceInitializeSuccess();
-        }               
     }
     
     public static ArrayList<VRInput> getVRinputs() {

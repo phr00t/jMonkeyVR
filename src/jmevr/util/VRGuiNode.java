@@ -93,7 +93,7 @@ public class VRGuiNode extends Node {
             case AUTO_OBSERVER:
                 Spatial obs = VRApplication.getObserver();
                 if( obs != null ) {
-                    positionTo(obs.getWorldTranslation(), obs.getWorldRotation());
+                    positionTo(obs.getWorldTranslation(), camLeft.getRotation());
                 }
                 break;
         }

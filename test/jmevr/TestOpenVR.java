@@ -39,7 +39,7 @@ public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
-        test.preconfigureVRApp(true, true, true);
+        test.preconfigureVRApp(false, true);
         OpenVR.printLatencyInfoToConsole(true);
         test.setFrustrumNearFar(0.5f, 512f);
         test.start();
@@ -79,7 +79,7 @@ public class TestOpenVR extends VRApplication {
         guiNode.attachChild(test);
         
         // test any positioning mode here (defaults to AUTO)
-        VRApplication.getVRGuiNode().setPositioningMode(POSITIONING_MODE.AUTO);
+        VRApplication.getVRGuiNode().setPositioningMode(POSITIONING_MODE.AUTO_OBSERVER);
         
         box.setMaterial(mat);
         

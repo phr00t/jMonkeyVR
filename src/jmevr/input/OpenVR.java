@@ -29,7 +29,7 @@ public class OpenVR {
 
     private static Pointer vrsystem;
     private static Pointer vrCompositor;
-    private static boolean forceInitialize = false, initSuccess = false;
+    private static boolean initSuccess = false;
     
     private static IntBuffer hmdDisplayFrequency;
     private static TrackedDevicePose_t.ByReference hmdTrackedDevicePoseReference;
@@ -125,16 +125,12 @@ public class OpenVR {
         }
     }
 
-    public void forceInitializeSuccess() {
-        forceInitialize = true;
-    }
-
     public void destroy() {
         JOpenVRLibrary.VR_Shutdown();
     }
 
     public boolean isInitialized() {
-        return forceInitialize || initSuccess;
+        return initSuccess;
     }
 
     public void reset() {
@@ -155,10 +151,18 @@ public class OpenVR {
         }
     }
     
-    public float getFOV() {
-        if( vrsystem == null ) return 70f;
-        float val = JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewBottomDegrees_Float, hmdErrorStore);
-        if( val <= 0f ) return 95f;
+    public float getFOV(int dir) {
+        float val = 0f;
+        if( vrsystem != null ) {      
+            val = JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, dir, hmdErrorStore);
+        }
+        // verification of number
+        if( val == 0f ) {
+            return 50f;
+        } else if( val <= 10f ) {
+            // most likely a radian number
+            return val * 57.2957795f;
+        }
         return val;
     }
 

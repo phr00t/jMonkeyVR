@@ -304,16 +304,21 @@ public class OpenVRViewManager {
         float fNear = origCam.getFrustumNear();
         // restore frustrum on distortion scene cam
         origCam.setFrustumFar(100f);
-        origCam.setFrustumNear(1f);
+        origCam.setFrustumNear(1f); 
         
         camLeft = origCam.clone();  
         origWidth = camLeft.getWidth();
         origHeight = camLeft.getHeight();
         
-        camLeft.setFrustumPerspective(VRApplication.getVRHardware().getFOV(), 
-                                      origWidth / origHeight,
-                                      fNear, fFar);                       
+        float fbot = -VRApplication.getVRHardware().getFOV(JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewBottomDegrees_Float);
+        float ftop = VRApplication.getVRHardware().getFOV(JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewTopDegrees_Float);
+        float fleft = -VRApplication.getVRHardware().getFOV(JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewLeftDegrees_Float);
+        float fright = VRApplication.getVRHardware().getFOV(JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewRightDegrees_Float);
+        float height = ftop - fbot;
+        float width = fright - fleft;
         
+        camLeft.setFrustumPerspective(height, width / height, fNear, fFar);                                      
+                
         prepareCameraSize(camLeft);
         camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));
         viewPortLeft = setupViewBuffers(camLeft, LEFT_VIEW_NAME);

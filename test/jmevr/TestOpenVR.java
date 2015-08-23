@@ -5,7 +5,7 @@
     x shadows & SSAO filter problems
     x set default IPD if given value is too low/high
     x needs dynamic, temporary latency fix when frames are dropped
-    - new GUI positioning mode that follows spatial *BUGGY*
+    x new GUI positioning mode that follows spatial
     - mouse cursor still visible in VR JFrame...
  */
 package jmevr;
@@ -39,7 +39,7 @@ public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
-        test.preconfigureVRApp(false, true);
+        test.preconfigureVRApp(true, true);
         OpenVR.printLatencyInfoToConsole(true);
         test.setFrustrumNearFar(0.5f, 512f);
         test.start();

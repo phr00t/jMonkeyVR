@@ -40,7 +40,7 @@ public class TestOpenVR extends VRApplication {
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
         test.preconfigureVRApp(true, true);
-        OpenVR.printLatencyInfoToConsole(true);
+        OpenVR.printLatencyInfoToConsole(false);
         test.setFrustrumNearFar(0.5f, 512f);
         test.start();
     }

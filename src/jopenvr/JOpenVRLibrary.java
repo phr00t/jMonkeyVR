@@ -26,8 +26,8 @@ public class JOpenVRLibrary implements Library {
 	}
 	/** enum values */
 	public static interface Hmd_Eye {
-		public static final int Hmd_Eye_Eye_Left = 1;
-		public static final int Hmd_Eye_Eye_Right = 0;
+		public static final int Hmd_Eye_Eye_Left = 0;
+		public static final int Hmd_Eye_Eye_Right = 1;
 	};
 	/** enum values */
 	public static interface GraphicsAPIConvention {

@@ -187,7 +187,7 @@ public abstract class VRApplication extends Application {
                     java.awt.DisplayMode useDM = null;
                     int max = 0;
                     for(java.awt.DisplayMode dm : VRdev.getDisplayModes()) {
-                        int check = dm.getHeight() + dm.getWidth() + dm.getRefreshRate();
+                        int check = dm.getHeight() + dm.getWidth() + dm.getRefreshRate() + dm.getBitDepth();
                         if( check > max ) {
                             max = check;
                             useDM = dm;
@@ -241,7 +241,7 @@ public abstract class VRApplication extends Application {
         }
         
         //re-setting settings they can have been merged from the registry.
-        settings.setSwapBuffers(true); // make sure this is set to true
+        settings.setSwapBuffers(true);
         setSettings(settings);
         start(JmeContext.Type.Display, false);
     }    

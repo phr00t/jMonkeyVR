@@ -443,6 +443,8 @@ public abstract class VRApplication extends Application {
         // update VR pose & cameras
         if( VRviewmanager != null ) {
             VRviewmanager.update(tpf);           
+        } else if( VRApplication.observer != null ) {
+            getCamera().setFrame(VRApplication.observer.getWorldTranslation(), VRApplication.observer.getWorldRotation());
         }
         
         renderManager.render(tpf, context.isRenderable());

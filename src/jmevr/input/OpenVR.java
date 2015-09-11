@@ -275,7 +275,10 @@ public class OpenVR {
         if( hmdPoseLeftEyeVec == null ) {
             hmdPoseLeftEyeVec = getHMDMatrixPoseLeftEye().toTranslationVector();
             // set default IPD if none or broken
-            if( hmdPoseLeftEyeVec.x <= 0.080f * -0.5f || hmdPoseLeftEyeVec.x >= 0.040f * -0.5f ) hmdPoseLeftEyeVec.x = 0.065f * -0.5f;
+            if( hmdPoseLeftEyeVec.x <= 0.080f * -0.5f || hmdPoseLeftEyeVec.x >= 0.040f * -0.5f ) {
+                hmdPoseLeftEyeVec.x = 0.065f * -0.5f;
+            }
+            hmdPoseLeftEyeVec.x *= -1f; // it seems these need flipping
         }
         return hmdPoseLeftEyeVec;
     }
@@ -284,7 +287,10 @@ public class OpenVR {
         if( hmdPoseRightEyeVec == null ) {
             hmdPoseRightEyeVec = getHMDMatrixPoseRightEye().toTranslationVector();
             // set default IPD if none or broken
-            if( hmdPoseRightEyeVec.x >= 0.080f * 0.5f || hmdPoseRightEyeVec.x <= 0.040f * 0.5f ) hmdPoseRightEyeVec.x = 0.065f * 0.5f;
+            if( hmdPoseRightEyeVec.x >= 0.080f * 0.5f || hmdPoseRightEyeVec.x <= 0.040f * 0.5f ) {
+                hmdPoseRightEyeVec.x = 0.065f * 0.5f;
+            }
+            hmdPoseRightEyeVec.x *= -1f; // it seems these need flipping
         }
         return hmdPoseRightEyeVec;
     }

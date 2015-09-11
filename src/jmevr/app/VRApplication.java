@@ -35,6 +35,7 @@ import jmevr.post.PreNormalCaching;
 import jmevr.util.OpenVRViewManager;
 import jmevr.util.VRGuiNode;
 import jmevr.util.VRGuiNode.POSITIONING_MODE;
+import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
 
 /**
  *
@@ -60,7 +61,9 @@ public abstract class VRApplication extends Application {
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
     
     static {
-        System.setProperty("sun.java2d.opengl", "True");                        
+        if( VR_IsHmdPresent() != 0 ) {
+            System.setProperty("sun.java2d.opengl", "True");
+        }                        
     }
     
     private class VRListener implements ActionListener{
@@ -235,9 +238,19 @@ public abstract class VRApplication extends Application {
             }
         }
         
-        // show settings for mirroring
-        if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
-            return;
+        if( !isInVR() ) {
+            // not in VR, show settings dialog
+            if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
+                return;
+            }
+        } else {
+            // use basic mirroring window, skip settings window
+            settings.setSamples(1);
+            settings.setWidth(1024);
+            settings.setHeight(576);
+            settings.setBitsPerPixel(32);
+            settings.setFrequency(60);
+            settings.setVSync(true);
         }
         
         //re-setting settings they can have been merged from the registry.

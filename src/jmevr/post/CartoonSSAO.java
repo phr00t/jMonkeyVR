@@ -33,8 +33,6 @@ public class CartoonSSAO extends Filter{
     private float bias = 0.025f;
     private float downsample = 1f;
 
-    private Pass ssaoPass;
-
     //private float downSampleFactor = 1f;
     RenderManager renderManager;
     ViewPort viewPort;
@@ -101,7 +99,6 @@ public class CartoonSSAO extends Filter{
 
         int screenWidth = Math.round(w / downsample);
         int screenHeight = Math.round(h / downsample);
-        postRenderPasses = new ArrayList<Pass>();
 
         normalPass = new Pass();
         normalPass.init(renderManager.getRenderer(), screenWidth, screenHeight, Format.RGBA8, Format.Depth);
@@ -118,23 +115,10 @@ public class CartoonSSAO extends Filter{
         material = new Material(manager, "jmevr/shaders/CartoonSSAO.j3md");
         material.setTexture("Normals", normalPass.getRenderedTexture());
 
-        ssaoPass = new Pass() {
-            @Override
-            public boolean requiresDepthAsTexture() {
-                return true;
-            }
-        };
-
-        ssaoPass.init(renderManager.getRenderer(), screenWidth, screenHeight, Format.RGBA8, Format.Depth, 1, material);
-        ssaoPass.getRenderedTexture().setMinFilter(Texture.MinFilter.NearestNoMipMaps);
-        ssaoPass.getRenderedTexture().setMagFilter(Texture.MagFilter.Nearest);
-        postRenderPasses.add(ssaoPass);
-
         material.setFloat("SampleRadius", sampleRadius);
         material.setFloat("Intensity", intensity);
         material.setFloat("Scale", scale);
         material.setFloat("Bias", bias);
-
 
         material.setVector3("FrustumCorner", frustumCorner);
         material.setVector2("FrustumNearFar", frustumNearFar);

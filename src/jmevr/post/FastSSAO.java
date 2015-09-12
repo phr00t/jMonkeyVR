@@ -14,7 +14,6 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
 import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.texture.Image.Format;
@@ -32,8 +31,6 @@ public class FastSSAO extends Filter{
     private float scale = 3.15f;
     private float bias = 0.025f;
     private float downsample = 1f;
-
-    private Pass ssaoPass;
 
     //private float downSampleFactor = 1f;
     RenderManager renderManager;
@@ -101,7 +98,6 @@ public class FastSSAO extends Filter{
 
         int screenWidth = Math.round(w / downsample);
         int screenHeight = Math.round(h / downsample);
-        postRenderPasses = new ArrayList<Pass>();
 
         normalPass = new Pass();
         normalPass.init(renderManager.getRenderer(), screenWidth, screenHeight, Format.RGBA8, Format.Depth);
@@ -118,23 +114,10 @@ public class FastSSAO extends Filter{
         material = new Material(manager, "jmevr/shaders/FastSSAO.j3md");
         material.setTexture("Normals", normalPass.getRenderedTexture());
 
-        ssaoPass = new Pass() {
-            @Override
-            public boolean requiresDepthAsTexture() {
-                return true;
-            }
-        };
-
-        ssaoPass.init(renderManager.getRenderer(), screenWidth, screenHeight, Format.RGBA8, Format.Depth, 1, material);
-        ssaoPass.getRenderedTexture().setMinFilter(Texture.MinFilter.NearestNoMipMaps);
-        ssaoPass.getRenderedTexture().setMagFilter(Texture.MagFilter.Nearest);
-        postRenderPasses.add(ssaoPass);
-
         material.setFloat("SampleRadius", sampleRadius);
         material.setFloat("Intensity", intensity);
         material.setFloat("Scale", scale);
         material.setFloat("Bias", bias);
-
 
         material.setVector3("FrustumCorner", frustumCorner);
         material.setVector2("FrustumNearFar", frustumNearFar);

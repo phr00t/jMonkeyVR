@@ -7,15 +7,13 @@ I recommend using Phr00t's jMonkeyEngine build here: https://github.com/phr00t/j
 
 SteamVR is required. You can download & install it free with the Steam client (under Tools). Extended mode required (but don't worry, this library makes it work like Direct mode).
 
-If testing with a Rift, I recommend disabling the Steam VR Compositor in your application (using the preconfigureVRApp function below), since support is flaky. The JFrame "easy extended" backup mode will do a good job as a replacement.
-
 See <a href="https://github.com/phr00t/jmonkeyengine-virtual-reality/blob/master/test/jmevr/TestOpenVR.java">TestOpenVR.java</a> to see a full example of how to set up an application to use VR hardware & jME3.
 
 <b>Adding OpenVR support to your application:</b>
 
 1. Add the latest jna-x.x.x & JMonkeyVR.jar to the project.
 
-2. Instead of extending SimpleApplication/BaseApplication for your Main class, extend VRApplication. This sets up a few things including the special VR GUI node. If you want to configure a few things, use the preconfigureVRApp function as follows (useSteamVRCompositor defaults to true, useJFrame [a backup rendering method] is set to true, forceDebugEnableVR defaults to false).
+2. Instead of extending SimpleApplication/BaseApplication for your Main class, extend VRApplication. This sets up a few things including the special VR GUI node. If you want to configure a few things, use the preconfigureVRApp function as follows (useSteamVRCompositor defaults to true, useJFrame [a backup rendering method] is set to true).
 
 ```
 public class Main extends VRApplication {
@@ -24,7 +22,7 @@ public class Main extends VRApplication {
  
     public static void main(String[] args) {
          MyApp = new Main();
-         MyApp.preconfigureVRApp(useSteamVRCompositor, useJFrame, forceDebugEnableVR); // optional
+         MyApp.preconfigureVRApp(useSteamVRCompositor, useJFrame); // optional
          MyApp.setFrustrumNearFar(0.5f, 512f); // optional, set near/far rendering of cameras
          MyApp.start();
      }

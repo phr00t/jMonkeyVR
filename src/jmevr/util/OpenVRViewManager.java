@@ -87,9 +87,11 @@ public class OpenVRViewManager {
             if( OpenVR.getVRCompositorInstance() != null ) {
                 // using the compositor...
                 JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
-                                                       JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getLeftTexId(), null);
+                                                       JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getLeftTexId(), null,
+                                                       JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_Default);
                 JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
-                                                       JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getRightTexId(), null);
+                                                       JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getRightTexId(), null,
+                                                       JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_Default);
                 // mirroring?
                 if( mirrorEnabled ) {
                     // mirror once every 3 frames, to prioritize performance for the VR headset

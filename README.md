@@ -1,4 +1,7 @@
-<b>Want to see how good this library works?</b> <a href="https://drive.google.com/file/d/0Bza9ecEdICHGMTJNRDNzcG9yWmM/view?usp=sharing">Free demo!</a>
+<b>Want to see how good this library works?</b> <a href="https://drive.google.com/file/d/0Bza9ecEdICHGMTJNRDNzcG9yWmM/view?usp=sharing">Free demo!</a> (might get outdated -- feel free to replace jMonkeyVR.jar with file above)
+
+<b>What games use this!? Commercial games on Steam!</b>
+<a href="http://store.steampowered.com/app/363460">Spermination</a> * <a href="http://store.steampowered.com/app/329770/">4089</a>
 
 I recommend using Phr00t's jMonkeyEngine build here: https://github.com/phr00t/jmonkeyengine (the main jME3 build may work, but OpenVR-specific changes will be made first on Phr00t's build) -- you can just use the JAR/libs under the dist/ and lib/ folders
 

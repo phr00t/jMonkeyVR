@@ -33,6 +33,7 @@ import jmevr.post.CartoonSSAO;
 import jmevr.post.FastSSAO;
 import jmevr.shadow.VRDirectionalLightShadowRenderer;
 import jopenvr.JOpenVRLibrary;
+import jopenvr.VRTextureBounds_t;
 
 /**
  *
@@ -46,6 +47,7 @@ public class OpenVRViewManager {
     private FilterPostProcessor ppLeft, ppRight;
     
     private boolean mirrorEnabled;
+    private static boolean useCustomDistortion;
     private int mirrorFrame, origWidth, origHeight;
     private float heightAdjustment;
     
@@ -54,6 +56,13 @@ public class OpenVRViewManager {
     private final static String LEFT_VIEW_NAME = "Left View";
     private final static String RIGHT_VIEW_NAME = "Right View";
 
+    /*
+        do not use. set via preconfigure routine in VRApplication
+    */
+    public static void _setCustomDistortion(boolean set) {
+        useCustomDistortion = set;
+    }
+    
     public OpenVRViewManager(VRApplication forVRApp){
         app = forVRApp;
     }
@@ -86,12 +95,22 @@ public class OpenVRViewManager {
         if( isInVR() ) {
             if( OpenVR.getVRCompositorInstance() != null ) {
                 // using the compositor...
-                JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
-                                                       JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getLeftTexId(), null,
-                                                       JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_Default);
-                JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
-                                                       JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getRightTexId(), null,
-                                                       JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_Default);
+                if( useCustomDistortion ) {
+                    // TODO: need to create VRTextureBounds_t object to grab left & right distortion mesh render from final viewport scene
+                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
+                                                           JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getLeftTexId(), null,
+                                                           JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_LensDistortionAlreadyApplied);
+                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
+                                                           JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getRightTexId(), null,
+                                                           JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_LensDistortionAlreadyApplied);                                        
+                } else {
+                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
+                                                           JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getLeftTexId(), null,
+                                                           JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_Default);
+                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
+                                                           JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getRightTexId(), null,
+                                                           JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_Default);                    
+                }
                 // mirroring?
                 if( mirrorEnabled ) {
                     // mirror once every 3 frames, to prioritize performance for the VR headset
@@ -161,8 +180,8 @@ public class OpenVRViewManager {
         // mirroring is handled by copying framebuffers
         app.getViewPort().detachScene(app.getRootNode());
         
-        // only setup distortion scene if compositor isn't running
-        if( OpenVR.getVRCompositorInstance() == null ) {
+        // only setup distortion scene if compositor isn't running (or using custom mesh distortion option)
+        if( useCustomDistortion || OpenVR.getVRCompositorInstance() == null ) {
             Node distortionScene = new Node();
             Material leftMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
             leftMat.setTexture("Texture", leftEyeTex);
@@ -194,7 +213,16 @@ public class OpenVRViewManager {
     public void update(float tpf) {
         
         // grab the observer
-        Spatial obs = VRApplication.getObserver();
+        Object obs = VRApplication.getObserver();
+        Quaternion objRot;
+        Vector3f objPos;
+        if( obs instanceof Camera ) {
+            objRot = ((Camera)obs).getRotation();
+            objPos = ((Camera)obs).getLocation();
+        } else {
+            objRot = ((Spatial)obs).getWorldRotation();
+            objPos = ((Spatial)obs).getWorldTranslation();
+        }
         // grab the OpenVR handle
         OpenVR dev = VRApplication.getVRHardware();
         // update the HMD's position & orientation
@@ -202,14 +230,14 @@ public class OpenVRViewManager {
         dev.getPositionAndOrientation(hmdPos, hmdRot);
         if( obs != null ) {
             // update hmdPos based on obs rotation
-            finalRotation.set(obs.getWorldRotation());
+            finalRotation.set(objRot);
             finalRotation.mult(hmdPos, hmdPos);
             finalRotation.multLocal(hmdRot);
         } else {
             finalRotation.set(hmdRot);
         }
-        finalizeCamera(dev.getHMDVectorPoseLeftEye(), obs, camLeft);
-        finalizeCamera(dev.getHMDVectorPoseRightEye(), obs, camRight);
+        finalizeCamera(dev.getHMDVectorPoseLeftEye(), objPos, camLeft);
+        finalizeCamera(dev.getHMDVectorPoseRightEye(), objPos, camRight);
         
         // update the mouse?
         VRMouseManager.update(tpf);
@@ -222,10 +250,10 @@ public class OpenVRViewManager {
         }
     }
     
-    private void finalizeCamera(Vector3f eyePos, Spatial obs, Camera cam) {
+    private void finalizeCamera(Vector3f eyePos, Vector3f obsPosition, Camera cam) {
         finalRotation.mult(eyePos, finalPosition);
         finalPosition.addLocal(hmdPos);
-        if( obs != null ) finalPosition.addLocal(obs.getWorldTranslation());
+        if( obsPosition != null ) finalPosition.addLocal(obsPosition);
         finalPosition.y += heightAdjustment;
         cam.setFrame(finalPosition, finalRotation);
     }

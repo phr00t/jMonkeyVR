@@ -29,7 +29,7 @@ public class OpenVR {
 
     private static Pointer vrsystem;
     private static Pointer vrCompositor;
-    private static boolean initSuccess = false;
+    private static boolean initSuccess = false, flipEyes = false;
     
     private static IntBuffer hmdDisplayFrequency;
     private static TrackedDevicePose_t.ByReference hmdTrackedDevicePoseReference;
@@ -73,6 +73,13 @@ public class OpenVR {
     }
     
     private static long latencyWaitTime = 0;
+    
+    /*
+        do not use. set via preconfigure routine in VRApplication
+    */
+    public static void _setFlipEyes(boolean set) {
+        flipEyes = set;
+    }
     
     private static boolean enableDebugLatency = false;
     public static void printLatencyInfoToConsole(boolean set) {
@@ -278,7 +285,7 @@ public class OpenVR {
             if( hmdPoseLeftEyeVec.x <= 0.080f * -0.5f || hmdPoseLeftEyeVec.x >= 0.040f * -0.5f ) {
                 hmdPoseLeftEyeVec.x = 0.065f * -0.5f;
             }
-            hmdPoseLeftEyeVec.x *= -1f; // it seems these need flipping
+            if( flipEyes == false ) hmdPoseLeftEyeVec.x *= -1f; // it seems these need flipping
         }
         return hmdPoseLeftEyeVec;
     }
@@ -290,7 +297,7 @@ public class OpenVR {
             if( hmdPoseRightEyeVec.x >= 0.080f * 0.5f || hmdPoseRightEyeVec.x <= 0.040f * 0.5f ) {
                 hmdPoseRightEyeVec.x = 0.065f * 0.5f;
             }
-            hmdPoseRightEyeVec.x *= -1f; // it seems these need flipping
+            if( flipEyes == false ) hmdPoseRightEyeVec.x *= -1f; // it seems these need flipping
         }
         return hmdPoseRightEyeVec;
     }

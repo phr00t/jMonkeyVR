@@ -43,11 +43,16 @@ import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
  */
 public abstract class VRApplication extends Application {
 
+    public static enum PRECONFIG_PARAMETER {
+        USE_STEAMVR_COMPOSITOR, USE_JFRAME_EXTENDED_BACKUP, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES
+    }
+    
     private static OpenVR VRhardware;    
+    private static Camera dummyCam;
     private static OpenVRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
-    private static boolean VRSupportedOS;
+    private static boolean VRSupportedOS, forceVR;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     private static JFrame VRwindow;
@@ -127,7 +132,8 @@ public abstract class VRApplication extends Application {
         super();
         
         rootNode = new Node("root");
-        guiNode = new VRGuiNode();   
+        guiNode = new VRGuiNode();
+        dummyCam = new Camera();
         mainApp = this;
         
         // we are going to use OpenVR now, not the Oculus Rift
@@ -147,16 +153,9 @@ public abstract class VRApplication extends Application {
     @Override
     public Camera getCamera() {
         if( isInVR() && VRviewmanager != null && VRviewmanager.getCamLeft() != null ) {
-            return VRviewmanager.getCamLeft();
+            return dummyCam;
         }
         return super.getCamera();
-    }
-    
-    public Camera getRightCamera() {
-        if( isInVR() && VRviewmanager != null && VRviewmanager.getCamRight() != null ) {
-            return VRviewmanager.getCamRight();
-        }
-        return super.getCamera();        
     }
     
     @Override
@@ -260,13 +259,27 @@ public abstract class VRApplication extends Application {
     }    
     
     /*
-        use the SteamVR Compositor? (defaults to true)
-        use the JFrame "easy extended" mode, if SteamVR Compositor isn't used? (defaults to true)
-        force VR mode, even if a device isn't detected? Good for testing (defaults to false)
+        if making changes to default values, this must be called before the VRApplication starts
+        sets paramters seen in VRApplication.PRECONFIG_PARAMETER enumeration
     */
-    public void preconfigureVRApp(boolean useCompositor, boolean useJFrame) {        
-        VRApplication.useCompositor = useCompositor;
-        VRApplication.useJFrame = useJFrame;
+    public void preconfigureVRApp(PRECONFIG_PARAMETER parm, boolean value) {        
+        switch( parm ) {
+            case FORCE_VR_MODE:
+                forceVR = value;
+                break;
+            case USE_CUSTOM_DISTORTION:
+                OpenVRViewManager._setCustomDistortion(value);
+                break;
+            case USE_JFRAME_EXTENDED_BACKUP:
+                VRApplication.useJFrame = value;
+                break;
+            case USE_STEAMVR_COMPOSITOR:
+                VRApplication.useCompositor = value;
+                break;
+            case FLIP_EYES:
+                OpenVR._setFlipEyes(value);
+                break;
+        }
     }
     
     public static ArrayList<VRInput> getVRinputs() {
@@ -277,7 +290,7 @@ public abstract class VRApplication extends Application {
         quick check if VR mode is enabled
     */
     public static boolean isInVR() {
-        return VRSupportedOS && VRhardware != null && VRhardware.isInitialized();
+        return forceVR || VRSupportedOS && VRhardware != null && VRhardware.isInitialized();
     }
     
     /*
@@ -314,10 +327,13 @@ public abstract class VRApplication extends Application {
         return rootNode;
     }
     
-    public static Spatial getObserver() {
+    public static Object getObserver() {
+        if( observer == null ) {
+            return mainApp.getCamera();
+        }
         return observer;
     }
-
+    
     /*
         important to set this! the VR headset will be linked to it
     */
@@ -336,7 +352,7 @@ public abstract class VRApplication extends Application {
             } else return VRApplication.observer.getWorldRotation();
         }        
         if( VRApplication.observer == null ) {
-            return VRhardware.getOrientation();
+            return VRhardware.getOrientation().multLocal(mainApp.getCamera().getRotation());
         } else {
             return VRhardware.getOrientation().multLocal(VRApplication.observer.getWorldRotation());
         }
@@ -353,7 +369,9 @@ public abstract class VRApplication extends Application {
             } else return VRApplication.observer.getWorldTranslation();            
         }
         if( VRApplication.observer == null ) {
-            return VRhardware.getPosition();
+            Vector3f pos = VRhardware.getPosition();
+            mainApp.getCamera().getRotation().mult(pos, pos);
+            return pos.addLocal(mainApp.getCamera().getLocation());
         } else {
             Vector3f pos = VRhardware.getPosition();
             VRApplication.observer.getWorldRotation().mult(pos, pos);
@@ -462,6 +480,7 @@ public abstract class VRApplication extends Application {
         super.initialize();
         cam.setFrustumFar(fFar);
         cam.setFrustumNear(fNear);
+        dummyCam = cam.clone();
         if( isInVR() ) {
             if( compositorAllowed() == false || OpenVR.getVRSystemInstance() == null ) {
                 System.out.println("Skipping SteamVR compositor!");

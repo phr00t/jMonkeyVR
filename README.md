@@ -22,14 +22,14 @@ public class Main extends VRApplication {
  
     public static void main(String[] args) {
          MyApp = new Main();
-         MyApp.preconfigureVRApp(useSteamVRCompositor, useJFrame); // optional
+         MyApp.preconfigureVRApp(PRECONFIG_PARAMETER.xxx, [true|false]); // optional
          MyApp.setFrustrumNearFar(0.5f, 512f); // optional, set near/far rendering of cameras
          MyApp.start();
      }
  }
 ```
 
-3. To add basic HMD sensing:
+3. To attach headset view to a spatial (if not done, will try to attach to default camera instead):
 
 ```
  Spatial observer = new Node("Observer");

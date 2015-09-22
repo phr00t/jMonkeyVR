@@ -1,11 +1,8 @@
 /*
-    x test changing GUI distance, does it stay centered? *FIXED*
-    x exit better with JFrame
-    x filter problems in 4089 causing same eye to be shown
-    x shadows & SSAO filter problems
-    x set default IPD if given value is too low/high
-    x needs dynamic, temporary latency fix when frames are dropped
-    x new GUI positioning mode that follows spatial
+    x if no observer is set, follow a created dummy camera returned by getCamera()
+      x useful for 5089
+    x preconfigure VR app should be converted to preconfigure(ENUM_PARAMTER, boolean value)
+    - should use new compositor submit feature for custom distortion mesh *IN PROGRESS, SEE TODO IN VR_VIEW_MANAGER*
     - mouse cursor still visible in VR JFrame...
  */
 package jmevr;
@@ -39,7 +36,7 @@ public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
-        test.preconfigureVRApp(true, true);
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true);
         OpenVR.printLatencyInfoToConsole(false);
         test.setFrustrumNearFar(0.5f, 512f);
         test.start();

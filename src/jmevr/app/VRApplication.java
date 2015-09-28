@@ -12,8 +12,11 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 import com.jme3.system.JmeContext;
@@ -33,8 +36,8 @@ import jmevr.input.OpenVR;
 import jmevr.input.VRInput;
 import jmevr.post.PreNormalCaching;
 import jmevr.util.OpenVRViewManager;
-import jmevr.util.VRGuiNode;
-import jmevr.util.VRGuiNode.POSITIONING_MODE;
+import jmevr.util.VRGuiManager;
+import jmevr.util.VRGuiManager.POSITIONING_MODE;
 import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
 
 /**
@@ -57,7 +60,7 @@ public abstract class VRApplication extends Application {
     
     private static JFrame VRwindow;
     
-    protected VRGuiNode guiNode;
+    protected Node guiNode;
     protected Node rootNode;
     
     private float fFar = 1000f, fNear = 1f;
@@ -132,7 +135,9 @@ public abstract class VRApplication extends Application {
         super();
         
         rootNode = new Node("root");
-        guiNode = new VRGuiNode();
+        guiNode = new Node("guiNode");
+        guiNode.setQueueBucket(Bucket.Gui);
+        guiNode.setCullHint(CullHint.Never);
         dummyCam = new Camera();
         mainApp = this;
         
@@ -315,12 +320,8 @@ public abstract class VRApplication extends Application {
         // check for Vive controllers, add as needed etc.
     }
     
-    public VRGuiNode getGuiNode(){
-        return (VRGuiNode)guiNode;
-    }
-    
-    public static VRGuiNode getVRGuiNode() {
-        return (VRGuiNode)mainApp.guiNode;
+    public Node getGuiNode(){
+        return guiNode;
     }
 
     public Node getRootNode() {
@@ -449,7 +450,7 @@ public abstract class VRApplication extends Application {
         
         rootNode.updateGeometricState();
         
-        if( VRApplication.isInVR() == false || VRApplication.getVRGuiNode().getPositioningMode() == POSITIONING_MODE.MANUAL ) {
+        if( VRApplication.isInVR() == false || VRGuiManager.getPositioningMode() == POSITIONING_MODE.MANUAL ) {
             // only update geometric state here if GUI is in manual mode, or not in VR
             // it will get updated automatically in the viewmanager update otherwise
             guiNode.updateGeometricState();

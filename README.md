@@ -41,26 +41,20 @@ public class Main extends VRApplication {
 
 <b>Using the GUI</b>
 
-The GUI system has two options: automatic & manual positioning. Automatic positioning will always keep the GUI elements floating infront of the view, while manual will let you center it manually, where it will stay as the player moves their head. The default is manual positioning.
+The GUI system has two options: automatic & manual positioning. Automatic positioning will always keep the GUI elements floating infront of the view, while manual will let you center it manually, where it will stay as the player moves their head. The default is automatic positioning.
 
 You can change options like so:
 
 ```
- VRApplication.getVRGuiNode().setPositioningMode(POSITIONING_MODE.AUTO);
- VRApplication.getVRGuiNode().setGuiDistance(0.8f);
+ VRGuiManager.setPositioningMode(POSITIONING_MODE.AUTO);
+ VRGuiManager.setGuiDistance(0.8f);
 ```
 
 To center the GUI's position manually, where it will stay until another manual position update is called (as long as the positioning mode is set to MANUAL):
 
 ```
- VRApplication.getVRGuiNode().positionGui();
+ VRGuiManager.positionGui();
 ```
-
-The VRGuiNode will try and keep things in the "Translucent" render bucket. If something ends up in the "Gui" bucket, you will need to call fixBrokenElements() to convert them to "Translucent".
-
-It should be safe to have all of the children of the root VRGuiNode also be VRGuiNode.
-
-The VRGuiNode will operate as a normal node if a VR headset isn't initialized. For testing purposes without a VR headset, you can set forceDebugEnableVR to "true" in the preconfigureVRApp call in step #2 above.
 
 <b>Adding Filters during runtime</b>
 

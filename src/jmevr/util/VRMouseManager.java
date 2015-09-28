@@ -55,10 +55,10 @@ public class VRMouseManager {
         VRApplication vrapp = VRApplication.getMainVRApp();
         if( vrapp.getInputManager().isCursorVisible() ) {
             if( mouseImage.getParent() == null ) {
-                VRApplication.getVRGuiNode().attachChild(mouseImage);
+                VRApplication.getMainVRApp().getGuiNode().attachChild(mouseImage);
             }
             Vector2f mousePos = vrapp.getInputManager().getCursorPosition();
-            mouseImage.setLocalTranslation(mousePos.x, mousePos.y - ySize, VRApplication.getVRGuiNode().getGuiDistance() + 1f);
+            mouseImage.setLocalTranslation(mousePos.x, mousePos.y - ySize, VRGuiManager.getGuiDistance() + 1f);
         } else if( mouseImage.getParent() != null ) {
             mouseImage.removeFromParent();
         }

@@ -151,7 +151,7 @@ public class OpenVRViewManager {
         
         // update the pose to position the gui correctly on start
         update(0f);        
-        VRApplication.getVRGuiNode().positionGui();
+        VRGuiManager.positionGui();
     }
     
     private void prepareCameraSize(Camera cam) {
@@ -179,6 +179,7 @@ public class OpenVRViewManager {
         // main viewport is either going to be a distortion scene or nothing
         // mirroring is handled by copying framebuffers
         app.getViewPort().detachScene(app.getRootNode());
+        app.getViewPort().detachScene(app.getGuiNode());
         
         // only setup distortion scene if compositor isn't running (or using custom mesh distortion option)
         if( useCustomDistortion || OpenVR.getVRCompositorInstance() == null ) {
@@ -243,10 +244,9 @@ public class OpenVRViewManager {
         VRMouseManager.update(tpf);
         
         // update GUI position?
-        VRGuiNode vrgn = VRApplication.getVRGuiNode();
-        if( vrgn != null && (vrgn.wantsReposition || vrgn.getPositioningMode() != VRGuiNode.POSITIONING_MODE.MANUAL) ) {
-            VRApplication.getVRGuiNode().positionGuiNow();
-            VRApplication.getVRGuiNode().updateGeometricState();
+        if( VRGuiManager.wantsReposition || VRGuiManager.getPositioningMode() != VRGuiManager.POSITIONING_MODE.MANUAL ) {
+            VRGuiManager.positionGuiNow();
+            VRGuiManager.updateGuiQuadGeometricState();
         }
     }
     
@@ -358,17 +358,17 @@ public class OpenVRViewManager {
         viewPortRight = setupViewBuffers(camRight, RIGHT_VIEW_NAME);
                 
         // setup gui
-        VRApplication.getVRGuiNode().setupGui(viewPortLeft, viewPortRight, (int)origWidth, (int)origHeight);
+        VRGuiManager.setupGui(origCam, viewPortLeft, viewPortRight, (int)origWidth, (int)origHeight);
         // make sure the gui node isn't in the distortion scene
-        for(ViewPort v : app.getRenderManager().getPostViews()) {
-            v.detachScene(VRApplication.getVRGuiNode());
-        }
+        //for(ViewPort v : app.getRenderManager().getPostViews()) {
+        //    v.detachScene(VRApplication.getMainVRApp().getGuiNode());
+        //}
         
         // call these to cache the results internally
         VRApplication.getVRHardware().getHMDMatrixPoseLeftEye();
         VRApplication.getVRHardware().getHMDMatrixPoseRightEye();
     }
-    
+        
     private ViewPort setupViewBuffers(Camera cam, String viewName){
         // create offscreen framebuffer
         FrameBuffer offBufferLeft = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);

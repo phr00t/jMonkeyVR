@@ -5,7 +5,6 @@
 package jmevr.util;
 
 import com.jme3.material.Material;
-import com.jme3.material.RenderState;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix3f;
@@ -13,12 +12,9 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.shape.Box;
-import com.jme3.scene.shape.Quad;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
@@ -33,12 +29,12 @@ import jmevr.app.VRApplication;
 public class VRGuiManager {
     
     public enum POSITIONING_MODE {
-        MANUAL, AUTO, AUTO_OBSERVER
+        MANUAL, AUTO_CAM_ALL, AUTO_OBSERVER_POS_CAM_ROTATION, AUTO_OBSERVER_ALL
     }
     
     private static Camera camLeft, camRight;
     private static float guiDistance = 1.5f, guiScale = 1f;
-    private static POSITIONING_MODE posMode = POSITIONING_MODE.AUTO;
+    private static POSITIONING_MODE posMode = POSITIONING_MODE.AUTO_CAM_ALL;
     
     private static final Vector3f look = new Vector3f(), left = new Vector3f(), temppos = new Vector3f();
     private static final Matrix3f orient = new Matrix3f();
@@ -78,14 +74,14 @@ public class VRGuiManager {
         guiQuad.setLocalScale(guiDistance * guiScale * 4f, 4f * guiDistance * guiScale * oHeight/oWidth, 1f);
         switch( posMode ) {
             case MANUAL:
-            case AUTO:
+            case AUTO_CAM_ALL:
                 if( camLeft != null && camRight != null ) {
                     // get middle point
                     temppos.set(camLeft.getLocation()).interpolateLocal(camRight.getLocation(), 0.5f);
                     positionTo(temppos, camLeft.getRotation());
                 }
                 break;
-            case AUTO_OBSERVER:
+            case AUTO_OBSERVER_POS_CAM_ROTATION:
                 Object obs = VRApplication.getObserver();
                 if( obs != null ) {
                     if( obs instanceof Camera ) {
@@ -94,6 +90,16 @@ public class VRGuiManager {
                         positionTo(((Spatial)obs).getWorldTranslation(), camLeft.getRotation());                        
                     }
                 }
+                break;
+            case AUTO_OBSERVER_ALL:
+                obs = VRApplication.getObserver();
+                if( obs != null ) {
+                    if( obs instanceof Camera ) {
+                        positionTo(((Camera)obs).getLocation(), ((Camera)obs).getRotation());
+                    } else {
+                        positionTo(((Spatial)obs).getWorldTranslation(), ((Spatial)obs).getWorldRotation());                        
+                    }
+                }                
                 break;
         }
         rotateScreenToCamera();
@@ -125,7 +131,7 @@ public class VRGuiManager {
         guiDistance += adjustAmount;
     }
     
-    public static void setupGui(Camera origCam, ViewPort left, ViewPort right, int origWidth, int origHeight) {
+    protected static void setupGui(Camera origCam, ViewPort left, ViewPort right, int origWidth, int origHeight) {
         getGuiQuad(origCam);
         left.attachScene(guiQuad);
         right.attachScene(guiQuad);

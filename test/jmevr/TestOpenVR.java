@@ -1,7 +1,4 @@
 /*
-    x if no observer is set, follow a created dummy camera returned by getCamera()
-      x useful for 5089
-    x preconfigure VR app should be converted to preconfigure(ENUM_PARAMTER, boolean value)
     - should use new compositor submit feature for custom distortion mesh *IN PROGRESS, SEE TODO IN VR_VIEW_MANAGER*
     - mouse cursor still visible in VR JFrame...
  */
@@ -76,8 +73,8 @@ public class TestOpenVR extends VRApplication {
         test.setPosition(settings.getWidth() * 0.5f - 192f * 0.5f, settings.getHeight() * 0.5f - 128f * 0.5f);
         guiNode.attachChild(test);
         
-        // test any positioning mode here (defaults to AUTO)
-        VRGuiManager.setPositioningMode(POSITIONING_MODE.AUTO_OBSERVER);
+        // test any positioning mode here (defaults to AUTO_CAM_ALL)
+        VRGuiManager.setPositioningMode(POSITIONING_MODE.AUTO_OBSERVER_ALL);
         
         box.setMaterial(mat);
         

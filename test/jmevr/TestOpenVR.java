@@ -9,6 +9,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.scene.Geometry;
@@ -21,7 +22,6 @@ import com.jme3.texture.Texture.MinFilter;
 import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
-import jmevr.input.OpenVR;
 import jmevr.post.CartoonSSAO;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
@@ -35,7 +35,6 @@ public class TestOpenVR extends VRApplication {
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true);
-        OpenVR.printLatencyInfoToConsole(false);
         test.setFrustrumNearFar(0.5f, 512f);
         test.start();
     }
@@ -66,11 +65,12 @@ public class TestOpenVR extends VRApplication {
         mat.setTexture("ColorMap", noise);
                        
         // gui element
+        Vector2f guiCanvasSize = VRGuiManager.getCanvasSize();
         Picture test = new Picture("testpic");
         test.setImage(assetManager, "Textures/crosshair.png", true);
         test.setWidth(192f);
         test.setHeight(128f);
-        test.setPosition(settings.getWidth() * 0.5f - 192f * 0.5f, settings.getHeight() * 0.5f - 128f * 0.5f);
+        test.setPosition(guiCanvasSize.x * 0.5f - 192f * 0.5f, guiCanvasSize.y * 0.5f - 128f * 0.5f);
         guiNode.attachChild(test);
         
         // test any positioning mode here (defaults to AUTO_CAM_ALL)

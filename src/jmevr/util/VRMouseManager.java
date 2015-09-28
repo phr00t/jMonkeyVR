@@ -9,6 +9,7 @@ import com.jme3.input.MouseInput;
 import com.jme3.input.lwjgl.LwjglMouseInput;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.Vector2f;
+import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.ui.Picture;
@@ -24,6 +25,7 @@ import org.lwjgl.input.Mouse;
 public class VRMouseManager {
  
     private static Picture mouseImage;
+    private static final Vector2f temp2f = new Vector2f();
     private static float ySize;
     
     protected static void init() {
@@ -50,6 +52,17 @@ public class VRMouseManager {
         mouseImage.getMaterial().getAdditionalRenderState().setDepthWrite(false);
     }
     
+    public static Vector2f getCursorPosition() {
+        temp2f.set(VRApplication.getMainVRApp().getInputManager().getCursorPosition());
+        if( VRApplication.isInVR() ) {
+            AppSettings as = VRApplication.getMainVRApp().getContext().getSettings();
+            Vector2f canvasSize = VRGuiManager.getCanvasSize();
+            temp2f.x *= canvasSize.x / as.getWidth();
+            temp2f.y *= canvasSize.y / as.getHeight();
+        }
+        return temp2f;
+    }
+    
     protected static void update(float tpf) {
         // if we are showing the cursor, add our picture as it
         VRApplication vrapp = VRApplication.getMainVRApp();
@@ -57,7 +70,7 @@ public class VRMouseManager {
             if( mouseImage.getParent() == null ) {
                 VRApplication.getMainVRApp().getGuiNode().attachChild(mouseImage);
             }
-            Vector2f mousePos = vrapp.getInputManager().getCursorPosition();
+            Vector2f mousePos = getCursorPosition();
             mouseImage.setLocalTranslation(mousePos.x, mousePos.y - ySize, VRGuiManager.getGuiDistance() + 1f);
         } else if( mouseImage.getParent() != null ) {
             mouseImage.removeFromParent();

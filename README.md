@@ -11,9 +11,9 @@ See <a href="https://github.com/phr00t/jmonkeyengine-virtual-reality/blob/master
 
 <b>Adding OpenVR support to your application:</b>
 
-1. Add the latest jna-x.x.x & JMonkeyVR.jar to the project.
+(1) Add the latest jna-x.x.x & JMonkeyVR.jar to the project.
 
-2. Instead of extending SimpleApplication/BaseApplication for your Main class, extend VRApplication. This sets up a few things including the special VR GUI node. If you want to configure a few things, use the preconfigureVRApp function as follows (useSteamVRCompositor defaults to true, useJFrame [a backup rendering method] is set to true).
+(2) Instead of extending SimpleApplication/BaseApplication for your Main class, extend VRApplication. This sets up a few things including the special VR GUI node. If you want to configure a few things, use the preconfigureVRApp function as follows (useSteamVRCompositor defaults to true, useJFrame [a backup rendering method] is set to true).
 
 ```
 public class Main extends VRApplication {
@@ -22,14 +22,14 @@ public class Main extends VRApplication {
  
     public static void main(String[] args) {
          MyApp = new Main();
-         MyApp.preconfigureVRApp(useSteamVRCompositor, useJFrame); // optional
+         MyApp.preconfigureVRApp(PRECONFIG_PARAMETER.xxx, [true|false]); // optional
          MyApp.setFrustrumNearFar(0.5f, 512f); // optional, set near/far rendering of cameras
          MyApp.start();
      }
  }
 ```
 
-3. To add basic HMD sensing:
+(3) To attach headset view to a spatial (if not done, will try to attach to default camera instead):
 
 ```
  Spatial observer = new Node("Observer");

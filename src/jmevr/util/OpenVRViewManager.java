@@ -358,7 +358,7 @@ public class OpenVRViewManager {
         viewPortRight = setupViewBuffers(camRight, RIGHT_VIEW_NAME);
                 
         // setup gui
-        VRGuiManager.setupGui(origCam, viewPortLeft, viewPortRight, (int)origWidth, (int)origHeight);
+        VRGuiManager.setupGui(viewPortLeft, viewPortRight, (int)origWidth, (int)origHeight);
         // make sure the gui node isn't in the distortion scene
         //for(ViewPort v : app.getRenderManager().getPostViews()) {
         //    v.detachScene(VRApplication.getMainVRApp().getGuiNode());

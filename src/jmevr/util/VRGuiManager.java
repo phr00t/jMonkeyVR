@@ -9,12 +9,14 @@ import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Geometry;
+import com.jme3.system.AppSettings;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
@@ -39,12 +41,26 @@ public class VRGuiManager {
     private static final Vector3f look = new Vector3f(), left = new Vector3f(), temppos = new Vector3f();
     private static final Matrix3f orient = new Matrix3f();
     private static final Quaternion tempq = new Quaternion();
+    private static Vector2f screenSize;
     protected static boolean wantsReposition;
     
     private static int oHeight, oWidth;
     
     public static void setPositioningMode(POSITIONING_MODE mode) {
         posMode = mode;
+    }
+    
+    public static Vector2f getCanvasSize() {
+        if( screenSize == null ) {
+            if( VRApplication.isInVR() ) {
+                screenSize = new Vector2f();
+                VRApplication.getVRHardware().getRenderSize(screenSize);
+            } else {
+                AppSettings as = VRApplication.getMainVRApp().getContext().getSettings();
+                screenSize = new Vector2f(as.getWidth(), as.getHeight());
+            }
+        }
+        return screenSize;
     }
     
     public static POSITIONING_MODE getPositioningMode() {
@@ -71,7 +87,7 @@ public class VRGuiManager {
     protected static void positionGuiNow() {
         wantsReposition = false;
         if( VRApplication.isInVR() == false ) return;
-        guiQuad.setLocalScale(guiDistance * guiScale * 4f, 4f * guiDistance * guiScale * oHeight/oWidth, 1f);
+        guiQuad.setLocalScale(guiDistance * guiScale * 4f, 4f * guiDistance * guiScale, 1f);
         switch( posMode ) {
             case MANUAL:
             case AUTO_CAM_ALL:
@@ -131,12 +147,12 @@ public class VRGuiManager {
         guiDistance += adjustAmount;
     }
     
-    protected static void setupGui(Camera origCam, ViewPort left, ViewPort right, int origWidth, int origHeight) {
-        getGuiQuad(origCam);
-        left.attachScene(guiQuad);
-        right.attachScene(guiQuad);
+    protected static void setupGui(ViewPort left, ViewPort right, int origWidth, int origHeight) {
         camLeft = left.getCamera();
         camRight = right.getCamera();
+        getGuiQuad(camLeft);
+        left.attachScene(guiQuad);
+        right.attachScene(guiQuad);
         oHeight = origHeight;
         oWidth = origWidth;
         setPositioningMode(posMode);
@@ -148,6 +164,7 @@ public class VRGuiManager {
     private static Geometry getGuiQuad(Camera sourceCam){
         if( guiQuad == null ) {
             VRApplication sourceApp = VRApplication.getMainVRApp();
+            Vector2f guiCanvasSize = getCanvasSize();
             Camera offCamera = sourceCam.clone();
             offCamera.setParallelProjection(true);
             offCamera.setLocation(Vector3f.ZERO);
@@ -158,10 +175,10 @@ public class VRGuiManager {
             offView.setBackgroundColor(ColorRGBA.BlackNoAlpha);
 
             // create offscreen framebuffer
-            FrameBuffer offBuffer = new FrameBuffer(offCamera.getWidth(), offCamera.getHeight(), 1);
+            FrameBuffer offBuffer = new FrameBuffer((int)guiCanvasSize.x, (int)guiCanvasSize.y, 1);
 
             //setup framebuffer's texture
-            guiTexture = new Texture2D(offCamera.getWidth(), offCamera.getHeight(), Format.RGBA8);
+            guiTexture = new Texture2D((int)guiCanvasSize.x, (int)guiCanvasSize.y, Format.RGBA8);
             guiTexture.setMinFilter(Texture.MinFilter.Trilinear);
             guiTexture.setMagFilter(Texture.MagFilter.Bilinear);
 

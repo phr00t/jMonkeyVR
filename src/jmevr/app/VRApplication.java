@@ -64,6 +64,7 @@ public abstract class VRApplication extends Application {
     protected Node rootNode;
     
     private float fFar = 1000f, fNear = 1f;
+    private int xWin = 1280, yWin = 720;
     
     private static boolean useCompositor = true, compositorOS, useJFrame = true;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
@@ -129,6 +130,11 @@ public abstract class VRApplication extends Application {
     public void setFrustrumNearFar(float near, float far) {
         fNear = near;
         fFar = far;
+    }
+    
+    public void setMirrorWindowSize(int width, int height) {
+        xWin = width;
+        yWin = height;
     }
 
     public VRApplication() {
@@ -250,10 +256,9 @@ public abstract class VRApplication extends Application {
         } else {
             // use basic mirroring window, skip settings window
             settings.setSamples(1);
-            settings.setWidth(1024);
-            settings.setHeight(576);
+            settings.setWidth(xWin);
+            settings.setHeight(yWin);
             settings.setBitsPerPixel(32);
-            settings.setFrequency(60);
             settings.setVSync(true);
         }
         

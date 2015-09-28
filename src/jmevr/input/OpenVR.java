@@ -147,8 +147,9 @@ public class OpenVR {
 
     public void getRenderSize(Vector2f store) {
         if( vrsystem == null ) {
-            store.x = 1280f;
-            store.y = 800f;
+            // 1344x1512
+            store.x = 1344f;
+            store.y = 1512f;
         } else {
             IntBuffer x = IntBuffer.allocate(1);
             IntBuffer y = IntBuffer.allocate(1);

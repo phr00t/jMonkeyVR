@@ -26,7 +26,8 @@ import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
 import jmevr.input.OpenVR;
 import jmevr.post.CartoonSSAO;
-import jmevr.util.VRGuiNode.POSITIONING_MODE;
+import jmevr.util.VRGuiManager;
+import jmevr.util.VRGuiManager.POSITIONING_MODE;
 
 /**
  *
@@ -70,13 +71,13 @@ public class TestOpenVR extends VRApplication {
         // gui element
         Picture test = new Picture("testpic");
         test.setImage(assetManager, "Textures/crosshair.png", true);
-        test.setWidth(128f);
+        test.setWidth(192f);
         test.setHeight(128f);
-        test.setPosition(settings.getWidth() * 0.5f - 64f, settings.getHeight() * 0.5f - 64f);
+        test.setPosition(settings.getWidth() * 0.5f - 192f * 0.5f, settings.getHeight() * 0.5f - 128f * 0.5f);
         guiNode.attachChild(test);
         
         // test any positioning mode here (defaults to AUTO)
-        VRApplication.getVRGuiNode().setPositioningMode(POSITIONING_MODE.AUTO_OBSERVER);
+        VRGuiManager.setPositioningMode(POSITIONING_MODE.AUTO_OBSERVER);
         
         box.setMaterial(mat);
         
@@ -128,9 +129,9 @@ public class TestOpenVR extends VRApplication {
 
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if(name.equals("incShift") && keyPressed){
-                    VRApplication.getVRGuiNode().adjustGuiDistance(-0.1f);
+                    VRGuiManager.adjustGuiDistance(-0.1f);
                 }else if(name.equals("decShift") && keyPressed){
-                    VRApplication.getVRGuiNode().adjustGuiDistance(0.1f);
+                    VRGuiManager.adjustGuiDistance(0.1f);
                 }else if(name.equals("filter") && keyPressed){
                     // adding filters in realtime
                     CartoonSSAO cartfilt = new CartoonSSAO();
@@ -143,7 +144,7 @@ public class TestOpenVR extends VRApplication {
                     VRApplication.moveScreenProcessingToVR();
                 }
                 if( name.equals("toggle") ) {
-                    VRApplication.getVRGuiNode().positionGui();
+                    VRGuiManager.positionGui();
                 }                
                 if(name.equals("forward")){
                     if(keyPressed){

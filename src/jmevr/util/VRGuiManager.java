@@ -38,9 +38,7 @@ public class VRGuiManager {
     private static float guiDistance = 1.5f, guiScale = 1f;
     private static POSITIONING_MODE posMode = POSITIONING_MODE.AUTO_CAM_ALL;
     
-    private static final Vector3f look = new Vector3f(), left = new Vector3f(), temppos = new Vector3f();
     private static final Matrix3f orient = new Matrix3f();
-    private static final Quaternion tempq = new Quaternion();
     private static Vector2f screenSize;
     protected static boolean wantsReposition;
     
@@ -96,6 +94,7 @@ public class VRGuiManager {
                     temppos.set(camLeft.getLocation()).interpolateLocal(camRight.getLocation(), 0.5f);
                     positionTo(temppos, camLeft.getRotation());
                 }
+                rotateScreenTo(camLeft.getRotation());
                 break;
             case AUTO_OBSERVER_POS_CAM_ROTATION:
                 Object obs = VRApplication.getObserver();
@@ -106,27 +105,35 @@ public class VRGuiManager {
                         positionTo(((Spatial)obs).getWorldTranslation(), camLeft.getRotation());                        
                     }
                 }
+                rotateScreenTo(camLeft.getRotation());
                 break;
             case AUTO_OBSERVER_ALL:
                 obs = VRApplication.getObserver();
                 if( obs != null ) {
                     if( obs instanceof Camera ) {
-                        positionTo(((Camera)obs).getLocation(), ((Camera)obs).getRotation());
+                        Quaternion q = ((Camera)obs).getRotation();
+                        positionTo(((Camera)obs).getLocation(), q);
+                        rotateScreenTo(q);
                     } else {
-                        positionTo(((Spatial)obs).getWorldTranslation(), ((Spatial)obs).getWorldRotation());                        
+                        Quaternion q = ((Spatial)obs).getWorldRotation();
+                        positionTo(((Spatial)obs).getWorldTranslation(), q);                        
+                        rotateScreenTo(q);
                     }
                 }                
                 break;
         }
-        rotateScreenToCamera();
     }
     
-    private static void rotateScreenToCamera() {
+    private static final Vector3f look = new Vector3f(), left = new Vector3f(), temppos = new Vector3f(), up = new Vector3f();
+    private static final Quaternion tempq = new Quaternion();
+    private static void rotateScreenTo(Quaternion dir) {
         // coopt diff for our in direction:
-        look.set(camLeft.getDirection()).negateLocal();
+        //look.set(camLeft.getDirection()).negateLocal();
+        dir.getRotationColumn(2, look).negateLocal();
         // coopt loc for our left direction:
-        left.set(camLeft.getLeft()).negateLocal();
-        orient.fromAxes(left, camLeft.getUp(), look);
+        //left.set(camLeft.getLeft()).negateLocal();
+        dir.getRotationColumn(0, left).negateLocal();
+        orient.fromAxes(left, dir.getRotationColumn(1, up), look);
         Quaternion rot = tempq.fromRotationMatrix(orient);
         guiQuad.setLocalRotation(rot);
     }

@@ -33,7 +33,6 @@ import jmevr.post.CartoonSSAO;
 import jmevr.post.FastSSAO;
 import jmevr.shadow.VRDirectionalLightShadowRenderer;
 import jopenvr.JOpenVRLibrary;
-import jopenvr.VRTextureBounds_t;
 
 /**
  *

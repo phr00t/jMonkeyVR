@@ -1,4 +1,7 @@
 /*
+    - only could see right eye in vr compositor...
+    - 5089's gui mode isn't working, quad is being rotated just by looking around
+    - getScreenCoordinates should kinda sorta work in VR
     - should use new compositor submit feature for custom distortion mesh *IN PROGRESS, SEE TODO IN VR_VIEW_MANAGER*
     - mouse cursor still visible in VR JFrame...
  */
@@ -34,7 +37,7 @@ public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true);
+        //test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true);
         test.setFrustrumNearFar(0.5f, 512f);
         test.start();
     }

@@ -73,7 +73,7 @@ public abstract class VRApplication extends Application {
         if( VR_IsHmdPresent() != 0 ) {
             System.setProperty("sun.java2d.opengl", "True");
         }                        
-    }
+    }    
     
     private class VRListener implements ActionListener{
 

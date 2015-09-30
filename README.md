@@ -37,7 +37,7 @@ public class Main extends VRApplication {
  rootNode.attachChild(observer);
 ```
 
-<i>PRO-TIP: Use anisotropic filtering! Textures will be very blurry otherwise!</i>
+<i>PRO-TIP: Use anisotropic filtering & do NOT directly access the VRApplication "cam", use getCamera() instead!</i>
 
 <b>Using the GUI</b>
 

@@ -37,7 +37,7 @@ public class Main extends VRApplication {
  rootNode.attachChild(observer);
 ```
 
-<i>PRO-TIP: Use anisotropic filtering! Textures will be very blurry otherwise!</i>
+<i>PRO-TIP: Use anisotropic filtering & do NOT directly access the VRApplication "cam", use getCamera() instead!</i>
 
 <b>Using the GUI</b>
 
@@ -66,4 +66,4 @@ This handles moving them out of the VR scene & cloning them for each eye. It is 
      
 See the TestOpenVR.java example for more usage information.
 
-<b>Don't be afraid to use the mouse!</b> Using inputManager.setCursorVisislbe(true) will work fine! This library will monitor mouse usage & replace the cursor with a 3D version at the GUI distance automatically. Make sure to use local translation comparisons against getCursorPosition() when determining if something is under the mouse cursor.
+<b>Don't be afraid to use the mouse!</b> Using inputManager.setCursorVisislbe(true) will work fine! This library will monitor mouse usage & replace the cursor with a 3D version at the GUI distance automatically. Make sure to get the cursor position using VRMouseManager.getCursorPosition(), and to render GUI elements within the screen size returned by VRGuiManager.getCanvasSize(). These functions will automatically return correct values, whether you are in VR or not.

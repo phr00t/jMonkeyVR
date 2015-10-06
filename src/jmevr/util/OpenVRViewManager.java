@@ -47,7 +47,7 @@ public class OpenVRViewManager {
     
     private boolean mirrorEnabled;
     private static boolean useCustomDistortion;
-    private int mirrorFrame, origWidth, origHeight;
+    private int mirrorFrame;
     private float heightAdjustment;
     
     private Texture leftEyeTex, rightEyeTex;
@@ -335,8 +335,6 @@ public class OpenVRViewManager {
         origCam.setFrustumNear(1f); 
         
         camLeft = origCam.clone();  
-        origWidth = camLeft.getWidth();
-        origHeight = camLeft.getHeight();
         
         float fbot = -VRApplication.getVRHardware().getFOV(JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewBottomDegrees_Float);
         float ftop = VRApplication.getVRHardware().getFOV(JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewTopDegrees_Float);
@@ -357,7 +355,7 @@ public class OpenVRViewManager {
         viewPortRight = setupViewBuffers(camRight, RIGHT_VIEW_NAME);
                 
         // setup gui
-        VRGuiManager.setupGui(viewPortLeft, viewPortRight, (int)origWidth, (int)origHeight);
+        VRGuiManager.setupGui(viewPortLeft, viewPortRight);
         // make sure the gui node isn't in the distortion scene
         //for(ViewPort v : app.getRenderManager().getPostViews()) {
         //    v.detachScene(VRApplication.getMainVRApp().getGuiNode());

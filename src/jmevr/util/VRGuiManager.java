@@ -4,11 +4,13 @@
  */
 package jmevr.util;
 
+import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -41,9 +43,7 @@ public class VRGuiManager {
     private static final Matrix3f orient = new Matrix3f();
     private static Vector2f screenSize;
     protected static boolean wantsReposition;
-    
-    private static int oHeight, oWidth;
-    
+
     public static void setPositioningMode(POSITIONING_MODE mode) {
         posMode = mode;
     }
@@ -154,17 +154,30 @@ public class VRGuiManager {
         guiDistance += adjustAmount;
     }
     
-    protected static void setupGui(ViewPort left, ViewPort right, int origWidth, int origHeight) {
+    protected static void setupGui(ViewPort left, ViewPort right) {
         camLeft = left.getCamera();
         camRight = right.getCamera();
         getGuiQuad(camLeft);
         left.attachScene(guiQuad);
         right.attachScene(guiQuad);
-        oHeight = origHeight;
-        oWidth = origWidth;
         setPositioningMode(posMode);
     }
     
+    /*
+        do not use, set by preconfigure routine in VRApplication
+    */
+    public static void _enableCurvedSuface(boolean set) {
+        useCurvedSurface = set;
+    }
+    
+    /*
+        do not use, set by preconfigure routine in VRApplication
+    */
+    public static void _enableGuiOverdraw(boolean set) {
+        overdraw = set;
+    }
+    
+    private static boolean useCurvedSurface = false, overdraw = false;
     private static Geometry guiQuad;
     private static ViewPort offView;
     private static Texture2D guiTexture;
@@ -199,8 +212,14 @@ public class VRGuiManager {
             // setup framebuffer's scene
             offView.attachScene(sourceApp.getGuiNode());
 
-            guiQuad = new Geometry("guiQuad", new CenterQuad(1f, 1f));
-            Material mat = new Material(sourceApp.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+            if( useCurvedSurface ) {
+                guiQuad = (Geometry)VRApplication.getMainVRApp().getAssetManager().loadModel("jmevr/util/gui_mesh.j3o");
+            } else {
+                guiQuad = new Geometry("guiQuad", new CenterQuad(1f, 1f));
+            }
+            
+            Material mat = new Material(sourceApp.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");            
+            mat.getAdditionalRenderState().setDepthTest(!overdraw);
             mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
             mat.getAdditionalRenderState().setDepthWrite(false);
             mat.setTexture("ColorMap", guiTexture);

@@ -47,7 +47,8 @@ import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
 public abstract class VRApplication extends Application {
 
     public static enum PRECONFIG_PARAMETER {
-        USE_STEAMVR_COMPOSITOR, USE_JFRAME_EXTENDED_BACKUP, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES
+        USE_STEAMVR_COMPOSITOR, USE_JFRAME_EXTENDED_BACKUP, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
+        SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE
     }
     
     private static OpenVR VRhardware;    
@@ -274,6 +275,12 @@ public abstract class VRApplication extends Application {
     */
     public void preconfigureVRApp(PRECONFIG_PARAMETER parm, boolean value) {        
         switch( parm ) {
+            case SET_GUI_OVERDRAW:
+                VRGuiManager._enableGuiOverdraw(value);
+                break;
+            case SET_GUI_CURVED_SURFACE:
+                VRGuiManager._enableCurvedSuface(value);
+                break;
             case FORCE_VR_MODE:
                 forceVR = value;
                 break;
@@ -358,7 +365,7 @@ public abstract class VRApplication extends Application {
             } else return VRApplication.observer.getWorldRotation();
         }        
         if( VRApplication.observer == null ) {
-            return VRhardware.getOrientation().multLocal(mainApp.getCamera().getRotation());
+            return VRApplication.getLeftViewPort().getCamera().getRotation();
         } else {
             return VRhardware.getOrientation().multLocal(VRApplication.observer.getWorldRotation());
         }

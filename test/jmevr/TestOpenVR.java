@@ -37,7 +37,10 @@ public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
-        //test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true);
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true);
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, true);
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true);
         test.setFrustrumNearFar(0.5f, 512f);
         test.start();
     }
@@ -78,6 +81,7 @@ public class TestOpenVR extends VRApplication {
         
         // test any positioning mode here (defaults to AUTO_CAM_ALL)
         VRGuiManager.setPositioningMode(POSITIONING_MODE.AUTO_OBSERVER_ALL);
+        VRGuiManager.setGuiScale(0.4f);
         
         box.setMaterial(mat);
         

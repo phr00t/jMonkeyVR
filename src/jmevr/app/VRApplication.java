@@ -365,7 +365,7 @@ public abstract class VRApplication extends Application {
             } else return VRApplication.observer.getWorldRotation();
         }        
         if( VRApplication.observer == null ) {
-            return VRApplication.getLeftViewPort().getCamera().getRotation();
+            return VRhardware.getOrientation().multLocal(dummyCam.getRotation());
         } else {
             return VRhardware.getOrientation().multLocal(VRApplication.observer.getWorldRotation());
         }
@@ -383,8 +383,8 @@ public abstract class VRApplication extends Application {
         }
         if( VRApplication.observer == null ) {
             Vector3f pos = VRhardware.getPosition();
-            mainApp.getCamera().getRotation().mult(pos, pos);
-            return pos.addLocal(mainApp.getCamera().getLocation());
+            dummyCam.getRotation().mult(pos, pos);
+            return pos.addLocal(dummyCam.getLocation());
         } else {
             Vector3f pos = VRhardware.getPosition();
             VRApplication.observer.getWorldRotation().mult(pos, pos);

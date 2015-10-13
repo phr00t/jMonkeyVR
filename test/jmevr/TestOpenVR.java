@@ -25,9 +25,11 @@ import com.jme3.texture.Texture.MinFilter;
 import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
+import jmevr.input.OpenVR;
 import jmevr.post.CartoonSSAO;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
+import jopenvr.JOpenVRLibrary;
 
 /**
  *
@@ -37,7 +39,10 @@ public class TestOpenVR extends VRApplication {
 
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true);
+        //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_STEAMVR_COMPOSITOR, false);
+        //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, true);
+        //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_JFRAME_EXTENDED_BACKUP, true);        
+        //test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true);
@@ -129,6 +134,7 @@ public class TestOpenVR extends VRApplication {
         inputManager.addMapping("left", new KeyTrigger(KeyInput.KEY_A));
         inputManager.addMapping("right", new KeyTrigger(KeyInput.KEY_D));
         inputManager.addMapping("filter", new KeyTrigger(KeyInput.KEY_F));
+        inputManager.addMapping("dumpImages", new KeyTrigger(KeyInput.KEY_I));
         ActionListener acl = new ActionListener() {
 
             public void onAction(String name, boolean keyPressed, float tpf) {
@@ -162,6 +168,8 @@ public class TestOpenVR extends VRApplication {
                     } else {
                         moveBackwards = false;
                     }
+                } else if( name.equals("dumpImages") ) {
+                    JOpenVRLibrary.VR_IVRCompositor_CompositorDumpImages(OpenVR.getVRCompositorInstance());
                 }else if(name.equals("left")){
                     if(keyPressed){
                         rotateLeft = true;
@@ -187,6 +195,7 @@ public class TestOpenVR extends VRApplication {
         inputManager.addListener(acl, "incShift");
         inputManager.addListener(acl, "decShift");
         inputManager.addListener(acl, "filter");
+        inputManager.addListener(acl, "dumpImages");
     }
      
      private float distance = 100f;

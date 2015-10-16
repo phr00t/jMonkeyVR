@@ -4,13 +4,11 @@
  */
 package jmevr.util;
 
-import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -218,7 +216,7 @@ public class VRGuiManager {
                 guiQuad = new Geometry("guiQuad", new CenterQuad(1f, 1f));
             }
             
-            Material mat = new Material(sourceApp.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");            
+            Material mat = new Material(sourceApp.getAssetManager(), "jmevr/shaders/GuiOverlay.j3md");            
             mat.getAdditionalRenderState().setDepthTest(!overdraw);
             mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
             mat.getAdditionalRenderState().setDepthWrite(false);

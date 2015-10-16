@@ -43,7 +43,7 @@ public class TestOpenVR extends VRApplication {
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_STEAMVR_COMPOSITOR, false);
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, true);
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_JFRAME_EXTENDED_BACKUP, true);        
-        //test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true);
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true);
         test.setRenderer(AppSettings.LWJGL_OPENGL3);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, true);

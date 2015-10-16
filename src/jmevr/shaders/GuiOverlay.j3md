@@ -1,0 +1,31 @@
+MaterialDef GuiOverlay {
+
+    MaterialParameters {
+        Texture2D ColorMap
+    }
+
+    Technique {
+        VertexShader GLSL150:   jmevr/shaders/GuiOverlay15.vert
+        FragmentShader GLSL150: jmevr/shaders/GuiOverlay15.frag
+
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+
+        Defines {
+        }
+    }
+
+    Technique {
+        VertexShader GLSL100:   jmevr/shaders/GuiOverlay.vert
+        FragmentShader GLSL100: jmevr/shaders/GuiOverlay.frag
+
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+
+        Defines {
+        }
+    }
+
+}

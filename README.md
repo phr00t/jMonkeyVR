@@ -50,6 +50,7 @@ You can change options like so:
 ```
  VRGuiManager.setPositioningMode(POSITIONING_MODE.AUTO);
  VRGuiManager.setGuiDistance(0.8f);
+ VRGuiManager.setGuiScale(0.5f);
 ```
 
 To center the GUI's position manually, where it will stay until another manual position update is called (as long as the positioning mode is set to MANUAL):

@@ -5,7 +5,7 @@
 
 I recommend using Phr00t's jMonkeyEngine build here: https://github.com/phr00t/jmonkeyengine (the main jME3 build may work, but OpenVR-specific changes will be made first on Phr00t's build) -- you can just use the JAR/libs under the dist/ and lib/ folders
 
-SteamVR is required. You can download & install it free with the Steam client (under Tools). Extended mode required (but don't worry, this library makes it work like Direct mode).
+SteamVR is required. You can download & install it free with the Steam client (under Tools).
 
 See <a href="https://github.com/phr00t/jmonkeyengine-virtual-reality/blob/master/test/jmevr/TestOpenVR.java">TestOpenVR.java</a> to see a full example of how to set up an application to use VR hardware & jME3.
 
@@ -40,6 +40,8 @@ public class Main extends VRApplication {
 <i>PRO-TIP: Use anisotropic filtering & do NOT directly access the VRApplication "cam", use getCamera() instead!</i>
 
 <b>Using the GUI</b>
+
+Get the size of the GUI "canvas" by calling VRGuiManager.getCanvasSize(). This will return the screen resolution when not in VR mode, and the virtual resolution size of the GUI canvas in VR mode. 
 
 The GUI system has two options: automatic & manual positioning. Automatic positioning will always keep the GUI elements floating infront of the view, while manual will let you center it manually, where it will stay as the player moves their head. The default is automatic positioning.
 

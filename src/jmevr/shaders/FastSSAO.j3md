@@ -15,11 +15,22 @@ MaterialDef FastSSAO {
         Vector2 FrustumNearFar
     }
 
-        Technique {
+    Technique {
+            VertexShader GLSL150:   Common/MatDefs/Post/Post15.vert
+            FragmentShader GLSL150: jmevr/shaders/FastSSAO15.frag
+
+        WorldParameters {
+            WorldViewProjectionMatrix
+            WorldViewMatrix
+            Resolution
+        }
+    }
+
+    Technique {
             VertexShader GLSL100:   Common/MatDefs/Post/Post.vert
             FragmentShader GLSL100: jmevr/shaders/FastSSAO.frag
 
-            WorldParameters {
+        WorldParameters {
             WorldViewProjectionMatrix
             WorldViewMatrix
             Resolution

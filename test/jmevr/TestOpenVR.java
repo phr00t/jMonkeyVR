@@ -19,6 +19,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
@@ -43,6 +44,7 @@ public class TestOpenVR extends VRApplication {
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, true);
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_JFRAME_EXTENDED_BACKUP, true);        
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true);
+        test.setRenderer(AppSettings.LWJGL_OPENGL3);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true);

@@ -9,8 +9,8 @@ MaterialDef OpenVR {
     }
  
      Technique {
-        VertexShader GLSL150:   jmevr/shaders/OpenVR.vert
-        FragmentShader GLSL150: jmevr/shaders/OpenVR.frag
+        VertexShader GLSL150:   jmevr/shaders/OpenVR15.vert
+        FragmentShader GLSL150: jmevr/shaders/OpenVR15.frag
  
         WorldParameters {
             WorldViewProjectionMatrix

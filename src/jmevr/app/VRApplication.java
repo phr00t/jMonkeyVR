@@ -51,6 +51,7 @@ public abstract class VRApplication extends Application {
         SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE
     }
     
+    private static String setRenderer;
     private static OpenVR VRhardware;    
     private static Camera dummyCam;
     private static OpenVRViewManager VRviewmanager;
@@ -136,6 +137,10 @@ public abstract class VRApplication extends Application {
     public void setMirrorWindowSize(int width, int height) {
         xWin = width;
         yWin = height;
+    }
+    
+    public void setRenderer(String renderer) {
+        setRenderer = renderer;
     }
 
     public VRApplication() {
@@ -264,6 +269,7 @@ public abstract class VRApplication extends Application {
         }
         
         //re-setting settings they can have been merged from the registry.
+        if( setRenderer != null ) settings.setRenderer(setRenderer);
         settings.setSwapBuffers(true);
         setSettings(settings);
         start(JmeContext.Type.Display, false);

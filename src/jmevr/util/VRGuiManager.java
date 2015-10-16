@@ -72,7 +72,7 @@ public class VRGuiManager {
         guiPos.set(0f, 0f, guiDistance);
         dir.mult(guiPos, guiPos);
         guiPos.x += pos.x;
-        guiPos.y += pos.y;
+        guiPos.y += pos.y + VRApplication.getVRHeightAdjustment();
         guiPos.z += pos.z;        
     }
     

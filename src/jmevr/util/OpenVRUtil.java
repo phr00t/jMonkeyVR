@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdMatrix44_t;
 import org.lwjgl.LWJGLUtil;
-import org.lwjgl.opengl.Display;
 
 /**
  *
@@ -59,42 +58,5 @@ public class OpenVRUtil {
         out.fromRotationMatrix(in.m00, in.m01, in.m02, in.m10, in.m11, in.m12, in.m20, in.m21, in.m22);
         // flip the pitch
         out.set(-out.getX(), out.getY(), -out.getZ(), out.getW());
-    }
-
-    public static long getNativeWindow() {
-        long window = -1;
-        try {
-            Object displayImpl = null;
-            Method[] displayMethods = Display.class.getDeclaredMethods();
-            for (Method m : displayMethods) {
-                if (m.getName().equals("getImplementation")) {
-                    m.setAccessible(true);
-                    displayImpl = m.invoke(null, (Object[]) null);
-                    break;
-                }
-            }            
-            String fieldName = null;
-            switch (LWJGLUtil.getPlatform()) {
-                case LWJGLUtil.PLATFORM_LINUX:
-                    fieldName = "current_window";
-                    break;
-                case LWJGLUtil.PLATFORM_WINDOWS:
-                    fieldName = "hwnd";
-                    break;
-            }
-            if (null != fieldName) {
-                Field[] windowsDisplayFields = displayImpl.getClass().getDeclaredFields();
-                for (Field f : windowsDisplayFields) {
-                    if (f.getName().equals(fieldName)) {
-                        f.setAccessible(true);
-                        window = (Long) f.get(displayImpl);
-                        continue;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-        return window;
     }
 }

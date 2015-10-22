@@ -222,7 +222,7 @@ public abstract class VRApplication extends Application {
                     settings.setBitsPerPixel(useDM.getBitDepth());
                     settings.setFrequency(useDM.getRefreshRate());
                     settings.setSwapBuffers(true);
-                    settings.setVSync(true);
+                    settings.setVSync(true); // allow vsync on this display
                     setSettings(settings);
                     VRdev.setFullScreenWindow(VRwindow);
                     // make sure we are in the right display mode
@@ -265,7 +265,7 @@ public abstract class VRApplication extends Application {
             settings.setWidth(xWin);
             settings.setHeight(yWin);
             settings.setBitsPerPixel(32);
-            settings.setVSync(true);
+            settings.setVSync(false); // stop vsyncing on primary monitor!
         }
         
         //re-setting settings they can have been merged from the registry.

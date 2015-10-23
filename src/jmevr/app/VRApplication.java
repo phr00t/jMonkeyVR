@@ -48,7 +48,7 @@ public abstract class VRApplication extends Application {
 
     public static enum PRECONFIG_PARAMETER {
         USE_STEAMVR_COMPOSITOR, USE_JFRAME_EXTENDED_BACKUP, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
-        SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE
+        SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY
     }
     
     private static String setRenderer;
@@ -57,7 +57,7 @@ public abstract class VRApplication extends Application {
     private static OpenVRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
-    private static boolean VRSupportedOS, forceVR;
+    private static boolean VRSupportedOS, forceVR, disableSwapBuffers;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     private static JFrame VRwindow;
@@ -145,7 +145,6 @@ public abstract class VRApplication extends Application {
 
     public VRApplication() {
         super();
-        
         rootNode = new Node("root");
         guiNode = new Node("guiNode");
         guiNode.setQueueBucket(Bucket.Gui);
@@ -259,20 +258,28 @@ public abstract class VRApplication extends Application {
             if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
                 return;
             }            
+            settings.setSwapBuffers(true);
         } else {
             // use basic mirroring window, skip settings window
             settings.setSamples(1);
             settings.setWidth(xWin);
             settings.setHeight(yWin);
-            settings.setBitsPerPixel(32);                        
+            settings.setBitsPerPixel(32);     
+            settings.setFrameRate(0);
+            settings.setFrequency(OpenVR.getDisplayFrequency());
+            settings.setFullscreen(false);
             settings.setVSync(false); // stop vsyncing on primary monitor!
+            settings.setSwapBuffers(!disableSwapBuffers);
         }
         
         //re-setting settings they can have been merged from the registry.
         if( setRenderer != null ) settings.setRenderer(setRenderer);
-        settings.setSwapBuffers(true);
         setSettings(settings);
         start(JmeContext.Type.Display, false);
+        
+        // disable annoying warnings about GUI stuff being updated, which is normal behavior
+        // for late GUI placement for VR purposes
+        Logger.getLogger("com.jme3").setLevel(Level.SEVERE);        
     }    
     
     /*
@@ -301,6 +308,9 @@ public abstract class VRApplication extends Application {
                 break;
             case FLIP_EYES:
                 OpenVR._setFlipEyes(value);
+                break;
+            case DISABLE_SWAPBUFFERS_COMPLETELY:
+                disableSwapBuffers = value;
                 break;
         }
     }

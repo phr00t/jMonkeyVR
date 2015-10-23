@@ -234,7 +234,7 @@ public class OpenVR {
                 latencyWaitTime += Math.round(Math.pow(frameCountRun / 10.0, 2.0));
             }
 
-            frameCount = nowCount;            
+            frameCount = nowCount;
             
             JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);   
         }

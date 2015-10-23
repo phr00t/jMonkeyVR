@@ -388,7 +388,7 @@ public class OpenVRViewManager {
         
         //setup framebuffer's texture
         Texture2D offTex = new Texture2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);
-        offTex.setMinFilter(Texture.MinFilter.Trilinear);
+        offTex.setMinFilter(Texture.MinFilter.BilinearNoMipMaps);
         offTex.setMagFilter(Texture.MagFilter.Bilinear);
 
         //setup framebuffer to use texture

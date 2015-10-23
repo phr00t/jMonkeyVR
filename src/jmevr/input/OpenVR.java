@@ -86,6 +86,11 @@ public class OpenVR {
         enableDebugLatency = set;
     }
 
+    public static int getDisplayFrequency() {
+        if( hmdDisplayFrequency == null ) return 0;
+        return hmdDisplayFrequency.get(0);
+    }
+    
     public boolean initialize() {
         hmdErrorStore = IntBuffer.allocate(1);
         vrsystem = JOpenVRLibrary.VR_Init(hmdErrorStore, JOpenVRLibrary.EVRApplicationType.EVRApplicationType_VRApplication_Scene);
@@ -101,15 +106,13 @@ public class OpenVR {
             
             hmdDisplayFrequency = IntBuffer.allocate(1);
             hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_DisplayFrequency_Float);
-            hmdDisplayFrequency = IntBuffer.allocate(1);
-            hmdDisplayFrequency.put( (int) JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float);
             hmdTrackedDevicePoseReference = new TrackedDevicePose_t.ByReference();
             hmdTrackedDevicePoses = (TrackedDevicePose_t[])hmdTrackedDevicePoseReference.toArray(JOpenVRLibrary.k_unMaxTrackedDeviceCount);
             poseMatrices = new Matrix4f[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
             for(int i=0;i<poseMatrices.length;i++) poseMatrices[i] = new Matrix4f();
 
             vsyncToPhotons = JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
-            timePerFrame = 1.0 / JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_DisplayFrequency_Float, hmdErrorStore);
+            timePerFrame = 1.0 / hmdDisplayFrequency.get(0);
             
             // disable all this stuff which kills performance
             hmdTrackedDevicePoseReference.setAutoRead(false);

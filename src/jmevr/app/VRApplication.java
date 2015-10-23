@@ -258,13 +258,13 @@ public abstract class VRApplication extends Application {
             // not in VR, show settings dialog
             if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
                 return;
-            }
+            }            
         } else {
             // use basic mirroring window, skip settings window
             settings.setSamples(1);
             settings.setWidth(xWin);
             settings.setHeight(yWin);
-            settings.setBitsPerPixel(32);
+            settings.setBitsPerPixel(32);                        
             settings.setVSync(false); // stop vsyncing on primary monitor!
         }
         

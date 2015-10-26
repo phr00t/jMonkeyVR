@@ -24,11 +24,13 @@ public class Compositor_FrameTiming extends Structure {
 	public float m_flCompositorRenderGpuMs;
 	public float m_flPresentCallCpuMs;
 	public float m_flRunningStartMs;
+	public float m_flHandoffStartMs;
+	public float m_flHandoffEndMs;
 	public Compositor_FrameTiming() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("size", "frameStart", "frameVSync", "droppedFrames", "frameIndex", "pose", "prediction", "m_flFrameIntervalMs", "m_flSceneRenderCpuMs", "m_flSceneRenderGpuMs", "m_flCompositorRenderCpuMs", "m_flCompositorRenderGpuMs", "m_flPresentCallCpuMs", "m_flRunningStartMs");
+		return Arrays.asList("size", "frameStart", "frameVSync", "droppedFrames", "frameIndex", "pose", "prediction", "m_flFrameIntervalMs", "m_flSceneRenderCpuMs", "m_flSceneRenderGpuMs", "m_flCompositorRenderCpuMs", "m_flCompositorRenderGpuMs", "m_flPresentCallCpuMs", "m_flRunningStartMs", "m_flHandoffStartMs", "m_flHandoffEndMs");
 	}
 	public Compositor_FrameTiming(Pointer peer) {
 		super(peer);

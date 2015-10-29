@@ -12,7 +12,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -51,7 +50,6 @@ public abstract class VRApplication extends Application {
         SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY
     }
     
-    private static String setRenderer;
     private static OpenVR VRhardware;    
     private static Camera dummyCam;
     private static OpenVRViewManager VRviewmanager;
@@ -137,10 +135,6 @@ public abstract class VRApplication extends Application {
     public void setMirrorWindowSize(int width, int height) {
         xWin = width;
         yWin = height;
-    }
-    
-    public void setRenderer(String renderer) {
-        setRenderer = renderer;
     }
 
     public VRApplication() {
@@ -272,8 +266,6 @@ public abstract class VRApplication extends Application {
             settings.setSwapBuffers(!disableSwapBuffers);
         }
         
-        //re-setting settings they can have been merged from the registry.
-        if( setRenderer != null ) settings.setRenderer(setRenderer);
         setSettings(settings);
         start(JmeContext.Type.Display, false);
         

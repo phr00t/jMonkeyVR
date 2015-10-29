@@ -48,7 +48,6 @@ public class TestOpenVR extends VRApplication {
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, false);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true); // show gui even if it is behind things
-        test.setRenderer(AppSettings.LWJGL_OPENGL3);
         test.setFrustrumNearFar(0.5f, 512f);
         test.start();
     }

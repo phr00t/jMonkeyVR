@@ -47,7 +47,7 @@ public abstract class VRApplication extends Application {
 
     public static enum PRECONFIG_PARAMETER {
         USE_STEAMVR_COMPOSITOR, USE_JFRAME_EXTENDED_BACKUP, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
-        SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY
+        SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY, PREFER_OPENGL3
     }
     
     private static OpenVR VRhardware;    
@@ -55,7 +55,7 @@ public abstract class VRApplication extends Application {
     private static OpenVRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
-    private static boolean VRSupportedOS, forceVR, disableSwapBuffers;
+    private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     private static JFrame VRwindow;
@@ -266,6 +266,13 @@ public abstract class VRApplication extends Application {
             settings.setSwapBuffers(!disableSwapBuffers);
         }
         
+        // set opengl mode
+        if( tryOpenGL3 ) {
+            settings.setRenderer(AppSettings.LWJGL_OPENGL3);
+        } else {
+            settings.setRenderer(AppSettings.LWJGL_OPENGL2);
+        }
+        
         setSettings(settings);
         start(JmeContext.Type.Display, false);
         
@@ -303,6 +310,9 @@ public abstract class VRApplication extends Application {
                 break;
             case DISABLE_SWAPBUFFERS_COMPLETELY:
                 disableSwapBuffers = value;
+                break;
+            case PREFER_OPENGL3:
+                tryOpenGL3 = value;
                 break;
         }
     }

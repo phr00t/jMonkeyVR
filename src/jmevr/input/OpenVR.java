@@ -33,7 +33,7 @@ public class OpenVR {
     
     private static IntBuffer hmdDisplayFrequency;
     private static TrackedDevicePose_t.ByReference hmdTrackedDevicePoseReference;
-    private static TrackedDevicePose_t[] hmdTrackedDevicePoses;
+    protected static TrackedDevicePose_t[] hmdTrackedDevicePoses;
     
     private static IntBuffer hmdErrorStore;
     
@@ -46,7 +46,7 @@ public class OpenVR {
     // for debugging latency
     private int frames = 0;    
     
-    private static Matrix4f[] poseMatrices;
+    protected static Matrix4f[] poseMatrices;
     
     private static final Matrix4f hmdPose = Matrix4f.IDENTITY.clone();
     private static Matrix4f hmdProjectionLeftEye;

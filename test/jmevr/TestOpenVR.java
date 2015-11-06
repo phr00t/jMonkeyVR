@@ -12,14 +12,15 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Box;
-import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
@@ -27,6 +28,7 @@ import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
 import jmevr.input.OpenVR;
+import jmevr.input.VRInput;
 import jmevr.post.CartoonSSAO;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
@@ -38,6 +40,7 @@ import jopenvr.JOpenVRLibrary;
  */
 public class TestOpenVR extends VRApplication {
 
+    // set some VR settings & start the app
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_STEAMVR_COMPOSITOR, false); // disable the SteamVR compositor (kinda needed at the moment)
@@ -52,11 +55,13 @@ public class TestOpenVR extends VRApplication {
         test.start();
     }
     
+    // general objects for scene management
     Node boxes = new Node("");
     Spatial observer;
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Material mat;
     Node mainScene;
+    Geometry leftHand, rightHand;
     
     @Override
     public void simpleInitApp() {        
@@ -77,6 +82,17 @@ public class TestOpenVR extends VRApplication {
         noise.setAnisotropicFilter(16);
         mat.setTexture("ColorMap", noise);
                        
+        // hand wands
+        leftHand = (Geometry)getAssetManager().loadModel("Models/handwand.j3o");
+        leftHand.scale(0.5f);
+        rightHand = leftHand.clone();
+        Material handMat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        handMat.setTexture("ColorMap", getAssetManager().loadTexture("Textures/handnoise.png"));
+        leftHand.setMaterial(handMat);
+        rightHand.setMaterial(handMat);
+        rootNode.attachChild(rightHand);
+        rootNode.attachChild(leftHand);
+        
         // gui element
         Vector2f guiCanvasSize = VRGuiManager.getCanvasSize();
         Picture test = new Picture("testpic");
@@ -220,6 +236,21 @@ public class TestOpenVR extends VRApplication {
          }
          if(rotateRight){
              observer.rotate(0, -0.75f*tpf, 0);
+         }
+         
+         handleWandInput(0, leftHand);
+         handleWandInput(1, rightHand);
+     }
+     
+     private void handleWandInput(int index, Geometry geo) {
+         Quaternion q = VRInput.getFinalObserverRotation(index);
+         Vector3f v = VRInput.getFinalObserverPosition(index);
+         if( q != null && v != null ) {
+             geo.setCullHint(CullHint.Dynamic); // make sure we see it
+             geo.setLocalTranslation(v);
+             geo.setLocalRotation(q);
+         } else {
+             geo.setCullHint(CullHint.Always); // hide it             
          }
      }
      

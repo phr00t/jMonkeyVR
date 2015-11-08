@@ -47,7 +47,7 @@ public abstract class VRApplication extends Application {
 
     public static enum PRECONFIG_PARAMETER {
         USE_STEAMVR_COMPOSITOR, USE_JFRAME_EXTENDED_BACKUP, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
-        SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY, PREFER_OPENGL3
+        SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY, PREFER_OPENGL3, DISABLE_VR
     }
     
     private static OpenVR VRhardware;    
@@ -55,7 +55,7 @@ public abstract class VRApplication extends Application {
     private static OpenVRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
-    private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true;
+    private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true, disableVR;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     private static JFrame VRwindow;
@@ -153,7 +153,7 @@ public abstract class VRApplication extends Application {
         compositorOS = OS.contains("indows");
         
         VRhardware = new OpenVR();
-        if( VRSupportedOS ) VRhardware.initialize();
+        if( VRSupportedOS && disableVR == false ) VRhardware.initialize();
     }
     
     /*
@@ -314,6 +314,9 @@ public abstract class VRApplication extends Application {
             case PREFER_OPENGL3:
                 tryOpenGL3 = value;
                 break;
+            case DISABLE_VR:
+                disableVR = value;
+                break;
         }
     }
     
@@ -325,7 +328,7 @@ public abstract class VRApplication extends Application {
         quick check if VR mode is enabled
     */
     public static boolean isInVR() {
-        return forceVR || VRSupportedOS && VRhardware != null && VRhardware.isInitialized();
+        return disableVR == false && (forceVR || VRSupportedOS && VRhardware != null && VRhardware.isInitialized());
     }
     
     /*
@@ -343,11 +346,6 @@ public abstract class VRApplication extends Application {
     */
     public static OpenVR getVRHardware() {
         return VRhardware;
-    }
-    
-    private static void initVRinput() {
-        // try and detect any VR input controllers
-        // check for Vive controllers, add as needed etc.
     }
     
     public Node getGuiNode(){
@@ -370,6 +368,13 @@ public abstract class VRApplication extends Application {
     */
     public static void setObserver(Spatial observer) {
         VRApplication.observer = observer;
+    }
+    
+    /*
+        get view manager
+    */
+    public static OpenVRViewManager getVRViewManager() {
+        return VRviewmanager;
     }
     
     /*
@@ -399,12 +404,11 @@ public abstract class VRApplication extends Application {
                 return mainApp.getCamera().getLocation();
             } else return VRApplication.observer.getWorldTranslation();            
         }
+        Vector3f pos = VRhardware.getPosition();
         if( VRApplication.observer == null ) {
-            Vector3f pos = VRhardware.getPosition();
             dummyCam.getRotation().mult(pos, pos);
             return pos.addLocal(dummyCam.getLocation());
         } else {
-            Vector3f pos = VRhardware.getPosition();
             VRApplication.observer.getWorldRotation().mult(pos, pos);
             return pos.addLocal(VRApplication.observer.getWorldTranslation());
         }
@@ -522,7 +526,6 @@ public abstract class VRApplication extends Application {
             inputManager.addListener(new VRListener(), new String[]{RESET_HMD, MIRRORING});
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));
             inputManager.addMapping(MIRRORING, new KeyTrigger(KeyInput.KEY_F10));
-            initVRinput();
             setLostFocusBehavior(LostFocusBehavior.Disabled);
         } else {
             viewPort.attachScene(rootNode);
@@ -540,9 +543,6 @@ public abstract class VRApplication extends Application {
     public void destroy() {
         if( VRhardware != null ) {
             VRhardware.destroy();
-            for(int i=0;i<VRinput.size();i++) {
-                VRinput.get(i).destroy();
-            }
             VRhardware = null;
         }        
         super.destroy();
@@ -555,8 +555,5 @@ public abstract class VRApplication extends Application {
     public void reset(){
         if( VRSupportedOS == false ) return;
         VRhardware.reset();
-        for(int i=0;i<VRinput.size();i++) {
-            VRinput.get(i).reset();
-        }
     }
 }

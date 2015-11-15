@@ -19,6 +19,7 @@ import jmevr.util.OpenVRUtil;
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdMatrix44_t;
 import jopenvr.JOpenVRLibrary;
+import jopenvr.JOpenVRLibrary.VREvent_t;
 import jopenvr.TrackedDevicePose_t;
 
 /**
@@ -29,6 +30,7 @@ public class OpenVR {
 
     private static Pointer vrsystem;
     private static Pointer vrCompositor;
+    private static VREvent_t tempEvent = new VREvent_t();
     private static boolean initSuccess = false, flipEyes = false;
     
     private static IntBuffer hmdDisplayFrequency;
@@ -119,6 +121,9 @@ public class OpenVR {
             hmdTrackedDevicePoseReference.setAutoWrite(false);
             hmdTrackedDevicePoseReference.setAutoSynch(false);
             
+            // init controllers for the first time
+            VRInput._updateConnectedControllers();
+            
             initSuccess = true;
             return true;
         }
@@ -205,7 +210,7 @@ public class OpenVR {
     public void updatePose(){
         if(vrsystem == null) return;
         if(vrCompositor != null) {
-           JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePoseReference, hmdTrackedDevicePoses.length, null, 0);
+           JOpenVRLibrary.VR_IVRCompositor_WaitGetPoses(vrCompositor, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount, null, 0);
         } else {
             // wait
             if( latencyWaitTime > 0 ) OpenVRUtil.sleepNanos(latencyWaitTime);
@@ -239,16 +244,32 @@ public class OpenVR {
 
             frameCount = nowCount;
             
-            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);   
+            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseStanding, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);   
         }
         
-        hmdTrackedDevicePoseReference.read(); // pull updated pose information set in native memory from functions above
+        // read in the values from pose results
+        hmdTrackedDevicePoseReference.read();
+        hmdTrackedDevicePoseReference.toArray(hmdTrackedDevicePoses);
         
+        // deal with controllers being plugged in and out
+        boolean hasEvent = false;
+        while( JOpenVRLibrary.VR_IVRSystem_PollNextEvent(OpenVR.getVRSystemInstance(), tempEvent) != 0 ) {
+            // wait until the events are clear..
+            hasEvent = true;
+        }
+        if( hasEvent ) {
+            // an event probably changed controller state
+            VRInput._updateConnectedControllers();
+        }
+        //update controllers pose information
+        VRInput._updateControllerStates();
+                
         for (int nDevice = 0; nDevice < JOpenVRLibrary.k_unMaxTrackedDeviceCount; ++nDevice ){
             if( hmdTrackedDevicePoses[nDevice].bPoseIsValid != 0 ){
                 OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(hmdTrackedDevicePoses[nDevice].mDeviceToAbsoluteTracking, poseMatrices[nDevice]);
-            }
+            }            
         }
+        
         if ( hmdTrackedDevicePoses[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd].bPoseIsValid != 0 ){
             hmdPose.set(poseMatrices[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd]);
         } else {

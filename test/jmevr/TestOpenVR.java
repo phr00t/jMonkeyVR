@@ -1,10 +1,3 @@
-/*
-    - only could see right eye in vr compositor...
-    - 5089's gui mode isn't working, quad is being rotated just by looking around
-    - getScreenCoordinates should kinda sorta work in VR
-    - should use new compositor submit feature for custom distortion mesh *IN PROGRESS, SEE TODO IN VR_VIEW_MANAGER*
-    - mouse cursor still visible in VR JFrame...
- */
 package jmevr;
 
 import com.jme3.input.KeyInput;
@@ -33,6 +26,7 @@ import jmevr.post.CartoonSSAO;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
 import jopenvr.JOpenVRLibrary;
+import jopenvr.VRControllerAxis_t;
 
 /**
  *
@@ -84,7 +78,7 @@ public class TestOpenVR extends VRApplication {
                        
         // hand wands
         leftHand = (Geometry)getAssetManager().loadModel("Models/handwand.j3o");
-        leftHand.scale(0.5f);
+        leftHand.scale(0.25f);
         rightHand = leftHand.clone();
         Material handMat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         handMat.setTexture("ColorMap", getAssetManager().loadTexture("Textures/handnoise.png"));
@@ -238,6 +232,7 @@ public class TestOpenVR extends VRApplication {
              observer.rotate(0, -0.75f*tpf, 0);
          }
          
+         System.out.println("Controller count: " + Integer.toString(VRInput.getTrackedControllerCount()));
          handleWandInput(0, leftHand);
          handleWandInput(1, rightHand);
      }
@@ -249,6 +244,12 @@ public class TestOpenVR extends VRApplication {
              geo.setCullHint(CullHint.Dynamic); // make sure we see it
              geo.setLocalTranslation(v);
              geo.setLocalRotation(q);
+             // print out all of the known information about the controllers here
+             for(int i=0;i<VRInput.getRawControllerState(index).rAxis.length;i++) {
+                 VRControllerAxis_t cs = VRInput.getRawControllerState(index).rAxis[i];
+                 System.out.println("Controller#" + Integer.toString(index) + ", Axis#" + Integer.toString(i) + " X: " + Float.toString(cs.x) + ", Y: " + Float.toString(cs.y));
+             }
+             System.out.println("Button press: " + Long.toString(VRInput.getRawControllerState(index).ulButtonPressed.longValue()) + ", touch: " + Long.toString(VRInput.getRawControllerState(index).ulButtonTouched.longValue()));
          } else {
              geo.setCullHint(CullHint.Always); // hide it             
          }

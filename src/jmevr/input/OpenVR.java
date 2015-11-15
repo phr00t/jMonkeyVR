@@ -37,7 +37,7 @@ public class OpenVR {
     private static TrackedDevicePose_t.ByReference hmdTrackedDevicePoseReference;
     protected static TrackedDevicePose_t[] hmdTrackedDevicePoses;
     
-    private static IntBuffer hmdErrorStore;
+    protected static IntBuffer hmdErrorStore;
     
     private static final Quaternion rotStore = new Quaternion();
     private static final Vector3f posStore = new Vector3f();
@@ -123,6 +123,9 @@ public class OpenVR {
             
             // init controllers for the first time
             VRInput._updateConnectedControllers();
+            
+            // init bounds & chaperone info
+            VRBounds.init();
             
             initSuccess = true;
             return true;

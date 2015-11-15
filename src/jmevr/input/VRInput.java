@@ -7,6 +7,7 @@ package jmevr.input;
 
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Spatial;
@@ -17,7 +18,7 @@ import jopenvr.JOpenVRLibrary;
 import jopenvr.VRControllerState_t;
 
 /*
-make helper functions to pull the following easily from raw data:
+make helper functions to pull the following easily from raw data (DONE)
 
 Controller#1, Axis#0 X: 2.8E-45, Y: 0.0 <--- axis 0, x seems to have bit flags for touchpad press & full trigger press
 Controller#1, Axis#1 X: 4.2E-45, Y: 0.39417708 <--- touchpad on Y
@@ -42,6 +43,40 @@ public class VRInput {
     private static final Vector3f[] posStore = new Vector3f[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
     private static final int[] controllerIndex = new int[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
     private static int controllerCount = 0;
+    private static final Vector2f tempAxis = new Vector2f();
+    
+    public enum VRINPUT_TYPE {
+        ViveTriggerAxis, ViveTouchpadAxis, ViveGripButton, ViveThumbButton
+    }
+    
+    public boolean buttonPressed(int controllerIndex, VRINPUT_TYPE checkButton) {
+        VRControllerState_t cs = cStates[VRInput.controllerIndex[controllerIndex]];
+        switch( checkButton ) {
+            default:
+                return false;
+            case ViveGripButton:
+                return (cs.ulButtonTouched.longValue() & 4) != 0;
+            case ViveThumbButton:
+                return (cs.ulButtonTouched.longValue() & 2) != 0;                
+        }
+    }
+    
+    public Vector2f getAxis(int controllerIndex, VRINPUT_TYPE forAxis) {
+        VRControllerState_t cs = cStates[VRInput.controllerIndex[controllerIndex]];
+        switch( forAxis ) {
+            default:
+                return null;
+            case ViveTriggerAxis:
+                tempAxis.x = cs.rAxis[2].y;
+                tempAxis.y = 0f;
+                break;
+            case ViveTouchpadAxis:
+                tempAxis.x = cs.rAxis[1].y;
+                tempAxis.y = cs.rAxis[2].x;
+                break;
+        }        
+        return tempAxis;
+    }
     
     static {
         for(int i=0;i<JOpenVRLibrary.k_unMaxTrackedDeviceCount;i++) {

@@ -21,6 +21,7 @@ import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
 import jmevr.input.OpenVR;
+import jmevr.input.VRBounds;
 import jmevr.input.VRInput;
 import jmevr.input.VRInput.VRINPUT_TYPE;
 import jmevr.post.CartoonSSAO;
@@ -76,7 +77,21 @@ public class TestOpenVR extends VRApplication {
         noise.setMinFilter(MinFilter.Trilinear);
         noise.setAnisotropicFilter(16);
         mat.setTexture("ColorMap", noise);
-                       
+                     
+        // make the floor according to the size of our play area
+        Geometry floor = new Geometry("floor", new Box(1f, 1f, 1f));
+        Vector2f playArea = VRBounds.getPlaySize();
+        if( playArea == null ) {
+            // no play area, use default size & height
+            floor.setLocalScale(2f, 0.5f, 2f);
+            floor.move(0f, -1.5f, 0f);
+        } else {
+            floor.setLocalScale(playArea.x, 0.5f, playArea.y);
+            floor.move(0f, -0.5f, 0f);
+        }
+        floor.setMaterial(mat);
+        rootNode.attachChild(floor);
+        
         // hand wands
         leftHand = (Geometry)getAssetManager().loadModel("Models/vive_controller.j3o");
         rightHand = leftHand.clone();

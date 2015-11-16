@@ -44,12 +44,13 @@ public class VRInput {
     private static final int[] controllerIndex = new int[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
     private static int controllerCount = 0;
     private static final Vector2f tempAxis = new Vector2f();
+    private static final Quaternion quatFlip = (new Quaternion()).fromAngles(0f, (float)Math.PI, 0f);
     
     public enum VRINPUT_TYPE {
         ViveTriggerAxis, ViveTouchpadAxis, ViveGripButton, ViveThumbButton
     }
     
-    public boolean buttonPressed(int controllerIndex, VRINPUT_TYPE checkButton) {
+    public static boolean buttonDown(int controllerIndex, VRINPUT_TYPE checkButton) {
         VRControllerState_t cs = cStates[VRInput.controllerIndex[controllerIndex]];
         switch( checkButton ) {
             default:
@@ -61,14 +62,14 @@ public class VRInput {
         }
     }
     
-    public Vector2f getAxis(int controllerIndex, VRINPUT_TYPE forAxis) {
+    public static Vector2f getAxis(int controllerIndex, VRINPUT_TYPE forAxis) {
         VRControllerState_t cs = cStates[VRInput.controllerIndex[controllerIndex]];
         switch( forAxis ) {
             default:
                 return null;
             case ViveTriggerAxis:
                 tempAxis.x = cs.rAxis[2].y;
-                tempAxis.y = 0f;
+                tempAxis.y = tempAxis.x;
                 break;
             case ViveTouchpadAxis:
                 tempAxis.x = cs.rAxis[1].y;
@@ -140,7 +141,7 @@ public class VRInput {
         if( isInputDeviceTracking(index) == false ) return null;
         index = controllerIndex[index];
         OpenVRUtil.convertMatrix4toQuat(OpenVR.poseMatrices[index], rotStore[index]);
-        return rotStore[index];
+        return rotStore[index].multLocal(quatFlip);
     }
 
     public static Vector3f getPosition(int index) {
@@ -163,6 +164,7 @@ public class VRInput {
             storePos.x = -storePos.x;
             storePos.z = -storePos.z;
             OpenVRUtil.convertMatrix4toQuat(OpenVR.poseMatrices[index], storeRot);
+            storeRot.multLocal(quatFlip);
         }
     }    
     

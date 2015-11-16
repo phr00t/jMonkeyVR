@@ -11,15 +11,18 @@ public class VRBounds {
     private static Vector2f playSize;
     
     public static boolean init() {
-        vrChaperone = JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRChaperone_Version, OpenVR.hmdErrorStore);
-        if( vrChaperone != null ) {
-            FloatBuffer fbX = FloatBuffer.allocate(1);
-            FloatBuffer fbZ = FloatBuffer.allocate(1);
-            JOpenVRLibrary.VR_IVRChaperone_GetPlayAreaSize(vrChaperone, fbX, fbZ);
-            playSize = new Vector2f(fbX.get(0), fbZ.get(0));
-            return true;
+        if( vrChaperone == null ) {
+            vrChaperone = JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRChaperone_Version, OpenVR.hmdErrorStore);
+            if( vrChaperone != null ) {
+                FloatBuffer fbX = FloatBuffer.allocate(1);
+                FloatBuffer fbZ = FloatBuffer.allocate(1);
+                JOpenVRLibrary.VR_IVRChaperone_GetPlayAreaSize(vrChaperone, fbX, fbZ);
+                playSize = new Vector2f(fbX.get(0), fbZ.get(0));
+                return true; // init success
+            }
+            return false; // failed to init
         }
-        return false;
+        return true; // already initialized
     }
     
     public static Vector2f getPlaySize() {

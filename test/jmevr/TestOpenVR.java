@@ -22,6 +22,7 @@ import com.jme3.util.SkyFactory;
 import jmevr.app.VRApplication;
 import jmevr.input.OpenVR;
 import jmevr.input.VRInput;
+import jmevr.input.VRInput.VRINPUT_TYPE;
 import jmevr.post.CartoonSSAO;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
@@ -77,11 +78,10 @@ public class TestOpenVR extends VRApplication {
         mat.setTexture("ColorMap", noise);
                        
         // hand wands
-        leftHand = (Geometry)getAssetManager().loadModel("Models/handwand.j3o");
-        leftHand.scale(0.25f);
+        leftHand = (Geometry)getAssetManager().loadModel("Models/vive_controller.j3o");
         rightHand = leftHand.clone();
         Material handMat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-        handMat.setTexture("ColorMap", getAssetManager().loadTexture("Textures/handnoise.png"));
+        handMat.setTexture("ColorMap", getAssetManager().loadTexture("Textures/vive_controller.png"));
         leftHand.setMaterial(handMat);
         rightHand.setMaterial(handMat);
         rootNode.attachChild(rightHand);
@@ -212,6 +212,7 @@ public class TestOpenVR extends VRApplication {
      
      private float distance = 100f;
      private float prod = 0f;
+     private float placeRate = 0f;
      
      @Override
      public void simpleUpdate(float tpf){
@@ -232,9 +233,9 @@ public class TestOpenVR extends VRApplication {
              observer.rotate(0, -0.75f*tpf, 0);
          }
          
-         System.out.println("Controller count: " + Integer.toString(VRInput.getTrackedControllerCount()));
          handleWandInput(0, leftHand);
          handleWandInput(1, rightHand);
+         if( placeRate > 0f ) placeRate -= tpf;
      }
      
      private void handleWandInput(int index, Geometry geo) {
@@ -244,12 +245,19 @@ public class TestOpenVR extends VRApplication {
              geo.setCullHint(CullHint.Dynamic); // make sure we see it
              geo.setLocalTranslation(v);
              geo.setLocalRotation(q);
+             // place a box when pressing a button
+             if( VRInput.getAxis(index, VRINPUT_TYPE.ViveTriggerAxis).x >= 1f &&
+                 placeRate <= 0f ) {
+                 placeRate = 0.5f;
+                 addBox(v, q, 0.1f);
+             }
              // print out all of the known information about the controllers here
-             for(int i=0;i<VRInput.getRawControllerState(index).rAxis.length;i++) {
+             /*for(int i=0;i<VRInput.getRawControllerState(index).rAxis.length;i++) {
                  VRControllerAxis_t cs = VRInput.getRawControllerState(index).rAxis[i];
                  System.out.println("Controller#" + Integer.toString(index) + ", Axis#" + Integer.toString(i) + " X: " + Float.toString(cs.x) + ", Y: " + Float.toString(cs.y));
              }
              System.out.println("Button press: " + Long.toString(VRInput.getRawControllerState(index).ulButtonPressed.longValue()) + ", touch: " + Long.toString(VRInput.getRawControllerState(index).ulButtonTouched.longValue()));
+             */
          } else {
              geo.setCullHint(CullHint.Always); // hide it             
          }
@@ -261,18 +269,23 @@ public class TestOpenVR extends VRApplication {
             float cos = FastMath.cos(x * FastMath.PI / 16f) * distance;
             float sin = FastMath.sin(x * FastMath.PI / 16f) * distance;
             Vector3f loc = new Vector3f(cos, 0, sin);
-            addBox(loc);
+            addBox(loc, null, 1f);
             loc = new Vector3f(0, cos, sin);
-            addBox(loc);
+            addBox(loc, null, 1f);
         }
 
     }
 
-    private void addBox(Vector3f location) {
+    private void addBox(Vector3f location, Quaternion rot, float scale) {
         Box b = new Box(0.3f, 0.3f, 0.3f);
 
         Geometry leftQuad = new Geometry("Box", b);
-        leftQuad.rotate(0.5f, 0, 0);
+        if( rot != null ) {
+            leftQuad.setLocalRotation(rot);
+        } else {
+            leftQuad.rotate(0.5f, 0f, 0f);
+        }
+        leftQuad.setLocalScale(scale);
         leftQuad.setMaterial(mat);
         leftQuad.setLocalTranslation(location);
         mainScene.attachChild(leftQuad);

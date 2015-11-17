@@ -120,6 +120,11 @@ public class OpenVR {
             hmdTrackedDevicePoseReference.setAutoRead(false);
             hmdTrackedDevicePoseReference.setAutoWrite(false);
             hmdTrackedDevicePoseReference.setAutoSynch(false);
+            for(int i=0;i<JOpenVRLibrary.k_unMaxTrackedDeviceCount;i++) {
+                hmdTrackedDevicePoses[i].setAutoRead(false);
+                hmdTrackedDevicePoses[i].setAutoWrite(false);
+                hmdTrackedDevicePoses[i].setAutoSynch(false);
+            }
             
             // init controllers for the first time
             VRInput._updateConnectedControllers();
@@ -177,7 +182,7 @@ public class OpenVR {
         }
         // verification of number
         if( val == 0f ) {
-            return 50f;
+            return 55f;
         } else if( val <= 10f ) {
             // most likely a radian number
             return val * 57.2957795f;
@@ -250,10 +255,6 @@ public class OpenVR {
             JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseStanding, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);   
         }
         
-        // read in the values from pose results
-        hmdTrackedDevicePoseReference.read();
-        hmdTrackedDevicePoseReference.toArray(hmdTrackedDevicePoses);
-        
         // deal with controllers being plugged in and out
         boolean hasEvent = false;
         while( JOpenVRLibrary.VR_IVRSystem_PollNextEvent(OpenVR.getVRSystemInstance(), tempEvent) != 0 ) {
@@ -267,8 +268,11 @@ public class OpenVR {
         //update controllers pose information
         VRInput._updateControllerStates();
                 
+        // read pose data from native
         for (int nDevice = 0; nDevice < JOpenVRLibrary.k_unMaxTrackedDeviceCount; ++nDevice ){
+            hmdTrackedDevicePoses[nDevice].readField("bPoseIsValid");
             if( hmdTrackedDevicePoses[nDevice].bPoseIsValid != 0 ){
+                hmdTrackedDevicePoses[nDevice].readField("mDeviceToAbsoluteTracking");
                 OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(hmdTrackedDevicePoses[nDevice].mDeviceToAbsoluteTracking, poseMatrices[nDevice]);
             }            
         }

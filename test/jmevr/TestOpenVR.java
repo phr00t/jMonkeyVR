@@ -28,7 +28,6 @@ import jmevr.post.CartoonSSAO;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
 import jopenvr.JOpenVRLibrary;
-import jopenvr.VRControllerAxis_t;
 
 /**
  *
@@ -47,7 +46,7 @@ public class TestOpenVR extends VRApplication {
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, false);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true); // show gui even if it is behind things
-        test.setFrustrumNearFar(0.5f, 512f);
+        test.setFrustrumNearFar(0.1f, 512f);
         test.start();
     }
     
@@ -86,7 +85,8 @@ public class TestOpenVR extends VRApplication {
             floor.setLocalScale(2f, 0.5f, 2f);
             floor.move(0f, -1.5f, 0f);
         } else {
-            floor.setLocalScale(playArea.x, 0.5f, playArea.y);
+            // cube model is actually 2x as big, cut it down to proper playArea size with * 0.5
+            floor.setLocalScale(playArea.x * 0.5f, 0.5f, playArea.y * 0.5f);
             floor.move(0f, -0.5f, 0f);
         }
         floor.setMaterial(mat);
@@ -260,7 +260,7 @@ public class TestOpenVR extends VRApplication {
              geo.setCullHint(CullHint.Dynamic); // make sure we see it
              geo.setLocalTranslation(v);
              geo.setLocalRotation(q);
-             // place a box when pressing a button
+             // place boxes when holding down trigger
              if( VRInput.getAxis(index, VRINPUT_TYPE.ViveTriggerAxis).x >= 1f &&
                  placeRate <= 0f ) {
                  placeRate = 0.5f;

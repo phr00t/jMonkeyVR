@@ -346,20 +346,15 @@ public class OpenVRViewManager {
         Camera origCam = app.getCamera();        
         float fFar = origCam.getFrustumFar();
         float fNear = origCam.getFrustumNear();
-        // restore frustrum on distortion scene cam
-        origCam.setFrustumFar(100f);
-        origCam.setFrustumNear(1f); 
+        
+        // restore frustrum on distortion scene cam, but only if not using VR Compositor
+        if( VRApplication.getJFrame() != null ) {
+            origCam.setFrustumFar(100f);
+            origCam.setFrustumNear(1f); 
+        }
         
         camLeft = origCam.clone();  
-        
-        float fbot = -VRApplication.getVRHardware().getFOV(JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewBottomDegrees_Float);
-        float ftop = VRApplication.getVRHardware().getFOV(JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewTopDegrees_Float);
-        float fleft = -VRApplication.getVRHardware().getFOV(JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewLeftDegrees_Float);
-        float fright = VRApplication.getVRHardware().getFOV(JOpenVRLibrary.TrackedDeviceProperty.TrackedDeviceProperty_Prop_FieldOfViewRightDegrees_Float);
-        float height = ftop - fbot;
-        float width = fright - fleft;
-        
-        camLeft.setFrustumPerspective(height, width / height, fNear, fFar);                                      
+        camLeft.setFrustumPerspective(110f, 1.3333f, fNear, fFar);      
                 
         prepareCameraSize(camLeft);
         camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));
@@ -372,10 +367,6 @@ public class OpenVRViewManager {
                 
         // setup gui
         VRGuiManager.setupGui(viewPortLeft, viewPortRight);
-        // make sure the gui node isn't in the distortion scene
-        //for(ViewPort v : app.getRenderManager().getPostViews()) {
-        //    v.detachScene(VRApplication.getMainVRApp().getGuiNode());
-        //}
         
         // call these to cache the results internally
         VRApplication.getVRHardware().getHMDMatrixPoseLeftEye();

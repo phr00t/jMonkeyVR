@@ -114,7 +114,8 @@ public class VRInput {
         for(int i=0;i<controllerCount;i++) {
             int index = controllerIndex[i];
             JOpenVRLibrary.VR_IVRSystem_GetControllerState(OpenVR.getVRSystemInstance(), index, cStates[index]);
-            cStates[index].read();
+            cStates[index].readField("ulButtonTouched");
+            cStates[index].readField("rAxis");
         }
     }
     

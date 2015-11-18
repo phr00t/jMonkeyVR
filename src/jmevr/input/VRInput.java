@@ -50,7 +50,7 @@ public class VRInput {
         ViveTriggerAxis, ViveTouchpadAxis, ViveGripButton, ViveThumbButton
     }
     
-    public static boolean buttonDown(int controllerIndex, VRINPUT_TYPE checkButton) {
+    public static boolean isButtonDown(int controllerIndex, VRINPUT_TYPE checkButton) {
         VRControllerState_t cs = cStates[VRInput.controllerIndex[controllerIndex]];
         switch( checkButton ) {
             default:
@@ -201,4 +201,11 @@ public class VRInput {
             return pos.addLocal(((Spatial)obs).getWorldTranslation());
         }
     }    
+    
+    public static void triggerHapticPulse(int controllerIndex, float seconds) {
+        // apparently only axis ID of 0 works
+        JOpenVRLibrary.VR_IVRSystem_TriggerHapticPulse(OpenVR.getVRSystemInstance(),
+                                                       VRInput.controllerIndex[controllerIndex],
+                                                       0, (short)Math.round(seconds / 1e-6f));
+    }
 }

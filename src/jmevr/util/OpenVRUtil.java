@@ -6,12 +6,9 @@ package jmevr.util;
 
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdMatrix44_t;
-import org.lwjgl.LWJGLUtil;
 
 /**
  *

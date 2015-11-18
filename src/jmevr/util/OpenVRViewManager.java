@@ -52,7 +52,7 @@ public class OpenVRViewManager {
     private int mirrorFrame;
     private float heightAdjustment;
     
-    private Texture leftEyeTex, rightEyeTex;
+    private Texture2D leftEyeTex, rightEyeTex, dualEyeTex;
     
     private final static String LEFT_VIEW_NAME = "Left View";
     private final static String RIGHT_VIEW_NAME = "Right View";
@@ -73,8 +73,7 @@ public class OpenVRViewManager {
     }
     
     private int getFullTexId() {
-        // TODO: get texture of output viewport... might need to set an output buffer?
-        return (int)VRApplication.getMainVRApp().getViewPort().getOutputFrameBuffer().getColorBuffer().getTexture().getImage().getId();
+        return (int)dualEyeTex.getImage().getId();
     }
     
     private int getLeftTexId() {
@@ -127,12 +126,12 @@ public class OpenVRViewManager {
                                                            JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_Default);                    
                 }
                 // mirroring?
-                if( mirrorEnabled ) {
+                if( mirrorEnabled && app.getContext().getSettings().isSwapBuffers() ) {
                     // mirror once every 3 frames, to prioritize performance for the VR headset
                     mirrorFrame = (mirrorFrame + 1) % 3;
                     if( mirrorFrame == 0 ) {
                         Renderer r = app.getRenderManager().getRenderer();
-                        r.copyFrameBuffer(viewPortLeft.getOutputFrameBuffer(), app.getViewPort().getOutputFrameBuffer(), false);
+                        r.copyFrameBuffer(viewPortLeft.getOutputFrameBuffer(), null, false);
                     }
                 }
             }
@@ -188,8 +187,8 @@ public class OpenVRViewManager {
      * Replaces rootNode as the main cameras scene with the distortion mesh
      */
     private void setupVRScene(){
-        leftEyeTex = app.getRenderManager().getPreView(LEFT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
-        rightEyeTex = app.getRenderManager().getPreView(RIGHT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
+        leftEyeTex = (Texture2D)app.getRenderManager().getPreView(LEFT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
+        rightEyeTex = (Texture2D)app.getRenderManager().getPreView(RIGHT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
         
         // main viewport is either going to be a distortion scene or nothing
         // mirroring is handled by copying framebuffers
@@ -214,6 +213,8 @@ public class OpenVRViewManager {
             distortionScene.updateGeometricState();
 
             app.getViewPort().attachScene(distortionScene);
+            
+            if( useCustomDistortion ) setupFinalFullTexture(app.getViewPort().getCamera());
         } else {
             // don't clear between mirroring frames
             app.getViewPort().setClearFlags(false, false, false);            
@@ -373,6 +374,26 @@ public class OpenVRViewManager {
         VRApplication.getVRHardware().getHMDMatrixPoseRightEye();
     }
         
+    private void setupFinalFullTexture(Camera cam) {
+        // create offscreen framebuffer
+        FrameBuffer offBuffer = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);
+        
+        //setup framebuffer's texture
+        dualEyeTex = new Texture2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);
+        dualEyeTex.setMinFilter(Texture.MinFilter.BilinearNoMipMaps);
+        dualEyeTex.setMagFilter(Texture.MagFilter.Bilinear);
+
+        //setup framebuffer to use texture
+        offBuffer.setDepthBuffer(Image.Format.Depth);
+        offBuffer.setColorTexture(dualEyeTex);        
+
+        ViewPort viewPort = this.app.getViewPort();
+        viewPort.setClearFlags(true, true, true);
+        viewPort.setBackgroundColor(ColorRGBA.Black);
+        //set viewport to render to offscreen framebuffer
+        viewPort.setOutputFrameBuffer(offBuffer);
+    }
+    
     private ViewPort setupViewBuffers(Camera cam, String viewName){
         // create offscreen framebuffer
         FrameBuffer offBufferLeft = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);

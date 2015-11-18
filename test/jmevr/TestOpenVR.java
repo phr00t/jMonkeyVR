@@ -265,6 +265,7 @@ public class TestOpenVR extends VRApplication {
                  placeRate <= 0f ) {
                  placeRate = 0.5f;
                  addBox(v, q, 0.1f);
+                 VRInput.triggerHapticPulse(index, 0.1f);
              }
              // print out all of the known information about the controllers here
              /*for(int i=0;i<VRInput.getRawControllerState(index).rAxis.length;i++) {

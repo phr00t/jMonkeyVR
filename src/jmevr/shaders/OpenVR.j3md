@@ -13,11 +13,9 @@ MaterialDef OpenVR {
         FragmentShader GLSL150: jmevr/shaders/OpenVR15.frag
  
         WorldParameters {
-            WorldViewProjectionMatrix
         }
  
         Defines {
-            RESOLVE_MS : NumSamples
         }
  
     }
@@ -27,7 +25,9 @@ MaterialDef OpenVR {
         FragmentShader GLSL100: jmevr/shaders/OpenVR.frag
  
         WorldParameters {
-            WorldViewProjectionMatrix
         }
+ 
+        Defines {
+        } 
     }
 }

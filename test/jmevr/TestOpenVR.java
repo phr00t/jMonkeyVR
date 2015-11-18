@@ -39,8 +39,8 @@ public class TestOpenVR extends VRApplication {
     public static void main(String[] args){
         TestOpenVR test = new TestOpenVR();
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_STEAMVR_COMPOSITOR, false); // disable the SteamVR compositor (kinda needed at the moment)
-        //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, true); // incomplete feature
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_JFRAME_EXTENDED_BACKUP, true); // defaults to true anyway, used on Mac & Linux
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, true); // use full screen distortion, maximum FOV, possibly quicker even
         test.preconfigureVRApp(PRECONFIG_PARAMETER.DISABLE_SWAPBUFFERS_COMPLETELY, true); // runs faster, but only VR Compositor visibility available
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, false); // render two eyes, regardless of SteamVR
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);

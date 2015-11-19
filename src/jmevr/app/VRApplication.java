@@ -80,7 +80,7 @@ public abstract class VRApplication extends Application {
         public void onAction(String name, boolean isPressed, float tpf) {
             if( isPressed ) {
                 if (name.equals(RESET_HMD)){
-                    reset();
+                    resetPose();
                 } else if( name.equals(MIRRORING) ) {
                     VRApplication.setMirroring(!VRApplication.getMirroring());
                 }
@@ -552,7 +552,7 @@ public abstract class VRApplication extends Application {
     /*
         reset headset pose. defaults to F9 key!
     */
-    public void reset(){
+    public static void resetPose(){
         if( VRSupportedOS == false ) return;
         VRhardware.reset();
     }

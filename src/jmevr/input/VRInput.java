@@ -45,9 +45,22 @@ public class VRInput {
     private static int controllerCount = 0;
     private static final Vector2f tempAxis = new Vector2f();
     private static final Quaternion quatFlip = (new Quaternion()).fromAngles(0f, (float)Math.PI, 0f);
+    private static final Vector2f lastCallAxis[] = new Vector2f[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
+    private static final boolean needsNewVelocity[] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount],
+                                 needsNewAngVelocity[] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
+    private static final Vector3f tempVel = new Vector3f();
     
     public enum VRINPUT_TYPE {
-        ViveTriggerAxis, ViveTouchpadAxis, ViveGripButton, ViveThumbButton
+        ViveTriggerAxis(0), ViveTouchpadAxis(1), ViveGripButton(2), ViveThumbButton(3);
+        
+        private final int value;
+        private VRINPUT_TYPE(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }        
     }
     
     public static boolean isButtonDown(int controllerIndex, VRINPUT_TYPE checkButton) {
@@ -60,6 +73,45 @@ public class VRInput {
             case ViveThumbButton:
                 return (cs.ulButtonTouched.longValue() & 2) != 0;                
         }
+    }
+    
+    public static void resetAxisDeltas() {
+        for(int i=0;i<lastCallAxis.length;i++) {
+            lastCallAxis[i].x = 0f;
+            lastCallAxis[i].y = 0f;
+        }
+    }
+    
+    public static Vector2f getAxisDeltaSinceLastCall(int controllerIndex, VRINPUT_TYPE forAxis) {                
+        int axisIndex = forAxis.getValue();
+        tempAxis.set(lastCallAxis[axisIndex]);
+        lastCallAxis[axisIndex].set(getAxis(controllerIndex, forAxis));
+        tempAxis.subtractLocal(lastCallAxis[axisIndex]);
+        return tempAxis;
+    }
+    
+    public static Vector3f getVelocity(int controllerIndex) {
+        int index = VRInput.controllerIndex[controllerIndex];
+        if( needsNewVelocity[index] ) {
+            OpenVR.hmdTrackedDevicePoses[index].readField("vVelocity");
+            needsNewVelocity[index] = false;
+        }
+        tempVel.x = OpenVR.hmdTrackedDevicePoses[index].vVelocity.v[0];
+        tempVel.y = OpenVR.hmdTrackedDevicePoses[index].vVelocity.v[1];
+        tempVel.z = OpenVR.hmdTrackedDevicePoses[index].vVelocity.v[2];
+        return tempVel;
+    }
+    
+    public static Vector3f getAngularVelocity(int controllerIndex) {
+        int index = VRInput.controllerIndex[controllerIndex];
+        if( needsNewAngVelocity[index] ) {
+            OpenVR.hmdTrackedDevicePoses[index].readField("vAngularVelocity");
+            needsNewAngVelocity[index] = false;
+        }
+        tempVel.x = OpenVR.hmdTrackedDevicePoses[index].vAngularVelocity.v[0];
+        tempVel.y = OpenVR.hmdTrackedDevicePoses[index].vAngularVelocity.v[1];
+        tempVel.z = OpenVR.hmdTrackedDevicePoses[index].vAngularVelocity.v[2];
+        return tempVel;
     }
     
     public static Vector2f getAxis(int controllerIndex, VRINPUT_TYPE forAxis) {
@@ -87,6 +139,9 @@ public class VRInput {
             cStates[i].setAutoSynch(false);
             cStates[i].setAutoRead(false);
             cStates[i].setAutoWrite(false);
+            lastCallAxis[i] = new Vector2f();
+            needsNewVelocity[i] = true;
+            needsNewAngVelocity[i] = true;
         }
     }
     
@@ -116,6 +171,8 @@ public class VRInput {
             JOpenVRLibrary.VR_IVRSystem_GetControllerState(OpenVR.getVRSystemInstance(), index, cStates[index]);
             cStates[index].readField("ulButtonTouched");
             cStates[index].readField("rAxis");
+            needsNewVelocity[index] = true;
+            needsNewAngVelocity[index] = true;
         }
     }
     

@@ -43,8 +43,7 @@ public class VRInput {
     private static final Vector3f[] posStore = new Vector3f[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
     private static final int[] controllerIndex = new int[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
     private static int controllerCount = 0;
-    private static final Vector2f tempAxis = new Vector2f();
-    private static final Quaternion quatFlip = (new Quaternion()).fromAngles(0f, (float)Math.PI, 0f);
+    private static final Vector2f tempAxis = new Vector2f(), temp2Axis = new Vector2f();
     private static final Vector2f lastCallAxis[] = new Vector2f[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
     private static final boolean needsNewVelocity[] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount],
                                  needsNewAngVelocity[] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
@@ -84,10 +83,16 @@ public class VRInput {
     
     public static Vector2f getAxisDeltaSinceLastCall(int controllerIndex, VRINPUT_TYPE forAxis) {                
         int axisIndex = forAxis.getValue();
-        tempAxis.set(lastCallAxis[axisIndex]);
+        temp2Axis.set(lastCallAxis[axisIndex]);
         lastCallAxis[axisIndex].set(getAxis(controllerIndex, forAxis));
-        tempAxis.subtractLocal(lastCallAxis[axisIndex]);
-        return tempAxis;
+        if( (temp2Axis.x != 0f || temp2Axis.y != 0f) && (lastCallAxis[axisIndex].x != 0f || lastCallAxis[axisIndex].y != 0f) ) {
+            temp2Axis.subtractLocal(lastCallAxis[axisIndex]);        
+        } else {
+            // move made from rest, don't count as a delta move
+            temp2Axis.x = 0f;
+            temp2Axis.y = 0f;
+        }
+        return temp2Axis;
     }
     
     public static Vector3f getVelocity(int controllerIndex) {
@@ -199,7 +204,7 @@ public class VRInput {
         if( isInputDeviceTracking(index) == false ) return null;
         index = controllerIndex[index];
         OpenVRUtil.convertMatrix4toQuat(OpenVR.poseMatrices[index], rotStore[index]);
-        return rotStore[index].multLocal(quatFlip);
+        return rotStore[index];
     }
 
     public static Vector3f getPosition(int index) {
@@ -222,7 +227,6 @@ public class VRInput {
             storePos.x = -storePos.x;
             storePos.z = -storePos.z;
             OpenVRUtil.convertMatrix4toQuat(OpenVR.poseMatrices[index], storeRot);
-            storeRot.multLocal(quatFlip);
         }
     }    
     
@@ -260,9 +264,10 @@ public class VRInput {
     }    
     
     public static void triggerHapticPulse(int controllerIndex, float seconds) {
+        if( VRApplication.isInVR() == false || VRInput.isInputDeviceTracking(controllerIndex) == false ) return;
         // apparently only axis ID of 0 works
         JOpenVRLibrary.VR_IVRSystem_TriggerHapticPulse(OpenVR.getVRSystemInstance(),
                                                        VRInput.controllerIndex[controllerIndex],
-                                                       0, (short)Math.round(seconds / 1e-6f));
+                                                       0, (short)Math.round(3f * seconds / 1e-3f));
     }
 }

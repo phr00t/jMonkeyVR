@@ -15,6 +15,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.util.concurrent.TimeUnit;
+import jmevr.app.VRApplication;
 import jmevr.util.OpenVRUtil;
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdMatrix44_t;
@@ -141,6 +142,11 @@ public class OpenVR {
         vrCompositor = JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRCompositor_Version, hmdErrorStore);
         if(vrCompositor != null && hmdErrorStore.get(0) == 0){                
             System.out.println("OpenVR Compositor initialized OK.");
+            if( VRApplication.isSeatedExperience() ) {
+                JOpenVRLibrary.VR_IVRCompositor_SetTrackingSpace(vrCompositor, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated);
+            } else {
+                JOpenVRLibrary.VR_IVRCompositor_SetTrackingSpace(vrCompositor, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseStanding);                
+            }
             return true;
         } else {
             System.out.println("OpenVR Compositor error: " + JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0)).getString(0));
@@ -252,7 +258,10 @@ public class OpenVR {
 
             frameCount = nowCount;
             
-            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem, JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseStanding, fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);   
+            JOpenVRLibrary.VR_IVRSystem_GetDeviceToAbsoluteTrackingPose(vrsystem,
+                    VRApplication.isSeatedExperience()?JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseSeated:
+                                                       JOpenVRLibrary.TrackingUniverseOrigin.TrackingUniverseOrigin_TrackingUniverseStanding,
+                    fSecondsUntilPhotons, hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount);   
         }
         
         // deal with controllers being plugged in and out

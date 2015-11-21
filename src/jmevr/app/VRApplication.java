@@ -7,6 +7,7 @@ import com.jme3.app.state.AppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -47,7 +48,8 @@ public abstract class VRApplication extends Application {
 
     public static enum PRECONFIG_PARAMETER {
         USE_STEAMVR_COMPOSITOR, USE_JFRAME_EXTENDED_BACKUP, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
-        SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY, PREFER_OPENGL3, DISABLE_VR
+        SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY, PREFER_OPENGL3, DISABLE_VR,
+        SEATED_EXPERIENCE
     }
     
     private static OpenVR VRhardware;    
@@ -55,7 +57,7 @@ public abstract class VRApplication extends Application {
     private static OpenVRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
-    private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true, disableVR;
+    private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true, disableVR, seated;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     private static JFrame VRwindow;
@@ -80,7 +82,7 @@ public abstract class VRApplication extends Application {
         public void onAction(String name, boolean isPressed, float tpf) {
             if( isPressed ) {
                 if (name.equals(RESET_HMD)){
-                    resetPose();
+                    resetSeatedPose();
                 } else if( name.equals(MIRRORING) ) {
                     VRApplication.setMirroring(!VRApplication.getMirroring());
                 }
@@ -317,7 +319,14 @@ public abstract class VRApplication extends Application {
             case DISABLE_VR:
                 disableVR = value;
                 break;
+            case SEATED_EXPERIENCE:
+                seated = value;
+                break;
         }
+    }
+    
+    public static boolean isSeatedExperience() {
+        return seated;
     }
     
     public static ArrayList<VRInput> getVRinputs() {
@@ -436,6 +445,19 @@ public abstract class VRApplication extends Application {
         return VRviewmanager.getViewPortRight();
     }
     
+    /*
+        helper function for setting both eye backgrounds the same color,
+        or just the normal viewport background color if not in VR
+    */
+    public static void setBackgroundColors(ColorRGBA clr) {
+        if( VRviewmanager == null ) {
+            mainApp.getViewPort().setBackgroundColor(clr);
+        } else {
+            VRviewmanager.getViewPortLeft().setBackgroundColor(clr);
+            VRviewmanager.getViewPortRight().setBackgroundColor(clr);
+        }
+    }
+    
     public static VRApplication getMainVRApp() {
         return mainApp;
     }
@@ -550,10 +572,10 @@ public abstract class VRApplication extends Application {
     }
     
     /*
-        reset headset pose. defaults to F9 key!
+        reset headset pose if seating experience. defaults to F9 key!
     */
-    public static void resetPose(){
-        if( VRSupportedOS == false ) return;
+    public static void resetSeatedPose(){
+        if( VRSupportedOS == false || isSeatedExperience() == false ) return;
         VRhardware.reset();
     }
 }

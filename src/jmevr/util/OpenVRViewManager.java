@@ -134,6 +134,11 @@ public class OpenVRViewManager {
                         r.copyFrameBuffer(viewPortLeft.getOutputFrameBuffer(), null, false);
                     }
                 }
+                // if we don't have swap buffers being done, do a glFlush here
+                // see https://steamcommunity.com/app/358720/discussions/0/490124466474881389/#c490124466476979601
+                if( app.getContext().getSettings().isSwapBuffers() == false ) {
+                    org.lwjgl.opengl.GL11.glFlush();
+                }
             }
         }        
     }

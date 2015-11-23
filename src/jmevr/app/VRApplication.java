@@ -189,10 +189,10 @@ public abstract class VRApplication extends Application {
             GraphicsDevice defDev = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             // pick the display that isn't the default one
             for(GraphicsDevice gd : devs) {
-                //if( gd != defDev ) {
+                if( gd != defDev ) {
                     VRdev = gd;
                     break;
-                //}
+                }
             }
             // did we get the VR device?
             if( VRdev != null ) {

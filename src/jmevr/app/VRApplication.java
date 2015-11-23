@@ -189,10 +189,10 @@ public abstract class VRApplication extends Application {
             GraphicsDevice defDev = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             // pick the display that isn't the default one
             for(GraphicsDevice gd : devs) {
-                if( gd != defDev ) {
+                //if( gd != defDev ) {
                     VRdev = gd;
                     break;
-                }
+                //}
             }
             // did we get the VR device?
             if( VRdev != null ) {
@@ -390,6 +390,7 @@ public abstract class VRApplication extends Application {
         where is the headset pointing, after all rotations are combined?
         depends on observer rotation, if any
     */
+    private static Quaternion tempq = new Quaternion();
     public static Quaternion getFinalObserverRotation() {
         if( VRviewmanager == null ) {
             if( VRApplication.observer == null ) {
@@ -397,10 +398,11 @@ public abstract class VRApplication extends Application {
             } else return VRApplication.observer.getWorldRotation();
         }        
         if( VRApplication.observer == null ) {
-            return VRhardware.getOrientation().multLocal(dummyCam.getRotation());
+            tempq.set(dummyCam.getRotation());
         } else {
-            return VRhardware.getOrientation().multLocal(VRApplication.observer.getWorldRotation());
+            tempq.set(VRApplication.observer.getWorldRotation());
         }
+        return tempq.multLocal(VRhardware.getOrientation());
     }
     
     /*

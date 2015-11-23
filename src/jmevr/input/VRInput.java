@@ -48,6 +48,7 @@ public class VRInput {
     private static final boolean needsNewVelocity[] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount],
                                  needsNewAngVelocity[] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
     private static final Vector3f tempVel = new Vector3f();
+    private static final Quaternion tempq = new Quaternion();
     
     public enum VRINPUT_TYPE {
         ViveTriggerAxis(0), ViveTouchpadAxis(1), ViveGripButton(2), ViveThumbButton(3);
@@ -217,19 +218,6 @@ public class VRInput {
         return posStore[index];
     }
     
-    public static void getPositionAndOrientation(int index, Vector3f storePos, Quaternion storeRot) {
-        if( isInputDeviceTracking(index) == false ) {
-            storePos.set(Vector3f.ZERO);
-            storeRot.set(Quaternion.DIRECTION_Z);
-        } else {
-            index = controllerIndex[index];
-            OpenVR.poseMatrices[index].toTranslationVector(storePos);
-            storePos.x = -storePos.x;
-            storePos.z = -storePos.z;
-            OpenVRUtil.convertMatrix4toQuat(OpenVR.poseMatrices[index], storeRot);
-        }
-    }    
-    
     /*
         where is the controller pointing, after all rotations are combined?
         depends on observer rotation, if any
@@ -239,10 +227,11 @@ public class VRInput {
         if( vrvm == null || isInputDeviceTracking(index) == false ) return null;
         Object obs = VRApplication.getObserver();
         if( obs instanceof Camera ) {
-            return getOrientation(index).multLocal(((Camera)obs).getRotation());
+            tempq.set(((Camera)obs).getRotation());
         } else {
-            return getOrientation(index).multLocal(((Spatial)obs).getWorldRotation());
+            tempq.set(((Spatial)obs).getWorldRotation());
         }
+        return tempq.multLocal(getOrientation(index));
     }
     
     /*

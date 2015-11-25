@@ -49,7 +49,7 @@ public abstract class VRApplication extends Application {
     public static enum PRECONFIG_PARAMETER {
         USE_STEAMVR_COMPOSITOR, USE_JFRAME_EXTENDED_BACKUP, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
         SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY, PREFER_OPENGL3, DISABLE_VR,
-        SEATED_EXPERIENCE
+        SEATED_EXPERIENCE, NO_GUI
     }
     
     private static OpenVR VRhardware;    
@@ -57,7 +57,7 @@ public abstract class VRApplication extends Application {
     private static OpenVRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
-    private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true, disableVR, seated;
+    private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true, disableVR, seated, nogui;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     private static JFrame VRwindow;
@@ -68,6 +68,8 @@ public abstract class VRApplication extends Application {
     private float fFar = 1000f, fNear = 1f;
     private int xWin = 1280, yWin = 720;
     
+    private static float distanceOfOptimization = 0f;
+    
     private static boolean useCompositor = true, compositorOS, useJFrame = true;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
     
@@ -76,6 +78,32 @@ public abstract class VRApplication extends Application {
             System.setProperty("sun.java2d.opengl", "True");
         }                        
     }    
+    
+    /*
+        optimization that uses objects pass this distance as the "background" for the
+        second eye. can save rendering objects far away again for a second eye.
+        use 0 to disable (default). Very experimental and generally broken, but fun to play with.
+    */
+    public static void setOptimizationDistance(float distance) {
+        distanceOfOptimization = distance;
+        if( VRviewmanager != null && VRviewmanager.getCamRight() != null ) {
+            if( distance > 0f ) {
+                VRviewmanager.getCamRight().setFrustumFar(distanceOfOptimization);      
+                if( VRviewmanager.getViewPortRight().getProcessors().contains(VRviewmanager.getDistanceOptimizer()) == false ) {
+                    VRviewmanager.getViewPortRight().addProcessor(VRviewmanager.getDistanceOptimizer());
+                }
+                VRviewmanager.getViewPortRight().setClearFlags(false, false, false);
+            } else {
+                VRviewmanager.getCamRight().setFrustumFar(VRApplication.getMainVRApp().fFar);
+                VRviewmanager.getViewPortRight().removeProcessor(VRviewmanager.getDistanceOptimizer());
+                VRviewmanager.getViewPortRight().setClearFlags(true, true, true);
+            }
+        }
+    }
+    
+    public static float getOptimizationDistance() {
+        return distanceOfOptimization;
+    }
     
     private class VRListener implements ActionListener{
 
@@ -319,6 +347,9 @@ public abstract class VRApplication extends Application {
             case DISABLE_VR:
                 disableVR = value;
                 break;
+            case NO_GUI:
+                nogui = value;
+                break;
             case SEATED_EXPERIENCE:
                 seated = value;
                 break;
@@ -359,6 +390,10 @@ public abstract class VRApplication extends Application {
     
     public Node getGuiNode(){
         return guiNode;
+    }
+    
+    public boolean hasTraditionalGUIOverlay() {
+        return !nogui;
     }
 
     public Node getRootNode() {
@@ -558,7 +593,12 @@ public abstract class VRApplication extends Application {
         
         simpleInitApp();
         
-        if( VRviewmanager != null ) VRviewmanager.initialize(this);
+        if( VRviewmanager != null ) {
+            VRviewmanager.initialize(this);
+            
+            // if we set any optimization value, make sure it is applied
+            VRApplication.setOptimizationDistance(distanceOfOptimization);
+        }
     }
     
     public abstract void simpleInitApp();

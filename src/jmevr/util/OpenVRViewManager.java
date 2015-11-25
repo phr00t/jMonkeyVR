@@ -41,6 +41,7 @@ import jopenvr.VRTextureBounds_t;
  */
 public class OpenVRViewManager {
 
+    private final DistanceOptimizer distOpt = new DistanceOptimizer();
     private final VRApplication app;
     private Camera camLeft,camRight;
     private ViewPort viewPortLeft, viewPortRight;
@@ -99,6 +100,11 @@ public class OpenVRViewManager {
     public void postRender() {
         if( isInVR() ) {
             if( OpenVR.getVRCompositorInstance() != null ) {
+                // if we don't have swap buffers being done, do a glFlush here
+                // see https://steamcommunity.com/app/358720/discussions/0/490124466474881389/#c490124466476979601
+                if( app.getContext().getSettings().isSwapBuffers() == false ) {
+                    org.lwjgl.opengl.GL11.glFinish();
+                }
                 // using the compositor...
                 if( useCustomDistortion ) {
                     // left eye
@@ -133,11 +139,6 @@ public class OpenVRViewManager {
                         Renderer r = app.getRenderManager().getRenderer();
                         r.copyFrameBuffer(viewPortLeft.getOutputFrameBuffer(), null, false);
                     }
-                }
-                // if we don't have swap buffers being done, do a glFlush here
-                // see https://steamcommunity.com/app/358720/discussions/0/490124466474881389/#c490124466476979601
-                if( app.getContext().getSettings().isSwapBuffers() == false ) {
-                    org.lwjgl.opengl.GL11.glFlush();
                 }
             }
         }        
@@ -188,12 +189,18 @@ public class OpenVRViewManager {
         if( cam.getWidth() != size.x || cam.getHeight() != size.y ) cam.resize((int)size.x, (int)size.y, true);
     }
     
+    public DistanceOptimizer getDistanceOptimizer() {
+        return distOpt;
+    }
+    
     /**
      * Replaces rootNode as the main cameras scene with the distortion mesh
      */
     private void setupVRScene(){
-        leftEyeTex = (Texture2D)app.getRenderManager().getPreView(LEFT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
-        rightEyeTex = (Texture2D)app.getRenderManager().getPreView(RIGHT_VIEW_NAME).getOutputFrameBuffer().getColorBuffer().getTexture();
+        leftEyeTex = (Texture2D)viewPortLeft.getOutputFrameBuffer().getColorBuffer().getTexture();
+        rightEyeTex = (Texture2D)viewPortRight.getOutputFrameBuffer().getColorBuffer().getTexture();
+        
+        distOpt.setup(app.getAssetManager(), viewPortLeft, viewPortRight);
         
         // main viewport is either going to be a distortion scene or nothing
         // mirroring is handled by copying framebuffers
@@ -265,7 +272,8 @@ public class OpenVRViewManager {
         VRMouseManager.update(tpf);
         
         // update GUI position?
-        if( VRGuiManager.wantsReposition || VRGuiManager.getPositioningMode() != VRGuiManager.POSITIONING_MODE.MANUAL ) {
+        if(  VRApplication.getMainVRApp().hasTraditionalGUIOverlay() &&
+            (VRGuiManager.wantsReposition || VRGuiManager.getPositioningMode() != VRGuiManager.POSITIONING_MODE.MANUAL) ) {
             VRGuiManager.positionGuiNow();
             VRGuiManager.updateGuiQuadGeometricState();
         }

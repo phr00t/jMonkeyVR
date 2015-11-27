@@ -8,6 +8,8 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Plane;
+import com.jme3.math.Plane.Side;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -46,8 +48,10 @@ import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
  */
 public abstract class VRApplication extends Application {
 
+    public static float DEFAULT_FOV = 110f, DEFAULT_ASPECT = 1f;
+    
     public static enum PRECONFIG_PARAMETER {
-        USE_STEAMVR_COMPOSITOR, USE_JFRAME_EXTENDED_BACKUP, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
+        USE_STEAMVR_COMPOSITOR, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
         SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY, PREFER_OPENGL3, DISABLE_VR,
         SEATED_EXPERIENCE, NO_GUI
     }
@@ -60,8 +64,6 @@ public abstract class VRApplication extends Application {
     private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true, disableVR, seated, nogui;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
-    private static JFrame VRwindow;
-    
     protected Node guiNode;
     protected Node rootNode;
     
@@ -70,7 +72,7 @@ public abstract class VRApplication extends Application {
     
     private static float distanceOfOptimization = 0f;
     
-    private static boolean useCompositor = true, compositorOS, useJFrame = true;
+    private static boolean useCompositor = true, compositorOS;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
     
     static {
@@ -78,28 +80,6 @@ public abstract class VRApplication extends Application {
             System.setProperty("sun.java2d.opengl", "True");
         }                        
     }    
-    
-    /*
-        optimization that uses objects pass this distance as the "background" for the
-        second eye. can save rendering objects far away again for a second eye.
-        use 0 to disable (default). Very experimental and generally broken, but fun to play with.
-    */
-    public static void setOptimizationDistance(float distance) {
-        distanceOfOptimization = distance;
-        if( VRviewmanager != null && VRviewmanager.getCamRight() != null ) {
-            if( distance > 0f ) {
-                VRviewmanager.getCamRight().setFrustumFar(distanceOfOptimization);      
-                if( VRviewmanager.getViewPortRight().getProcessors().contains(VRviewmanager.getDistanceOptimizer()) == false ) {
-                    VRviewmanager.getViewPortRight().addProcessor(VRviewmanager.getDistanceOptimizer());
-                }
-                VRviewmanager.getViewPortRight().setClearFlags(false, false, false);
-            } else {
-                VRviewmanager.getCamRight().setFrustumFar(VRApplication.getMainVRApp().fFar);
-                VRviewmanager.getViewPortRight().removeProcessor(VRviewmanager.getDistanceOptimizer());
-                VRviewmanager.getViewPortRight().setClearFlags(true, true, true);
-            }
-        }
-    }
     
     public static float getOptimizationDistance() {
         return distanceOfOptimization;
@@ -116,13 +96,6 @@ public abstract class VRApplication extends Application {
                 }
             }
         }
-    }
-    
-    /*
-        using "easy extended" mode
-    */
-    public static JFrame getJFrame() {
-        return VRwindow;
     }
     
     /*
@@ -208,9 +181,9 @@ public abstract class VRApplication extends Application {
             loadSettings = true;
         }
 
-        if( isInVR() && !compositorAllowed() && useJFrame ) {
+        if( isInVR() && !compositorAllowed() ) {
             // "easy extended" mode
-            // setup experimental JFrame on external device
+            // TO-DO: JFrame was removed in LWJGL 3, need to use new GLFW library to pick "monitor" display of VR device
             // first, find the VR device
             GraphicsDevice VRdev = null;
             GraphicsDevice[] devs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
@@ -236,10 +209,6 @@ public abstract class VRApplication extends Application {
                         }
                     }
                     // create a window for the VR device
-                    VRwindow = new JFrame(VRdev.getDefaultConfiguration());
-                    VRwindow.setSize(useDM.getWidth(), useDM.getHeight());
-                    VRwindow.setUndecorated(true);
-                    VRwindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     settings.setWidth(useDM.getWidth());
                     settings.setHeight(useDM.getHeight());
                     settings.setBitsPerPixel(useDM.getBitDepth());
@@ -247,33 +216,23 @@ public abstract class VRApplication extends Application {
                     settings.setSwapBuffers(true);
                     settings.setVSync(true); // allow vsync on this display
                     setSettings(settings);
-                    VRdev.setFullScreenWindow(VRwindow);
+                    //VRdev.setFullScreenWindow(VRwindow);
                     // make sure we are in the right display mode
                     if( VRdev.getDisplayMode().equals(useDM) == false ) {
                         VRdev.setDisplayMode(useDM);
                     }
-                    createCanvas();
-                    JmeCanvasContext jmeCanvas = (JmeCanvasContext)getContext();
-                    jmeCanvas.setSystemListener(this);
-                    jmeCanvas.getCanvas().setPreferredSize(VRwindow.getSize());
-                    jmeCanvas.getCanvas().setIgnoreRepaint(true);
-                    VRwindow.add(jmeCanvas.getCanvas());
                     // make a blank cursor to hide it
                     BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
                     Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");                    
-                    VRwindow.setCursor(blankCursor);
-                    jmeCanvas.getCanvas().setCursor(blankCursor);
-                    VRwindow.pack();
-                    VRwindow.setVisible(true);
-                    startCanvas();
+                    //VRwindow.setCursor(blankCursor);
+                    //jmeCanvas.getCanvas().setCursor(blankCursor);
+                    //VRwindow.pack();
+                    //VRwindow.setVisible(true);
+                    //startCanvas();
                     return;
                 } catch(Exception e) { 
-                    System.out.println("JFrame exception: " + e.toString());
-                    useJFrame = false;
+                    
                 }
-            } else {
-                // disable JFrame mode, start normally
-                useJFrame = false;
             }
         }
         
@@ -328,9 +287,6 @@ public abstract class VRApplication extends Application {
                 break;
             case USE_CUSTOM_DISTORTION:
                 OpenVRViewManager._setCustomDistortion(value);
-                break;
-            case USE_JFRAME_EXTENDED_BACKUP:
-                VRApplication.useJFrame = value;
                 break;
             case USE_STEAMVR_COMPOSITOR:
                 VRApplication.useCompositor = value;
@@ -524,11 +480,6 @@ public abstract class VRApplication extends Application {
             }
             return;
         }
-
-        // if we are using the VRwindow and it was disposed, exit the app
-        if( VRwindow != null && VRwindow.isDisplayable() == false ) {
-            destroy();
-        }
         
         float tpf = timer.getTimePerFrame() * speed;
         
@@ -595,9 +546,6 @@ public abstract class VRApplication extends Application {
         
         if( VRviewmanager != null ) {
             VRviewmanager.initialize(this);
-            
-            // if we set any optimization value, make sure it is applied
-            VRApplication.setOptimizationDistance(distanceOfOptimization);
         }
     }
     

@@ -41,7 +41,6 @@ import jopenvr.VRTextureBounds_t;
  */
 public class OpenVRViewManager {
 
-    private final DistanceOptimizer distOpt = new DistanceOptimizer();
     private final VRApplication app;
     private Camera camLeft,camRight;
     private ViewPort viewPortLeft, viewPortRight;
@@ -189,18 +188,12 @@ public class OpenVRViewManager {
         if( cam.getWidth() != size.x || cam.getHeight() != size.y ) cam.resize((int)size.x, (int)size.y, true);
     }
     
-    public DistanceOptimizer getDistanceOptimizer() {
-        return distOpt;
-    }
-    
     /**
      * Replaces rootNode as the main cameras scene with the distortion mesh
      */
     private void setupVRScene(){
         leftEyeTex = (Texture2D)viewPortLeft.getOutputFrameBuffer().getColorBuffer().getTexture();
         rightEyeTex = (Texture2D)viewPortRight.getOutputFrameBuffer().getColorBuffer().getTexture();
-        
-        distOpt.setup(app.getAssetManager(), viewPortLeft, viewPortRight);
         
         // main viewport is either going to be a distortion scene or nothing
         // mirroring is handled by copying framebuffers
@@ -309,6 +302,8 @@ public class OpenVRViewManager {
         ppLeft.removeAllFilters();
         viewPortLeft.clearProcessors();
         viewPortRight.clearProcessors();
+        // if we have no processors to sync, don't add the FilterPostProcessor
+        if( sourceViewport.getProcessors().isEmpty() ) return;
         // add post processors we just made, which are empty
         viewPortLeft.addProcessor(ppLeft);
         viewPortRight.addProcessor(ppRight);
@@ -361,14 +356,14 @@ public class OpenVRViewManager {
         float fFar = origCam.getFrustumFar();
         float fNear = origCam.getFrustumNear();
         
-        // restore frustrum on distortion scene cam, but only if not using VR Compositor
-        if( VRApplication.getJFrame() != null ) {
+        // restore frustrum on distortion scene cam, if needed
+        if( VRApplication.compositorAllowed() == false || useCustomDistortion ) {
             origCam.setFrustumFar(100f);
             origCam.setFrustumNear(1f); 
         }
         
         camLeft = origCam.clone();  
-        camLeft.setFrustumPerspective(110f, 1.3333f, fNear, fFar);      
+        camLeft.setFrustumPerspective(VRApplication.DEFAULT_FOV, VRApplication.DEFAULT_ASPECT, fNear, fFar);      
                 
         prepareCameraSize(camLeft);
         camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));

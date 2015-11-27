@@ -40,14 +40,13 @@ public class TestOpenVR extends VRApplication {
         TestOpenVR test = new TestOpenVR();
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_STEAMVR_COMPOSITOR, false); // disable the SteamVR compositor (kinda needed at the moment)
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_JFRAME_EXTENDED_BACKUP, true); // defaults to true anyway, used on Mac & Linux
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, false); // use full screen distortion, maximum FOV, possibly quicker even
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.DISABLE_SWAPBUFFERS_COMPLETELY, false); // runs faster, but only VR Compositor visibility available
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true); // render two eyes, regardless of SteamVR
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, true); // use full screen distortion, maximum FOV, possibly quicker even
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.DISABLE_SWAPBUFFERS_COMPLETELY, true); // runs faster, but only VR Compositor visibility available
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, false); // render two eyes, regardless of SteamVR
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, false);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true); // show gui even if it is behind things
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.NO_GUI, true);
-        //VRApplication.setOptimizationDistance(2.5f); // VERY experimental and generally broken method of rendering far objects once
         test.setFrustrumNearFar(0.1f, 512f);
         test.start();
     }
@@ -68,8 +67,10 @@ public class TestOpenVR extends VRApplication {
     private void initTestScene(){
         mainScene = new Node("scene");
         observer = new Node("observer");
-        mainScene.attachChild(SkyFactory.createSky(
-                    assetManager, "Textures/Sky/Bright/spheremap.png", SkyFactory.EnvMapType.EquirectMap));
+        
+        Spatial sky = SkyFactory.createSky(
+                    assetManager, "Textures/Sky/Bright/spheremap.png", SkyFactory.EnvMapType.EquirectMap);
+        mainScene.attachChild(sky);
         
         Geometry box = new Geometry("", new Box(5,5,5));
         mat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");

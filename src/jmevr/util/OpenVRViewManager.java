@@ -6,6 +6,7 @@ package jmevr.util;
 
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Plane;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -99,13 +100,10 @@ public class OpenVRViewManager {
     public void postRender() {
         if( isInVR() ) {
             if( OpenVR.getVRCompositorInstance() != null ) {
-                // if we don't have swap buffers being done, do a glFlush here
-                // see https://steamcommunity.com/app/358720/discussions/0/490124466474881389/#c490124466476979601
-                if( app.getContext().getSettings().isSwapBuffers() == false ) {
-                    org.lwjgl.opengl.GL11.glFinish();
-                }
                 // using the compositor...
-                if( useCustomDistortion ) {
+                if( useCustomDistortion || VRApplication.isInstanceVRRendering() ) {
+                    int submitFlag = useCustomDistortion?JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_LensDistortionAlreadyApplied:
+                                                         JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_Default;
                     // left eye
                     texBounds.uMax = 0.5f;
                     texBounds.uMin = 0f;
@@ -113,7 +111,7 @@ public class OpenVRViewManager {
                     texBounds.vMin = 0f;
                     JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
                                                            JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getFullTexId(), texBounds,
-                                                           JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_LensDistortionAlreadyApplied);
+                                                           submitFlag);
                     // right eye
                     texBounds.uMax = 1f;
                     texBounds.uMin = 0.5f;
@@ -121,7 +119,7 @@ public class OpenVRViewManager {
                     texBounds.vMin = 0f;
                     JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
                                                            JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getFullTexId(), texBounds,
-                                                           JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_LensDistortionAlreadyApplied);                                        
+                                                           submitFlag);                                        
                 } else {
                     JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
                                                            JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getLeftTexId(), null,
@@ -166,11 +164,13 @@ public class OpenVRViewManager {
                     
         moveScreenProcessingToEyes();
         
-        VRMouseManager.init();
+        if( VRApplication.hasTraditionalGUIOverlay() ) {
+            VRMouseManager.init();
+            // update the pose to position the gui correctly on start
+            update(0f);        
+            VRGuiManager.positionGui();
+        }
         
-        // update the pose to position the gui correctly on start
-        update(0f);        
-        VRGuiManager.positionGui();
     }
     
     private void prepareCameraSize(Camera cam) {
@@ -192,16 +192,19 @@ public class OpenVRViewManager {
      * Replaces rootNode as the main cameras scene with the distortion mesh
      */
     private void setupVRScene(){
-        leftEyeTex = (Texture2D)viewPortLeft.getOutputFrameBuffer().getColorBuffer().getTexture();
-        rightEyeTex = (Texture2D)viewPortRight.getOutputFrameBuffer().getColorBuffer().getTexture();
-        
-        // main viewport is either going to be a distortion scene or nothing
-        // mirroring is handled by copying framebuffers
-        app.getViewPort().detachScene(app.getRootNode());
-        app.getViewPort().detachScene(app.getGuiNode());
+        if( !VRApplication.isInstanceVRRendering() ) {
+            leftEyeTex = (Texture2D)viewPortLeft.getOutputFrameBuffer().getColorBuffer().getTexture();
+            rightEyeTex = (Texture2D)viewPortRight.getOutputFrameBuffer().getColorBuffer().getTexture();        
+            // main viewport is either going to be a distortion scene or nothing
+            // mirroring is handled by copying framebuffers
+            app.getViewPort().detachScene(app.getRootNode());
+            app.getViewPort().detachScene(app.getGuiNode());
+        }
         
         // only setup distortion scene if compositor isn't running (or using custom mesh distortion option)
-        if( useCustomDistortion || OpenVR.getVRCompositorInstance() == null ) {
+        if( VRApplication.isInstanceVRRendering() ) {
+            setupFinalFullTexture(app.getViewPort().getCamera());            
+        } else if( useCustomDistortion || OpenVR.getVRCompositorInstance() == null ) {
             Node distortionScene = new Node();
             Material leftMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
             leftMat.setTexture("Texture", leftEyeTex);
@@ -261,14 +264,15 @@ public class OpenVRViewManager {
         finalizeCamera(dev.getHMDVectorPoseLeftEye(), objPos, camLeft);
         finalizeCamera(dev.getHMDVectorPoseRightEye(), objPos, camRight);
         
-        // update the mouse?
-        VRMouseManager.update(tpf);
+        if( VRApplication.hasTraditionalGUIOverlay() ) {
+            // update the mouse?
+            VRMouseManager.update(tpf);
         
-        // update GUI position?
-        if(  VRApplication.getMainVRApp().hasTraditionalGUIOverlay() &&
-            (VRGuiManager.wantsReposition || VRGuiManager.getPositioningMode() != VRGuiManager.POSITIONING_MODE.MANUAL) ) {
-            VRGuiManager.positionGuiNow();
-            VRGuiManager.updateGuiQuadGeometricState();
+            // update GUI position?
+            if( VRGuiManager.wantsReposition || VRGuiManager.getPositioningMode() != VRGuiManager.POSITIONING_MODE.MANUAL ) {
+                VRGuiManager.positionGuiNow();
+                VRGuiManager.updateGuiQuadGeometricState();
+            }
         }
     }
     
@@ -284,6 +288,7 @@ public class OpenVRViewManager {
         handles moving filters from the main view to each eye
     */
     public void moveScreenProcessingToEyes() {
+        if( viewPortRight == null ) return;
         syncScreenProcessing(VRApplication.getMainVRApp().getViewPort());
         VRApplication.getMainVRApp().getViewPort().clearProcessors();
     }
@@ -292,6 +297,7 @@ public class OpenVRViewManager {
         sets the two views to use the list of processors
     */
     public void syncScreenProcessing(ViewPort sourceViewport) {
+        if( viewPortRight == null ) return;
         // setup post processing filters
         if( ppRight == null ) {
             ppRight = new FilterPostProcessor(app.getAssetManager());               
@@ -357,25 +363,37 @@ public class OpenVRViewManager {
         float fNear = origCam.getFrustumNear();
         
         // restore frustrum on distortion scene cam, if needed
-        if( VRApplication.compositorAllowed() == false || useCustomDistortion ) {
+        if( VRApplication.isInstanceVRRendering() ) {
+            camLeft = origCam;
+        } else if( VRApplication.compositorAllowed() == false || useCustomDistortion ) {
             origCam.setFrustumFar(100f);
             origCam.setFrustumNear(1f); 
+            camLeft = origCam.clone();  
+        } else {
+            camLeft = origCam.clone();
         }
         
-        camLeft = origCam.clone();  
         camLeft.setFrustumPerspective(VRApplication.DEFAULT_FOV, VRApplication.DEFAULT_ASPECT, fNear, fFar);      
                 
         prepareCameraSize(camLeft);
         camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));
-        viewPortLeft = setupViewBuffers(camLeft, LEFT_VIEW_NAME);
         
-        camRight = camLeft.clone();
-        prepareCameraSize(camRight);
-        camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
-        viewPortRight = setupViewBuffers(camRight, RIGHT_VIEW_NAME);
-                
+        if( VRApplication.isInstanceVRRendering() == false ) {
+            viewPortLeft = setupViewBuffers(camLeft, LEFT_VIEW_NAME);
+            camRight = camLeft.clone();
+            prepareCameraSize(camRight);
+            camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
+            viewPortRight = setupViewBuffers(camRight, RIGHT_VIEW_NAME);
+        } else {
+            viewPortLeft = app.getViewPort();
+            viewPortLeft.attachScene(VRApplication.getMainVRApp().getRootNode());
+            camRight = camLeft.clone();
+            prepareCameraSize(camRight);
+            camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
+        }
+        
         // setup gui
-        VRGuiManager.setupGui(viewPortLeft, viewPortRight);
+        VRGuiManager.setupGui(camLeft, camRight, viewPortLeft, viewPortRight);
         
         // call these to cache the results internally
         VRApplication.getVRHardware().getHMDMatrixPoseLeftEye();
@@ -383,9 +401,12 @@ public class OpenVRViewManager {
     }
         
     private void setupFinalFullTexture(Camera cam) {
+        // if we are not using the VR Compositor, just keep outputting to the main viewport
+        if( OpenVR.getVRCompositorInstance() == null ) return;
+            
         // create offscreen framebuffer
         FrameBuffer offBuffer = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);
-        
+
         //setup framebuffer's texture
         dualEyeTex = new Texture2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);
         dualEyeTex.setMinFilter(Texture.MinFilter.BilinearNoMipMaps);

@@ -40,6 +40,7 @@ import jmevr.post.PreNormalCaching;
 import jmevr.util.OpenVRViewManager;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
+import jmevr.util.VRInstanceNode;
 import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
 
 /**
@@ -53,7 +54,7 @@ public abstract class VRApplication extends Application {
     public static enum PRECONFIG_PARAMETER {
         USE_STEAMVR_COMPOSITOR, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
         SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY, PREFER_OPENGL3, DISABLE_VR,
-        SEATED_EXPERIENCE, NO_GUI
+        SEATED_EXPERIENCE, NO_GUI, INSTANCE_VR_RENDERING
     }
     
     private static OpenVR VRhardware;    
@@ -61,11 +62,11 @@ public abstract class VRApplication extends Application {
     private static OpenVRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
-    private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true, disableVR, seated, nogui;
+    private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true, disableVR, seated, nogui, instanceVR;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
-    protected Node guiNode;
-    protected Node rootNode;
+    protected VRInstanceNode guiNode;
+    protected VRInstanceNode rootNode;
     
     private float fFar = 1000f, fNear = 1f;
     private int xWin = 1280, yWin = 720;
@@ -142,8 +143,8 @@ public abstract class VRApplication extends Application {
 
     public VRApplication() {
         super();
-        rootNode = new Node("root");
-        guiNode = new Node("guiNode");
+        rootNode = new VRInstanceNode("root");
+        guiNode = new VRInstanceNode("guiNode");
         guiNode.setQueueBucket(Bucket.Gui);
         guiNode.setCullHint(CullHint.Never);
         dummyCam = new Camera();
@@ -294,6 +295,9 @@ public abstract class VRApplication extends Application {
             case FLIP_EYES:
                 OpenVR._setFlipEyes(value);
                 break;
+            case INSTANCE_VR_RENDERING:
+                instanceVR = value;
+                break;
             case DISABLE_SWAPBUFFERS_COMPLETELY:
                 disableSwapBuffers = value;
                 break;
@@ -318,6 +322,10 @@ public abstract class VRApplication extends Application {
     
     public static ArrayList<VRInput> getVRinputs() {
         return VRinput;
+    }
+    
+    public static boolean isInstanceVRRendering() {
+        return instanceVR && isInVR();
     }
     
     /*
@@ -348,7 +356,7 @@ public abstract class VRApplication extends Application {
         return guiNode;
     }
     
-    public boolean hasTraditionalGUIOverlay() {
+    public static boolean hasTraditionalGUIOverlay() {
         return !nogui;
     }
 
@@ -438,14 +446,16 @@ public abstract class VRApplication extends Application {
         return VRviewmanager.getViewPortRight();
     }
     
+    private static ColorRGBA bgColor;
     /*
         helper function for setting both eye backgrounds the same color,
         or just the normal viewport background color if not in VR
     */
     public static void setBackgroundColors(ColorRGBA clr) {
+        bgColor = clr;
         if( VRviewmanager == null ) {
             mainApp.getViewPort().setBackgroundColor(clr);
-        } else {
+        } else if( VRviewmanager.getViewPortLeft() != null ) {
             VRviewmanager.getViewPortLeft().setBackgroundColor(clr);
             VRviewmanager.getViewPortRight().setBackgroundColor(clr);
         }
@@ -546,6 +556,10 @@ public abstract class VRApplication extends Application {
         
         if( VRviewmanager != null ) {
             VRviewmanager.initialize(this);
+            if( bgColor != null ) {
+                VRviewmanager.getViewPortLeft().setBackgroundColor(bgColor);
+                if( VRviewmanager.getViewPortRight() != null ) VRviewmanager.getViewPortRight().setBackgroundColor(bgColor);
+            }
         }
     }
     

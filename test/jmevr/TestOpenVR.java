@@ -1,9 +1,22 @@
+/*
+
+    working on instance rendering.
+
+    just shows black at the moment when enabled, but lots of stuff is working behind the scenes.
+
+    trying to get *something* to show when things are being instanced
+      - perhaps try doing non-instanced objects? but eye is determined by instance ID...
+      - ...
+
+*/
+
 package jmevr;
 
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -27,6 +40,7 @@ import jmevr.input.VRInput.VRINPUT_TYPE;
 import jmevr.post.CartoonSSAO;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
+import jmevr.util.VRInstanceNode;
 import jopenvr.JOpenVRLibrary;
 
 /**
@@ -40,23 +54,23 @@ public class TestOpenVR extends VRApplication {
         TestOpenVR test = new TestOpenVR();
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_STEAMVR_COMPOSITOR, false); // disable the SteamVR compositor (kinda needed at the moment)
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_JFRAME_EXTENDED_BACKUP, true); // defaults to true anyway, used on Mac & Linux
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, true); // use full screen distortion, maximum FOV, possibly quicker even
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.DISABLE_SWAPBUFFERS_COMPLETELY, true); // runs faster, but only VR Compositor visibility available
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, false); // render two eyes, regardless of SteamVR
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, false); // use full screen distortion, maximum FOV, possibly quicker even
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.DISABLE_SWAPBUFFERS_COMPLETELY, false); // runs faster, but only VR Compositor visibility available
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true); // render two eyes, regardless of SteamVR
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, false);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true); // show gui even if it is behind things
-        //test.preconfigureVRApp(PRECONFIG_PARAMETER.NO_GUI, true);
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, false); // WIP
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.NO_GUI, true);
         test.setFrustrumNearFar(0.1f, 512f);
         test.start();
     }
     
     // general objects for scene management
-    Node boxes = new Node("");
+    VRInstanceNode boxes = new VRInstanceNode("boxes");
     Spatial observer;
     boolean moveForward, moveBackwards, rotateLeft, rotateRight;
     Material mat;
-    Node mainScene;
     Geometry leftHand, rightHand;
     
     @Override
@@ -65,15 +79,14 @@ public class TestOpenVR extends VRApplication {
     }
     
     private void initTestScene(){
-        mainScene = new Node("scene");
         observer = new Node("observer");
         
         Spatial sky = SkyFactory.createSky(
                     assetManager, "Textures/Sky/Bright/spheremap.png", SkyFactory.EnvMapType.EquirectMap);
-        mainScene.attachChild(sky);
+        rootNode.attachChild(sky);
         
         Geometry box = new Geometry("", new Box(5,5,5));
-        mat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        mat = new Material(getAssetManager(), "jmevr/shaders/Unshaded.j3md");
         Texture noise = getAssetManager().loadTexture("Textures/noise.png");
         noise.setMagFilter(MagFilter.Nearest);
         noise.setMinFilter(MinFilter.Trilinear);
@@ -135,8 +148,7 @@ public class TestOpenVR extends VRApplication {
         observer.setLocalTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
         
         VRApplication.setObserver(observer);
-        mainScene.attachChild(observer);
-        rootNode.attachChild(mainScene);
+        rootNode.attachChild(observer);
         
         addAllBoxes();
 
@@ -307,6 +319,6 @@ public class TestOpenVR extends VRApplication {
         leftQuad.setLocalScale(scale);
         leftQuad.setMaterial(mat);
         leftQuad.setLocalTranslation(location);
-        mainScene.attachChild(leftQuad);
+        rootNode.attachChild(leftQuad);
     }
 }

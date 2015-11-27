@@ -152,13 +152,13 @@ public class VRGuiManager {
         guiDistance += adjustAmount;
     }
     
-    protected static void setupGui(ViewPort left, ViewPort right) {
-        if( VRApplication.getMainVRApp().hasTraditionalGUIOverlay() ) {
-            camLeft = left.getCamera();
-            camRight = right.getCamera();
+    protected static void setupGui(Camera leftcam, Camera rightcam, ViewPort left, ViewPort right) {
+        if( VRApplication.hasTraditionalGUIOverlay() ) {
+            camLeft = leftcam;
+            camRight = rightcam;
             getGuiQuad(camLeft);
             left.attachScene(guiQuad);
-            right.attachScene(guiQuad);
+            if( right != null ) right.attachScene(guiQuad);
             setPositioningMode(posMode);
         }
     }

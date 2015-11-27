@@ -1,0 +1,45 @@
+MaterialDef Unshaded {
+
+    MaterialParameters {
+        Texture2D ColorMap
+        Color Color (Color)
+
+        // For instancing
+        Boolean UseInstancing
+    }
+
+    Technique {
+        VertexShader GLSL150:   jmevr/shaders/Unshaded.vert
+        FragmentShader GLSL150: jmevr/shaders/Unshaded.frag
+
+        WorldParameters {
+            WorldViewProjectionMatrix
+            ViewProjectionMatrix
+            ViewMatrix
+        }
+
+        Defines {
+            INSTANCING : UseInstancing
+            HAS_COLORMAP : ColorMap
+            HAS_COLOR : Color
+        }
+    }
+
+    Technique {
+        VertexShader GLSL100:   jmevr/shaders/Unshaded.vert
+        FragmentShader GLSL100: jmevr/shaders/Unshaded.frag
+
+        WorldParameters {
+            WorldViewProjectionMatrix
+            ViewProjectionMatrix
+            ViewMatrix
+        }
+
+        Defines {
+            INSTANCING : UseInstancing
+            HAS_COLORMAP : ColorMap
+            HAS_COLOR : Color
+        }
+    }
+
+}

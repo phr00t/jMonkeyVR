@@ -206,6 +206,8 @@ public class OpenVRViewManager {
         // only setup distortion scene if compositor isn't running (or using custom mesh distortion option)
         if( VRApplication.isInstanceVRRendering() ) {
             org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_CLIP_DISTANCE0);
+            ((VRInstanceNode)VRApplication.getMainVRApp().getRootNode()).enableInstanceVR();
+            ((VRInstanceNode)VRApplication.getMainVRApp().getGuiNode()).enableInstanceVR();
             setupFinalFullTexture(app.getViewPort().getCamera());            
         } else if( useCustomDistortion || OpenVR.getVRCompositorInstance() == null ) {
             Node distortionScene = new Node();

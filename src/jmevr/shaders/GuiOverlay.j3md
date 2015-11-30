@@ -2,6 +2,10 @@ MaterialDef GuiOverlay {
 
     MaterialParameters {
         Texture2D ColorMap
+
+        // For VR instancing
+        Boolean UseInstancing
+        Matrix4 RightEyeViewProjectionMatrix
     }
 
     Technique {
@@ -10,9 +14,11 @@ MaterialDef GuiOverlay {
 
         WorldParameters {
             WorldViewProjectionMatrix
+            ViewProjectionMatrix // needed for VR instancing
         }
 
         Defines {
+            INSTANCING : UseInstancing // For VR instancing
         }
     }
 
@@ -22,9 +28,11 @@ MaterialDef GuiOverlay {
 
         WorldParameters {
             WorldViewProjectionMatrix
+            ViewProjectionMatrix // needed for VR instancing
         }
 
         Defines {
+            INSTANCING : UseInstancing // For VR instancing
         }
     }
 

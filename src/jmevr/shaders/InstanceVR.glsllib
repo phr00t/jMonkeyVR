@@ -27,8 +27,6 @@ uniform mat4 g_ViewProjectionMatrix;
 uniform mat3 g_NormalMatrix;
 uniform mat4 m_RightEyeViewProjectionMatrix;
 
-#if defined VERTEX_SHADER
-
 #if defined INSTANCING
 
 // World Matrix + Normal Rotation Quaternion. 
@@ -119,7 +117,5 @@ vec4 TransformWorldViewProjectionVR(vec4 position)
 vec3 TransformNormal(vec3 normal) {
 	return g_NormalMatrix * normal;
 }
-
-#endif
 
 #endif

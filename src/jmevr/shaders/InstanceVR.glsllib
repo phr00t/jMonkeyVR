@@ -25,6 +25,7 @@ uniform mat4 g_WorldViewMatrix;
 uniform mat4 g_WorldViewProjectionMatrix;
 uniform mat4 g_ViewProjectionMatrix;
 uniform mat3 g_NormalMatrix;
+uniform mat4 m_RightEyeViewProjectionMatrix;
 
 #if defined VERTEX_SHADER
 
@@ -64,17 +65,16 @@ vec4 TransformWorldViewProjection(vec4 position)
 
 // VR specific variables
 const float EyeOffsetScale[2] = float[](-0.5, 0.5);
-varying float clipCheck;
-flat out int instanceID;
+const vec4 EyeClipEdge[2] = vec4[](vec4(-1.0,0.0,0.0,1.0), vec4(1.0,0.0,0.0,1.0));
+out float gl_ClipDistance[1];
 in int gl_InstanceID;
 
 vec4 TransformWorldViewProjectionVR(vec4 position)
 {
-    vec4 clipPos = g_ViewProjectionMatrix * TransformWorld(position);
+    vec4 clipPos = (gl_InstanceID == 0 ? g_ViewProjectionMatrix : m_RightEyeViewProjectionMatrix) * TransformWorld(position);
+    gl_ClipDistance[0] = dot(clipPos, EyeClipEdge[gl_InstanceID]);
     clipPos.x *= 0.5; // shrink to half of the screen
     clipPos.x += EyeOffsetScale[gl_InstanceID] * clipPos.w; // scoot left or right.
-    clipCheck = clipPos.x + 1.0 / (1.75 + clipPos.z);
-    instanceID = gl_InstanceID;
     return clipPos;    
 }
 
@@ -121,22 +121,5 @@ vec3 TransformNormal(vec3 normal) {
 }
 
 #endif
-
-#else
-    // fragment shader
-
-    varying float clipCheck;
-    flat in int instanceID;
-
-    #if defined INSTANCING
-
-        #define CHECK_CLIP //if( instanceID == 0 && clipCheck >= 0.0 || instanceID == 1 && clipCheck <= 0.0 ) discard;
-
-    #else
-    // not instancing
-
-        #define CHECK_CLIP
-
-    #endif
 
 #endif

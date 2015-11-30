@@ -4,8 +4,9 @@ MaterialDef Unshaded {
         Texture2D ColorMap
         Color Color (Color)
 
-        // For instancing
+        // For VR instancing
         Boolean UseInstancing
+        Matrix4 RightEyeViewProjectionMatrix
     }
 
     Technique {
@@ -36,7 +37,7 @@ MaterialDef Unshaded {
         }
 
         Defines {
-            INSTANCING : UseInstancing
+            INSTANCING : UseInstancing // For VR instancing
             HAS_COLORMAP : ColorMap
             HAS_COLOR : Color
         }

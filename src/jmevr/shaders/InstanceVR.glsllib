@@ -65,7 +65,7 @@ vec4 TransformWorldViewProjection(vec4 position)
 // VR specific variables
 const float EyeOffsetScale[2] = float[](-0.5, 0.5);
 varying float clipCheck;
-invariant int eyeIndex_clipping;
+flat out int instanceID;
 in int gl_InstanceID;
 
 vec4 TransformWorldViewProjectionVR(vec4 position)
@@ -74,7 +74,7 @@ vec4 TransformWorldViewProjectionVR(vec4 position)
     clipPos.x *= 0.5; // shrink to half of the screen
     clipPos.x += EyeOffsetScale[gl_InstanceID] * clipPos.w; // scoot left or right.
     clipCheck = clipPos.x + 1.0 / (1.75 + clipPos.z);
-    eyeIndex_clipping = gl_InstanceID;
+    instanceID = gl_InstanceID;
     return clipPos;    
 }
 
@@ -126,11 +126,11 @@ vec3 TransformNormal(vec3 normal) {
     // fragment shader
 
     varying float clipCheck;
-    invariant int eyeIndex_clipping;
+    flat in int instanceID;
 
     #if defined INSTANCING
 
-        #define CHECK_CLIP //if( eyeIndex_clipping == 0 && clipCheck >= 0.5 || eyeIndex_clipping == 1 && clipCheck <= 0.5 ) discard;
+        #define CHECK_CLIP //if( instanceID == 0 && clipCheck >= 0.0 || instanceID == 1 && clipCheck <= 0.0 ) discard;
 
     #else
     // not instancing

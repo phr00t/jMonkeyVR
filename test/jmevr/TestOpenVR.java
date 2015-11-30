@@ -16,7 +16,6 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -56,11 +55,11 @@ public class TestOpenVR extends VRApplication {
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_JFRAME_EXTENDED_BACKUP, true); // defaults to true anyway, used on Mac & Linux
         test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, false); // use full screen distortion, maximum FOV, possibly quicker even
         test.preconfigureVRApp(PRECONFIG_PARAMETER.DISABLE_SWAPBUFFERS_COMPLETELY, false); // runs faster, but only VR Compositor visibility available
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true); // render two eyes, regardless of SteamVR
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, false); // render two eyes, regardless of SteamVR
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, false);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true); // show gui even if it is behind things
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, false); // WIP
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, true); // WIP
         test.preconfigureVRApp(PRECONFIG_PARAMETER.NO_GUI, true);
         test.setFrustrumNearFar(0.1f, 512f);
         test.start();
@@ -156,6 +155,8 @@ public class TestOpenVR extends VRApplication {
         
         // use magic VR mouse cusor (same usage as non-VR mouse cursor)
         inputManager.setCursorVisible(true);
+        
+        rootNode.instance();
         
         // filter test (can be added here like this)
         // but we are going to save them for the F key during runtime
@@ -307,10 +308,9 @@ public class TestOpenVR extends VRApplication {
 
     }
 
+    private static final Box smallBox = new Box(0.3f, 0.3f, .3f);
     private void addBox(Vector3f location, Quaternion rot, float scale) {
-        Box b = new Box(0.3f, 0.3f, 0.3f);
-
-        Geometry leftQuad = new Geometry("Box", b);
+        Geometry leftQuad = new Geometry("Box", smallBox);
         if( rot != null ) {
             leftQuad.setLocalRotation(rot);
         } else {

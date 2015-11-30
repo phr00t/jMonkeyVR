@@ -23,6 +23,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.shadow.DirectionalLightShadowFilter;
+import com.jme3.system.lwjgl.LwjglContext;
+import com.jme3.system.lwjgl.LwjglWindow;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
@@ -387,6 +389,10 @@ public class OpenVRViewManager {
         } else {
             viewPortLeft = app.getViewPort();
             viewPortLeft.attachScene(VRApplication.getMainVRApp().getRootNode());
+            //long windowHandle = ((LwjglWindow)VRApplication.getMainVRApp().getContext()).getWindowHandle(); 
+                                                                                                            //happening due to resolution change after viewport creation
+            //org.lwjgl.glfw.GLFW.glfwSetWindowSize(windowHandle, VRApplication.getMainVRApp().getContext().getSettings().getWidth(),
+            //                                                    VRApplication.getMainVRApp().getContext().getSettings().getHeight()+1);
             camRight = camLeft.clone();
             prepareCameraSize(camRight);
             camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));

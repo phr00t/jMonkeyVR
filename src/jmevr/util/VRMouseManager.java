@@ -5,7 +5,6 @@
  */
 package jmevr.util;
 
-import com.jme3.cursors.plugins.JmeCursor;
 import com.jme3.input.MouseInput;
 import com.jme3.input.lwjgl.GlfwMouseInput;
 import com.jme3.material.RenderState.BlendMode;
@@ -14,9 +13,7 @@ import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.ui.Picture;
-import java.nio.ByteBuffer;
 import jmevr.app.VRApplication;
-import org.lwjgl.BufferUtils;
 
 /**
  *

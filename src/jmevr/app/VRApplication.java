@@ -553,7 +553,9 @@ public abstract class VRApplication extends Application {
         simpleInitApp();
         
         // any filters created, move them now
-        VRviewmanager.moveScreenProcessingToEyes();
+        if( VRviewmanager != null ) {
+            VRviewmanager.moveScreenProcessingToEyes();
+        }
     }
     
     public abstract void simpleInitApp();

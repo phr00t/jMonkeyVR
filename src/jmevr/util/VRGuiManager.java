@@ -16,6 +16,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
@@ -68,7 +69,7 @@ public class VRGuiManager {
     }
     
     private static void positionTo(Vector3f pos, Quaternion dir) {
-        Vector3f guiPos = guiQuad.getLocalTranslation();
+        Vector3f guiPos = guiQuadNode.getLocalTranslation();
         guiPos.set(0f, 0f, guiDistance);
         dir.mult(guiPos, guiPos);
         guiPos.x += pos.x;
@@ -77,13 +78,13 @@ public class VRGuiManager {
     }
     
     protected static void updateGuiQuadGeometricState() {
-        guiQuad.updateGeometricState();
+        guiQuadNode.updateGeometricState();
     }
     
     protected static void positionGuiNow() {
         wantsReposition = false;
         if( VRApplication.isInVR() == false ) return;
-        guiQuad.setLocalScale(guiDistance * guiScale * 4f, 4f * guiDistance * guiScale, 1f);
+        guiQuadNode.setLocalScale(guiDistance * guiScale * 4f, 4f * guiDistance * guiScale, 1f);
         switch( posMode ) {
             case MANUAL:
             case AUTO_CAM_ALL:
@@ -133,7 +134,7 @@ public class VRGuiManager {
         dir.getRotationColumn(0, left).negateLocal();
         orient.fromAxes(left, dir.getRotationColumn(1, up), look);
         Quaternion rot = tempq.fromRotationMatrix(orient);
-        guiQuad.setLocalRotation(rot);
+        guiQuadNode.setLocalRotation(rot);
     }
     
     public static void setGuiDistance(float newGuiDistance) {
@@ -155,10 +156,10 @@ public class VRGuiManager {
     protected static void setupGui(Camera leftcam, Camera rightcam, ViewPort left, ViewPort right) {
         if( VRApplication.hasTraditionalGUIOverlay() ) {
             camLeft = leftcam;
-            camRight = rightcam;
-            getGuiQuad(camLeft);
-            left.attachScene(guiQuad);
-            if( right != null ) right.attachScene(guiQuad);
+            camRight = rightcam;            
+            Spatial guiScene = getGuiQuad(camLeft);
+            left.attachScene(guiScene);
+            if( right != null ) right.attachScene(guiScene);
             setPositioningMode(posMode);
         }
     }
@@ -179,10 +180,11 @@ public class VRGuiManager {
     
     private static boolean useCurvedSurface = false, overdraw = false;
     private static Geometry guiQuad;
+    private static VRInstanceNode guiQuadNode;
     private static ViewPort offView;
     private static Texture2D guiTexture;
-    private static Geometry getGuiQuad(Camera sourceCam){
-        if( guiQuad == null ) {
+    private static Spatial getGuiQuad(Camera sourceCam){
+        if( guiQuadNode == null ) {
             VRApplication sourceApp = VRApplication.getMainVRApp();
             Vector2f guiCanvasSize = getCanvasSize();
             Camera offCamera = sourceCam.clone();
@@ -225,7 +227,12 @@ public class VRGuiManager {
             mat.setTexture("ColorMap", guiTexture);
             guiQuad.setQueueBucket(Bucket.Translucent);
             guiQuad.setMaterial(mat);
+            
+            guiQuadNode = new VRInstanceNode("gui-quad-node");
+            guiQuadNode.setCullHint(CullHint.Never);
+            guiQuadNode.setQueueBucket(Bucket.Translucent);
+            guiQuadNode.attachChild(guiQuad);
         }
-        return guiQuad;
+        return guiQuadNode;
     }
 }

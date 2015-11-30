@@ -36,7 +36,6 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.GeometryGroupNode;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.UserData;
@@ -44,7 +43,6 @@ import com.jme3.scene.control.Control;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.material.MatParam;
-import static com.jme3.scene.GeometryGroupNode.getGeometryStartIndex;
 import com.jme3.scene.instancing.InstancedGeometry;
 import com.jme3.scene.instancing.InstancedNode;
 import java.io.IOException;
@@ -53,63 +51,16 @@ import jmevr.app.VRApplication;
 
 public class VRInstanceNode extends GeometryGroupNode {
     
-    static int getGeometryStartIndex2(Geometry geom) {
-        return getGeometryStartIndex(geom);
+    private boolean autoInstance = true;
+    
+    public void setAutoInstancing(boolean val) {
+        autoInstance = val;
     }
     
-    static void setGeometryStartIndex2(Geometry geom, int startIndex) {
-        setGeometryStartIndex(geom, startIndex);
+    public boolean isAutoInstancing() {
+        return autoInstance;
     }
-    
-    private static final class InstanceTypeKey implements Cloneable {
 
-        Mesh mesh;
-        Material material;
-        int lodLevel;
-
-        public InstanceTypeKey(Mesh mesh, Material material, int lodLevel) {
-            this.mesh = mesh;
-            this.material = material;
-            this.lodLevel = lodLevel;
-        }
-        
-        public InstanceTypeKey(){
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 3;
-            hash = 41 * hash + this.mesh.hashCode();
-            hash = 41 * hash + this.material.hashCode();
-            hash = 41 * hash + this.lodLevel;
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            final InstanceTypeKey other = (InstanceTypeKey) obj;
-            if (this.mesh != other.mesh) {
-                return false;
-            }
-            if (this.material != other.material) {
-                return false;
-            }
-            if (this.lodLevel != other.lodLevel) {
-                return false;
-            }
-            return true;
-        }
-        
-        @Override
-        public InstanceTypeKey clone() {
-            try {
-                return (InstanceTypeKey) super.clone();
-            } catch (CloneNotSupportedException ex) {
-                throw new AssertionError();
-            }
-        }
-    }
-    
     private static class InstancedNodeControl implements Control {
 
         private VRInstanceNode node;
@@ -155,40 +106,23 @@ public class VRInstanceNode extends GeometryGroupNode {
         // the control is going to be added automatically here.
     }
     
+    protected void enableInstanceVR() {
+        if( control != null ) return;
+        control = new InstancedNodeControl(this);
+        addControl(control);        
+    }
+    
     public VRInstanceNode(String name) {
         super(name);
-        control = new InstancedNodeControl(this);
-        addControl(control);
+        if( VRApplication.isInstanceVRRendering() ) {
+            enableInstanceVR();
+        }
     }
     
     public void renderFromControl() {
         for (InstancedGeometry ig : igByGeom.values()) {
             ig.updateInstances();
         }
-    }
-
-    public InstancedGeometry lookUpByGeometry(Geometry geom) {
-        return igByGeom.get(geom);
-        /*lookUp.mesh = geom.getMesh();
-        lookUp.material = geom.getMaterial();
-        lookUp.lodLevel = geom.getLodLevel();
-
-        InstancedGeometry ig = instancesMap.get(lookUp);
-
-        if (ig == null) {
-            ig = new InstancedGeometry(
-                    "mesh-" + System.identityHashCode(lookUp.mesh) + "," +
-                    "material-" + lookUp.material.getMaterialDef().getName() + ","
-                    + "lod-" + lookUp.lodLevel);
-            ig.setMaterial(lookUp.material);
-            ig.setMesh(lookUp.mesh);
-            ig.setUserData(UserData.JME_PHYSICSIGNORE, true);
-            ig.setCullHint(Spatial.CullHint.Never);
-            instancesMap.put(lookUp.clone(), ig);
-            attachChild(ig);
-        }
-
-        return ig;*/
     }
     
     private void addToInstancedGeometry(Geometry geom) {
@@ -199,7 +133,6 @@ public class VRInstanceNode extends GeometryGroupNode {
             System.out.println("VR instance failed on geo '" + geom.getName() + "', material '" + material.getMaterialDef().getAssetName() + "' Check material params!");
             return;
         }
-        geom.setCullHint(CullHint.Always); // hide the original
         geom.getMaterial().setMatrix4("RightEyeViewProjectionMatrix", VRApplication.getVRViewManager().getCamRight().getViewProjectionMatrix());
         material.setBoolean("UseInstancing", true);
         InstancedGeometry ig = new InstancedGeometry(geom.getName() + "-instance"); 
@@ -207,10 +140,9 @@ public class VRInstanceNode extends GeometryGroupNode {
         ig.setMaterial(geom.getMaterial());
         ig.setMesh(geom.getMesh());
         ig.setUserData(UserData.JME_PHYSICSIGNORE, true);
-        //ig.setCullHint(Spatial.CullHint.Never);
+        ig.setCullHint(Spatial.CullHint.Never);
         Geometry clone = geom.clone(false);
-        clone.setLocalTransform(geom.getLocalTransform());
-        geom.getParent().attachChild(clone);
+        geom.setCullHint(CullHint.Always); // hide the original
         clone.setCullHint(CullHint.Always);
         igByGeom.put(geom, ig);
         igByGeom.put(clone, ig);
@@ -218,26 +150,16 @@ public class VRInstanceNode extends GeometryGroupNode {
         clone.associateWithGroupNode(this, 1);
         ig.addInstance(geom);
         ig.addInstance(clone);
-        attachChild(ig);
+        Node myparent = geom.getParent();
+        if( myparent == null ) myparent = this;
+        myparent.attachChild(clone);
+        myparent.attachChild(ig);
     }
     
     private void removeFromInstancedGeometry(Geometry geom) {
         InstancedGeometry ig = igByGeom.remove(geom);
         if (ig != null) {
             ig.deleteInstance(geom);
-        }
-    }
-    
-    private void relocateInInstancedGeometry(Geometry geom) {
-        InstancedGeometry oldIG = igByGeom.get(geom);
-        InstancedGeometry newIG = lookUpByGeometry(geom);
-        if (oldIG != newIG) {
-            if (oldIG == null) {
-                throw new AssertionError();
-            }
-            oldIG.deleteInstance(geom);
-            newIG.addInstance(geom);
-            igByGeom.put(geom, newIG);
         }
     }
     
@@ -260,8 +182,16 @@ public class VRInstanceNode extends GeometryGroupNode {
     }
     
     @Override
+    public int attachChildAt(Spatial child, int index) {
+        if( autoInstance ) instance(child);
+        int retval = super.attachChildAt(child, index);
+        return retval;
+    }
+    
+    @Override
     public Spatial detachChildAt(int index) {
         Spatial s = super.detachChildAt(index);
+        if( VRApplication.isInstanceVRRendering() == false ) return s;
         if (s instanceof Node) {
             ungroupSceneGraph(s);
         }
@@ -297,12 +227,12 @@ public class VRInstanceNode extends GeometryGroupNode {
 
     @Override
     public void onMaterialChange(Geometry geom) {
-        relocateInInstancedGeometry(geom);
+        //relocateInInstancedGeometry(geom);
     }
 
     @Override
     public void onMeshChange(Geometry geom) {
-        relocateInInstancedGeometry(geom);
+        //relocateInInstancedGeometry(geom);
     }
 
     @Override

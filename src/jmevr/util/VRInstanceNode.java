@@ -194,11 +194,13 @@ public class VRInstanceNode extends GeometryGroupNode {
     private void addToInstancedGeometry(Geometry geom) {
         Material material = geom.getMaterial();
         MatParam param = material.getMaterialDef().getMaterialParam("UseInstancing");
-        if (param == null ) {
-            System.out.println("VR instance failed on geo '" + geom.getName() + "', material '" + material.getMaterialDef().getAssetName() + "'");
+        MatParam param2 = material.getMaterialDef().getMaterialParam("RightEyeViewProjectionMatrix");
+        if (param == null || param2 == null) {
+            System.out.println("VR instance failed on geo '" + geom.getName() + "', material '" + material.getMaterialDef().getAssetName() + "' Check material params!");
             return;
         }
         geom.setCullHint(CullHint.Always); // hide the original
+        geom.getMaterial().setMatrix4("RightEyeViewProjectionMatrix", VRApplication.getVRViewManager().getCamRight().getViewProjectionMatrix());
         material.setBoolean("UseInstancing", true);
         InstancedGeometry ig = new InstancedGeometry(geom.getName() + "-instance"); 
         ig.setMaxNumInstances(2);

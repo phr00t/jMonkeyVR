@@ -1,5 +1,7 @@
 #define VERTEX_SHADER
 #import "Common/ShaderLib/GLSLCompat.glsllib"
+
+// import the following for VR instancing
 #import "jmevr/shaders/InstanceVR.glsllib"
 
 attribute vec3 inPosition;
@@ -20,5 +22,6 @@ void main(){
 
     vec4 modelSpacePos = vec4(inPosition, 1.0);
 
+    // use the following transform function for VR instancing
     gl_Position = TransformWorldViewProjectionVR(modelSpacePos);
 }

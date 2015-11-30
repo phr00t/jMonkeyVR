@@ -442,13 +442,11 @@ public abstract class VRApplication extends Application {
         return VRviewmanager.getViewPortRight();
     }
     
-    private static ColorRGBA bgColor;
     /*
         helper function for setting both eye backgrounds the same color,
         or just the normal viewport background color if not in VR
     */
     public static void setBackgroundColors(ColorRGBA clr) {
-        bgColor = clr;
         if( VRviewmanager == null ) {
             mainApp.getViewPort().setBackgroundColor(clr);
         } else if( VRviewmanager.getViewPortLeft() != null ) {
@@ -548,15 +546,14 @@ public abstract class VRApplication extends Application {
             guiViewPort.attachScene(guiNode);
         }
         
-        simpleInitApp();
-        
         if( VRviewmanager != null ) {
             VRviewmanager.initialize(this);
-            if( bgColor != null ) {
-                VRviewmanager.getViewPortLeft().setBackgroundColor(bgColor);
-                if( VRviewmanager.getViewPortRight() != null ) VRviewmanager.getViewPortRight().setBackgroundColor(bgColor);
-            }
         }
+        
+        simpleInitApp();
+        
+        // any filters created, move them now
+        VRviewmanager.moveScreenProcessingToEyes();
     }
     
     public abstract void simpleInitApp();

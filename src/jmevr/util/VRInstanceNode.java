@@ -129,13 +129,11 @@ public class VRInstanceNode extends GeometryGroupNode {
         }
         geom.getMaterial().setMatrix4("RightEyeViewProjectionMatrix", VRApplication.getVRViewManager().getCamRight().getViewProjectionMatrix());
         material.setBoolean("UseInstancing", true);
-        InstancedGeometry ig = new InstancedGeometry(geom.getName() + "-instance"); 
-        ig.setMaxNumInstances(2);
+        InstancedGeometry ig = new InstancedGeometry(geom.getName() + "-instance", false, 2);
+        ig.forceBoundFrom(geom);
         ig.setMaterial(geom.getMaterial());
         ig.setMesh(geom.getMesh());
         ig.setUserData(UserData.JME_PHYSICSIGNORE, true);
-        ig.setCullHint(CullHint.Never); //debug never cull while we figure this out...
-        //ig.setModelBound(geom.getWorldBound());
         Geometry clone = geom.clone(false);
         geom.setCullHint(CullHint.Always); // hide the original
         clone.setCullHint(CullHint.Always);

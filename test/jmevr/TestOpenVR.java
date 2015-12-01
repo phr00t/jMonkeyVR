@@ -15,7 +15,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
-import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -257,15 +256,6 @@ public class TestOpenVR extends VRApplication {
              observer.rotate(0, -0.75f*tpf, 0);
          }
          
-         //debug culling count
-         /*int culled = 0;
-         for(Spatial s : rootNode.getChildren()) {
-             if( s.getLastFrustumIntersection() == Camera.FrustumIntersect.Outside ) {
-                 culled ++;
-             }
-         }
-         System.out.println("Cubed culled: " + Integer.toString(culled));*/
-         
          handleWandInput(0, leftHand);
          handleWandInput(1, rightHand);
          if( placeRate > 0f ) placeRate -= tpf;
@@ -286,12 +276,11 @@ public class TestOpenVR extends VRApplication {
                  VRInput.triggerHapticPulse(index, 0.1f);
              }
              // print out all of the known information about the controllers here
-             for(int i=0;i<VRInput.getRawControllerState(index).rAxis.length;i++) {
+             /*for(int i=0;i<VRInput.getRawControllerState(index).rAxis.length;i++) {
                  VRControllerAxis_t cs = VRInput.getRawControllerState(index).rAxis[i];
                  System.out.println("Controller#" + Integer.toString(index) + ", Axis#" + Integer.toString(i) + " X: " + Float.toString(cs.x) + ", Y: " + Float.toString(cs.y));
              }
-             System.out.println("Button press: " + Long.toString(VRInput.getRawControllerState(index).ulButtonPressed.longValue()) + ", touch: " + Long.toString(VRInput.getRawControllerState(index).ulButtonTouched.longValue()));
-             
+             System.out.println("Button press: " + Long.toString(VRInput.getRawControllerState(index).ulButtonPressed.longValue()) + ", touch: " + Long.toString(VRInput.getRawControllerState(index).ulButtonTouched.longValue()));*/            
          } else {
              geo.setCullHint(CullHint.Always); // hide it             
          }

@@ -27,6 +27,11 @@ Controller#1, Axis#3 X: 0.0, Y: 0.0
 Controller#1, Axis#4 X: 0.0, Y: 0.0
 Button press: 0, touch: 0 <--- touch 4 for grip button, 2 for little black button
 
+axis#0 x: 1.4e-45 (touchpad press), gets+2.8e-45 when trigger press
+axis#1 x: 1.4e-45 (touching touchpad)
+
+http://stackoverflow.com/questions/10643754/convert-float-to-bits
+
 */
 
 /**
@@ -72,6 +77,10 @@ public class VRInput {
                 return (cs.ulButtonTouched.longValue() & 4) != 0;
             case ViveThumbButton:
                 return (cs.ulButtonTouched.longValue() & 2) != 0;                
+            case ViveTouchpadAxis:
+                return (Float.floatToRawIntBits(cs.rAxis[0].x) & 1) != 0;
+            case ViveTriggerAxis:
+                return (Float.floatToRawIntBits(cs.rAxis[0].x) & 2) != 0;                
         }
     }
     

@@ -15,6 +15,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
+import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -34,6 +35,7 @@ import jmevr.post.CartoonSSAO;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
 import jopenvr.JOpenVRLibrary;
+import jopenvr.VRControllerAxis_t;
 
 /**
  *
@@ -46,13 +48,13 @@ public class TestOpenVR extends VRApplication {
         TestOpenVR test = new TestOpenVR();
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_STEAMVR_COMPOSITOR, false); // disable the SteamVR compositor (kinda needed at the moment)
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_JFRAME_EXTENDED_BACKUP, true); // defaults to true anyway, used on Mac & Linux
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, true); // use full screen distortion, maximum FOV, possibly quicker even
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, false); // use full screen distortion, maximum FOV, possibly quicker even
         test.preconfigureVRApp(PRECONFIG_PARAMETER.DISABLE_SWAPBUFFERS_COMPLETELY, false); // runs faster, but only VR Compositor visibility available
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true); // render two eyes, regardless of SteamVR
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, false);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true); // show gui even if it is behind things
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, true); // WIP
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, false); // WIP
         test.preconfigureVRApp(PRECONFIG_PARAMETER.NO_GUI, false);
         test.setFrustrumNearFar(0.1f, 512f);
         test.start();
@@ -255,6 +257,15 @@ public class TestOpenVR extends VRApplication {
              observer.rotate(0, -0.75f*tpf, 0);
          }
          
+         //debug culling count
+         /*int culled = 0;
+         for(Spatial s : rootNode.getChildren()) {
+             if( s.getLastFrustumIntersection() == Camera.FrustumIntersect.Outside ) {
+                 culled ++;
+             }
+         }
+         System.out.println("Cubed culled: " + Integer.toString(culled));*/
+         
          handleWandInput(0, leftHand);
          handleWandInput(1, rightHand);
          if( placeRate > 0f ) placeRate -= tpf;
@@ -275,12 +286,12 @@ public class TestOpenVR extends VRApplication {
                  VRInput.triggerHapticPulse(index, 0.1f);
              }
              // print out all of the known information about the controllers here
-             /*for(int i=0;i<VRInput.getRawControllerState(index).rAxis.length;i++) {
+             for(int i=0;i<VRInput.getRawControllerState(index).rAxis.length;i++) {
                  VRControllerAxis_t cs = VRInput.getRawControllerState(index).rAxis[i];
                  System.out.println("Controller#" + Integer.toString(index) + ", Axis#" + Integer.toString(i) + " X: " + Float.toString(cs.x) + ", Y: " + Float.toString(cs.y));
              }
              System.out.println("Button press: " + Long.toString(VRInput.getRawControllerState(index).ulButtonPressed.longValue()) + ", touch: " + Long.toString(VRInput.getRawControllerState(index).ulButtonTouched.longValue()));
-             */
+             
          } else {
              geo.setCullHint(CullHint.Always); // hide it             
          }

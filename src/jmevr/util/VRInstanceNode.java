@@ -100,12 +100,6 @@ public class VRInstanceNode extends GeometryGroupNode {
     
     protected HashMap<Geometry, InstancedGeometry> igByGeom = new HashMap<>();
     
-    public VRInstanceNode() {
-        super();
-        // NOTE: since we are deserializing,
-        // the control is going to be added automatically here.
-    }
-    
     protected void enableInstanceVR() {
         if( control != null ) return;
         control = new InstancedNodeControl(this);
@@ -140,7 +134,8 @@ public class VRInstanceNode extends GeometryGroupNode {
         ig.setMaterial(geom.getMaterial());
         ig.setMesh(geom.getMesh());
         ig.setUserData(UserData.JME_PHYSICSIGNORE, true);
-        ig.setCullHint(Spatial.CullHint.Never);
+        ig.setCullHint(CullHint.Never); //debug never cull while we figure this out...
+        //ig.setModelBound(geom.getWorldBound());
         Geometry clone = geom.clone(false);
         geom.setCullHint(CullHint.Always); // hide the original
         clone.setCullHint(CullHint.Always);

@@ -187,6 +187,10 @@ public class OpenVRViewManager {
         if( size.y < app.getContext().getSettings().getHeight() ) {
             size.y = app.getContext().getSettings().getHeight();
         }
+        
+        // double width resolution if we are doing both eyes in one camera
+        if( VRApplication.isInstanceVRRendering() ) size.x *= 2f; 
+        
         if( cam.getWidth() != size.x || cam.getHeight() != size.y ) cam.resize((int)size.x, (int)size.y, true);
     }
     
@@ -397,7 +401,6 @@ public class OpenVRViewManager {
             //org.lwjgl.glfw.GLFW.glfwSetWindowSize(windowHandle, VRApplication.getMainVRApp().getContext().getSettings().getWidth(),
             //                                                    VRApplication.getMainVRApp().getContext().getSettings().getHeight()+1);
             camRight = camLeft.clone();
-            prepareCameraSize(camRight);
             camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
         }
         

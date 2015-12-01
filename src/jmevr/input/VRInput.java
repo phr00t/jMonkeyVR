@@ -51,7 +51,8 @@ public class VRInput {
     private static final Vector2f tempAxis = new Vector2f(), temp2Axis = new Vector2f();
     private static final Vector2f lastCallAxis[] = new Vector2f[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
     private static final boolean needsNewVelocity[] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount],
-                                 needsNewAngVelocity[] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
+                                 needsNewAngVelocity[] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount],
+                                 buttonDown[][] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount][16];
     private static final Vector3f tempVel = new Vector3f();
     private static final Quaternion tempq = new Quaternion();
     
@@ -84,10 +85,24 @@ public class VRInput {
         }
     }
     
-    public static void resetAxisDeltas() {
+    public static boolean wasButtonPressedSinceLastCall(int controllerIndex, VRINPUT_TYPE checkButton) {
+        boolean buttonDownNow = isButtonDown(controllerIndex, checkButton);
+        int checkButtonValue = checkButton.getValue();
+        int cIndex = VRInput.controllerIndex[controllerIndex];
+        boolean retval = buttonDownNow == true && buttonDown[cIndex][checkButtonValue] == false;
+        buttonDown[cIndex][checkButtonValue] = buttonDownNow;
+        return retval;
+    }
+    
+    public static void resetInputSinceLastCall() {
         for(int i=0;i<lastCallAxis.length;i++) {
             lastCallAxis[i].x = 0f;
             lastCallAxis[i].y = 0f;
+        }
+        for(int i=0;i<JOpenVRLibrary.k_unMaxTrackedDeviceCount;i++) {
+            for(int j=0;j<16;j++) {
+                buttonDown[i][j] = false;
+            }
         }
     }
     

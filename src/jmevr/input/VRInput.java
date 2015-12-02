@@ -75,9 +75,9 @@ public class VRInput {
             default:
                 return false;
             case ViveGripButton:
-                return (cs.ulButtonTouched.longValue() & 4) != 0;
+                return (cs.ulButtonTouched & 4) != 0;
             case ViveThumbButton:
-                return (cs.ulButtonTouched.longValue() & 2) != 0;                
+                return (cs.ulButtonTouched & 2) != 0;                
             case ViveTouchpadAxis:
                 return (Float.floatToRawIntBits(cs.rAxis[0].x) & 1) != 0;
             case ViveTriggerAxis:
@@ -185,7 +185,7 @@ public class VRInput {
     public static void _updateConnectedControllers() {
         controllerCount = 0;
         for(int i=0;i<JOpenVRLibrary.k_unMaxTrackedDeviceCount;i++) {
-            if( JOpenVRLibrary.VR_IVRSystem_GetTrackedDeviceClass(OpenVR.getVRSystemInstance(), i) == JOpenVRLibrary.TrackedDeviceClass.TrackedDeviceClass_Controller ) {
+            if( JOpenVRLibrary.VR_IVRSystem_GetTrackedDeviceClass(OpenVR.getVRSystemInstance(), i) == JOpenVRLibrary.ETrackedDeviceClass.ETrackedDeviceClass_TrackedDeviceClass_Controller ) {
                 controllerIndex[controllerCount] = i;
                 controllerCount++;
             }

@@ -35,7 +35,7 @@ public class MeshUtil {
         int vertPos = 0, coordPos = 0;
         
         Pointer vrsystem = OpenVR.getVRSystemInstance();
-        float Xoffset = eye == JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left ? -1f : 0;
+        float Xoffset = eye == JOpenVRLibrary.EVREye.EVREye_Eye_Left ? -1f : 0;
         for (int y = 0; y < m_iLensGridSegmentCountV; y++) {
             for (int x = 0; x < m_iLensGridSegmentCountH; x++) {
                 u = x * w;

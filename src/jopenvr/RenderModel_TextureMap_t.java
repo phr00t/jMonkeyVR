@@ -9,8 +9,8 @@ import java.util.List;
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
 public class RenderModel_TextureMap_t extends Structure {
-	public byte unWidth;
-	public byte unHeight;
+	public short unWidth;
+	public short unHeight;
 	/**
 	 * const uint8_t *<br>
 	 * C type : uint8_t*
@@ -26,7 +26,7 @@ public class RenderModel_TextureMap_t extends Structure {
 	 * @param rubTextureMapData const uint8_t *<br>
 	 * C type : uint8_t*
 	 */
-	public RenderModel_TextureMap_t(byte unWidth, byte unHeight, Pointer rubTextureMapData) {
+	public RenderModel_TextureMap_t(short unWidth, short unHeight, Pointer rubTextureMapData) {
 		super();
 		this.unWidth = unWidth;
 		this.unHeight = unHeight;

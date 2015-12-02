@@ -18,16 +18,11 @@
 // The GL_ARB_draw_instanced and GL_ARB_instanced_arrays extensions 
 // are required (OGL 3.3).
 
-uniform mat4 g_WorldMatrix;
-uniform mat4 g_ViewMatrix;
-uniform mat4 g_ProjectionMatrix;
-uniform mat4 g_WorldViewMatrix;
-uniform mat4 g_WorldViewProjectionMatrix;
-uniform mat4 g_ViewProjectionMatrix;
-uniform mat3 g_NormalMatrix;
-uniform mat4 m_RightEyeViewProjectionMatrix;
-
 #if defined INSTANCING
+
+uniform mat4 g_ViewProjectionMatrix;
+uniform mat4 g_ViewMatrix;
+uniform mat4 m_RightEyeViewProjectionMatrix;
 
 // World Matrix + Normal Rotation Quaternion. 
 // The World Matrix is the top 3 rows - 
@@ -93,6 +88,11 @@ vec3 TransformNormal(vec3 vec)
 #define g_NormalMatrix              Use_the_instancing_functions_for_this
 
 #else
+
+uniform mat4 g_WorldMatrix;
+uniform mat4 g_WorldViewMatrix;
+uniform mat4 g_WorldViewProjectionMatrix;
+uniform mat3 g_NormalMatrix;
 
 vec4 TransformWorld(vec4 position)
 {

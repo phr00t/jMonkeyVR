@@ -62,6 +62,10 @@ public class VRMouseManager {
         if( vrapp.getInputManager().isCursorVisible() ) {
             if( mouseImage.getParent() == null ) {
                 VRApplication.getMainVRApp().getGuiNode().attachChild(mouseImage);
+                // set mouse in center of the screen if newly added
+                AppSettings as = VRApplication.getMainVRApp().getContext().getSettings();
+                MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
+                if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).setCursorPosition(as.getWidth() / 2, as.getHeight() / 2);
             }
             Vector2f mousePos = getCursorPosition();
             mouseImage.setLocalTranslation(mousePos.x, mousePos.y - ySize, VRGuiManager.getGuiDistance() + 1f);

@@ -61,7 +61,7 @@ public abstract class VRApplication extends Application {
     private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true, disableVR, seated, nogui, instanceVR;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
-    protected VRInstanceNode guiNode;
+    protected Node guiNode;
     protected VRInstanceNode rootNode;
     
     private float fFar = 1000f, fNear = 1f;
@@ -140,7 +140,7 @@ public abstract class VRApplication extends Application {
     public VRApplication() {
         super();
         rootNode = new VRInstanceNode("root");
-        guiNode = new VRInstanceNode("guiNode");
+        guiNode = new Node("guiNode");
         guiNode.setQueueBucket(Bucket.Gui);
         guiNode.setCullHint(CullHint.Never);
         dummyCam = new Camera();

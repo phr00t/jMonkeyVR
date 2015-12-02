@@ -167,9 +167,9 @@ public class VRInstanceNode extends GeometryGroupNode {
                 // Will invoke onGeometryUnassociated automatically.
                 g.unassociateFromGroupNode();
                 
-                if (InstancedNode.getGeometryStartIndex(g) != -1) {
-                    throw new AssertionError();
-                }
+                //if (InstancedNode.getGeometryStartIndex(g) != -1) {
+                //    throw new AssertionError();
+                //}
             }
         }
     }

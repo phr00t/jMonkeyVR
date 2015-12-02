@@ -124,9 +124,8 @@ public class OpenVRViewManager {
                 if( useCustomDistortion || VRApplication.isInstanceVRRendering() ) {
                     int submitFlag = useCustomDistortion?JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_LensDistortionAlreadyApplied:
                                                          JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default;
-                    texType.handle = getLeftTexId();
+                    texType.handle = getFullTexId();
                     JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texType, texBoundsLeft, submitFlag);
-                    texType.handle = getRightTexId();
                     JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Right, texType, texBoundsRight, submitFlag);
                 } else {
                     texType.handle = getLeftTexId();
@@ -214,7 +213,6 @@ public class OpenVRViewManager {
         if( VRApplication.isInstanceVRRendering() ) {
             org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_CLIP_DISTANCE0);
             ((VRInstanceNode)VRApplication.getMainVRApp().getRootNode()).enableInstanceVR();
-            ((VRInstanceNode)VRApplication.getMainVRApp().getGuiNode()).enableInstanceVR();
             setupFinalFullTexture(app.getViewPort().getCamera());            
         } else if( useCustomDistortion || OpenVR.getVRCompositorInstance() == null ) {
             Node distortionScene = new Node();

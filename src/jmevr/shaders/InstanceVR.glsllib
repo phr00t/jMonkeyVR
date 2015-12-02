@@ -82,10 +82,10 @@ vec3 TransformNormal(vec3 vec)
 }
 
 // Prevent user from using g_** matrices which will have invalid data in this case.
-#define g_WorldMatrix               Use_the_instancing_functions_for_this
-#define g_WorldViewMatrix           Use_the_instancing_functions_for_this
-#define g_WorldViewProjectionMatrix Use_the_instancing_functions_for_this
-#define g_NormalMatrix              Use_the_instancing_functions_for_this
+#define g_WorldMatrix               TransformWorld(position)
+#define g_WorldViewMatrix           TransformWorldView(position)
+#define g_WorldViewProjectionMatrix TransformWorldViewProjectionVR(position)
+#define g_NormalMatrix              TransformNormal(inNormal)
 
 #else
 

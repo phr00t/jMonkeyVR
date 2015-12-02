@@ -451,7 +451,7 @@ public abstract class VRApplication extends Application {
             mainApp.getViewPort().setBackgroundColor(clr);
         } else if( VRviewmanager.getViewPortLeft() != null ) {
             VRviewmanager.getViewPortLeft().setBackgroundColor(clr);
-            VRviewmanager.getViewPortRight().setBackgroundColor(clr);
+            if( VRviewmanager.getViewPortRight() != null ) VRviewmanager.getViewPortRight().setBackgroundColor(clr);
         }
     }
     

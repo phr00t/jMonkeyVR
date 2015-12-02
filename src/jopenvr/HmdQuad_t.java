@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class HmdQuad_t extends Structure {
 	/**
-	 * HmdVector3_t[4]<br>
+	 * struct vr::HmdVector3_t[4]<br>
 	 * C type : HmdVector3_t[4]
 	 */
 	public HmdVector3_t[] vCorners = new HmdVector3_t[4];
@@ -21,7 +21,7 @@ public class HmdQuad_t extends Structure {
 		return Arrays.asList("vCorners");
 	}
 	/**
-	 * @param vCorners HmdVector3_t[4]<br>
+	 * @param vCorners struct vr::HmdVector3_t[4]<br>
 	 * C type : HmdVector3_t[4]
 	 */
 	public HmdQuad_t(HmdVector3_t vCorners[]) {

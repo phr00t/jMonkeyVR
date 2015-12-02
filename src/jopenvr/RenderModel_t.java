@@ -1,5 +1,4 @@
 package jopenvr;
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.ShortByReference;
@@ -11,7 +10,6 @@ import java.util.List;
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
 public class RenderModel_t extends Structure {
-	public NativeLong ulInternalHandle;
 	/**
 	 * const struct vr::RenderModel_Vertex_t *<br>
 	 * C type : RenderModel_Vertex_t*
@@ -24,29 +22,28 @@ public class RenderModel_t extends Structure {
 	 */
 	public ShortByReference rIndexData;
 	public int unTriangleCount;
-	/** C type : RenderModel_TextureMap_t */
-	public RenderModel_TextureMap_t diffuseTexture;
+	/** C type : TextureID_t */
+	public int diffuseTextureId;
 	public RenderModel_t() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("ulInternalHandle", "rVertexData", "unVertexCount", "rIndexData", "unTriangleCount", "diffuseTexture");
+		return Arrays.asList("rVertexData", "unVertexCount", "rIndexData", "unTriangleCount", "diffuseTextureId");
 	}
 	/**
 	 * @param rVertexData const struct vr::RenderModel_Vertex_t *<br>
 	 * C type : RenderModel_Vertex_t*<br>
 	 * @param rIndexData const uint16_t *<br>
 	 * C type : uint16_t*<br>
-	 * @param diffuseTexture C type : RenderModel_TextureMap_t
+	 * @param diffuseTextureId C type : TextureID_t
 	 */
-	public RenderModel_t(NativeLong ulInternalHandle, jopenvr.RenderModel_Vertex_t.ByReference rVertexData, int unVertexCount, ShortByReference rIndexData, int unTriangleCount, RenderModel_TextureMap_t diffuseTexture) {
+	public RenderModel_t(jopenvr.RenderModel_Vertex_t.ByReference rVertexData, int unVertexCount, ShortByReference rIndexData, int unTriangleCount, int diffuseTextureId) {
 		super();
-		this.ulInternalHandle = ulInternalHandle;
 		this.rVertexData = rVertexData;
 		this.unVertexCount = unVertexCount;
 		this.rIndexData = rIndexData;
 		this.unTriangleCount = unTriangleCount;
-		this.diffuseTexture = diffuseTexture;
+		this.diffuseTextureId = diffuseTextureId;
 	}
 	public RenderModel_t(Pointer peer) {
 		super(peer);

@@ -9,6 +9,10 @@ import java.util.List;
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
 public class CameraVideoStreamFrame_t extends Structure {
+	/**
+	 * @see ECameraVideoStreamFormat<br>
+	 * C type : ECameraVideoStreamFormat
+	 */
 	public int m_nStreamFormat;
 	public int m_nWidth;
 	public int m_nHeight;
@@ -17,13 +21,16 @@ public class CameraVideoStreamFrame_t extends Structure {
 	public int m_nBufferIndex;
 	public int m_nBufferCount;
 	public int m_nImageDataSize;
-	public double m_flFrameTime;
-	public byte m_bPoseValid;
+	public double m_flFrameElapsedTime;
+	public double m_flFrameCaptureTime;
+	public byte m_bPoseIsValid;
+	/** C type : HmdMatrix34_t */
+	public HmdMatrix34_t m_matDeviceToAbsoluteTracking;
 	/**
-	 * float[16]<br>
-	 * C type : float[16]
+	 * float[4]<br>
+	 * C type : float[4]
 	 */
-	public float[] m_HMDPoseMatrix = new float[16];
+	public float[] m_Pad = new float[4];
 	/**
 	 * void *<br>
 	 * C type : void*
@@ -33,7 +40,7 @@ public class CameraVideoStreamFrame_t extends Structure {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("m_nStreamFormat", "m_nWidth", "m_nHeight", "m_nFrameSequence", "m_nTimeStamp", "m_nBufferIndex", "m_nBufferCount", "m_nImageDataSize", "m_flFrameTime", "m_bPoseValid", "m_HMDPoseMatrix", "m_pImageData");
+		return Arrays.asList("m_nStreamFormat", "m_nWidth", "m_nHeight", "m_nFrameSequence", "m_nTimeStamp", "m_nBufferIndex", "m_nBufferCount", "m_nImageDataSize", "m_flFrameElapsedTime", "m_flFrameCaptureTime", "m_bPoseIsValid", "m_matDeviceToAbsoluteTracking", "m_Pad", "m_pImageData");
 	}
 	public CameraVideoStreamFrame_t(Pointer peer) {
 		super(peer);

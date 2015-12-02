@@ -14,8 +14,8 @@ public class VROverlayIntersectionParams_t extends Structure {
 	/** C type : HmdVector3_t */
 	public HmdVector3_t vDirection;
 	/**
-	 * @see TrackingUniverseOrigin<br>
-	 * C type : TrackingUniverseOrigin
+	 * @see ETrackingUniverseOrigin<br>
+	 * C type : ETrackingUniverseOrigin
 	 */
 	public int eOrigin;
 	public VROverlayIntersectionParams_t() {
@@ -27,8 +27,8 @@ public class VROverlayIntersectionParams_t extends Structure {
 	/**
 	 * @param vSource C type : HmdVector3_t<br>
 	 * @param vDirection C type : HmdVector3_t<br>
-	 * @param eOrigin @see TrackingUniverseOrigin<br>
-	 * C type : TrackingUniverseOrigin
+	 * @param eOrigin @see ETrackingUniverseOrigin<br>
+	 * C type : ETrackingUniverseOrigin
 	 */
 	public VROverlayIntersectionParams_t(HmdVector3_t vSource, HmdVector3_t vDirection, int eOrigin) {
 		super();

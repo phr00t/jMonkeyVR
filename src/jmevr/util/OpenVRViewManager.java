@@ -36,6 +36,7 @@ import jmevr.post.CartoonSSAO;
 import jmevr.post.FastSSAO;
 import jmevr.shadow.VRDirectionalLightShadowRenderer;
 import jopenvr.JOpenVRLibrary;
+import jopenvr.Texture_t;
 import jopenvr.VRTextureBounds_t;
 
 /**
@@ -48,7 +49,8 @@ public class OpenVRViewManager {
     private Camera camLeft,camRight;
     private ViewPort viewPortLeft, viewPortRight;
     private FilterPostProcessor ppLeft, ppRight;
-    private final VRTextureBounds_t texBounds = new VRTextureBounds_t();
+    private final VRTextureBounds_t texBoundsLeft = new VRTextureBounds_t(), texBoundsRight = new VRTextureBounds_t();
+    private final Texture_t texType = new Texture_t();
     
     private boolean mirrorEnabled;
     private static boolean useCustomDistortion;
@@ -99,36 +101,40 @@ public class OpenVRViewManager {
         heightAdjustment = amount;
     }
     
+    private void initTextureSubmitStructs() {
+        // left eye
+        texBoundsLeft.uMax = 0.5f;
+        texBoundsLeft.uMin = 0f;
+        texBoundsLeft.vMax = 1f;
+        texBoundsLeft.vMin = 0f;
+        // right eye
+        texBoundsRight.uMax = 1f;
+        texBoundsRight.uMin = 0.5f;
+        texBoundsRight.vMax = 1f;
+        texBoundsRight.vMin = 0f;
+        // texture type
+        texType.eColorSpace = JOpenVRLibrary.EColorSpace.EColorSpace_ColorSpace_Linear;
+        texType.eType = JOpenVRLibrary.EGraphicsAPIConvention.EGraphicsAPIConvention_API_OpenGL;
+    }
+    
     public void postRender() {
         if( isInVR() ) {
             if( OpenVR.getVRCompositorInstance() != null ) {
                 // using the compositor...
                 if( useCustomDistortion || VRApplication.isInstanceVRRendering() ) {
-                    int submitFlag = useCustomDistortion?JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_LensDistortionAlreadyApplied:
-                                                         JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_Default;
-                    // left eye
-                    texBounds.uMax = 0.5f;
-                    texBounds.uMin = 0f;
-                    texBounds.vMax = 1f;
-                    texBounds.vMin = 0f;
-                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
-                                                           JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getFullTexId(), texBounds,
-                                                           submitFlag);
-                    // right eye
-                    texBounds.uMax = 1f;
-                    texBounds.uMin = 0.5f;
-                    texBounds.vMax = 1f;
-                    texBounds.vMin = 0f;
-                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
-                                                           JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getFullTexId(), texBounds,
-                                                           submitFlag);                                        
+                    int submitFlag = useCustomDistortion?JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_LensDistortionAlreadyApplied:
+                                                         JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default;
+                    texType.handle = getLeftTexId();
+                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texType, texBoundsLeft, submitFlag);
+                    texType.handle = getRightTexId();
+                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Right, texType, texBoundsRight, submitFlag);
                 } else {
-                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left,
-                                                           JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getLeftTexId(), null,
-                                                           JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_Default);
-                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right,
-                                                           JOpenVRLibrary.GraphicsAPIConvention.GraphicsAPIConvention_API_OpenGL, getRightTexId(), null,
-                                                           JOpenVRLibrary.VRSubmitFlags_t.VRSubmitFlags_t_Submit_Default);                    
+                    texType.handle = getLeftTexId();
+                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texType, null,
+                                                           JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default);
+                    texType.handle = getRightTexId();
+                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Right, texType, null,
+                                                           JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default);
                 }
                 // mirroring?
                 if( mirrorEnabled && app.getContext().getSettings().isSwapBuffers() ) {
@@ -160,19 +166,16 @@ public class OpenVRViewManager {
     }
     
     public void initialize(VRApplication app) {            
-        setupCamerasAndViews();
-        
-        setupVRScene();
-                    
-        moveScreenProcessingToEyes();
-        
+        initTextureSubmitStructs();
+        setupCamerasAndViews();        
+        setupVRScene();                    
+        moveScreenProcessingToEyes();       
         if( VRApplication.hasTraditionalGUIOverlay() ) {
             VRMouseManager.init();
             // update the pose to position the gui correctly on start
             update(0f);        
             VRGuiManager.positionGui();
-        }
-        
+        }        
     }
     
     private void prepareCameraSize(Camera cam) {
@@ -217,13 +220,13 @@ public class OpenVRViewManager {
             Node distortionScene = new Node();
             Material leftMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
             leftMat.setTexture("Texture", leftEyeTex);
-            Geometry leftEye = new Geometry("box", MeshUtil.setupDistortionMesh(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Left));
+            Geometry leftEye = new Geometry("box", MeshUtil.setupDistortionMesh(JOpenVRLibrary.EVREye.EVREye_Eye_Left));
             leftEye.setMaterial(leftMat);
             distortionScene.attachChild(leftEye);
 
             Material rightMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
             rightMat.setTexture("Texture", rightEyeTex);
-            Geometry rightEye = new Geometry("box", MeshUtil.setupDistortionMesh(JOpenVRLibrary.Hmd_Eye.Hmd_Eye_Eye_Right));
+            Geometry rightEye = new Geometry("box", MeshUtil.setupDistortionMesh(JOpenVRLibrary.EVREye.EVREye_Eye_Right));
             rightEye.setMaterial(rightMat);
             distortionScene.attachChild(rightEye);
 

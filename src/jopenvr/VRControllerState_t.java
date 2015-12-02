@@ -1,5 +1,4 @@
 package jopenvr;
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import java.util.Arrays;
@@ -11,10 +10,10 @@ import java.util.List;
  */
 public class VRControllerState_t extends Structure {
 	public int unPacketNum;
-	public NativeLong ulButtonPressed;
-	public NativeLong ulButtonTouched;
+	public long ulButtonPressed;
+	public long ulButtonTouched;
 	/**
-	 * VRControllerAxis_t[5]<br>
+	 * struct vr::VRControllerAxis_t[5]<br>
 	 * C type : VRControllerAxis_t[5]
 	 */
 	public VRControllerAxis_t[] rAxis = new VRControllerAxis_t[5];
@@ -25,10 +24,10 @@ public class VRControllerState_t extends Structure {
 		return Arrays.asList("unPacketNum", "ulButtonPressed", "ulButtonTouched", "rAxis");
 	}
 	/**
-	 * @param rAxis VRControllerAxis_t[5]<br>
+	 * @param rAxis struct vr::VRControllerAxis_t[5]<br>
 	 * C type : VRControllerAxis_t[5]
 	 */
-	public VRControllerState_t(int unPacketNum, NativeLong ulButtonPressed, NativeLong ulButtonTouched, VRControllerAxis_t rAxis[]) {
+	public VRControllerState_t(int unPacketNum, long ulButtonPressed, long ulButtonTouched, VRControllerAxis_t rAxis[]) {
 		super();
 		this.unPacketNum = unPacketNum;
 		this.ulButtonPressed = ulButtonPressed;

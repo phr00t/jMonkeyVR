@@ -13,7 +13,7 @@ public class Texture_t extends Structure {
 	 * void *<br>
 	 * C type : void*
 	 */
-	public long handle;
+	public int handle;
 	/**
 	 * @see EGraphicsAPIConvention<br>
 	 * C type : EGraphicsAPIConvention
@@ -38,7 +38,7 @@ public class Texture_t extends Structure {
 	 * @param eColorSpace @see EColorSpace<br>
 	 * C type : EColorSpace
 	 */
-	public Texture_t(long handle, int eType, int eColorSpace) {
+	public Texture_t(int handle, int eType, int eColorSpace) {
 		super();
 		this.handle = handle;
 		this.eType = eType;

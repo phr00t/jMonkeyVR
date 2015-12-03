@@ -118,13 +118,13 @@ public class OpenVRViewManager {
         texBoundsRight.setAutoWrite(false);
         texBoundsRight.write();
         // texture type
-        texTypeLeft.eColorSpace = JOpenVRLibrary.EColorSpace.EColorSpace_ColorSpace_Linear;
+        texTypeLeft.eColorSpace = JOpenVRLibrary.EColorSpace.EColorSpace_ColorSpace_Gamma;
         texTypeLeft.eType = JOpenVRLibrary.EGraphicsAPIConvention.EGraphicsAPIConvention_API_OpenGL;
         texTypeLeft.setAutoSynch(false);
         texTypeLeft.setAutoRead(false);
         texTypeLeft.setAutoWrite(false);
         texTypeLeft.handle = -1;
-        texTypeRight.eColorSpace = JOpenVRLibrary.EColorSpace.EColorSpace_ColorSpace_Linear;
+        texTypeRight.eColorSpace = JOpenVRLibrary.EColorSpace.EColorSpace_ColorSpace_Gamma;
         texTypeRight.eType = JOpenVRLibrary.EGraphicsAPIConvention.EGraphicsAPIConvention_API_OpenGL;
         texTypeRight.setAutoSynch(false);
         texTypeRight.setAutoRead(false);

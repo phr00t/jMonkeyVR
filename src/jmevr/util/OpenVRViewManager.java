@@ -50,7 +50,7 @@ public class OpenVRViewManager {
     private ViewPort viewPortLeft, viewPortRight;
     private FilterPostProcessor ppLeft, ppRight;
     private final VRTextureBounds_t texBoundsLeft = new VRTextureBounds_t(), texBoundsRight = new VRTextureBounds_t();
-    private final Texture_t texType = new Texture_t();
+    private final Texture_t texTypeLeft = new Texture_t(), texTypeRight = new Texture_t();
     
     private boolean mirrorEnabled;
     private static boolean useCustomDistortion;
@@ -107,14 +107,32 @@ public class OpenVRViewManager {
         texBoundsLeft.uMin = 0f;
         texBoundsLeft.vMax = 1f;
         texBoundsLeft.vMin = 0f;
+        texBoundsLeft.setAutoSynch(false);
+        texBoundsLeft.setAutoRead(false);
+        texBoundsLeft.setAutoWrite(false);
+        texBoundsLeft.write();
         // right eye
         texBoundsRight.uMax = 1f;
         texBoundsRight.uMin = 0.5f;
         texBoundsRight.vMax = 1f;
         texBoundsRight.vMin = 0f;
+        texBoundsRight.setAutoSynch(false);
+        texBoundsRight.setAutoRead(false);
+        texBoundsRight.setAutoWrite(false);
+        texBoundsRight.write();
         // texture type
-        texType.eColorSpace = JOpenVRLibrary.EColorSpace.EColorSpace_ColorSpace_Linear;
-        texType.eType = JOpenVRLibrary.EGraphicsAPIConvention.EGraphicsAPIConvention_API_OpenGL;
+        texTypeLeft.eColorSpace = JOpenVRLibrary.EColorSpace.EColorSpace_ColorSpace_Gamma;
+        texTypeLeft.eType = JOpenVRLibrary.EGraphicsAPIConvention.EGraphicsAPIConvention_API_OpenGL;
+        texTypeLeft.setAutoSynch(false);
+        texTypeLeft.setAutoRead(false);
+        texTypeLeft.setAutoWrite(false);
+        texTypeLeft.handle = -1;
+        texTypeRight.eColorSpace = JOpenVRLibrary.EColorSpace.EColorSpace_ColorSpace_Gamma;
+        texTypeRight.eType = JOpenVRLibrary.EGraphicsAPIConvention.EGraphicsAPIConvention_API_OpenGL;
+        texTypeRight.setAutoSynch(false);
+        texTypeRight.setAutoRead(false);
+        texTypeRight.setAutoWrite(false);
+        texTypeRight.handle = -1;
     }
     
     public void postRender() {
@@ -122,17 +140,24 @@ public class OpenVRViewManager {
             if( OpenVR.getVRCompositorInstance() != null ) {
                 // using the compositor...
                 if( useCustomDistortion || VRApplication.isInstanceVRRendering() ) {
-                    int submitFlag = useCustomDistortion?JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_LensDistortionAlreadyApplied:
-                                                         JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default;
-                    texType.handle = getFullTexId();
-                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texType, texBoundsLeft, submitFlag);
-                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Right, texType, texBoundsRight, submitFlag);
+                    if( texTypeLeft.handle == -1 ) {
+                        texTypeLeft.handle = getFullTexId();
+                        if( texTypeLeft.handle != -1 ) texTypeLeft.write();
+                    } else {
+                        int submitFlag = useCustomDistortion?JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_LensDistortionAlreadyApplied:
+                                                             JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default;
+                        JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texTypeLeft, texBoundsLeft, submitFlag);
+                        JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Right, texTypeLeft, texBoundsRight, submitFlag);
+                    }
+                } else if( texTypeLeft.handle == -1 || texTypeRight.handle == -1 ) {
+                    texTypeLeft.handle = getLeftTexId();
+                    if( texTypeLeft.handle != -1 ) texTypeLeft.write();
+                    texTypeRight.handle = getRightTexId();
+                    if( texTypeRight.handle != -1 ) texTypeRight.write();                    
                 } else {
-                    texType.handle = getLeftTexId();
-                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texType, null,
+                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texTypeLeft, null,
                                                            JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default);
-                    texType.handle = getRightTexId();
-                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Right, texType, null,
+                    JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Right, texTypeRight, null,
                                                            JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default);
                 }
                 // mirroring?

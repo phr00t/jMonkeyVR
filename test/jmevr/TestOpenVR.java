@@ -294,7 +294,7 @@ public class TestOpenVR extends VRApplication {
                  VRControllerAxis_t cs = VRInput.getRawControllerState(index).rAxis[i];
                  System.out.println("Controller#" + Integer.toString(index) + ", Axis#" + Integer.toString(i) + " X: " + Float.toString(cs.x) + ", Y: " + Float.toString(cs.y));
              }
-             System.out.println("Button press: " + Long.toString(VRInput.getRawControllerState(index).ulButtonPressed.longValue()) + ", touch: " + Long.toString(VRInput.getRawControllerState(index).ulButtonTouched.longValue()));*/            
+             System.out.println("Button press: " + Long.toString(VRInput.getRawControllerState(index).ulButtonPressed) + ", touch: " + Long.toString(VRInput.getRawControllerState(index).ulButtonTouched));*/
          } else {
              geo.setCullHint(CullHint.Always); // hide it             
          }

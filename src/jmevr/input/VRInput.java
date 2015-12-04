@@ -20,17 +20,37 @@ import jopenvr.VRControllerState_t;
 /*
 make helper functions to pull the following easily from raw data (DONE)
 
-Controller#1, Axis#0 X: 2.8E-45, Y: 0.0 <--- axis 0, x seems to have bit flags for touchpad press & full trigger press
-Controller#1, Axis#1 X: 4.2E-45, Y: 0.39417708 <--- touchpad on Y
-Controller#1, Axis#2 X: -0.7597278, Y: 1.0 <--- touchpad on X, trigger on Y
+trigger:
+Controller#1, Axis#0 X: 0.0, Y: 0.0
+Controller#1, Axis#1 X: 1.0, Y: 0.0
+Controller#1, Axis#2 X: 0.0, Y: 0.0
 Controller#1, Axis#3 X: 0.0, Y: 0.0
 Controller#1, Axis#4 X: 0.0, Y: 0.0
-Button press: 0, touch: 0 <--- touch 4 for grip button, 2 for little black button
+Button press: 8589934592 (when full), touch: 8589934592
 
-axis#0 x: 1.4e-45 (touchpad press), gets+2.8e-45 when trigger press
-axis#1 x: 1.4e-45 (touching touchpad)
+touchpad (upper left):
+Controller#1, Axis#0 X: -0.6059755, Y: 0.2301706
+Controller#1, Axis#1 X: 0.0, Y: 0.0
+Controller#1, Axis#2 X: 0.0, Y: 0.0
+Controller#1, Axis#3 X: 0.0, Y: 0.0
+Controller#1, Axis#4 X: 0.0, Y: 0.0
+Button press: 4294967296 (when pressed in), touch: 4294967296
 
-http://stackoverflow.com/questions/10643754/convert-float-to-bits
+grip:
+Controller#1, Axis#0 X: 0.0, Y: 0.0
+Controller#1, Axis#1 X: 0.0, Y: 0.0
+Controller#1, Axis#2 X: 0.0, Y: 0.0
+Controller#1, Axis#3 X: 0.0, Y: 0.0
+Controller#1, Axis#4 X: 0.0, Y: 0.0
+Button press: 4, touch: 4
+
+thumb:
+Controller#1, Axis#0 X: 0.0, Y: 0.0
+Controller#1, Axis#1 X: 0.0, Y: 0.0
+Controller#1, Axis#2 X: 0.0, Y: 0.0
+Controller#1, Axis#3 X: 0.0, Y: 0.0
+Controller#1, Axis#4 X: 0.0, Y: 0.0
+Button press: 2, touch: 2
 
 */
 
@@ -75,13 +95,13 @@ public class VRInput {
             default:
                 return false;
             case ViveGripButton:
-                return (cs.ulButtonTouched & 4) != 0;
+                return (cs.ulButtonPressed & 4) != 0;
             case ViveThumbButton:
-                return (cs.ulButtonTouched & 2) != 0;                
+                return (cs.ulButtonPressed & 2) != 0;                
             case ViveTouchpadAxis:
-                return (Float.floatToRawIntBits(cs.rAxis[0].x) & 1) != 0;
+                return (cs.ulButtonPressed & 4294967296l) != 0;
             case ViveTriggerAxis:
-                return (Float.floatToRawIntBits(cs.rAxis[0].x) & 2) != 0;                
+                return (cs.ulButtonPressed & 8589934592l) != 0;                
         }
     }
     
@@ -150,12 +170,12 @@ public class VRInput {
             default:
                 return null;
             case ViveTriggerAxis:
-                tempAxis.x = cs.rAxis[2].y;
+                tempAxis.x = cs.rAxis[1].x;
                 tempAxis.y = tempAxis.x;
                 break;
             case ViveTouchpadAxis:
-                tempAxis.x = cs.rAxis[1].y;
-                tempAxis.y = cs.rAxis[2].x;
+                tempAxis.x = cs.rAxis[0].x;
+                tempAxis.y = cs.rAxis[0].y;
                 break;
         }        
         return tempAxis;
@@ -199,7 +219,7 @@ public class VRInput {
         for(int i=0;i<controllerCount;i++) {
             int index = controllerIndex[i];
             JOpenVRLibrary.VR_IVRSystem_GetControllerState(OpenVR.getVRSystemInstance(), index, cStates[index]);
-            cStates[index].readField("ulButtonTouched");
+            cStates[index].readField("ulButtonPressed");
             cStates[index].readField("rAxis");
             needsNewVelocity[index] = true;
             needsNewAngVelocity[index] = true;

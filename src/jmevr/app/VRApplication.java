@@ -492,6 +492,9 @@ public abstract class VRApplication extends Application {
 
         // simple update and root node
         simpleUpdate(tpf);
+        
+        // handle instancing new stuff?
+        rootNode.handleChangedGeometry();
  
         rootNode.updateLogicalState(tpf);
         guiNode.updateLogicalState(tpf);

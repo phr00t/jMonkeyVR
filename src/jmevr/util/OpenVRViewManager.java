@@ -26,6 +26,8 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
+import java.util.ArrayDeque;
+import java.util.Stack;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
 import jmevr.input.OpenVR;
@@ -239,6 +241,8 @@ public class OpenVRViewManager {
             org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_CLIP_DISTANCE0);
             ((VRInstanceNode)VRApplication.getMainVRApp().getRootNode()).enableInstanceVR();
             setupFinalFullTexture(app.getViewPort().getCamera());            
+            Node.trackedAddedGeometry = new Stack<>();
+            Node.trackedRemovedGeometry = new Stack<>();
         } else if( useCustomDistortion || OpenVR.getVRCompositorInstance() == null ) {
             Node distortionScene = new Node();
             Material leftMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");

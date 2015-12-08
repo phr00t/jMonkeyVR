@@ -35,7 +35,6 @@ import com.jme3.material.Material;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.GeometryGroupNode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.UserData;
@@ -43,12 +42,13 @@ import com.jme3.scene.control.Control;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.material.MatParam;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.instancing.InstancedGeometry;
 import java.io.IOException;
 import java.util.HashMap;
 import jmevr.app.VRApplication;
 
-public class VRInstanceNode extends GeometryGroupNode {
+public class VRInstanceNode extends Node {
     
     private boolean autoInstance = true;
     
@@ -95,12 +95,44 @@ public class VRInstanceNode extends GeometryGroupNode {
         }
     }
     
+    private boolean isGui(Spatial s) {
+        if( s.getQueueBucket() == Bucket.Gui ) return true;
+        Spatial p = s.getParent();
+        if( p != null ) return isGui(p);
+        return s == VRApplication.getMainVRApp().getGuiNode() ||
+               s.getCullHint() == CullHint.Never;
+    }
+    
+    public void handleChangedGeometry() {
+        if( VRApplication.isInstanceVRRendering() == false ) return;
+        while(Node.trackedAddedGeometry.isEmpty() == false) {
+            try {
+                Geometry g = Node.trackedAddedGeometry.pop();
+                if( !isGui(g) ) {
+                    if( g.getBatchHint() == BatchHint.Never ) { 
+                        InstancedGeometry ig = igByGeom.get(g);
+                        if( ig != null ) g.getParent().attachChild(ig);
+                    } else {
+                        addToInstancedGeometry(g);
+                    }
+                }
+            } catch(Exception e) { }
+        }
+        while(Node.trackedRemovedGeometry.isEmpty() == false) {
+            try {
+                Geometry g = Node.trackedRemovedGeometry.pop();
+                InstancedGeometry ig = igByGeom.get(g);
+                if( ig != null ) ig.removeFromParent();
+            } catch(Exception e) { }
+        }
+    }
+    
     protected InstancedNodeControl control;
     
     protected HashMap<Geometry, InstancedGeometry> igByGeom = new HashMap<>();
     
     protected void enableInstanceVR() {
-        if( control != null ) return;
+        if( control != null ) return;        
         control = new InstancedNodeControl(this);
         addControl(control);        
     }
@@ -129,17 +161,18 @@ public class VRInstanceNode extends GeometryGroupNode {
         geom.getMaterial().setMatrix4("RightEyeViewProjectionMatrix", VRApplication.getVRViewManager().getCamRight().getViewProjectionMatrix());
         material.setBoolean("UseInstancing", true);
         InstancedGeometry ig = new InstancedGeometry(geom.getName() + "-instance", false, 2);
-        ig.forceBoundFrom(geom);
+        ig.forceLinkedGeometry(geom);
         ig.setMaterial(geom.getMaterial());
         ig.setMesh(geom.getMesh());
         ig.setUserData(UserData.JME_PHYSICSIGNORE, true);
         Geometry clone = geom.clone(false);
+        clone.setUserData(UserData.JME_PHYSICSIGNORE, true);
         geom.setCullHint(CullHint.Always);
+        geom.setBatchHint(BatchHint.Never);
+        clone.setBatchHint(BatchHint.Never);
         clone.setCullHint(CullHint.Always);
         igByGeom.put(geom, ig);
         igByGeom.put(clone, ig);
-        geom.associateWithGroupNode(this, 0);
-        clone.associateWithGroupNode(this, 0);
         ig.addInstance(geom);
         ig.addInstance(clone);
         Node myparent = geom.getParent();
@@ -147,59 +180,17 @@ public class VRInstanceNode extends GeometryGroupNode {
         myparent.attachChild(clone);
         myparent.attachChild(ig);
     }
-    
-    private void removeFromInstancedGeometry(Geometry geom) {
-        InstancedGeometry ig = igByGeom.remove(geom);
-        if (ig != null) {
-            ig.deleteInstance(geom);
-        }
-    }
-    
-    private void ungroupSceneGraph(Spatial s) {
-        if (s instanceof Node) {
-            for (Spatial sp : ((Node) s).getChildren()) {
-                ungroupSceneGraph(sp);
-            }
-        } else if (s instanceof Geometry) {
-            Geometry g = (Geometry) s;
-            if (g.isGrouped()) {
-                // Will invoke onGeometryUnassociated automatically.
-                g.unassociateFromGroupNode();
-                
-                //if (InstancedNode.getGeometryStartIndex(g) != -1) {
-                //    throw new AssertionError();
-                //}
-            }
-        }
-    }
 
-    @Override
-    public int attachChildAt(Spatial child, int index) {
-        if( autoInstance ) instance(child);
-        int retval = super.attachChildAt(child, index);
-        return retval;
-    }
-    
-    @Override
-    public Spatial detachChildAt(int index) {
-        Spatial s = super.detachChildAt(index);
-        if( VRApplication.isInstanceVRRendering() == false ) return s;
-        if (s instanceof Node) {
-            ungroupSceneGraph(s);
-        }
-        return s;
-    }
-    
     private void instance(Spatial n) {
         if( VRApplication.isInstanceVRRendering() == false ) return;
         if (n instanceof Geometry) {
             Geometry g = (Geometry) n;
-            if (!g.isGrouped() && g.getBatchHint() != Spatial.BatchHint.Never) {
+            if (g.getBatchHint() != Spatial.BatchHint.Never) {
                 addToInstancedGeometry(g);
             }
         } else if (n instanceof Node) {
             for (Spatial child : ((Node) n).getChildren()) {
-                if (child instanceof GeometryGroupNode) {
+                if (child.getBatchHint() == BatchHint.Never) {
                     continue;
                 }
                 instance(child);
@@ -210,25 +201,5 @@ public class VRInstanceNode extends GeometryGroupNode {
     public void instance() {
         if( VRApplication.isInstanceVRRendering() == false ) return;
         instance(this);
-    }
-    
-    @Override
-    public void onTransformChange(Geometry geom) {
-        // Handled automatically
-    }
-
-    @Override
-    public void onMaterialChange(Geometry geom) {
-        //relocateInInstancedGeometry(geom);
-    }
-
-    @Override
-    public void onMeshChange(Geometry geom) {
-        //relocateInInstancedGeometry(geom);
-    }
-
-    @Override
-    public void onGeoemtryUnassociated(Geometry geom) {
-        removeFromInstancedGeometry(geom);
     }
 }

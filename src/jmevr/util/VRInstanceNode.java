@@ -44,7 +44,6 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.material.MatParam;
 import com.jme3.scene.instancing.InstancedGeometry;
-import com.jme3.scene.instancing.InstancedNode;
 import java.io.IOException;
 import java.util.HashMap;
 import jmevr.app.VRApplication;
@@ -135,12 +134,12 @@ public class VRInstanceNode extends GeometryGroupNode {
         ig.setMesh(geom.getMesh());
         ig.setUserData(UserData.JME_PHYSICSIGNORE, true);
         Geometry clone = geom.clone(false);
-        geom.setCullHint(CullHint.Always); // hide the original
+        geom.setCullHint(CullHint.Always);
         clone.setCullHint(CullHint.Always);
         igByGeom.put(geom, ig);
         igByGeom.put(clone, ig);
         geom.associateWithGroupNode(this, 0);
-        clone.associateWithGroupNode(this, 1);
+        clone.associateWithGroupNode(this, 0);
         ig.addInstance(geom);
         ig.addInstance(clone);
         Node myparent = geom.getParent();
@@ -173,7 +172,7 @@ public class VRInstanceNode extends GeometryGroupNode {
             }
         }
     }
-    
+
     @Override
     public int attachChildAt(Spatial child, int index) {
         if( autoInstance ) instance(child);

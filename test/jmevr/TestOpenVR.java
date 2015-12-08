@@ -48,10 +48,10 @@ public class TestOpenVR extends VRApplication {
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_STEAMVR_COMPOSITOR, false); // disable the SteamVR compositor (kinda needed at the moment)
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_JFRAME_EXTENDED_BACKUP, true); // defaults to true anyway, used on Mac & Linux
         test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, true); // use full screen distortion, maximum FOV, possibly quicker even
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.DISABLE_SWAPBUFFERS_COMPLETELY, true); // runs faster, but only VR Compositor visibility available
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, false); // render two eyes, regardless of SteamVR
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.DISABLE_SWAPBUFFERS_COMPLETELY, false); // runs faster, but only VR Compositor visibility available
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true); // render two eyes, regardless of SteamVR
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, false);
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true); // show gui even if it is behind things
         test.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, false); // WIP
         test.preconfigureVRApp(PRECONFIG_PARAMETER.NO_GUI, false);
@@ -121,8 +121,9 @@ public class TestOpenVR extends VRApplication {
         guiNode.attachChild(test);
         
         // test any positioning mode here (defaults to AUTO_CAM_ALL)
-        VRGuiManager.setPositioningMode(POSITIONING_MODE.AUTO_OBSERVER_ALL);
+        VRGuiManager.setPositioningMode(POSITIONING_MODE.AUTO_CAM_ALL_SKIP_PITCH);
         VRGuiManager.setGuiScale(0.4f);
+        VRGuiManager.setPositioningElasticity(10f);
         
         box.setMaterial(mat);
         

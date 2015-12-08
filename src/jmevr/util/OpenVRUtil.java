@@ -4,6 +4,7 @@
  */
 package jmevr.util;
 
+import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
 import java.util.concurrent.TimeUnit;
@@ -56,4 +57,55 @@ public class OpenVRUtil {
         // flip the pitch
         out.set(-out.getX(), out.getY(), -out.getZ(), out.getW());
     }
+        
+    public static Quaternion FastFullAngles(Quaternion use, float yaw, float pitch, float roll) {
+        float angle;
+        float sinRoll, sinPitch, sinYaw, cosRoll, cosPitch, cosYaw;
+        angle = roll * 0.5f;
+        sinPitch = (float)Math.sin(angle);
+        cosPitch = (float)Math.cos(angle);
+        angle = yaw * 0.5f;
+        sinRoll = (float)Math.sin(angle);
+        cosRoll = (float)Math.cos(angle);
+        angle = pitch * 0.5f;
+        sinYaw = (float)Math.sin(angle);
+        cosYaw = (float)Math.cos(angle);
+
+        // variables used to reduce multiplication calls.
+        float cosRollXcosPitch = cosRoll * cosPitch;
+        float sinRollXsinPitch = sinRoll * sinPitch;
+        float cosRollXsinPitch = cosRoll * sinPitch;
+        float sinRollXcosPitch = sinRoll * cosPitch;
+
+        use.set((cosRollXcosPitch * sinYaw + sinRollXsinPitch * cosYaw),
+                (sinRollXcosPitch * cosYaw + cosRollXsinPitch * sinYaw),
+                (cosRollXsinPitch * cosYaw - sinRollXcosPitch * sinYaw),
+                (cosRollXcosPitch * cosYaw - sinRollXsinPitch * sinYaw));
+
+        return use;     
+    }    
+    
+    public static Quaternion stripToYaw(Quaternion q) {
+        float yaw;
+        float w = q.getW();
+        float x = q.getX();
+        float y = q.getY();
+        float z = q.getZ();
+        float sqx = x*x;
+        float sqy = y*y;
+        float sqz = z*z;
+        float sqw = w*w;
+        float unit = sqx + sqy + sqz + sqw; // if normalized is one, otherwise
+        // is correction factor
+        float test = x * y + z * w;
+        if (test > 0.499 * unit) { // singularity at north pole
+            yaw = 2 * FastMath.atan2(x, w);
+        } else if (test < -0.499 * unit) { // singularity at south pole
+            yaw = -2 * FastMath.atan2(x, w);
+        } else {
+            yaw = FastMath.atan2(2 * y * w - 2 * x * z, sqx - sqy - sqz + sqw); // roll or heading 
+        }
+        FastFullAngles(q, yaw, 0f, 0f);
+        return q;
+    }    
 }

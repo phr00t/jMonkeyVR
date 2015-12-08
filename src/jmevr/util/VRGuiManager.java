@@ -32,17 +32,29 @@ import jmevr.app.VRApplication;
 public class VRGuiManager {
     
     public enum POSITIONING_MODE {
-        MANUAL, AUTO_CAM_ALL, AUTO_OBSERVER_POS_CAM_ROTATION, AUTO_OBSERVER_ALL
+        MANUAL, AUTO_CAM_ALL, AUTO_CAM_ALL_SKIP_PITCH, AUTO_OBSERVER_POS_CAM_ROTATION, AUTO_OBSERVER_ALL
     }
     
     private static Camera camLeft, camRight;
-    private static float guiDistance = 1.5f, guiScale = 1f;
+    private static float guiDistance = 1.5f, guiScale = 1f, guiPositioningElastic;
     private static POSITIONING_MODE posMode = POSITIONING_MODE.AUTO_CAM_ALL;
     
     private static final Matrix3f orient = new Matrix3f();
     private static Vector2f screenSize;
     protected static boolean wantsReposition;
 
+    /**
+     * 
+     * Makes auto GUI positioning happen not immediately, but like an
+     * elastic connected to the headset. Setting to 0 disables (default)
+     * Higher settings make it track the headset quicker.
+     * 
+     * @param elastic amount of elasticity
+     */
+    public static void setPositioningElasticity(float elastic) {
+        guiPositioningElastic = elastic;
+    }
+    
     public static void setPositioningMode(POSITIONING_MODE mode) {
         posMode = mode;
     }
@@ -68,55 +80,63 @@ public class VRGuiManager {
         wantsReposition = true;
     }
     
-    private static void positionTo(Vector3f pos, Quaternion dir) {
+    private static final Vector3f EoldPos = new Vector3f();
+    private static final Quaternion EoldDir = new Quaternion();
+    private static void positionTo(Vector3f pos, Quaternion dir, float tpf) {
         Vector3f guiPos = guiQuadNode.getLocalTranslation();
         guiPos.set(0f, 0f, guiDistance);
         dir.mult(guiPos, guiPos);
         guiPos.x += pos.x;
         guiPos.y += pos.y + VRApplication.getVRHeightAdjustment();
         guiPos.z += pos.z;        
+        if( guiPositioningElastic > 0f && posMode != POSITIONING_MODE.MANUAL ) {
+            // mix pos & dir with current pos & dir            
+            guiPos.interpolateLocal(EoldPos, guiPos, Float.min(1f, tpf * guiPositioningElastic));
+            EoldPos.set(guiPos);
+        }
     }
     
     protected static void updateGuiQuadGeometricState() {
         guiQuadNode.updateGeometricState();
     }
     
-    protected static void positionGuiNow() {
+    protected static void positionGuiNow(float tpf) {
         wantsReposition = false;
         if( VRApplication.isInVR() == false ) return;
         guiQuadNode.setLocalScale(guiDistance * guiScale * 4f, 4f * guiDistance * guiScale, 1f);
         switch( posMode ) {
             case MANUAL:
+            case AUTO_CAM_ALL_SKIP_PITCH:
             case AUTO_CAM_ALL:
                 if( camLeft != null && camRight != null ) {
                     // get middle point
                     temppos.set(camLeft.getLocation()).interpolateLocal(camRight.getLocation(), 0.5f);
-                    positionTo(temppos, camLeft.getRotation());
+                    positionTo(temppos, camLeft.getRotation(), tpf);
                 }
-                rotateScreenTo(camLeft.getRotation());
+                rotateScreenTo(camLeft.getRotation(), tpf);
                 break;
             case AUTO_OBSERVER_POS_CAM_ROTATION:
                 Object obs = VRApplication.getObserver();
                 if( obs != null ) {
                     if( obs instanceof Camera ) {
-                        positionTo(((Camera)obs).getLocation(), camLeft.getRotation());
+                        positionTo(((Camera)obs).getLocation(), camLeft.getRotation(), tpf);
                     } else {
-                        positionTo(((Spatial)obs).getWorldTranslation(), camLeft.getRotation());                        
+                        positionTo(((Spatial)obs).getWorldTranslation(), camLeft.getRotation(), tpf);                        
                     }
                 }
-                rotateScreenTo(camLeft.getRotation());
+                rotateScreenTo(camLeft.getRotation(), tpf);
                 break;
             case AUTO_OBSERVER_ALL:
                 obs = VRApplication.getObserver();
                 if( obs != null ) {
                     if( obs instanceof Camera ) {
                         Quaternion q = ((Camera)obs).getRotation();
-                        positionTo(((Camera)obs).getLocation(), q);
-                        rotateScreenTo(q);
+                        positionTo(((Camera)obs).getLocation(), q, tpf);
+                        rotateScreenTo(q, tpf);
                     } else {
                         Quaternion q = ((Spatial)obs).getWorldRotation();
-                        positionTo(((Spatial)obs).getWorldTranslation(), q);                        
-                        rotateScreenTo(q);
+                        positionTo(((Spatial)obs).getWorldTranslation(), q, tpf);                        
+                        rotateScreenTo(q, tpf);
                     }
                 }                
                 break;
@@ -125,16 +145,19 @@ public class VRGuiManager {
     
     private static final Vector3f look = new Vector3f(), left = new Vector3f(), temppos = new Vector3f(), up = new Vector3f();
     private static final Quaternion tempq = new Quaternion();
-    private static void rotateScreenTo(Quaternion dir) {
-        // coopt diff for our in direction:
-        //look.set(camLeft.getDirection()).negateLocal();
+    private static void rotateScreenTo(Quaternion dir, float tpf) {
         dir.getRotationColumn(2, look).negateLocal();
-        // coopt loc for our left direction:
-        //left.set(camLeft.getLeft()).negateLocal();
         dir.getRotationColumn(0, left).negateLocal();
-        orient.fromAxes(left, dir.getRotationColumn(1, up), look);
+        orient.fromAxes(left, dir.getRotationColumn(1, up), look);        
         Quaternion rot = tempq.fromRotationMatrix(orient);
-        guiQuadNode.setLocalRotation(rot);
+        if( posMode == POSITIONING_MODE.AUTO_CAM_ALL_SKIP_PITCH ) OpenVRUtil.stripToYaw(rot);
+        if( guiPositioningElastic > 0f && posMode != POSITIONING_MODE.MANUAL ) {
+            // mix pos & dir with current pos & dir            
+            EoldDir.nlerp(rot, tpf * guiPositioningElastic);
+            guiQuadNode.setLocalRotation(EoldDir);
+        } else {
+            guiQuadNode.setLocalRotation(rot);
+        }
     }
     
     public static void setGuiDistance(float newGuiDistance) {

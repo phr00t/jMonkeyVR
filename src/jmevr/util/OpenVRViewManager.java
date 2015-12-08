@@ -305,7 +305,7 @@ public class OpenVRViewManager {
         
             // update GUI position?
             if( VRGuiManager.wantsReposition || VRGuiManager.getPositioningMode() != VRGuiManager.POSITIONING_MODE.MANUAL ) {
-                VRGuiManager.positionGuiNow();
+                VRGuiManager.positionGuiNow(tpf);
                 VRGuiManager.updateGuiQuadGeometricState();
             }
         }

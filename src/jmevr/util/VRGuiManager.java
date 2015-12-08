@@ -255,6 +255,7 @@ public class VRGuiManager {
             guiQuadNode.setCullHint(CullHint.Never);
             guiQuadNode.setQueueBucket(Bucket.Translucent);
             guiQuadNode.attachChild(guiQuad);
+            guiQuadNode.instance();
         }
         return guiQuadNode;
     }

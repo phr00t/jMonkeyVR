@@ -16,6 +16,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.FrameBuffer;
@@ -256,10 +257,11 @@ public class VRGuiManager {
             guiQuad.setMaterial(mat);
             
             guiQuadNode = new VRInstanceNode("gui-quad-node");
-            guiQuadNode.setCullHint(CullHint.Never);
             guiQuadNode.setQueueBucket(Bucket.Translucent);
             guiQuadNode.attachChild(guiQuad);
-            guiQuadNode.instance();
+            if( Node.trackedAddedGeometry != null ) {
+                Node.trackedAddedGeometry.push(guiQuad);
+            }
         }
         return guiQuadNode;
     }

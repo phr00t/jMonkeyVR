@@ -55,6 +55,10 @@ public class VRGuiManager {
         guiPositioningElastic = elastic;
     }
     
+    public static float getPositioningElasticity() {
+        return guiPositioningElastic;
+    }
+    
     public static void setPositioningMode(POSITIONING_MODE mode) {
         posMode = mode;
     }

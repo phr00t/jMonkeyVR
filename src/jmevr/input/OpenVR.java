@@ -57,7 +57,7 @@ public class OpenVR {
     private static Matrix4f hmdPoseLeftEye;
     private static Matrix4f hmdPoseRightEye;
     
-    private static Vector3f hmdPoseLeftEyeVec, hmdPoseRightEyeVec;
+    private static Vector3f hmdPoseLeftEyeVec, hmdPoseRightEyeVec, hmdSeatToStand;
     
     private static float vsyncToPhotons;
     private static double timePerFrame, frameCountRun;
@@ -165,6 +165,7 @@ public class OpenVR {
     public void reset() {
         if( vrsystem == null ) return;
         JOpenVRLibrary.VR_IVRSystem_ResetSeatedZeroPose(vrsystem);
+        hmdSeatToStand = null;
     }
 
     public void getRenderSize(Vector2f store) {
@@ -341,6 +342,17 @@ public class OpenVR {
             if( flipEyes == false ) hmdPoseRightEyeVec.x *= -1f; // it seems these need flipping
         }
         return hmdPoseRightEyeVec;
+    }
+    
+    public Vector3f getSeatedToAbsolutePosition() {
+        if( hmdSeatToStand == null ) {
+            hmdSeatToStand = new Vector3f();
+            HmdMatrix34_t mat = JOpenVRLibrary.VR_IVRSystem_GetSeatedZeroPoseToStandingAbsoluteTrackingPose(vrsystem);
+            Matrix4f tempmat = new Matrix4f();
+            OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, tempmat);
+            tempmat.toTranslationVector(hmdSeatToStand);
+        }
+        return hmdSeatToStand;
     }
     
     public Matrix4f getHMDMatrixPoseLeftEye(){

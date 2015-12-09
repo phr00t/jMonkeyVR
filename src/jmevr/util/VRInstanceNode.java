@@ -45,20 +45,10 @@ import com.jme3.material.MatParam;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.instancing.InstancedGeometry;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import jmevr.app.VRApplication;
 
 public class VRInstanceNode extends Node {
-    
-    private boolean autoInstance = true;
-    
-    public void setAutoInstancing(boolean val) {
-        autoInstance = val;
-    }
-    
-    public boolean isAutoInstancing() {
-        return autoInstance;
-    }
 
     private static class InstancedNodeControl implements Control {
 
@@ -109,30 +99,36 @@ public class VRInstanceNode extends Node {
             try {
                 Geometry g = Node.trackedAddedGeometry.pop();
                 if( !isGui(g) ) {
+                    InstancedGeometry ig;
                     if( g.getBatchHint() == BatchHint.Never ) { 
-                        InstancedGeometry ig = igByGeom.get(g);
+                        ig = g.getUserData("instanced");
                         if( ig != null ) g.getParent().attachChild(ig);
                     } else {
-                        addToInstancedGeometry(g);
+                        ig = addToInstancedGeometry(g);
                     }
+                    if( ig != null && igToRender.contains(ig) == false ) igToRender.add(ig);
                 }
             } catch(Exception e) { }
         }
         while(Node.trackedRemovedGeometry.isEmpty() == false) {
             try {
                 Geometry g = Node.trackedRemovedGeometry.pop();
-                InstancedGeometry ig = igByGeom.get(g);
-                if( ig != null ) ig.removeFromParent();
+                InstancedGeometry ig = g.getUserData("instanced");
+                if( ig != null ) {
+                    ig.removeFromParent();
+                    igToRender.remove(ig);
+                }
             } catch(Exception e) { }
         }
     }
     
     protected InstancedNodeControl control;
     
-    protected HashMap<Geometry, InstancedGeometry> igByGeom = new HashMap<>();
+    protected ArrayList<InstancedGeometry> igToRender;
     
     protected void enableInstanceVR() {
         if( control != null ) return;        
+        if( igToRender == null ) igToRender = new ArrayList<>();
         control = new InstancedNodeControl(this);
         addControl(control);        
     }
@@ -145,18 +141,19 @@ public class VRInstanceNode extends Node {
     }
     
     public void renderFromControl() {
-        for (InstancedGeometry ig : igByGeom.values()) {
+        for (int i=0;i<igToRender.size();i++) {
+            InstancedGeometry ig = igToRender.get(i);
             ig.updateInstances();
         }
     }
     
-    private void addToInstancedGeometry(Geometry geom) {
+    private InstancedGeometry addToInstancedGeometry(Geometry geom) {
         Material material = geom.getMaterial();
         MatParam param = material.getMaterialDef().getMaterialParam("UseInstancing");
         MatParam param2 = material.getMaterialDef().getMaterialParam("RightEyeViewProjectionMatrix");
         if (param == null || param2 == null) {
             System.out.println("VR instance failed on geo '" + geom.getName() + "', material '" + material.getMaterialDef().getAssetName() + "' Check material params!");
-            return;
+            return null;
         }
         geom.getMaterial().setMatrix4("RightEyeViewProjectionMatrix", VRApplication.getVRViewManager().getCamRight().getViewProjectionMatrix());
         material.setBoolean("UseInstancing", true);
@@ -171,35 +168,14 @@ public class VRInstanceNode extends Node {
         geom.setBatchHint(BatchHint.Never);
         clone.setBatchHint(BatchHint.Never);
         clone.setCullHint(CullHint.Always);
-        igByGeom.put(geom, ig);
-        igByGeom.put(clone, ig);
+        geom.setUserData("instanced", ig);
         ig.addInstance(geom);
         ig.addInstance(clone);
         Node myparent = geom.getParent();
         if( myparent == null ) myparent = this;
         myparent.attachChild(clone);
         myparent.attachChild(ig);
+        return ig;
     }
 
-    private void instance(Spatial n) {
-        if( VRApplication.isInstanceVRRendering() == false ) return;
-        if (n instanceof Geometry) {
-            Geometry g = (Geometry) n;
-            if (g.getBatchHint() != Spatial.BatchHint.Never) {
-                addToInstancedGeometry(g);
-            }
-        } else if (n instanceof Node) {
-            for (Spatial child : ((Node) n).getChildren()) {
-                if (child.getBatchHint() == BatchHint.Never) {
-                    continue;
-                }
-                instance(child);
-            }
-        }
-    }
-    
-    public void instance() {
-        if( VRApplication.isInstanceVRRendering() == false ) return;
-        instance(this);
-    }
 }

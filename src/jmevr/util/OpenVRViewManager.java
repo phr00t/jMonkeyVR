@@ -227,23 +227,18 @@ public class OpenVRViewManager {
      * Replaces rootNode as the main cameras scene with the distortion mesh
      */
     private void setupVRScene(){
-        if( !VRApplication.isInstanceVRRendering() ) {
-            leftEyeTex = (Texture2D)viewPortLeft.getOutputFrameBuffer().getColorBuffer().getTexture();
-            rightEyeTex = (Texture2D)viewPortRight.getOutputFrameBuffer().getColorBuffer().getTexture();        
-            // main viewport is either going to be a distortion scene or nothing
-            // mirroring is handled by copying framebuffers
-            app.getViewPort().detachScene(app.getRootNode());
-            app.getViewPort().detachScene(app.getGuiNode());
-        }
+        // no special scene to setup if we are doing instancing
+        if( VRApplication.isInstanceVRRendering() ) return;
+        
+        leftEyeTex = (Texture2D)viewPortLeft.getOutputFrameBuffer().getColorBuffer().getTexture();
+        rightEyeTex = (Texture2D)viewPortRight.getOutputFrameBuffer().getColorBuffer().getTexture();        
+        // main viewport is either going to be a distortion scene or nothing
+        // mirroring is handled by copying framebuffers
+        app.getViewPort().detachScene(app.getRootNode());
+        app.getViewPort().detachScene(app.getGuiNode());
         
         // only setup distortion scene if compositor isn't running (or using custom mesh distortion option)
-        if( VRApplication.isInstanceVRRendering() ) {
-            org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_CLIP_DISTANCE0);
-            ((VRInstanceNode)VRApplication.getMainVRApp().getRootNode()).enableInstanceVR();
-            setupFinalFullTexture(app.getViewPort().getCamera());            
-            Node.trackedAddedGeometry = new Stack<>();
-            Node.trackedRemovedGeometry = new Stack<>();
-        } else if( useCustomDistortion || OpenVR.getVRCompositorInstance() == null ) {
+        if( useCustomDistortion || OpenVR.getVRCompositorInstance() == null ) {
             Node distortionScene = new Node();
             Material leftMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
             leftMat.setTexture("Texture", leftEyeTex);
@@ -432,6 +427,12 @@ public class OpenVRViewManager {
             //                                                    VRApplication.getMainVRApp().getContext().getSettings().getHeight()+1);
             camRight = camLeft.clone();
             camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
+            
+            org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_CLIP_DISTANCE0);
+            ((VRInstanceNode)VRApplication.getMainVRApp().getRootNode()).enableInstanceVR();
+            setupFinalFullTexture(app.getViewPort().getCamera());            
+            Node.trackedAddedGeometry = new Stack<>();
+            Node.trackedRemovedGeometry = new Stack<>();
         }
         
         // setup gui

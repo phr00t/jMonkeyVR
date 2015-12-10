@@ -16,6 +16,7 @@ import com.jme3.post.filters.FogFilter;
 import com.jme3.post.filters.TranslucentBucketFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
@@ -431,7 +432,7 @@ public class OpenVRViewManager {
             org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_CLIP_DISTANCE0);
             ((VRInstanceNode)VRApplication.getMainVRApp().getRootNode()).enableInstanceVR();
             setupFinalFullTexture(app.getViewPort().getCamera());            
-            Node.trackedAddedGeometry = new Stack<>();
+            RenderManager.trackedRenderedGeometry = new Stack<>();
             Node.trackedRemovedGeometry = new Stack<>();
         }
         

@@ -42,6 +42,8 @@ import com.jme3.scene.control.Control;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.material.MatParam;
+import com.jme3.renderer.Camera;
+import com.jme3.renderer.Camera.FrustumIntersect;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.instancing.InstancedGeometry;
 import java.io.IOException;
@@ -95,9 +97,9 @@ public class VRInstanceNode extends Node {
     
     public void handleChangedGeometry() {
         if( VRApplication.isInstanceVRRendering() == false ) return;
-        while(Node.trackedAddedGeometry.isEmpty() == false) {
+        while(RenderManager.trackedRenderedGeometry.isEmpty() == false) {
             try {
-                Geometry g = Node.trackedAddedGeometry.pop();
+                Geometry g = RenderManager.trackedRenderedGeometry.pop();
                 if( !isGui(g) ) {
                     InstancedGeometry ig;
                     if( g.getBatchHint() == BatchHint.Never ) { 
@@ -106,17 +108,25 @@ public class VRInstanceNode extends Node {
                     } else {
                         ig = addToInstancedGeometry(g);
                     }
-                    if( ig != null && igToRender.contains(ig) == false ) igToRender.add(ig);
+                    if( ig != null && igToRender.contains(ig) == false ) {
+                        igToRender.add(ig);
+                    } else {
+                        // mark that we looked at it, but decided not to add it...
+                        g.setBatchHint(BatchHint.Never);
+                    }
+                } else {
+                    // mark that we looked at it, but decided not to add it...
+                    g.setBatchHint(BatchHint.Never);
                 }
             } catch(Exception e) { }
         }
         while(Node.trackedRemovedGeometry.isEmpty() == false) {
             try {
                 Geometry g = Node.trackedRemovedGeometry.pop();
-                InstancedGeometry ig = g.getUserData("instanced");
-                if( ig != null ) {
-                    ig.removeFromParent();
-                    igToRender.remove(ig);
+                Object ig = g.getUserData("instanced");
+                if( ig instanceof InstancedGeometry ) {
+                    ((InstancedGeometry)ig).removeFromParent();
+                    igToRender.remove((InstancedGeometry)ig);
                 }
             } catch(Exception e) { }
         }
@@ -143,7 +153,11 @@ public class VRInstanceNode extends Node {
     public void renderFromControl() {
         for (int i=0;i<igToRender.size();i++) {
             InstancedGeometry ig = igToRender.get(i);
-            ig.updateInstances();
+            Geometry g = ig.getLinkedGeometry();
+            if( g != null &&
+                VRApplication.getLeftViewPort().getCamera().contains(g.getWorldBound()) != FrustumIntersect.Outside ) {
+                ig.updateInstances();
+            }
         }
     }
     
@@ -161,19 +175,17 @@ public class VRInstanceNode extends Node {
         ig.forceLinkedGeometry(geom);
         ig.setMaterial(geom.getMaterial());
         ig.setMesh(geom.getMesh());
+        ig.getMesh().setStatic();
         ig.setUserData(UserData.JME_PHYSICSIGNORE, true);
-        Geometry clone = geom.clone(false);
-        clone.setUserData(UserData.JME_PHYSICSIGNORE, true);
         geom.setCullHint(CullHint.Always);
         geom.setBatchHint(BatchHint.Never);
-        clone.setBatchHint(BatchHint.Never);
-        clone.setCullHint(CullHint.Always);
+        ig.setBatchHint(BatchHint.Never);
+        ig.setCullHint(CullHint.Dynamic);
         geom.setUserData("instanced", ig);
         ig.addInstance(geom);
-        ig.addInstance(clone);
+        ig.addInstance(geom);
         Node myparent = geom.getParent();
         if( myparent == null ) myparent = this;
-        myparent.attachChild(clone);
         myparent.attachChild(ig);
         return ig;
     }

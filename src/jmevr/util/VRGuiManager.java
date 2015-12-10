@@ -259,9 +259,6 @@ public class VRGuiManager {
             guiQuadNode = new VRInstanceNode("gui-quad-node");
             guiQuadNode.setQueueBucket(Bucket.Translucent);
             guiQuadNode.attachChild(guiQuad);
-            if( Node.trackedAddedGeometry != null ) {
-                Node.trackedAddedGeometry.push(guiQuad);
-            }
         }
         return guiQuadNode;
     }

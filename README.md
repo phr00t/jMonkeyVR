@@ -48,6 +48,8 @@ Rendering with instancing can improve performance significantly, since there is 
 You also need to enable VR instancing with a preconfigure parameter:
 
     MyApp.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, true);
+    
+As of now, many core jMonkeyEngine materials are not ready for VR instancing. You will likely need to write your own shaders to include VR instancing support (or copy & paste your own modified ones from core). You can use the Unshaded.j3md ones linked above, but they are very basic (no lighting, etc).
 
 <b>Using the GUI</b>
 

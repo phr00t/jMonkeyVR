@@ -19,6 +19,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -433,7 +434,7 @@ public class OpenVRViewManager {
             ((VRInstanceNode)VRApplication.getMainVRApp().getRootNode()).enableInstanceVR();
             setupFinalFullTexture(app.getViewPort().getCamera());            
             RenderManager.trackedRenderedGeometry = new Stack<>();
-            Node.trackedRemovedGeometry = new Stack<>();
+            Node.trackedRemovedSpatials = new Stack<>();
         }
         
         // setup gui

@@ -209,7 +209,7 @@ public class VRGuiManager {
     
     private static boolean useCurvedSurface = false, overdraw = false;
     private static Geometry guiQuad;
-    private static VRInstanceNode guiQuadNode;
+    private static Node guiQuadNode;
     private static ViewPort offView;
     private static Texture2D guiTexture;
     private static Spatial getGuiQuad(Camera sourceCam){
@@ -230,7 +230,7 @@ public class VRGuiManager {
 
             //setup framebuffer's texture
             guiTexture = new Texture2D((int)guiCanvasSize.x, (int)guiCanvasSize.y, Format.RGBA8);
-            guiTexture.setMinFilter(Texture.MinFilter.Trilinear);
+            guiTexture.setMinFilter(Texture.MinFilter.BilinearNoMipMaps);
             guiTexture.setMagFilter(Texture.MagFilter.Bilinear);
 
             //setup framebuffer to use texture
@@ -257,7 +257,7 @@ public class VRGuiManager {
             guiQuad.setQueueBucket(Bucket.Translucent);
             guiQuad.setMaterial(mat);
             
-            guiQuadNode = new VRInstanceNode("gui-quad-node");
+            guiQuadNode = new Node("gui-quad-node");
             guiQuadNode.setQueueBucket(Bucket.Translucent);
             guiQuadNode.attachChild(guiQuad);
         }

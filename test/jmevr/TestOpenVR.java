@@ -57,7 +57,7 @@ public class TestOpenVR extends VRApplication {
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, false);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true); // show gui even if it is behind things
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, false); // faster VR rendering, requires some vertex shader changes (see jmevr/shaders/Unshaded.j3md)
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, true); // faster VR rendering, requires some vertex shader changes (see jmevr/shaders/Unshaded.j3md)
         test.preconfigureVRApp(PRECONFIG_PARAMETER.NO_GUI, false);
         test.preconfigureFrustrumNearFar(0.1f, 512f); // set frustum distances here before app starts
         //test.preconfigureResolutionMultiplier(0.666f); // you can downsample for performance reasons

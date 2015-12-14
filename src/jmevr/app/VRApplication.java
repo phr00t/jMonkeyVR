@@ -36,7 +36,6 @@ import jmevr.post.PreNormalCaching;
 import jmevr.util.OpenVRViewManager;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
-import jmevr.util.VRInstanceNode;
 import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
 
 /**
@@ -61,8 +60,7 @@ public abstract class VRApplication extends Application {
     private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true, disableVR, seated, nogui, instanceVR;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
-    protected Node guiNode;
-    protected VRInstanceNode rootNode;
+    protected Node guiNode, rootNode;
     
     private float fFar = 1000f, fNear = 1f;
     private int xWin = 1280, yWin = 720;
@@ -144,7 +142,7 @@ public abstract class VRApplication extends Application {
 
     public VRApplication() {
         super();
-        rootNode = new VRInstanceNode("root");
+        rootNode = new Node("root");
         guiNode = new Node("guiNode");
         guiNode.setQueueBucket(Bucket.Gui);
         guiNode.setCullHint(CullHint.Never);
@@ -497,9 +495,6 @@ public abstract class VRApplication extends Application {
 
         // simple update and root node
         simpleUpdate(tpf);
-        
-        // handle instancing new stuff?
-        rootNode.handleChangedGeometry();
  
         rootNode.updateLogicalState(tpf);
         guiNode.updateLogicalState(tpf);

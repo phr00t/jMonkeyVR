@@ -444,10 +444,8 @@ public class OpenVRViewManager {
             camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
             
             org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_CLIP_DISTANCE0);
-            ((VRInstanceNode)VRApplication.getMainVRApp().getRootNode()).enableInstanceVR();
+            RenderManager._VRInstancing_RightCamProjection = camRight.getViewProjectionMatrix();
             setupFinalFullTexture(app.getViewPort().getCamera());            
-            RenderManager.trackedRenderedGeometry = new Stack<>();
-            Node.trackedRemovedSpatials = new Stack<>();
         }
         
         // setup gui

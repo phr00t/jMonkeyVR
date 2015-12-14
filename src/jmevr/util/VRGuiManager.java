@@ -73,6 +73,7 @@ public class VRGuiManager {
                 AppSettings as = VRApplication.getMainVRApp().getContext().getSettings();
                 screenSize = new Vector2f(as.getWidth(), as.getHeight());
             }
+            screenSize.multLocal(VRApplication.getVRViewManager().getResolutionMuliplier());
         }
         return screenSize;
     }

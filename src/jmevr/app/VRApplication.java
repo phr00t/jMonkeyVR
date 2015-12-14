@@ -45,7 +45,7 @@ import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
  */
 public abstract class VRApplication extends Application {
 
-    public static float DEFAULT_FOV = 110f, DEFAULT_ASPECT = 1f;
+    public static float DEFAULT_FOV = 108f, DEFAULT_ASPECT = 1f;
     
     public static enum PRECONFIG_PARAMETER {
         USE_STEAMVR_COMPOSITOR, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
@@ -67,7 +67,7 @@ public abstract class VRApplication extends Application {
     private float fFar = 1000f, fNear = 1f;
     private int xWin = 1280, yWin = 720;
     
-    private static float distanceOfOptimization = 0f;
+    private static float distanceOfOptimization = 0f, resMult = 1f;
     
     private static boolean useCompositor = true, compositorOS;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
@@ -127,14 +127,19 @@ public abstract class VRApplication extends Application {
         }
     }
     
-    public void setFrustrumNearFar(float near, float far) {
+    public void preconfigureFrustrumNearFar(float near, float far) {
         fNear = near;
         fFar = far;
     }
     
-    public void setMirrorWindowSize(int width, int height) {
+    public void preconfigureMirrorWindowSize(int width, int height) {
         xWin = width;
         yWin = height;
+    }
+    
+    public void preconfigureResolutionMultiplier(float val) {
+        resMult = val;
+        if( VRviewmanager != null ) VRviewmanager.setResolutionMultiplier(resMult);
     }
 
     public VRApplication() {
@@ -540,6 +545,7 @@ public abstract class VRApplication extends Application {
                 VRhardware.initOpenVRCompositor();
             }
             VRviewmanager = new OpenVRViewManager(this);
+            VRviewmanager.setResolutionMultiplier(resMult);
             inputManager.addListener(new VRListener(), new String[]{RESET_HMD, MIRRORING});
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));
             inputManager.addMapping(MIRRORING, new KeyTrigger(KeyInput.KEY_F10));

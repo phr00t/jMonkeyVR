@@ -148,8 +148,8 @@ public class OpenVRViewManager {
                     } else {
                         int submitFlag = useCustomDistortion?JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_LensDistortionAlreadyApplied:
                                                              JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default;
-                        errl = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texTypeLeft, texBoundsLeft, submitFlag);
                         errr = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Right, texTypeLeft, texBoundsRight, submitFlag);
+                        errl = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texTypeLeft, texBoundsLeft, submitFlag);
                     }
                 } else if( texTypeLeft.handle == -1 || texTypeRight.handle == -1 ) {
                     texTypeLeft.handle = getLeftTexId();
@@ -206,7 +206,16 @@ public class OpenVRViewManager {
         }        
     }
     
-    private void prepareCameraSize(Camera cam) {
+    private float resMult = 1f;
+    public void setResolutionMultiplier(float resMult) {
+        this.resMult = resMult;
+    }
+    
+    public float getResolutionMuliplier() {
+        return resMult;
+    }
+    
+    private void prepareCameraSize(Camera cam, float xMult) {
         Vector2f size = new Vector2f();
         OpenVR vrhmd = VRApplication.getVRHardware();
         
@@ -219,10 +228,14 @@ public class OpenVRViewManager {
             size.y = app.getContext().getSettings().getHeight();
         }
         
-        // double width resolution if we are doing both eyes in one camera
-        if( VRApplication.isInstanceVRRendering() ) size.x *= 2f; 
+        if( VRApplication.isInstanceVRRendering() ) size.x *= 2f;
         
-        if( cam.getWidth() != size.x || cam.getHeight() != size.y ) cam.resize((int)size.x, (int)size.y, true);
+        // other adjustments
+        size.x *= xMult;
+        size.x *= resMult;
+        size.y *= resMult;
+        
+        if( cam.getWidth() != size.x || cam.getHeight() != size.y ) cam.resize((int)size.x, (int)size.y, false);
     }
     
     /**
@@ -230,7 +243,11 @@ public class OpenVRViewManager {
      */
     private void setupVRScene(){
         // no special scene to setup if we are doing instancing
-        if( VRApplication.isInstanceVRRendering() ) return;
+        if( VRApplication.isInstanceVRRendering() ) {
+            // distortion has to be done with compositor here... we want only one pass on our end!
+            useCustomDistortion = false;
+            return;
+        }
         
         leftEyeTex = (Texture2D)viewPortLeft.getOutputFrameBuffer().getColorBuffer().getTexture();
         rightEyeTex = (Texture2D)viewPortRight.getOutputFrameBuffer().getColorBuffer().getTexture();        
@@ -405,28 +422,24 @@ public class OpenVRViewManager {
             origCam.setFrustumFar(100f);
             origCam.setFrustumNear(1f); 
             camLeft = origCam.clone();  
+            prepareCameraSize(origCam, 2f);
         } else {
             camLeft = origCam.clone();
         }
         
         camLeft.setFrustumPerspective(VRApplication.DEFAULT_FOV, VRApplication.DEFAULT_ASPECT, fNear, fFar);      
                 
-        prepareCameraSize(camLeft);
+        prepareCameraSize(camLeft, 1f);
         camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));
         
         if( VRApplication.isInstanceVRRendering() == false ) {
             viewPortLeft = setupViewBuffers(camLeft, LEFT_VIEW_NAME);
             camRight = camLeft.clone();
-            prepareCameraSize(camRight);
             camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
             viewPortRight = setupViewBuffers(camRight, RIGHT_VIEW_NAME);
         } else {
             viewPortLeft = app.getViewPort();
             viewPortLeft.attachScene(VRApplication.getMainVRApp().getRootNode());
-            //long windowHandle = ((LwjglWindow)VRApplication.getMainVRApp().getContext()).getWindowHandle(); 
-                                                                                                            //happening due to resolution change after viewport creation
-            //org.lwjgl.glfw.GLFW.glfwSetWindowSize(windowHandle, VRApplication.getMainVRApp().getContext().getSettings().getWidth(),
-            //                                                    VRApplication.getMainVRApp().getContext().getSettings().getHeight()+1);
             camRight = camLeft.clone();
             camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
             

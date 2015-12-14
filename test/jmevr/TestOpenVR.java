@@ -51,15 +51,16 @@ public class TestOpenVR extends VRApplication {
         TestOpenVR test = new TestOpenVR();
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_STEAMVR_COMPOSITOR, false); // disable the SteamVR compositor (kinda needed at the moment)
         //test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_JFRAME_EXTENDED_BACKUP, true); // defaults to true anyway, used on Mac & Linux
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, true); // use full screen distortion, maximum FOV, possibly quicker even
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_CUSTOM_DISTORTION, true); // use full screen distortion, maximum FOV, possibly quicker (not compatible with instancing)
         test.preconfigureVRApp(PRECONFIG_PARAMETER.DISABLE_SWAPBUFFERS_COMPLETELY, false); // runs faster, but only VR Compositor visibility available
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, true); // render two eyes, regardless of SteamVR
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, false);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_OVERDRAW, true); // show gui even if it is behind things
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, true); // faster VR rendering, requires some vertex shader changes (see jmevr/shaders/Unshaded.j3md)
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, false); // faster VR rendering, requires some vertex shader changes (see jmevr/shaders/Unshaded.j3md)
         test.preconfigureVRApp(PRECONFIG_PARAMETER.NO_GUI, false);
-        test.setFrustrumNearFar(0.1f, 512f);
+        test.preconfigureFrustrumNearFar(0.1f, 512f); // set frustum distances here before app starts
+        //test.preconfigureResolutionMultiplier(0.666f); // you can downsample for performance reasons
         test.start();
     }
     
@@ -242,14 +243,14 @@ public class TestOpenVR extends VRApplication {
      private float prod = 0f;
      private float placeRate = 0f;
      
-     //debug FPS test
+     //FPS test
      private float tpfAdder = 0f;
      private int tpfCount = 0;
      
      @Override
      public void simpleUpdate(float tpf){
-         
-         //debug FPS test
+        
+         //FPS test
          tpfAdder += tpf;
          tpfCount++;
          if( tpfCount == 60 ) {

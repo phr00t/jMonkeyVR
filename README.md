@@ -39,6 +39,18 @@ public class Main extends VRApplication {
 
 <i>PRO-TIP: Use anisotropic filtering & do NOT directly access the VRApplication "cam", use getCamera() instead!</i>
 
+<b>How do I use VR instancing?</b>
+
+Rendering with instancing can improve performance significantly, since there is only one viewport & rendering pass. However, it requires a little work by modifying vertex shaders & material definitions. Take a look at the Unshaded files here (near the bottom) to see what needs to be included:
+
+<a href="https://github.com/phr00t/jMonkeyVR/tree/master/src/jmevr/shaders">https://github.com/phr00t/jMonkeyVR/tree/master/src/jmevr/shaders</a>
+
+You also need to enable VR instancing with a preconfigure parameter:
+
+    MyApp.preconfigureVRApp(PRECONFIG_PARAMETER.INSTANCE_VR_RENDERING, true);
+    
+As of now, many core jMonkeyEngine materials are not ready for VR instancing. You will likely need to write your own shaders to include VR instancing support (or copy & paste your own modified ones from core). You can use the Unshaded.j3md ones linked above, but they are very basic (no lighting, etc).
+
 <b>Using the GUI</b>
 
 Get the size of the GUI "canvas" by calling VRGuiManager.getCanvasSize(). This will return the screen resolution when not in VR mode, and the virtual resolution size of the GUI canvas in VR mode. 

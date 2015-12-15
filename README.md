@@ -53,7 +53,7 @@ As of now, many core jMonkeyEngine materials are not ready for VR instancing. Yo
 
 Using instancing elsewhere in your scene will conflict with jMonkeyVR's automated instancing system. I recommend not using it.
 
-Using BitmapText someplace within the scene, and not part of the GUI? That is OK! Just make sure you have another BitmapFont loaded for 3D scene use, since it will be automatically instanced. If you try and use the same BitmapFont, GUI text won't be visible.
+Using BitmapText someplace within the scene, and not part of the GUI? That is OK! Just make sure you have another BitmapFont loaded for 3D scene use, since it will be automatically instanced. If you try and use the same BitmapFont, GUI text won't be visible. Remember, your BitmapFont loader will need to use a shader that supports instancing (like Unshaded linked above).
 
 <b>Using the GUI</b>
 

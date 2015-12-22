@@ -51,6 +51,10 @@ You also need to enable VR instancing with a preconfigure parameter:
     
 As of now, many core jMonkeyEngine materials are not ready for VR instancing. You will likely need to write your own shaders to include VR instancing support (or copy & paste your own modified ones from core). You can use the Unshaded.j3md ones linked above, but they are very basic (no lighting, etc).
 
+Using instancing elsewhere in your scene will conflict with jMonkeyVR's automated instancing system. I recommend not using it.
+
+Using BitmapText someplace within the scene, and not part of the GUI? That is OK! Just make sure you have another BitmapFont loaded for 3D scene use, since it will be automatically instanced. If you try and use the same BitmapFont, GUI text won't be visible. Remember, your BitmapFont loader will need to use a shader that supports instancing (like Unshaded linked above).
+
 <b>Using the GUI</b>
 
 Get the size of the GUI "canvas" by calling VRGuiManager.getCanvasSize(). This will return the screen resolution when not in VR mode, and the virtual resolution size of the GUI canvas in VR mode. 

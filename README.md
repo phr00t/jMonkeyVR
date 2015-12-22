@@ -55,6 +55,8 @@ Using instancing elsewhere in your scene will conflict with jMonkeyVR's automate
 
 Using BitmapText someplace within the scene, and not part of the GUI? That is OK! Just make sure you have another BitmapFont loaded for 3D scene use, since it will be automatically instanced. If you try and use the same BitmapFont, GUI text won't be visible. Remember, your BitmapFont loader will need to use a shader that supports instancing (like Unshaded linked above).
 
+Shadows & CartoonSSAO should now work with VR instancing. Use InstancedDirectionalShadowFilter for simple directional shadows. This filter will automatically use special shadows when in VR instancing, and normal shadows when not in VR mode.
+
 <b>Using the GUI</b>
 
 Get the size of the GUI "canvas" by calling VRGuiManager.getCanvasSize(). This will return the screen resolution when not in VR mode, and the virtual resolution size of the GUI canvas in VR mode. 

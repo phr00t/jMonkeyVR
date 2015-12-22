@@ -6,6 +6,7 @@
 package jmevr.post;
 
 import com.jme3.post.Filter.Pass;
+import com.jme3.renderer.Caps;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
@@ -32,7 +33,11 @@ public class PreNormalCaching {
             // lets make the prenormals
             r.setFrameBuffer(normalPass.getRenderFrameBuffer());
             renderManager.getRenderer().clearBuffers(true, true, true);
-            renderManager.setForcedTechnique("PreNormalPass");
+            if( renderManager.getRenderer().getCaps().contains(Caps.GLSL150) ) {
+                renderManager.setForcedTechnique("PreNormalPass15");
+            } else {
+                renderManager.setForcedTechnique("PreNormalPass");                
+            }
             renderManager.renderViewPortQueues(viewPort, false);
             renderManager.setForcedTechnique(null);
             // if we should cache this, do it now

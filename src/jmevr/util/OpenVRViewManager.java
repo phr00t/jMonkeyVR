@@ -136,13 +136,13 @@ public class OpenVRViewManager {
         texTypeRight.handle = -1;
     }
     
-    public void postRender() {
+    public void sendTextures() {
         if( isInVR() ) {
             if( OpenVR.getVRCompositorInstance() != null ) {
                 // using the compositor...
                 int errl = 0, errr = 0;
                 if( useCustomDistortion || VRApplication.isInstanceVRRendering() ) {
-                    if( texTypeLeft.handle == -1 ) {
+                    if( texTypeLeft.handle == -1 || texTypeLeft.handle != getFullTexId() ) {
                         texTypeLeft.handle = getFullTexId();
                         if( texTypeLeft.handle != -1 ) texTypeLeft.write();
                     } else {
@@ -151,7 +151,8 @@ public class OpenVRViewManager {
                         errr = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Right, texTypeLeft, texBoundsRight, submitFlag);
                         errl = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texTypeLeft, texBoundsLeft, submitFlag);
                     }
-                } else if( texTypeLeft.handle == -1 || texTypeRight.handle == -1 ) {
+                } else if( texTypeLeft.handle == -1 || texTypeRight.handle == -1 ||
+                           texTypeLeft.handle != getLeftTexId() || texTypeRight.handle != getRightTexId() ) {
                     texTypeLeft.handle = getLeftTexId();
                     if( texTypeLeft.handle != -1 ) texTypeLeft.write();
                     texTypeRight.handle = getRightTexId();
@@ -174,9 +175,9 @@ public class OpenVRViewManager {
                     }
                 }
             }
-        }        
+        }                
     }
-    
+
     public Camera getCamLeft() {
         return camLeft;
     }
@@ -431,6 +432,7 @@ public class OpenVRViewManager {
                 
         prepareCameraSize(camLeft, 1f);
         camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));
+        //org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB);
         
         if( VRApplication.isInstanceVRRendering() == false ) {
             viewPortLeft = setupViewBuffers(camLeft, LEFT_VIEW_NAME);
@@ -462,6 +464,7 @@ public class OpenVRViewManager {
             
         // create offscreen framebuffer
         FrameBuffer offBuffer = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);
+        //offBuffer.setSrgb(true);
 
         //setup framebuffer's texture
         dualEyeTex = new Texture2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);
@@ -482,6 +485,7 @@ public class OpenVRViewManager {
     private ViewPort setupViewBuffers(Camera cam, String viewName){
         // create offscreen framebuffer
         FrameBuffer offBufferLeft = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);
+        //offBufferLeft.setSrgb(true);
         
         //setup framebuffer's texture
         Texture2D offTex = new Texture2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);

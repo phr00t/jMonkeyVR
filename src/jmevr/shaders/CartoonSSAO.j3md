@@ -7,17 +7,14 @@ MaterialDef CartoonSSAO {
         Texture2D Texture
         Texture2D Normals
         Vector3 FrustumCorner
-        Float SampleRadius
-        Float Intensity
-        Float Scale
-        Float Bias
+        Float Distance
 
         Vector2 FrustumNearFar
     }
 
     Technique {
             VertexShader GLSL150:   Common/MatDefs/Post/Post15.vert
-            FragmentShader GLSL150: jmevr/shaders/CartoonSSAO15.frag
+            FragmentShader GLSL150: jmevr/shaders/CartoonSSAO.frag
 
         WorldParameters {
             WorldViewProjectionMatrix

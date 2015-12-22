@@ -523,7 +523,7 @@ public abstract class VRApplication extends Application {
         
         // update compositor?
         if( VRviewmanager != null ) {
-            VRviewmanager.postRender();
+            VRviewmanager.sendTextures();
         }
     }
 
@@ -570,6 +570,7 @@ public abstract class VRApplication extends Application {
             VRhardware.destroy();
             VRhardware = null;
         }        
+        disableVR = true;
         super.destroy();
         Runtime.getRuntime().exit(0);
     }

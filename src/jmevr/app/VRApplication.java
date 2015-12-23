@@ -290,6 +290,7 @@ public abstract class VRApplication extends Application {
                 break;
             case USE_STEAMVR_COMPOSITOR:
                 VRApplication.useCompositor = value;
+                if( value == false ) disableSwapBuffers = false;
                 break;
             case FLIP_EYES:
                 OpenVR._setFlipEyes(value);
@@ -298,7 +299,9 @@ public abstract class VRApplication extends Application {
                 instanceVR = value;
                 break;
             case DISABLE_SWAPBUFFERS_COMPLETELY:
-                disableSwapBuffers = value;
+                if( VRApplication.useCompositor == false ) {
+                    disableSwapBuffers = false;
+                } else disableSwapBuffers = value;
                 break;
             case PREFER_OPENGL3:
                 tryOpenGL3 = value;

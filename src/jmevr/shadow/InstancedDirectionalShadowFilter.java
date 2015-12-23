@@ -21,9 +21,6 @@ public class InstancedDirectionalShadowFilter extends DirectionalLightShadowFilt
     
     public InstancedDirectionalShadowFilter(AssetManager assetManager, int shadowMapSize, int nbSplits) {
         super(assetManager, shadowMapSize, nbSplits, "jmevr/shaders/PostShadowFilter.j3md");
-        if( VRApplication.isInstanceVRRendering() ) {
-            this.material.setBoolean("Instancing", true);
-        }
     }        
 
     @Override    

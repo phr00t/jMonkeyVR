@@ -5,7 +5,6 @@ MaterialDef Unshaded {
         Color Color (Color)
 
         // For VR instancing
-        Boolean UseInstancing
         Matrix4 RightEyeViewProjectionMatrix
     }
 
@@ -20,7 +19,7 @@ MaterialDef Unshaded {
         }
 
         Defines {
-            INSTANCING : UseInstancing // For VR instancing
+            INSTANCING : RightEyeViewProjectionMatrix // For VR instancing
             HAS_COLORMAP : ColorMap
             HAS_COLOR : Color
         }
@@ -37,7 +36,7 @@ MaterialDef Unshaded {
         }
 
         Defines {
-            INSTANCING : UseInstancing // For VR instancing
+            INSTANCING : RightEyeViewProjectionMatrix // For VR instancing
             HAS_COLORMAP : ColorMap
             HAS_COLOR : Color
         }

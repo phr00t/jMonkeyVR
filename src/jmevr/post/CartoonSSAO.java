@@ -19,7 +19,7 @@ public class CartoonSSAO extends Filter{
     private Vector3f frustumCorner;
     private Vector2f frustumNearFar;
     // Wide area occlusion settings
-    private float downsample = 1f;
+    private float downsample = 1f, applyDistance = 0.0005f;
 
     //private float downSampleFactor = 1f;
     RenderManager renderManager;
@@ -69,7 +69,8 @@ public class CartoonSSAO extends Filter{
     }
 
     public void setDistance(float dist) {
-        material.setFloat("Distance", dist);
+        applyDistance = dist;
+        if( material != null ) material.setFloat("Distance", dist);
     }
     
     @Override
@@ -97,7 +98,7 @@ public class CartoonSSAO extends Filter{
 
         material.setVector3("FrustumCorner", frustumCorner);
         material.setVector2("FrustumNearFar", frustumNearFar);
-        material.setFloat("Distance", 0.0005f);
+        material.setFloat("Distance", applyDistance);
     }
 
 }

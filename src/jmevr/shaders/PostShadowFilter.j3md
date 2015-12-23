@@ -41,7 +41,6 @@ MaterialDef Post Shadow {
         // is VR instancing?
         Matrix4 ViewProjectionMatrixInverseRight
         Vector4 ViewProjectionMatrixRow2Right
-        Boolean Instancing
     }
 
     Technique {
@@ -63,7 +62,7 @@ MaterialDef Post Shadow {
             POINTLIGHT : LightViewProjectionMatrix5
             //if no shadow map don't render shadows
             RENDER_SHADOWS : ShadowMap0
-            INSTANCING : Instancing
+            INSTANCING : ViewProjectionMatrixInverseRight
         }
       
     }
@@ -83,7 +82,7 @@ MaterialDef Post Shadow {
             FADE : FadeInfo
             PSSM : Splits
             POINTLIGHT : LightViewProjectionMatrix5
-            INSTANCING : Instancing
+            INSTANCING : ViewProjectionMatrixInverseRight
         }
       
     }

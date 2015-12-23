@@ -4,7 +4,6 @@ MaterialDef GuiOverlay {
         Texture2D ColorMap
 
         // For VR instancing
-        Boolean UseInstancing
         Matrix4 RightEyeViewProjectionMatrix
     }
 
@@ -18,7 +17,7 @@ MaterialDef GuiOverlay {
         }
 
         Defines {
-            INSTANCING : UseInstancing // For VR instancing
+            INSTANCING : RightEyeViewProjectionMatrix // For VR instancing
         }
     }
 
@@ -32,7 +31,7 @@ MaterialDef GuiOverlay {
         }
 
         Defines {
-            INSTANCING : UseInstancing // For VR instancing
+            INSTANCING : RightEyeViewProjectionMatrix // For VR instancing
         }
     }
 

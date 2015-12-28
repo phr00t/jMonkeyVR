@@ -19,7 +19,6 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -28,13 +27,10 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
-import java.util.ArrayDeque;
-import java.util.Stack;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
 import jmevr.input.OpenVR;
 import jmevr.post.CartoonSSAO;
-import jmevr.post.FastSSAO;
 import jmevr.shadow.VRDirectionalLightShadowRenderer;
 import jopenvr.JOpenVRLibrary;
 import jopenvr.Texture_t;
@@ -383,8 +379,6 @@ public class OpenVRViewManager {
                             f2 = FilterUtil.cloneFogFilter((FogFilter)f); 
                         } else if (f instanceof CartoonSSAO ) {
                             f2 = new CartoonSSAO((CartoonSSAO)f);
-                        } else if (f instanceof FastSSAO) {
-                            f2 = new FastSSAO((FastSSAO)f);
                         } else if (f instanceof SSAOFilter){
                             f2 = FilterUtil.cloneSSAOFilter((SSAOFilter)f);
                         } else if (f instanceof DirectionalLightShadowFilter){

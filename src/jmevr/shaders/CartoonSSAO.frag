@@ -1,7 +1,6 @@
 #define FRAGMENT_SHADER
 #import "Common/ShaderLib/GLSLCompat.glsllib"
 
-uniform vec2 g_Resolution;
 uniform vec2 g_ResolutionInverse;
 uniform vec2 m_FrustumNearFar;
 uniform sampler2D m_Texture;
@@ -14,7 +13,7 @@ varying vec2 texCoord;
 
 #define m_Scale 3.15
 #define m_Bias 0.025
-#define m_SampleRadius 3.0
+#define m_SampleRadius 0.325
 
 vec4 fetchNormalDepth(vec2 tc){
     vec4 nd;
@@ -30,6 +29,13 @@ vec3 getPosition(in vec2 uv){
     return depth* vec3(x, y, m_FrustumCorner.z);
 }
 
+vec3 getPosition(in vec2 uv, in float indepth){
+    float depth= (2.0 * m_FrustumNearFar.x) / (m_FrustumNearFar.y + m_FrustumNearFar.x - indepth * (m_FrustumNearFar.y-m_FrustumNearFar.x));
+    float x = mix(-m_FrustumCorner.x, m_FrustumCorner.x, uv.x);
+    float y = mix(-m_FrustumCorner.y, m_FrustumCorner.y, uv.y);
+    return depth* vec3(x, y, m_FrustumCorner.z);
+}
+
 float doAmbientOcclusion(in vec2 tc, in vec3 pos, in vec3 norm){
     vec3 diff = getPosition(tc)- pos;
     float d = length(diff) * m_Scale;
@@ -39,10 +45,19 @@ float doAmbientOcclusion(in vec2 tc, in vec3 pos, in vec3 norm){
 
 void main(){
     float result;
-    vec3 position = getPosition(texCoord);
+
+    float firstdepth = texture2D(m_DepthTexture,texCoord).r;
+    vec4 color = texture2D(m_Texture, texCoord);
+
+    if( firstdepth == 1.0 ) {
+        gl_FragColor = color;
+        return;
+    }
+
+    vec3 position = getPosition(texCoord, firstdepth);
     vec3 normal = texture2D(m_Normals, texCoord).xyz * 2.0 - 1.0;
 
-    float rad = 0.06 * (m_SampleRadius/position.z + (fract(texCoord.x*(g_Resolution.x*0.5))*0.125) + (fract(texCoord.y*(g_Resolution.y*0.5))*0.25));
+    float rad = m_SampleRadius / max(16.0, position.z);
 
     float ao = doAmbientOcclusion(texCoord + vec2( rad,  rad), position, normal);
     ao += doAmbientOcclusion(texCoord + vec2(-rad,  rad), position, normal);
@@ -61,12 +76,10 @@ void main(){
     ao += doAmbientOcclusion(texCoord + vec2(-rad,  rad), position, normal);
     ao += doAmbientOcclusion(texCoord + vec2( rad,  rad), position, normal);
 
-    ao *= 0.4;
-    result = 1.0 - (1.25 - max(16.0 - position.z, 0.0) * 0.04) * ao;
+    result = 1.0 - clamp(ao * 0.4, 0.0, 0.5 - position.z * m_Distance * 2.0);
 
+#ifndef NO_OUTLINE
     // ok, done with ambient occlusion, do cartoon edge
-
-    vec3 color = texture2D(m_Texture, texCoord).rgb;
 
     vec2 mv = 0.5 * g_ResolutionInverse;
 
@@ -81,6 +94,8 @@ void main(){
     float normalDelta = dot(diagonalDelta.xyz, vec3(1.0));
     float totalDelta = (diagonalDelta.w + normalDelta * 0.4) - position.z * m_Distance;
 
-    gl_FragColor.rgb = color.rgb * vec3(result) * (1.0 - clamp(totalDelta, 0.0, 1.0));
-    gl_FragColor.a = 1.0;
+    gl_FragColor = color * vec4(result, result, result, 1.0) * (1.0 - clamp(totalDelta, 0.0, 1.0));
+#else
+    gl_FragColor = color * vec4(result, result, result, 1.0);    
+#endif
 }

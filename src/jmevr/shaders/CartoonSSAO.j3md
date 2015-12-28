@@ -8,7 +8,7 @@ MaterialDef CartoonSSAO {
         Texture2D Normals
         Vector3 FrustumCorner
         Float Distance
-
+        Boolean disableOutline
         Vector2 FrustumNearFar
     }
 
@@ -19,8 +19,11 @@ MaterialDef CartoonSSAO {
         WorldParameters {
             WorldViewProjectionMatrix
             WorldViewMatrix
-            Resolution
             ResolutionInverse
+        }
+
+        Defines {
+            NO_OUTLINE : disableOutline
         }
     }
 
@@ -31,8 +34,11 @@ MaterialDef CartoonSSAO {
         WorldParameters {
             WorldViewProjectionMatrix
             WorldViewMatrix
-            Resolution
             ResolutionInverse
+        }
+
+        Defines {
+            NO_OUTLINE : disableOutline
         }
     }
 }

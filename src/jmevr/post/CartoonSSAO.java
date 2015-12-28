@@ -9,19 +9,20 @@ import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.texture.Image.Format;
+import jmevr.app.VRApplication;
 
 public class CartoonSSAO extends Filter{
     private Pass normalPass;
     private Vector3f frustumCorner;
     private Vector2f frustumNearFar;
-    // Wide area occlusion settings
+    private boolean useOutline = true;
     private float downsample = 1f, applyDistance = 0.0005f;
-
-    //private float downSampleFactor = 1f;
+    
     RenderManager renderManager;
     ViewPort viewPort;
 
@@ -54,7 +55,22 @@ public class CartoonSSAO extends Filter{
     protected void postQueue(RenderQueue renderQueue) {
         PreNormalCaching.getPreNormals(renderManager, normalPass, viewPort);
     }
-
+    
+    public void enableOutline(boolean set) {
+        useOutline = set;
+        if( material != null ) {
+            if( useOutline ) {
+                material.clearParam("disableOutline");
+            } else {
+                material.setBoolean("disableOutline", true);
+            }
+        }
+    }
+    
+    public boolean isOutlineEnabled() {
+        return useOutline;
+    }
+    
     public void setDownsampling(float downsample) {
         this.downsample = downsample;
     }
@@ -94,11 +110,12 @@ public class CartoonSSAO extends Filter{
 
         //ssao Pass
         material = new Material(manager, "jmevr/shaders/CartoonSSAO.j3md");
-        material.setTexture("Normals", normalPass.getRenderedTexture());
+        material.setTexture("Normals", normalPass.getRenderedTexture());        
 
         material.setVector3("FrustumCorner", frustumCorner);
         material.setVector2("FrustumNearFar", frustumNearFar);
         material.setFloat("Distance", applyDistance);
+        if( useOutline == false ) material.setBoolean("disableOutline", true);
     }
 
 }

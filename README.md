@@ -3,7 +3,7 @@
 <b>What games use this!? Commercial games on Steam:
 <a href="http://store.steampowered.com/app/363460">Spermination</a> * <a href="http://store.steampowered.com/app/329770/">4089</a></b> * <b>Upcoming 5089!</b>
 
-I recommend using Phr00t's jMonkeyEngine build here: https://github.com/phr00t/jmonkeyengine (the main jME3 build may work, but OpenVR-specific changes will be made first on Phr00t's build) -- you can just use the JAR/libs under the dist/ and lib/ folders
+Phr00t's jMonkeyEngine build is required: https://github.com/phr00t/jmonkeyengine (the main jME3 build might work, but VR-specific changes will be made first on Phr00t's build) -- you can just use the JAR/libs under the dist/ and lib/ folders
 
 SteamVR is required. You can download & install it free with the Steam client (under Tools).
 
@@ -77,7 +77,7 @@ To center the GUI's position manually, where it will stay until another manual p
  VRGuiManager.positionGui();
 ```
 
-<b>Adding Filters during runtime</b>
+<b>Adding Filters during runtime (not needed with VR instancing)</b>
 
 If you add filters during application intialization, they will be automatically moved to each eye <i>if</i> VR mode gets started. However, if after initialization, you add some filters, you will need to move them to the VR scene with this function:
 

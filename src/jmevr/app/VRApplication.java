@@ -37,6 +37,7 @@ import jmevr.util.OpenVRViewManager;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
 import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
+import org.lwjgl.system.Platform;
 
 /**
  *
@@ -52,6 +53,7 @@ public abstract class VRApplication extends Application {
         SEATED_EXPERIENCE, NO_GUI, INSTANCE_VR_RENDERING
     }
     
+    private static String OS;
     private static OpenVR VRhardware;    
     private static Camera dummyCam;
     private static OpenVRViewManager VRviewmanager;
@@ -151,7 +153,7 @@ public abstract class VRApplication extends Application {
         
         // we are going to use OpenVR now, not the Oculus Rift
         // OpenVR does support the Rift
-        String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+        OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
         VRSupportedOS = true; //!OS.contains("nux"); //for the moment, linux/unix is supported enough to run
         compositorOS = OS.contains("indows");
         
@@ -180,14 +182,14 @@ public abstract class VRApplication extends Application {
             setSettings(new AppSettings(true));
             loadSettings = true;
         }
-
+                
         if( isInVR() && !compositorAllowed() ) {
             // "easy extended" mode
             // TO-DO: JFrame was removed in LWJGL 3, need to use new GLFW library to pick "monitor" display of VR device
             // first, find the VR device
             GraphicsDevice VRdev = null;
-            GraphicsDevice[] devs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
             GraphicsDevice defDev = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            GraphicsDevice[] devs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
             // pick the display that isn't the default one
             for(GraphicsDevice gd : devs) {
                 if( gd != defDev ) {
@@ -238,9 +240,17 @@ public abstract class VRApplication extends Application {
         
         if( !isInVR() ) {
             // not in VR, show settings dialog
-            if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
-                return;
-            }            
+            if( Platform.get() != Platform.MACOSX ) {
+                if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
+                    return;
+                }            
+            } else {
+                // just go fullscreen and skip using AWT which conflicts with
+                // GLFW on macs
+                settings.setSamples(1);
+                settings.setFullscreen(true);
+                settings.setVSync(true);
+            }
             settings.setSwapBuffers(true);
         } else {
             // use basic mirroring window, skip settings window

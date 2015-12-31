@@ -16,13 +16,17 @@ public class CameraVideoStreamFrame_t extends Structure {
 	public int m_nStreamFormat;
 	public int m_nWidth;
 	public int m_nHeight;
+	public int m_nImageDataSize;
 	public int m_nFrameSequence;
-	public int m_nTimeStamp;
+	public int m_nISPFrameTimeStamp;
+	public int m_nISPReferenceTimeStamp;
+	public int m_nSyncCounter;
+	public int m_nExposureTime;
 	public int m_nBufferIndex;
 	public int m_nBufferCount;
-	public int m_nImageDataSize;
 	public double m_flFrameElapsedTime;
 	public double m_flFrameCaptureTime;
+	public long m_nFrameCaptureTicks;
 	public byte m_bPoseIsValid;
 	/** C type : HmdMatrix34_t */
 	public HmdMatrix34_t m_matDeviceToAbsoluteTracking;
@@ -40,7 +44,7 @@ public class CameraVideoStreamFrame_t extends Structure {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("m_nStreamFormat", "m_nWidth", "m_nHeight", "m_nFrameSequence", "m_nTimeStamp", "m_nBufferIndex", "m_nBufferCount", "m_nImageDataSize", "m_flFrameElapsedTime", "m_flFrameCaptureTime", "m_bPoseIsValid", "m_matDeviceToAbsoluteTracking", "m_Pad", "m_pImageData");
+		return Arrays.asList("m_nStreamFormat", "m_nWidth", "m_nHeight", "m_nImageDataSize", "m_nFrameSequence", "m_nISPFrameTimeStamp", "m_nISPReferenceTimeStamp", "m_nSyncCounter", "m_nExposureTime", "m_nBufferIndex", "m_nBufferCount", "m_flFrameElapsedTime", "m_flFrameCaptureTime", "m_nFrameCaptureTicks", "m_bPoseIsValid", "m_matDeviceToAbsoluteTracking", "m_Pad", "m_pImageData");
 	}
 	public CameraVideoStreamFrame_t(Pointer peer) {
 		super(peer);

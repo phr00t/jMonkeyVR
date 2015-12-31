@@ -426,7 +426,7 @@ public class OpenVRViewManager {
                 
         prepareCameraSize(camLeft, 1f);
         camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));
-        //org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB);
+        org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB);
         
         if( VRApplication.isInstanceVRRendering() == false ) {
             viewPortLeft = setupViewBuffers(camLeft, LEFT_VIEW_NAME);
@@ -458,7 +458,7 @@ public class OpenVRViewManager {
             
         // create offscreen framebuffer
         FrameBuffer offBuffer = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);
-        //offBuffer.setSrgb(true);
+        offBuffer.setSrgb(true);
 
         //setup framebuffer's texture
         dualEyeTex = new Texture2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);
@@ -479,7 +479,7 @@ public class OpenVRViewManager {
     private ViewPort setupViewBuffers(Camera cam, String viewName){
         // create offscreen framebuffer
         FrameBuffer offBufferLeft = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);
-        //offBufferLeft.setSrgb(true);
+        offBufferLeft.setSrgb(true);
         
         //setup framebuffer's texture
         Texture2D offTex = new Texture2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);

@@ -182,13 +182,14 @@ public abstract class VRApplication extends Application {
             setSettings(new AppSettings(true));
             loadSettings = true;
         }
-                
+                            
+        GraphicsDevice defDev = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        
         if( isInVR() && !compositorAllowed() ) {
             // "easy extended" mode
             // TO-DO: JFrame was removed in LWJGL 3, need to use new GLFW library to pick "monitor" display of VR device
             // first, find the VR device
             GraphicsDevice VRdev = null;
-            GraphicsDevice defDev = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             GraphicsDevice[] devs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
             // pick the display that isn't the default one
             for(GraphicsDevice gd : devs) {
@@ -245,10 +246,14 @@ public abstract class VRApplication extends Application {
                     return;
                 }            
             } else {
-                // just go fullscreen and skip using AWT which conflicts with
-                // GLFW on macs
+                // GLFW workaround on macs
                 settings.setSamples(1);
-                settings.setFullscreen(true);
+                settings.setWidth(1280);
+                settings.setHeight(720);
+                settings.setResizable(false);
+                settings.setFrequency(defDev.getDisplayMode().getRefreshRate());
+                settings.setDepthBits(defDev.getDisplayMode().getBitDepth());
+                settings.setFullscreen(false);
                 settings.setVSync(true);
             }
             settings.setSwapBuffers(true);
@@ -258,7 +263,7 @@ public abstract class VRApplication extends Application {
             settings.setWidth(xWin);
             settings.setHeight(yWin);
             settings.setBitsPerPixel(32);     
-            settings.setFrameRate(0);
+            settings.setGammaCorrection(true);
             settings.setFrequency(OpenVR.getDisplayFrequency());
             settings.setFullscreen(false);
             settings.setVSync(false); // stop vsyncing on primary monitor!

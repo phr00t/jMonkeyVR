@@ -57,6 +57,11 @@ public class JOpenVRLibrary implements Library {
 		public static final int ETrackedDeviceClass_TrackedDeviceClass_Other = 1000;
 	};
 	/** enum values */
+	public static interface ETrackedControllerRole {
+		public static final int ETrackedControllerRole_TrackedControllerRole_Invalid = 0;
+		public static final int ETrackedControllerRole_TrackedControllerRole_LeftHand = 1;
+		public static final int ETrackedControllerRole_TrackedControllerRole_RightHand = 2;
+	};
 	public static interface ETrackingUniverseOrigin {
 		public static final int ETrackingUniverseOrigin_TrackingUniverseSeated = 0;
 		public static final int ETrackingUniverseOrigin_TrackingUniverseStanding = 1;
@@ -91,6 +96,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int ETrackedDeviceProperty_Prop_CanUnifyCoordinateSystemWithHmd_Bool = 1024;
 		public static final int ETrackedDeviceProperty_Prop_ContainsProximitySensor_Bool = 1025;
 		public static final int ETrackedDeviceProperty_Prop_DeviceProvidesBatteryStatus_Bool = 1026;
+		public static final int ETrackedDeviceProperty_Prop_DeviceCanPowerOff_Bool = 1027;
 		public static final int ETrackedDeviceProperty_Prop_ReportsTimeSinceVSync_Bool = 2000;
 		public static final int ETrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float = 2001;
 		public static final int ETrackedDeviceProperty_Prop_DisplayFrequency_Float = 2002;
@@ -108,6 +114,17 @@ public class JOpenVRLibrary implements Library {
 		public static final int ETrackedDeviceProperty_Prop_DisplayGCBlackClamp_Float = 2014;
 		public static final int ETrackedDeviceProperty_Prop_EdidProductID_Int32 = 2015;
 		public static final int ETrackedDeviceProperty_Prop_CameraToHeadTransform_Matrix34 = 2016;
+		public static final int ETrackedDeviceProperty_Prop_DisplayGCType_Int32 = 2017;
+		public static final int ETrackedDeviceProperty_Prop_DisplayGCOffset_Float = 2018;
+		public static final int ETrackedDeviceProperty_Prop_DisplayGCScale_Float = 2019;
+		public static final int ETrackedDeviceProperty_Prop_DisplayGCPrescale_Float = 2020;
+		public static final int ETrackedDeviceProperty_Prop_DisplayGCImage_String = 2021;
+		public static final int ETrackedDeviceProperty_Prop_LensCenterLeftU_Float = 2022;
+		public static final int ETrackedDeviceProperty_Prop_LensCenterLeftV_Float = 2023;
+		public static final int ETrackedDeviceProperty_Prop_LensCenterRightU_Float = 2024;
+		public static final int ETrackedDeviceProperty_Prop_LensCenterRightV_Float = 2025;
+		public static final int ETrackedDeviceProperty_Prop_UserHeadToEyeDepthMeters_Float = 2026;
+		public static final int ETrackedDeviceProperty_Prop_CameraFirmwareVersion_Uint64 = 2027;
 		public static final int ETrackedDeviceProperty_Prop_AttachedDeviceId_String = 3000;
 		public static final int ETrackedDeviceProperty_Prop_SupportedButtons_Uint64 = 3001;
 		public static final int ETrackedDeviceProperty_Prop_Axis0Type_Int32 = 3002;
@@ -162,6 +179,8 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_TrackedDeviceUserInteractionStarted = 103;
 		public static final int EVREventType_VREvent_TrackedDeviceUserInteractionEnded = 104;
 		public static final int EVREventType_VREvent_IpdChanged = 105;
+		public static final int EVREventType_VREvent_EnterStandbyMode = 106;
+		public static final int EVREventType_VREvent_LeaveStandbyMode = 107;
 		public static final int EVREventType_VREvent_ButtonPress = 200;
 		public static final int EVREventType_VREvent_ButtonUnpress = 201;
 		public static final int EVREventType_VREvent_ButtonTouch = 202;
@@ -202,6 +221,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_ChaperoneUniverseHasChanged = 801;
 		public static final int EVREventType_VREvent_ChaperoneTempDataHasChanged = 802;
 		public static final int EVREventType_VREvent_ChaperoneSettingsHaveChanged = 803;
+		public static final int EVREventType_VREvent_BackgroundSettingHasChanged = 850;
 		public static final int EVREventType_VREvent_StatusUpdate = 900;
 		public static final int EVREventType_VREvent_MCImageUpdated = 1000;
 		public static final int EVREventType_VREvent_FirmwareUpdateStarted = 1100;
@@ -217,6 +237,9 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_TrackedCamera_StopVideoStream = 1501;
 		public static final int EVREventType_VREvent_TrackedCamera_PauseVideoStream = 1502;
 		public static final int EVREventType_VREvent_TrackedCamera_ResumeVideoStream = 1503;
+		public static final int EVREventType_VREvent_PerformanceTest_EnableCapture = 1600;
+		public static final int EVREventType_VREvent_PerformanceTest_DisableCapture = 1601;
+		public static final int EVREventType_VREvent_PerformanceTest_FidelityLevel = 1602;
 		public static final int EVREventType_VREvent_VendorSpecific_Reserved_Start = 10000;
 		public static final int EVREventType_VREvent_VendorSpecific_Reserved_End = 19999;
 	};
@@ -226,6 +249,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EDeviceActivityLevel_k_EDeviceActivityLevel_Idle = 0;
 		public static final int EDeviceActivityLevel_k_EDeviceActivityLevel_UserInteraction = 1;
 		public static final int EDeviceActivityLevel_k_EDeviceActivityLevel_UserInteraction_Timeout = 2;
+		public static final int EDeviceActivityLevel_k_EDeviceActivityLevel_Standby = 3;
 	};
 	/** enum values */
 	public static interface EVRButtonId {
@@ -302,6 +326,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVRApplicationType_VRApplication_Scene = 1;
 		public static final int EVRApplicationType_VRApplication_Overlay = 2;
 		public static final int EVRApplicationType_VRApplication_Background = 3;
+		public static final int EVRApplicationType_VRApplication_Utility = 4;
 	};
 	/** enum values */
 	public static interface EVRFirmwareError {
@@ -313,6 +338,8 @@ public class JOpenVRLibrary implements Library {
 	public static interface EVRNotificationError {
 		public static final int EVRNotificationError_VRNotificationError_OK = 0;
 		public static final int EVRNotificationError_VRNotificationError_InvalidNotificationId = 100;
+		public static final int EVRNotificationError_VRNotificationError_NotificationQueueFull = 101;
+		public static final int EVRNotificationError_VRNotificationError_InvalidOverlayHandle = 102;
 	};
 	/** enum values */
 	public static interface EVRInitError {
@@ -341,6 +368,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVRInitError_VRInitError_Init_TooManyObjects = 120;
 		public static final int EVRInitError_VRInitError_Init_NoServerForBackgroundApp = 121;
 		public static final int EVRInitError_VRInitError_Init_NotSupportedWithCompositor = 122;
+		public static final int EVRInitError_VRInitError_Init_NotAvailableToUtilityApps = 123;
 		public static final int EVRInitError_VRInitError_Driver_Failed = 200;
 		public static final int EVRInitError_VRInitError_Driver_Unknown = 201;
 		public static final int EVRInitError_VRInitError_Driver_HmdUnknown = 202;
@@ -370,6 +398,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVRInitError_VRInitError_VendorSpecific_HmdFound_UnableToGetUserDataNext = 1110;
 		public static final int EVRInitError_VRInitError_VendorSpecific_HmdFound_UserDataAddressRange = 1111;
 		public static final int EVRInitError_VRInitError_VendorSpecific_HmdFound_UserDataError = 1112;
+		public static final int EVRInitError_VRInitError_VendorSpecific_HmdFound_ConfigFailedSanityCheck = 1113;
 		public static final int EVRInitError_VRInitError_Steam_SteamInstallationNotFound = 2000;
 	};
 	/** enum values */
@@ -441,6 +470,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVRCompositorError_VRCompositorError_IsNotSceneApplication = 103;
 		public static final int EVRCompositorError_VRCompositorError_TextureIsOnWrongDevice = 104;
 		public static final int EVRCompositorError_VRCompositorError_TextureUsesUnsupportedFormat = 105;
+		public static final int EVRCompositorError_VRCompositorError_SharedTexturesNotSupported = 106;
 	};
 	/** enum values */
 	public static interface VROverlayInputMethod {
@@ -652,6 +682,22 @@ public class JOpenVRLibrary implements Library {
 	/** Original signature : <code>void VR_IVRSystem_ApplyTransform(intptr_t, TrackedDevicePose_t*, TrackedDevicePose_t*, HmdMatrix34_t*)</code> */
 	public static native void VR_IVRSystem_ApplyTransform(Pointer instancePtr, TrackedDevicePose_t pOutputPose, TrackedDevicePose_t pTrackedDevicePose, HmdMatrix34_t pTransform);
 	/**
+	 * Original signature : <code>TrackedDeviceIndex_t VR_IVRSystem_GetTrackedDeviceIndexForControllerRole(intptr_t, ETrackedControllerRole)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRSystem_GetTrackedDeviceIndexForControllerRole(java.nio.IntBuffer, int)} and {@link #VR_IVRSystem_GetTrackedDeviceIndexForControllerRole(com.sun.jna.ptr.IntByReference, int)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVRSystem_GetTrackedDeviceIndexForControllerRole(IntByReference instancePtr, int unDeviceType);
+	/** Original signature : <code>TrackedDeviceIndex_t VR_IVRSystem_GetTrackedDeviceIndexForControllerRole(intptr_t, ETrackedControllerRole)</code> */
+	public static native int VR_IVRSystem_GetTrackedDeviceIndexForControllerRole(Pointer instancePtr, int unDeviceType);
+	/**
+	 * Original signature : <code>ETrackedControllerRole VR_IVRSystem_GetControllerRoleForTrackedDeviceIndex(intptr_t, TrackedDeviceIndex_t)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRSystem_GetControllerRoleForTrackedDeviceIndex(java.nio.IntBuffer, int)} and {@link #VR_IVRSystem_GetControllerRoleForTrackedDeviceIndex(com.sun.jna.ptr.IntByReference, int)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVRSystem_GetControllerRoleForTrackedDeviceIndex(IntByReference instancePtr, int unDeviceIndex);
+	/** Original signature : <code>ETrackedControllerRole VR_IVRSystem_GetControllerRoleForTrackedDeviceIndex(intptr_t, TrackedDeviceIndex_t)</code> */
+	public static native int VR_IVRSystem_GetControllerRoleForTrackedDeviceIndex(Pointer instancePtr, int unDeviceIndex);
+	/**
 	 * Original signature : <code>ETrackedDeviceClass VR_IVRSystem_GetTrackedDeviceClass(intptr_t, TrackedDeviceIndex_t)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRSystem_GetTrackedDeviceClass(java.nio.IntBuffer, int)} and {@link #VR_IVRSystem_GetTrackedDeviceClass(com.sun.jna.ptr.IntByReference, int)} instead
 	 */
@@ -851,6 +897,22 @@ public class JOpenVRLibrary implements Library {
 	public static native void VR_IVRSystem_AcknowledgeQuit_UserPrompt(IntByReference instancePtr);
 	/** Original signature : <code>void VR_IVRSystem_AcknowledgeQuit_UserPrompt(intptr_t)</code> */
 	public static native void VR_IVRSystem_AcknowledgeQuit_UserPrompt(Pointer instancePtr);
+	/**
+	 * Original signature : <code>void VR_IVRSystem_PerformanceTestEnableCapture(intptr_t, bool)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRSystem_PerformanceTestEnableCapture(java.nio.IntBuffer, byte)} and {@link #VR_IVRSystem_PerformanceTestEnableCapture(com.sun.jna.ptr.IntByReference, byte)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVRSystem_PerformanceTestEnableCapture(IntByReference instancePtr, byte bEnable);
+	/** Original signature : <code>void VR_IVRSystem_PerformanceTestEnableCapture(intptr_t, bool)</code> */
+	public static native void VR_IVRSystem_PerformanceTestEnableCapture(Pointer instancePtr, byte bEnable);
+	/**
+	 * Original signature : <code>void VR_IVRSystem_PerformanceTestReportFidelityLevelChange(intptr_t, int)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRSystem_PerformanceTestReportFidelityLevelChange(java.nio.IntBuffer, int)} and {@link #VR_IVRSystem_PerformanceTestReportFidelityLevelChange(com.sun.jna.ptr.IntByReference, int)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVRSystem_PerformanceTestReportFidelityLevelChange(IntByReference instancePtr, int nFidelityLevel);
+	/** Original signature : <code>void VR_IVRSystem_PerformanceTestReportFidelityLevelChange(intptr_t, int)</code> */
+	public static native void VR_IVRSystem_PerformanceTestReportFidelityLevelChange(Pointer instancePtr, int nFidelityLevel);
 	/**
 	 * Original signature : <code>void VR_IVRExtendedDisplay_GetWindowBounds(intptr_t, int32_t*, int32_t*, uint32_t*, uint32_t*)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRExtendedDisplay_GetWindowBounds(java.nio.IntBuffer, java.nio.IntBuffer, java.nio.IntBuffer, java.nio.IntBuffer, java.nio.IntBuffer)} and {@link #VR_IVRExtendedDisplay_GetWindowBounds(com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference)} instead
@@ -1211,6 +1273,22 @@ public class JOpenVRLibrary implements Library {
 	public static native byte VR_IVRChaperoneSetup_GetLiveSeatedZeroPoseToRawTrackingPose(IntByReference instancePtr, HmdMatrix34_t pmatSeatedZeroPoseToRawTrackingPose);
 	/** Original signature : <code>bool VR_IVRChaperoneSetup_GetLiveSeatedZeroPoseToRawTrackingPose(intptr_t, HmdMatrix34_t*)</code> */
 	public static native byte VR_IVRChaperoneSetup_GetLiveSeatedZeroPoseToRawTrackingPose(Pointer instancePtr, HmdMatrix34_t pmatSeatedZeroPoseToRawTrackingPose);
+	/**
+	 * Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingWallTagInfo(intptr_t, uint8_t*, uint32_t)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRChaperoneSetup_SetWorkingWallTagInfo(java.nio.IntBuffer, java.nio.ByteBuffer, int)} and {@link #VR_IVRChaperoneSetup_SetWorkingWallTagInfo(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, int)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVRChaperoneSetup_SetWorkingWallTagInfo(IntByReference instancePtr, Pointer pTagsBuffer, int unTagCount);
+	/** Original signature : <code>void VR_IVRChaperoneSetup_SetWorkingWallTagInfo(intptr_t, uint8_t*, uint32_t)</code> */
+	public static native void VR_IVRChaperoneSetup_SetWorkingWallTagInfo(Pointer instancePtr, ByteBuffer pTagsBuffer, int unTagCount);
+	/**
+	 * Original signature : <code>bool VR_IVRChaperoneSetup_GetLiveWallTagInfo(intptr_t, uint8_t*, uint32_t*)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRChaperoneSetup_GetLiveWallTagInfo(java.nio.IntBuffer, java.nio.ByteBuffer, java.nio.IntBuffer)} and {@link #VR_IVRChaperoneSetup_GetLiveWallTagInfo(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	public static native byte VR_IVRChaperoneSetup_GetLiveWallTagInfo(IntByReference instancePtr, Pointer pTagsBuffer, IntByReference punTagCount);
+	/** Original signature : <code>bool VR_IVRChaperoneSetup_GetLiveWallTagInfo(intptr_t, uint8_t*, uint32_t*)</code> */
+	public static native byte VR_IVRChaperoneSetup_GetLiveWallTagInfo(Pointer instancePtr, ByteBuffer pTagsBuffer, IntBuffer punTagCount);
 	/**
 	 * Original signature : <code>void VR_IVRCompositor_SetTrackingSpace(intptr_t, ETrackingUniverseOrigin)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRCompositor_SetTrackingSpace(java.nio.IntBuffer, int)} and {@link #VR_IVRCompositor_SetTrackingSpace(com.sun.jna.ptr.IntByReference, int)} instead
@@ -1652,6 +1730,14 @@ public class JOpenVRLibrary implements Library {
 	/** Original signature : <code>bool VR_IVROverlay_IsOverlayVisible(intptr_t, VROverlayHandle_t)</code> */
 	public static native byte VR_IVROverlay_IsOverlayVisible(Pointer instancePtr, long ulOverlayHandle);
 	/**
+	 * Original signature : <code>EVROverlayError VR_IVROverlay_GetTransformForOverlayCoordinates(intptr_t, VROverlayHandle_t, ETrackingUniverseOrigin, HmdVector2_t, HmdMatrix34_t*)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVROverlay_GetTransformForOverlayCoordinates(java.nio.IntBuffer, long, int, jopenvr.HmdVector2_t.ByValue, jopenvr.HmdMatrix34_t)} and {@link #VR_IVROverlay_GetTransformForOverlayCoordinates(com.sun.jna.ptr.IntByReference, long, int, jopenvr.HmdVector2_t.ByValue, jopenvr.HmdMatrix34_t)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVROverlay_GetTransformForOverlayCoordinates(IntByReference instancePtr, long ulOverlayHandle, int eTrackingOrigin, HmdVector2_t.ByValue coordinatesInOverlay, HmdMatrix34_t pmatTransform);
+	/** Original signature : <code>EVROverlayError VR_IVROverlay_GetTransformForOverlayCoordinates(intptr_t, VROverlayHandle_t, ETrackingUniverseOrigin, HmdVector2_t, HmdMatrix34_t*)</code> */
+	public static native int VR_IVROverlay_GetTransformForOverlayCoordinates(Pointer instancePtr, long ulOverlayHandle, int eTrackingOrigin, HmdVector2_t.ByValue coordinatesInOverlay, HmdMatrix34_t pmatTransform);
+	/**
 	 * Original signature : <code>bool VR_IVROverlay_PollNextOverlayEvent(intptr_t, VROverlayHandle_t, VREvent_t*)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_PollNextOverlayEvent(java.nio.IntBuffer, long, jopenvr.JOpenVRLibrary.VREvent_t)} and {@link #VR_IVROverlay_PollNextOverlayEvent(com.sun.jna.ptr.IntByReference, long, jopenvr.JOpenVRLibrary.VREvent_t)} instead
 	 */
@@ -1860,6 +1946,22 @@ public class JOpenVRLibrary implements Library {
 	/** Original signature : <code>void VR_IVROverlay_HideKeyboard(intptr_t)</code> */
 	public static native void VR_IVROverlay_HideKeyboard(Pointer instancePtr);
 	/**
+	 * Original signature : <code>void VR_IVROverlay_SetKeyboardTransformAbsolute(intptr_t, ETrackingUniverseOrigin, HmdMatrix34_t*)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetKeyboardTransformAbsolute(java.nio.IntBuffer, int, jopenvr.HmdMatrix34_t)} and {@link #VR_IVROverlay_SetKeyboardTransformAbsolute(com.sun.jna.ptr.IntByReference, int, jopenvr.HmdMatrix34_t)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVROverlay_SetKeyboardTransformAbsolute(IntByReference instancePtr, int eTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToKeyboardTransform);
+	/** Original signature : <code>void VR_IVROverlay_SetKeyboardTransformAbsolute(intptr_t, ETrackingUniverseOrigin, HmdMatrix34_t*)</code> */
+	public static native void VR_IVROverlay_SetKeyboardTransformAbsolute(Pointer instancePtr, int eTrackingOrigin, HmdMatrix34_t pmatTrackingOriginToKeyboardTransform);
+	/**
+	 * Original signature : <code>void VR_IVROverlay_SetKeyboardPositionForOverlay(intptr_t, VROverlayHandle_t, HmdRect2_t)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVROverlay_SetKeyboardPositionForOverlay(java.nio.IntBuffer, long, jopenvr.HmdRect2_t.ByValue)} and {@link #VR_IVROverlay_SetKeyboardPositionForOverlay(com.sun.jna.ptr.IntByReference, long, jopenvr.HmdRect2_t.ByValue)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVROverlay_SetKeyboardPositionForOverlay(IntByReference instancePtr, long ulOverlayHandle, jopenvr.HmdRect2_t.ByValue avoidRect);
+	/** Original signature : <code>void VR_IVROverlay_SetKeyboardPositionForOverlay(intptr_t, VROverlayHandle_t, HmdRect2_t)</code> */
+	public static native void VR_IVROverlay_SetKeyboardPositionForOverlay(Pointer instancePtr, long ulOverlayHandle, jopenvr.HmdRect2_t.ByValue avoidRect);
+	/**
 	 * Original signature : <code>bool VR_IVRRenderModels_LoadRenderModel(intptr_t, const char*, RenderModel_t**)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRRenderModels_LoadRenderModel(java.nio.IntBuffer, java.lang.String, jopenvr.RenderModel_t.ByReference[])} and {@link #VR_IVRRenderModels_LoadRenderModel(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, jopenvr.RenderModel_t.ByReference[])} instead
 	 */
@@ -1951,134 +2053,6 @@ public class JOpenVRLibrary implements Library {
 	public static native byte VR_IVRRenderModels_GetComponentState(IntByReference instancePtr, Pointer pchRenderModelName, Pointer pchComponentName, VRControllerState_t pControllerState, RenderModel_ComponentState_t pComponentState);
 	/** Original signature : <code>bool VR_IVRRenderModels_GetComponentState(intptr_t, const char*, const char*, const VRControllerState_t*, RenderModel_ComponentState_t*)</code> */
 	public static native byte VR_IVRRenderModels_GetComponentState(Pointer instancePtr, String pchRenderModelName, String pchComponentName, VRControllerState_t pControllerState, RenderModel_ComponentState_t pComponentState);
-	/**
-	 * Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverCount(intptr_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_GetDriverCount(java.nio.IntBuffer)} and {@link #VR_IVRControlPanel_GetDriverCount(com.sun.jna.ptr.IntByReference)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRControlPanel_GetDriverCount(IntByReference instancePtr);
-	/** Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverCount(intptr_t)</code> */
-	public static native int VR_IVRControlPanel_GetDriverCount(Pointer instancePtr);
-	/**
-	 * Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverId(intptr_t, uint32_t, char*, uint32_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_GetDriverId(java.nio.IntBuffer, int, java.nio.ByteBuffer, int)} and {@link #VR_IVRControlPanel_GetDriverId(com.sun.jna.ptr.IntByReference, int, com.sun.jna.Pointer, int)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRControlPanel_GetDriverId(IntByReference instancePtr, int unDriverIndex, Pointer pchBuffer, int unBufferLen);
-	/** Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverId(intptr_t, uint32_t, char*, uint32_t)</code> */
-	public static native int VR_IVRControlPanel_GetDriverId(Pointer instancePtr, int unDriverIndex, ByteBuffer pchBuffer, int unBufferLen);
-	/**
-	 * Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverDisplayCount(intptr_t, const char*)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_GetDriverDisplayCount(java.nio.IntBuffer, java.lang.String)} and {@link #VR_IVRControlPanel_GetDriverDisplayCount(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRControlPanel_GetDriverDisplayCount(IntByReference instancePtr, Pointer pchDriverId);
-	/** Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverDisplayCount(intptr_t, const char*)</code> */
-	public static native int VR_IVRControlPanel_GetDriverDisplayCount(Pointer instancePtr, String pchDriverId);
-	/**
-	 * Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverDisplayId(intptr_t, const char*, uint32_t, char*, uint32_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_GetDriverDisplayId(java.nio.IntBuffer, java.lang.String, int, java.nio.ByteBuffer, int)} and {@link #VR_IVRControlPanel_GetDriverDisplayId(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, int, com.sun.jna.Pointer, int)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRControlPanel_GetDriverDisplayId(IntByReference instancePtr, Pointer pchDriverId, int unDisplayIndex, Pointer pchBuffer, int unBufferLen);
-	/** Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverDisplayId(intptr_t, const char*, uint32_t, char*, uint32_t)</code> */
-	public static native int VR_IVRControlPanel_GetDriverDisplayId(Pointer instancePtr, String pchDriverId, int unDisplayIndex, ByteBuffer pchBuffer, int unBufferLen);
-	/**
-	 * Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverDisplayModelNumber(intptr_t, const char*, const char*, char*, uint32_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_GetDriverDisplayModelNumber(java.nio.IntBuffer, java.lang.String, java.lang.String, java.nio.ByteBuffer, int)} and {@link #VR_IVRControlPanel_GetDriverDisplayModelNumber(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.Pointer, com.sun.jna.Pointer, int)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRControlPanel_GetDriverDisplayModelNumber(IntByReference instancePtr, Pointer pchDriverId, Pointer pchDisplayId, Pointer pchBuffer, int unBufferLen);
-	/** Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverDisplayModelNumber(intptr_t, const char*, const char*, char*, uint32_t)</code> */
-	public static native int VR_IVRControlPanel_GetDriverDisplayModelNumber(Pointer instancePtr, String pchDriverId, String pchDisplayId, ByteBuffer pchBuffer, int unBufferLen);
-	/**
-	 * Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverDisplaySerialNumber(intptr_t, const char*, const char*, char*, uint32_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_GetDriverDisplaySerialNumber(java.nio.IntBuffer, java.lang.String, java.lang.String, java.nio.ByteBuffer, int)} and {@link #VR_IVRControlPanel_GetDriverDisplaySerialNumber(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.Pointer, com.sun.jna.Pointer, int)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRControlPanel_GetDriverDisplaySerialNumber(IntByReference instancePtr, Pointer pchDriverId, Pointer pchDisplayId, Pointer pchBuffer, int unBufferLen);
-	/** Original signature : <code>uint32_t VR_IVRControlPanel_GetDriverDisplaySerialNumber(intptr_t, const char*, const char*, char*, uint32_t)</code> */
-	public static native int VR_IVRControlPanel_GetDriverDisplaySerialNumber(Pointer instancePtr, String pchDriverId, String pchDisplayId, ByteBuffer pchBuffer, int unBufferLen);
-	/**
-	 * Original signature : <code>uint32_t VR_IVRControlPanel_LoadSharedResource(intptr_t, const char*, char*, uint32_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_LoadSharedResource(java.nio.IntBuffer, java.lang.String, java.nio.ByteBuffer, int)} and {@link #VR_IVRControlPanel_LoadSharedResource(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.Pointer, int)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRControlPanel_LoadSharedResource(IntByReference instancePtr, Pointer pchResourceName, Pointer pchBuffer, int unBufferLen);
-	/** Original signature : <code>uint32_t VR_IVRControlPanel_LoadSharedResource(intptr_t, const char*, char*, uint32_t)</code> */
-	public static native int VR_IVRControlPanel_LoadSharedResource(Pointer instancePtr, String pchResourceName, ByteBuffer pchBuffer, int unBufferLen);
-	/**
-	 * Original signature : <code>float VR_IVRControlPanel_GetIPD(intptr_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_GetIPD(java.nio.IntBuffer)} and {@link #VR_IVRControlPanel_GetIPD(com.sun.jna.ptr.IntByReference)} instead
-	 */
-	@Deprecated 
-	public static native float VR_IVRControlPanel_GetIPD(IntByReference instancePtr);
-	/** Original signature : <code>float VR_IVRControlPanel_GetIPD(intptr_t)</code> */
-	public static native float VR_IVRControlPanel_GetIPD(Pointer instancePtr);
-	/**
-	 * Original signature : <code>void VR_IVRControlPanel_SetIPD(intptr_t, float)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_SetIPD(java.nio.IntBuffer, float)} and {@link #VR_IVRControlPanel_SetIPD(com.sun.jna.ptr.IntByReference, float)} instead
-	 */
-	@Deprecated 
-	public static native void VR_IVRControlPanel_SetIPD(IntByReference instancePtr, float fIPD);
-	/** Original signature : <code>void VR_IVRControlPanel_SetIPD(intptr_t, float)</code> */
-	public static native void VR_IVRControlPanel_SetIPD(Pointer instancePtr, float fIPD);
-	/**
-	 * Original signature : <code>IVRCompositor* VR_IVRControlPanel_GetCurrentCompositorInterface(intptr_t, const char*)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_GetCurrentCompositorInterface(java.nio.IntBuffer, java.lang.String)} and {@link #VR_IVRControlPanel_GetCurrentCompositorInterface(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer)} instead
-	 */
-	@Deprecated 
-	public static native JOpenVRLibrary.IVRCompositor VR_IVRControlPanel_GetCurrentCompositorInterface(IntByReference instancePtr, Pointer pchInterfaceVersion);
-	/** Original signature : <code>IVRCompositor* VR_IVRControlPanel_GetCurrentCompositorInterface(intptr_t, const char*)</code> */
-	public static native JOpenVRLibrary.IVRCompositor VR_IVRControlPanel_GetCurrentCompositorInterface(Pointer instancePtr, String pchInterfaceVersion);
-	/**
-	 * Original signature : <code>bool VR_IVRControlPanel_QuitProcess(intptr_t, uint32_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_QuitProcess(java.nio.IntBuffer, int)} and {@link #VR_IVRControlPanel_QuitProcess(com.sun.jna.ptr.IntByReference, int)} instead
-	 */
-	@Deprecated 
-	public static native byte VR_IVRControlPanel_QuitProcess(IntByReference instancePtr, int pidProcessToQuit);
-	/** Original signature : <code>bool VR_IVRControlPanel_QuitProcess(intptr_t, uint32_t)</code> */
-	public static native byte VR_IVRControlPanel_QuitProcess(Pointer instancePtr, int pidProcessToQuit);
-	/**
-	 * Original signature : <code>uint32_t VR_IVRControlPanel_StartVRProcess(intptr_t, const char*, const char**, uint32_t, const char*)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_StartVRProcess(java.nio.IntBuffer, java.lang.String, java.lang.String[], int, java.lang.String)} and {@link #VR_IVRControlPanel_StartVRProcess(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.PointerByReference, int, com.sun.jna.Pointer)} instead
-	 */
-	@Deprecated 
-	public static native int VR_IVRControlPanel_StartVRProcess(Pointer instancePtr, Pointer pchExecutable, PointerByReference pchArguments, int unArgumentCount, Pointer pchWorkingDirectory);
-	/** Original signature : <code>uint32_t VR_IVRControlPanel_StartVRProcess(intptr_t, const char*, const char**, uint32_t, const char*)</code> */
-	//public static native int VR_IVRControlPanel_StartVRProcess(Pointer instancePtr, String pchExecutable, String pchArguments[], int unArgumentCount, String pchWorkingDirectory);
-	/**
-	 * Original signature : <code>void VR_IVRControlPanel_SetMasterProcessToThis(intptr_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_SetMasterProcessToThis(java.nio.IntBuffer)} and {@link #VR_IVRControlPanel_SetMasterProcessToThis(com.sun.jna.ptr.IntByReference)} instead
-	 */
-	@Deprecated 
-	public static native void VR_IVRControlPanel_SetMasterProcessToThis(IntByReference instancePtr);
-	/** Original signature : <code>void VR_IVRControlPanel_SetMasterProcessToThis(intptr_t)</code> */
-	public static native void VR_IVRControlPanel_SetMasterProcessToThis(Pointer instancePtr);
-	/**
-	 * Original signature : <code>void VR_IVRControlPanel_StartAutolaunchOverlays(intptr_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_StartAutolaunchOverlays(java.nio.IntBuffer)} and {@link #VR_IVRControlPanel_StartAutolaunchOverlays(com.sun.jna.ptr.IntByReference)} instead
-	 */
-	@Deprecated 
-	public static native void VR_IVRControlPanel_StartAutolaunchOverlays(IntByReference instancePtr);
-	/** Original signature : <code>void VR_IVRControlPanel_StartAutolaunchOverlays(intptr_t)</code> */
-	public static native void VR_IVRControlPanel_StartAutolaunchOverlays(Pointer instancePtr);
-	/**
-	 * Original signature : <code>bool VR_IVRControlPanel_ForceQuitProcess(intptr_t, uint32_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_ForceQuitProcess(java.nio.IntBuffer, int)} and {@link #VR_IVRControlPanel_ForceQuitProcess(com.sun.jna.ptr.IntByReference, int)} instead
-	 */
-	@Deprecated 
-	public static native byte VR_IVRControlPanel_ForceQuitProcess(IntByReference instancePtr, int pidProcessToQuit);
-	/** Original signature : <code>bool VR_IVRControlPanel_ForceQuitProcess(intptr_t, uint32_t)</code> */
-	public static native byte VR_IVRControlPanel_ForceQuitProcess(Pointer instancePtr, int pidProcessToQuit);
-	/**
-	 * Original signature : <code>void VR_IVRControlPanel_AbortTransition(intptr_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRControlPanel_AbortTransition(java.nio.IntBuffer)} and {@link #VR_IVRControlPanel_AbortTransition(com.sun.jna.ptr.IntByReference)} instead
-	 */
-	@Deprecated 
-	public static native void VR_IVRControlPanel_AbortTransition(IntByReference instancePtr);
-	/** Original signature : <code>void VR_IVRControlPanel_AbortTransition(intptr_t)</code> */
-	public static native void VR_IVRControlPanel_AbortTransition(Pointer instancePtr);
 	/**
 	 * Original signature : <code>EVRNotificationError VR_IVRNotifications_CreateNotification(intptr_t, VROverlayHandle_t, uint64_t, EVRNotificationType, const char*, EVRNotificationStyle, NotificationBitmap_t*, VRNotificationId*)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRNotifications_CreateNotification(java.nio.IntBuffer, long, long, int, java.lang.String, int, jopenvr.NotificationBitmap_t, java.nio.IntBuffer)} and {@link #VR_IVRNotifications_CreateNotification(com.sun.jna.ptr.IntByReference, long, long, int, com.sun.jna.Pointer, int, jopenvr.NotificationBitmap_t, com.sun.jna.ptr.IntByReference)} instead
@@ -2280,14 +2254,6 @@ public class JOpenVRLibrary implements Library {
 	/** Original signature : <code>bool VR_IVRTrackedCamera_SetAutoExposure(intptr_t, TrackedDeviceIndex_t, bool)</code> */
 	public static native byte VR_IVRTrackedCamera_SetAutoExposure(Pointer instancePtr, int nDeviceIndex, byte bEnable);
 	/**
-	 * Original signature : <code>bool VR_IVRTrackedCamera_SupportsPauseResume(intptr_t, TrackedDeviceIndex_t)</code><br>
-	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_SupportsPauseResume(java.nio.IntBuffer, int)} and {@link #VR_IVRTrackedCamera_SupportsPauseResume(com.sun.jna.ptr.IntByReference, int)} instead
-	 */
-	@Deprecated 
-	public static native byte VR_IVRTrackedCamera_SupportsPauseResume(IntByReference instancePtr, int nDeviceIndex);
-	/** Original signature : <code>bool VR_IVRTrackedCamera_SupportsPauseResume(intptr_t, TrackedDeviceIndex_t)</code> */
-	public static native byte VR_IVRTrackedCamera_SupportsPauseResume(Pointer instancePtr, int nDeviceIndex);
-	/**
 	 * Original signature : <code>bool VR_IVRTrackedCamera_PauseVideoStream(intptr_t, TrackedDeviceIndex_t)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_PauseVideoStream(java.nio.IntBuffer, int)} and {@link #VR_IVRTrackedCamera_PauseVideoStream(com.sun.jna.ptr.IntByReference, int)} instead
 	 */
@@ -2328,6 +2294,70 @@ public class JOpenVRLibrary implements Library {
 	/** Original signature : <code>bool VR_IVRTrackedCamera_GetCameraProjection(intptr_t, TrackedDeviceIndex_t, float, float, float, float, HmdMatrix44_t*)</code> */
 	public static native byte VR_IVRTrackedCamera_GetCameraProjection(Pointer instancePtr, int nDeviceIndex, float flWidthPixels, float flHeightPixels, float flZNear, float flZFar, HmdMatrix44_t pProjection);
 	/**
+	 * Original signature : <code>bool VR_IVRTrackedCamera_GetRecommendedCameraUndistortion(intptr_t, TrackedDeviceIndex_t, uint32_t*, uint32_t*)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_GetRecommendedCameraUndistortion(java.nio.IntBuffer, int, java.nio.IntBuffer, java.nio.IntBuffer)} and {@link #VR_IVRTrackedCamera_GetRecommendedCameraUndistortion(com.sun.jna.ptr.IntByReference, int, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	public static native byte VR_IVRTrackedCamera_GetRecommendedCameraUndistortion(IntByReference instancePtr, int nDeviceIndex, IntByReference pUndistortionWidthPixels, IntByReference pUndistortionHeightPixels);
+	/** Original signature : <code>bool VR_IVRTrackedCamera_GetRecommendedCameraUndistortion(intptr_t, TrackedDeviceIndex_t, uint32_t*, uint32_t*)</code> */
+	public static native byte VR_IVRTrackedCamera_GetRecommendedCameraUndistortion(Pointer instancePtr, int nDeviceIndex, IntBuffer pUndistortionWidthPixels, IntBuffer pUndistortionHeightPixels);
+	/**
+	 * Original signature : <code>bool VR_IVRTrackedCamera_SetCameraUndistortion(intptr_t, TrackedDeviceIndex_t, uint32_t, uint32_t)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_SetCameraUndistortion(java.nio.IntBuffer, int, int, int)} and {@link #VR_IVRTrackedCamera_SetCameraUndistortion(com.sun.jna.ptr.IntByReference, int, int, int)} instead
+	 */
+	@Deprecated 
+	public static native byte VR_IVRTrackedCamera_SetCameraUndistortion(IntByReference instancePtr, int nDeviceIndex, int nUndistortionWidthPixels, int nUndistortionHeightPixels);
+	/** Original signature : <code>bool VR_IVRTrackedCamera_SetCameraUndistortion(intptr_t, TrackedDeviceIndex_t, uint32_t, uint32_t)</code> */
+	public static native byte VR_IVRTrackedCamera_SetCameraUndistortion(Pointer instancePtr, int nDeviceIndex, int nUndistortionWidthPixels, int nUndistortionHeightPixels);
+	/**
+	 * Original signature : <code>void VR_IVRTrackedCamera_RequestVideoServicesForTool(intptr_t)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_RequestVideoServicesForTool(java.nio.IntBuffer)} and {@link #VR_IVRTrackedCamera_RequestVideoServicesForTool(com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVRTrackedCamera_RequestVideoServicesForTool(IntByReference instancePtr);
+	/** Original signature : <code>void VR_IVRTrackedCamera_RequestVideoServicesForTool(intptr_t)</code> */
+	public static native void VR_IVRTrackedCamera_RequestVideoServicesForTool(Pointer instancePtr);
+	/**
+	 * Original signature : <code>void VR_IVRTrackedCamera_ReleaseVideoServicesForTool(intptr_t)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_ReleaseVideoServicesForTool(java.nio.IntBuffer)} and {@link #VR_IVRTrackedCamera_ReleaseVideoServicesForTool(com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVRTrackedCamera_ReleaseVideoServicesForTool(IntByReference instancePtr);
+	/** Original signature : <code>void VR_IVRTrackedCamera_ReleaseVideoServicesForTool(intptr_t)</code> */
+	public static native void VR_IVRTrackedCamera_ReleaseVideoServicesForTool(Pointer instancePtr);
+	/**
+	 * Original signature : <code>bool VR_IVRTrackedCamera_GetVideoStreamFrameSharedTextureGL(intptr_t, bool, glUInt_t*, glSharedTextureHandle_t*)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_GetVideoStreamFrameSharedTextureGL(java.nio.IntBuffer, byte, java.nio.IntBuffer, com.sun.jna.ptr.PointerByReference)} and {@link #VR_IVRTrackedCamera_GetVideoStreamFrameSharedTextureGL(com.sun.jna.ptr.IntByReference, byte, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.PointerByReference)} instead
+	 */
+	@Deprecated 
+	public static native byte VR_IVRTrackedCamera_GetVideoStreamFrameSharedTextureGL(IntByReference instancePtr, byte bUndistorted, IntByReference pglTextureId, PointerByReference pglSharedTextureHandle);
+	/** Original signature : <code>bool VR_IVRTrackedCamera_GetVideoStreamFrameSharedTextureGL(intptr_t, bool, glUInt_t*, glSharedTextureHandle_t*)</code> */
+	public static native byte VR_IVRTrackedCamera_GetVideoStreamFrameSharedTextureGL(Pointer instancePtr, byte bUndistorted, IntBuffer pglTextureId, PointerByReference pglSharedTextureHandle);
+	/**
+	 * Original signature : <code>bool VR_IVRTrackedCamera_ReleaseVideoStreamFrameSharedTextureGL(intptr_t, glUInt_t, glSharedTextureHandle_t)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_ReleaseVideoStreamFrameSharedTextureGL(java.nio.IntBuffer, int, com.sun.jna.Pointer)} and {@link #VR_IVRTrackedCamera_ReleaseVideoStreamFrameSharedTextureGL(com.sun.jna.ptr.IntByReference, int, com.sun.jna.Pointer)} instead
+	 */
+	@Deprecated 
+	public static native byte VR_IVRTrackedCamera_ReleaseVideoStreamFrameSharedTextureGL(IntByReference instancePtr, int glTextureId, Pointer glSharedTextureHandle);
+	/** Original signature : <code>bool VR_IVRTrackedCamera_ReleaseVideoStreamFrameSharedTextureGL(intptr_t, glUInt_t, glSharedTextureHandle_t)</code> */
+	public static native byte VR_IVRTrackedCamera_ReleaseVideoStreamFrameSharedTextureGL(Pointer instancePtr, int glTextureId, Pointer glSharedTextureHandle);
+	/**
+	 * Original signature : <code>void VR_IVRTrackedCamera_LockSharedTextureGL(intptr_t, glSharedTextureHandle_t)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_LockSharedTextureGL(java.nio.IntBuffer, com.sun.jna.Pointer)} and {@link #VR_IVRTrackedCamera_LockSharedTextureGL(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVRTrackedCamera_LockSharedTextureGL(IntByReference instancePtr, Pointer glSharedTextureHandle);
+	/** Original signature : <code>void VR_IVRTrackedCamera_LockSharedTextureGL(intptr_t, glSharedTextureHandle_t)</code> */
+	public static native void VR_IVRTrackedCamera_LockSharedTextureGL(Pointer instancePtr, Pointer glSharedTextureHandle);
+	/**
+	 * Original signature : <code>void VR_IVRTrackedCamera_UnlockSharedTextureGL(intptr_t, glSharedTextureHandle_t)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_UnlockSharedTextureGL(java.nio.IntBuffer, com.sun.jna.Pointer)} and {@link #VR_IVRTrackedCamera_UnlockSharedTextureGL(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVRTrackedCamera_UnlockSharedTextureGL(IntByReference instancePtr, Pointer glSharedTextureHandle);
+	/** Original signature : <code>void VR_IVRTrackedCamera_UnlockSharedTextureGL(intptr_t, glSharedTextureHandle_t)</code> */
+	public static native void VR_IVRTrackedCamera_UnlockSharedTextureGL(Pointer instancePtr, Pointer glSharedTextureHandle);
+	/**
 	 * Global entry points<br>
 	 * Original signature : <code>intptr_t VR_Init(EVRInitError*, EVRApplicationType)</code><br>
 	 * @deprecated use the safer methods {@link #VR_Init(java.nio.IntBuffer, int)} and {@link #VR_Init(com.sun.jna.ptr.IntByReference, int)} instead
@@ -2355,6 +2385,9 @@ public class JOpenVRLibrary implements Library {
 	public static native Pointer VR_GetGenericInterface(String pchInterfaceVersion, IntBuffer peError);
 	/** Original signature : <code>bool VR_IsRuntimeInstalled()</code> */
 	public static native byte VR_IsRuntimeInstalled();
+	public static native Pointer VR_GetVRInitErrorAsSymbol(int error);
+	/** Original signature : <code>char* VR_GetVRInitErrorAsEnglishDescription(EVRInitError)</code> */
+	public static native Pointer VR_GetVRInitErrorAsEnglishDescription(int error);
 	public static class VREvent_t extends PointerType {
 		public VREvent_t(Pointer address) {
 			super(address);
@@ -2372,18 +2405,18 @@ public class JOpenVRLibrary implements Library {
 		}
 	};
 	
-	public static String IVRSystem_Version = "IVRSystem_009";
-	public static String IVRExtendedDisplay_Version = "IVRExtendedDisplay_001";
+	public static String IVRSystem_Version = "IVRSystem_010";
 	public static String IVRApplications_Version = "IVRApplications_002";
+	public static String IVRExtendedDisplay_Version = "IVRExtendedDisplay_001";
 	public static String IVRChaperone_Version = "IVRChaperone_003";
 	public static String IVRChaperoneSetup_Version = "IVRChaperoneSetup_004";
-	public static String IVRCompositor_Version = "IVRCompositor_009";
-	public static String IVROverlay_Version = "IVROverlay_007";
+	public static String IVRCompositor_Version = "IVRCompositor_010";
+	public static String IVROverlay_Version = "IVROverlay_008";
 	public static String IVRRenderModels_Version = "IVRRenderModels_002";
 	public static String IVRControlPanel_Version = "IVRControlPanel_001";
 	public static String IVRNotifications_Version = "IVRNotifications_002";
 	public static String IVRSettings_Version = "IVRSettings_001";
-	public static String IVRTrackedCamera_Version = "IVRTrackedCamera_Version_001";
+	public static String IVRTrackedCamera_Version = "IVRTrackedCamera_001";
 	
 	public static int k_unTrackingStringSize = 32;
 	public static int k_unMaxTrackedDeviceCount = 16;

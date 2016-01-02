@@ -116,6 +116,7 @@ public class CartoonSSAO extends Filter{
         material.setVector2("FrustumNearFar", frustumNearFar);
         material.setFloat("Distance", applyDistance);
         if( useOutline == false ) material.setBoolean("disableOutline", true);
+        if( VRApplication.isInstanceVRRendering() ) material.setBoolean("useInstancing", true);
     }
 
 }

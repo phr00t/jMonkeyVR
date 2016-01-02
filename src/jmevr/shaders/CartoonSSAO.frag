@@ -24,14 +24,22 @@ vec4 fetchNormalDepth(vec2 tc){
 
 vec3 getPosition(in vec2 uv){
     float depth= (2.0 * m_FrustumNearFar.x) / (m_FrustumNearFar.y + m_FrustumNearFar.x - texture2D(m_DepthTexture,uv).r * (m_FrustumNearFar.y-m_FrustumNearFar.x));
+#ifdef INSTANCING
+    float x = mix(-m_FrustumCorner.x, m_FrustumCorner.x, (uv.x - (uv.x > 0.5 ? 0.5 : 0.0)) * 2.0);
+#else
     float x = mix(-m_FrustumCorner.x, m_FrustumCorner.x, uv.x);
+#endif
     float y = mix(-m_FrustumCorner.y, m_FrustumCorner.y, uv.y);
     return depth* vec3(x, y, m_FrustumCorner.z);
 }
 
 vec3 getPosition(in vec2 uv, in float indepth){
     float depth= (2.0 * m_FrustumNearFar.x) / (m_FrustumNearFar.y + m_FrustumNearFar.x - indepth * (m_FrustumNearFar.y-m_FrustumNearFar.x));
+#ifdef INSTANCING
+    float x = mix(-m_FrustumCorner.x, m_FrustumCorner.x, (uv.x - (uv.x > 0.5 ? 0.5 : 0.0)) * 2.0);
+#else
     float x = mix(-m_FrustumCorner.x, m_FrustumCorner.x, uv.x);
+#endif
     float y = mix(-m_FrustumCorner.y, m_FrustumCorner.y, uv.y);
     return depth* vec3(x, y, m_FrustumCorner.z);
 }

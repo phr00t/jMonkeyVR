@@ -9,6 +9,7 @@ MaterialDef CartoonSSAO {
         Vector3 FrustumCorner
         Float Distance
         Boolean disableOutline
+        Boolean useInstancing
         Vector2 FrustumNearFar
     }
 
@@ -24,6 +25,7 @@ MaterialDef CartoonSSAO {
 
         Defines {
             NO_OUTLINE : disableOutline
+            INSTANCING : useInstancing
         }
     }
 
@@ -39,6 +41,7 @@ MaterialDef CartoonSSAO {
 
         Defines {
             NO_OUTLINE : disableOutline
+            INSTANCING : useInstancing
         }
     }
 }

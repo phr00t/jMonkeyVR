@@ -263,6 +263,7 @@ public abstract class VRApplication extends Application {
             settings.setWidth(xWin);
             settings.setHeight(yWin);
             settings.setBitsPerPixel(32);     
+            settings.setFrameRate(0); // never sleep in main loop
             settings.setFrequency(OpenVR.getDisplayFrequency());
             settings.setFullscreen(false);
             settings.setVSync(false); // stop vsyncing on primary monitor!

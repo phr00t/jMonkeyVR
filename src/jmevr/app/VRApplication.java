@@ -248,13 +248,15 @@ public abstract class VRApplication extends Application {
             } else {
                 // GLFW workaround on macs
                 settings.setSamples(1);
+                //settings.setWidth(defDev.getDisplayMode().getWidth());
+                //settings.setHeight(defDev.getDisplayMode().getHeight());
+                //settings.setFrequency(defDev.getDisplayMode().getRefreshRate());
+                //settings.setDepthBits(defDev.getDisplayMode().getBitDepth());
+                //settings.setVSync(true);
                 settings.setWidth(1280);
                 settings.setHeight(720);
-                settings.setResizable(false);
-                settings.setFrequency(defDev.getDisplayMode().getRefreshRate());
-                settings.setDepthBits(defDev.getDisplayMode().getBitDepth());
+                settings.setResizable(true);
                 settings.setFullscreen(false);
-                settings.setVSync(true);
             }
             settings.setSwapBuffers(true);
         } else {

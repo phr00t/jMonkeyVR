@@ -20,6 +20,8 @@ import com.jme3.scene.Spatial.CullHint;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
+import com.jme3.system.lwjgl.LwjglContext;
+import com.jme3.system.lwjgl.LwjglWindow;
 import java.awt.Cursor;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -37,6 +39,7 @@ import jmevr.util.OpenVRViewManager;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
 import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.Platform;
 
 /**
@@ -182,9 +185,9 @@ public abstract class VRApplication extends Application {
             setSettings(new AppSettings(true));
             loadSettings = true;
         }
-                            
-        GraphicsDevice defDev = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         
+        GraphicsDevice defDev = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+                                    
         if( isInVR() && !compositorAllowed() ) {
             // "easy extended" mode
             // TO-DO: JFrame was removed in LWJGL 3, need to use new GLFW library to pick "monitor" display of VR device
@@ -248,14 +251,12 @@ public abstract class VRApplication extends Application {
             } else {
                 // GLFW workaround on macs
                 settings.setSamples(1);
-                //settings.setWidth(defDev.getDisplayMode().getWidth());
-                //settings.setHeight(defDev.getDisplayMode().getHeight());
-                //settings.setFrequency(defDev.getDisplayMode().getRefreshRate());
-                //settings.setDepthBits(defDev.getDisplayMode().getBitDepth());
-                //settings.setVSync(true);
+                settings.setFrequency(defDev.getDisplayMode().getRefreshRate());
+                settings.setDepthBits(defDev.getDisplayMode().getBitDepth());
+                settings.setVSync(true);
                 settings.setWidth(1280);
                 settings.setHeight(720);
-                settings.setResizable(true);
+                settings.setResizable(false);
                 settings.setFullscreen(false);
             }
             settings.setSwapBuffers(true);

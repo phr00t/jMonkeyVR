@@ -20,8 +20,11 @@ import com.jme3.scene.Spatial.CullHint;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
-import com.jme3.system.lwjgl.LwjglContext;
-import com.jme3.system.lwjgl.LwjglWindow;
+import com.jme3.texture.FrameBuffer;
+import com.jme3.texture.Image;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture2D;
+import com.sun.jna.Pointer;
 import java.awt.Cursor;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -38,8 +41,8 @@ import jmevr.post.PreNormalCaching;
 import jmevr.util.OpenVRViewManager;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
+import jopenvr.JOpenVRLibrary;
 import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.Platform;
 
 /**
@@ -75,11 +78,12 @@ public abstract class VRApplication extends Application {
     private static boolean useCompositor = true, compositorOS;
     private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
     
-    static {
+    // no longer using LwjglCanvas, and this sometimes broke the graphics settings
+    /*static {
         if( VR_IsHmdPresent() != 0 ) {
             System.setProperty("sun.java2d.opengl", "True");
         }                        
-    }    
+    } */   
     
     public static float getOptimizationDistance() {
         return distanceOfOptimization;
@@ -334,6 +338,22 @@ public abstract class VRApplication extends Application {
                 seated = value;
                 break;
         }
+    }
+    
+    /**
+     * can be used to change seated experience during runtime
+     * 
+     * @param isSeated true if designed for sitting, false for standing/roomscale
+     */
+    public static void setSeatedExperience(boolean isSeated) {
+        seated = isSeated;
+        Pointer vrCompositor = OpenVR.getVRCompositorInstance();
+        if( vrCompositor == null ) return;
+        if( seated ) {
+            JOpenVRLibrary.VR_IVRCompositor_SetTrackingSpace(vrCompositor, JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseSeated);
+        } else {
+            JOpenVRLibrary.VR_IVRCompositor_SetTrackingSpace(vrCompositor, JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseStanding);                
+        }        
     }
     
     public static boolean isSeatedExperience() {

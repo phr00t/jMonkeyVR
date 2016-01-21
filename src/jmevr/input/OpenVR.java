@@ -266,7 +266,8 @@ public class OpenVR {
         }
         
         // deal with controllers being plugged in and out
-        boolean hasEvent = false;
+        // causing an invalid memory crash... skipping for now
+        /*boolean hasEvent = false;
         while( JOpenVRLibrary.VR_IVRSystem_PollNextEvent(OpenVR.getVRSystemInstance(), tempEvent) != 0 ) {
             // wait until the events are clear..
             hasEvent = true;
@@ -274,7 +275,7 @@ public class OpenVR {
         if( hasEvent ) {
             // an event probably changed controller state
             VRInput._updateConnectedControllers();
-        }
+        }*/
         //update controllers pose information
         VRInput._updateControllerStates();
                 

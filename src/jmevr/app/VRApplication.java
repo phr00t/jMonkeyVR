@@ -31,6 +31,9 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -258,8 +261,22 @@ public abstract class VRApplication extends Application {
                 settings.setFrequency(defDev.getDisplayMode().getRefreshRate());
                 settings.setDepthBits(defDev.getDisplayMode().getBitDepth());
                 settings.setVSync(true);
-                settings.setWidth(1280);
-                settings.setHeight(720);
+                // try and read resolution from file in local dir
+                File resfile = new File("resolution.txt");
+                if( resfile.exists() ) {
+                    try {
+                        BufferedReader br = new BufferedReader(new FileReader(resfile));
+                        settings.setWidth(Integer.parseInt(br.readLine()));
+                        settings.setHeight(Integer.parseInt(br.readLine()));
+                        br.close();
+                    } catch(Exception e) {
+                        settings.setWidth(1280);
+                        settings.setHeight(720);
+                    }
+                } else {
+                    settings.setWidth(1280);
+                    settings.setHeight(720);
+                }
                 settings.setResizable(false);
                 settings.setFullscreen(false);
             }

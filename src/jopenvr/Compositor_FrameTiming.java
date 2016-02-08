@@ -9,30 +9,34 @@ import java.util.List;
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
 public class Compositor_FrameTiming extends Structure {
-	public int size;
-	public double frameStart;
-	public float frameVSync;
-	public int droppedFrames;
-	public int frameIndex;
-	/** C type : TrackedDevicePose_t */
-	public TrackedDevicePose_t pose;
-	public float prediction;
-	public float m_flFrameIntervalMs;
-	public float m_flSceneRenderCpuMs;
+	public int m_nSize;
+	public int m_nFrameIndex;
+	public int m_nNumFramePresents;
+	public int m_nNumDroppedFrames;
+	public double m_flSystemTimeInSeconds;
 	public float m_flSceneRenderGpuMs;
-	public float m_flCompositorRenderCpuMs;
+	public float m_flTotalRenderGpuMs;
 	public float m_flCompositorRenderGpuMs;
+	public float m_flCompositorRenderCpuMs;
+	public float m_flCompositorIdleCpuMs;
+	public float m_flClientFrameIntervalMs;
 	public float m_flPresentCallCpuMs;
-	public float m_flRunningStartMs;
-	public float m_flHandoffStartMs;
-	public float m_flHandoffEndMs;
-	public float m_flCompositorUpdateCpuMs;
-	public int m_nPresents;
+	public float m_flWaitForPresentCpuMs;
+	public float m_flSubmitFrameMs;
+	public float m_flWaitGetPosesCalledMs;
+	public float m_flNewPosesReadyMs;
+	public float m_flNewFrameReadyMs;
+	public float m_flCompositorUpdateStartMs;
+	public float m_flCompositorUpdateEndMs;
+	public float m_flCompositorRenderStartMs;
+	/** C type : TrackedDevicePose_t */
+	public TrackedDevicePose_t m_HmdPose;
+	public int m_nFidelityLevel;
 	public Compositor_FrameTiming() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("size", "frameStart", "frameVSync", "droppedFrames", "frameIndex", "pose", "prediction", "m_flFrameIntervalMs", "m_flSceneRenderCpuMs", "m_flSceneRenderGpuMs", "m_flCompositorRenderCpuMs", "m_flCompositorRenderGpuMs", "m_flPresentCallCpuMs", "m_flRunningStartMs", "m_flHandoffStartMs", "m_flHandoffEndMs", "m_flCompositorUpdateCpuMs", "m_nPresents");
+		return Arrays.asList("m_nSize", "m_nFrameIndex", "m_nNumFramePresents", "m_nNumDroppedFrames", "m_flSystemTimeInSeconds", "m_flSceneRenderGpuMs", "m_flTotalRenderGpuMs", "m_flCompositorRenderGpuMs", "m_flCompositorRenderCpuMs", "m_flCompositorIdleCpuMs", "m_flClientFrameIntervalMs", "m_flPresentCallCpuMs", "m_flWaitForPresentCpuMs", "m_flSubmitFrameMs", "m_flWaitGetPosesCalledMs", "m_flNewPosesReadyMs", "m_flNewFrameReadyMs", "m_flCompositorUpdateStartMs", "m_flCompositorUpdateEndMs", "m_flCompositorRenderStartMs", "m_HmdPose", "m_nFidelityLevel");
 	}
 	public Compositor_FrameTiming(Pointer peer) {
 		super(peer);

@@ -98,6 +98,8 @@ public class JOpenVRLibrary implements Library {
 		public static final int ETrackedDeviceProperty_Prop_DeviceProvidesBatteryStatus_Bool = 1026;
 		public static final int ETrackedDeviceProperty_Prop_DeviceCanPowerOff_Bool = 1027;
 		public static final int ETrackedDeviceProperty_Prop_Firmware_ProgrammingTarget_String = 1028;
+		public static final int ETrackedDeviceProperty_Prop_DeviceClass_Int32 = 1029;
+		public static final int ETrackedDeviceProperty_Prop_HasCamera_Bool = 1030;
 		public static final int ETrackedDeviceProperty_Prop_ReportsTimeSinceVSync_Bool = 2000;
 		public static final int ETrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float = 2001;
 		public static final int ETrackedDeviceProperty_Prop_DisplayFrequency_Float = 2002;
@@ -128,6 +130,9 @@ public class JOpenVRLibrary implements Library {
 		public static final int ETrackedDeviceProperty_Prop_CameraFirmwareVersion_Uint64 = 2027;
 		public static final int ETrackedDeviceProperty_Prop_CameraFirmwareDescription_String = 2028;
 		public static final int ETrackedDeviceProperty_Prop_DisplayFPGAVersion_Uint64 = 2029;
+		public static final int ETrackedDeviceProperty_Prop_DisplayBootloaderVersion_Uint64 = 2030;
+		public static final int ETrackedDeviceProperty_Prop_DisplayHardwareVersion_Uint64 = 2031;
+		public static final int ETrackedDeviceProperty_Prop_AudioFirmwareVersion_Uint64 = 2032;
 		public static final int ETrackedDeviceProperty_Prop_AttachedDeviceId_String = 3000;
 		public static final int ETrackedDeviceProperty_Prop_SupportedButtons_Uint64 = 3001;
 		public static final int ETrackedDeviceProperty_Prop_Axis0Type_Int32 = 3002;
@@ -185,6 +190,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_IpdChanged = 105;
 		public static final int EVREventType_VREvent_EnterStandbyMode = 106;
 		public static final int EVREventType_VREvent_LeaveStandbyMode = 107;
+		public static final int EVREventType_VREvent_TrackedDeviceRoleChanged = 108;
 		public static final int EVREventType_VREvent_ButtonPress = 200;
 		public static final int EVREventType_VREvent_ButtonUnpress = 201;
 		public static final int EVREventType_VREvent_ButtonTouch = 202;
@@ -228,6 +234,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_ChaperoneTempDataHasChanged = 802;
 		public static final int EVREventType_VREvent_ChaperoneSettingsHaveChanged = 803;
 		public static final int EVREventType_VREvent_BackgroundSettingHasChanged = 850;
+		public static final int EVREventType_VREvent_CameraSettingsHaveChanged = 851;
 		public static final int EVREventType_VREvent_StatusUpdate = 900;
 		public static final int EVREventType_VREvent_MCImageUpdated = 1000;
 		public static final int EVREventType_VREvent_FirmwareUpdateStarted = 1100;
@@ -522,11 +529,24 @@ public class JOpenVRLibrary implements Library {
 		public static final int EOverlayDirection_OverlayDirection_Count = 4;
 	};
 	/** enum values */
+	public static interface EVRRenderModelError {
+		public static final int EVRRenderModelError_VRRenderModelError_None = 0;
+		public static final int EVRRenderModelError_VRRenderModelError_Loading = 100;
+		public static final int EVRRenderModelError_VRRenderModelError_NotSupported = 200;
+		public static final int EVRRenderModelError_VRRenderModelError_InvalidArg = 300;
+		public static final int EVRRenderModelError_VRRenderModelError_InvalidModel = 301;
+		public static final int EVRRenderModelError_VRRenderModelError_NoShapes = 302;
+		public static final int EVRRenderModelError_VRRenderModelError_MultipleShapes = 303;
+		public static final int EVRRenderModelError_VRRenderModelError_TooManyIndices = 304;
+		public static final int EVRRenderModelError_VRRenderModelError_MultipleTextures = 305;
+		public static final int EVRRenderModelError_VRRenderModelError_InvalidTexture = 400;
+	};
 	public static interface EVRComponentProperty {
 		public static final int EVRComponentProperty_VRComponentProperty_IsStatic = 1;
 		public static final int EVRComponentProperty_VRComponentProperty_IsVisible = 2;
 		public static final int EVRComponentProperty_VRComponentProperty_IsTouched = 4;
 		public static final int EVRComponentProperty_VRComponentProperty_IsPressed = 8;
+		public static final int EVRComponentProperty_VRComponentProperty_IsScrolled = 16;
 	};
 	/** enum values */
 	public static interface EVRNotificationType {
@@ -2025,9 +2045,9 @@ public class JOpenVRLibrary implements Library {
 	 * @deprecated use the safer methods {@link #VR_IVRRenderModels_LoadRenderModel(java.nio.IntBuffer, java.lang.String, jopenvr.RenderModel_t.ByReference[])} and {@link #VR_IVRRenderModels_LoadRenderModel(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, jopenvr.RenderModel_t.ByReference[])} instead
 	 */
 	@Deprecated 
-	//public static native byte VR_IVRRenderModels_LoadRenderModel(IntByReference instancePtr, Pointer pchRenderModelName, PointerByReference ppRenderModel);
+	public static native int VR_IVRRenderModels_LoadRenderModel_Async(Pointer instancePtr, Pointer pchRenderModelName, PointerByReference ppRenderModel);
 	/** Original signature : <code>bool VR_IVRRenderModels_LoadRenderModel(intptr_t, const char*, RenderModel_t**)</code> */
-	public static native byte VR_IVRRenderModels_LoadRenderModel(Pointer instancePtr, String pchRenderModelName, PointerByReference ppRenderModel);
+	//public static native int VR_IVRRenderModels_LoadRenderModel_Async(IntByReference instancePtr, Pointer pchRenderModelName, RenderModel_t.ByReference ppRenderModel[]);
 	/** Original signature : <code>bool VR_IVRRenderModels_LoadRenderModel(intptr_t, const char*, RenderModel_t**)</code> */
 	//public static native byte VR_IVRRenderModels_LoadRenderModel(IntByReference instancePtr, Pointer pchRenderModelName, RenderModel_t.ByReference[] ppRenderModel);
 	/**
@@ -2043,9 +2063,9 @@ public class JOpenVRLibrary implements Library {
 	 * @deprecated use the safer methods {@link #VR_IVRRenderModels_LoadTexture(java.nio.IntBuffer, int, jopenvr.RenderModel_TextureMap_t.ByReference[])} and {@link #VR_IVRRenderModels_LoadTexture(com.sun.jna.ptr.IntByReference, int, jopenvr.RenderModel_TextureMap_t.ByReference[])} instead
 	 */
 	@Deprecated 
-	//public static native byte VR_IVRRenderModels_LoadTexture(Pointer instancePtr, int textureId, PointerByReference ppTexture);
+	public static native int VR_IVRRenderModels_LoadTexture_Async(Pointer instancePtr, int textureId, PointerByReference ppTexture);
 	/** Original signature : <code>bool VR_IVRRenderModels_LoadTexture(intptr_t, TextureID_t, RenderModel_TextureMap_t**)</code> */
-	public static native byte VR_IVRRenderModels_LoadTexture(Pointer instancePtr, int textureId, PointerByReference ppTexture);
+	//public static native int VR_IVRRenderModels_LoadTexture_Async(Pointer instancePtr, int textureId, RenderModel_TextureMap_t.ByReference ppTexture[]);
 	/** Original signature : <code>bool VR_IVRRenderModels_LoadTexture(intptr_t, TextureID_t, RenderModel_TextureMap_t**)</code> */
 	//public static native byte VR_IVRRenderModels_LoadTexture(IntByReference instancePtr, int textureId, RenderModel_TextureMap_t.ByReference[] ppTexture);
 	/**
@@ -2056,6 +2076,22 @@ public class JOpenVRLibrary implements Library {
 	public static native void VR_IVRRenderModels_FreeTexture(IntByReference instancePtr, RenderModel_TextureMap_t pTexture);
 	/** Original signature : <code>void VR_IVRRenderModels_FreeTexture(intptr_t, RenderModel_TextureMap_t*)</code> */
 	public static native void VR_IVRRenderModels_FreeTexture(Pointer instancePtr, RenderModel_TextureMap_t pTexture);
+	/**
+	 * Original signature : <code>EVRRenderModelError VR_IVRRenderModels_LoadTextureD3D11_Async(intptr_t, TextureID_t, void*, void**)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRRenderModels_LoadTextureD3D11_Async(java.nio.IntBuffer, int, com.sun.jna.Pointer, com.sun.jna.ptr.PointerByReference)} and {@link #VR_IVRRenderModels_LoadTextureD3D11_Async(com.sun.jna.ptr.IntByReference, int, com.sun.jna.Pointer, com.sun.jna.ptr.PointerByReference)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVRRenderModels_LoadTextureD3D11_Async(IntByReference instancePtr, int textureId, Pointer pD3D11Device, PointerByReference ppD3D11Texture2D);
+	/** Original signature : <code>EVRRenderModelError VR_IVRRenderModels_LoadTextureD3D11_Async(intptr_t, TextureID_t, void*, void**)</code> */
+	public static native int VR_IVRRenderModels_LoadTextureD3D11_Async(Pointer instancePtr, int textureId, Pointer pD3D11Device, PointerByReference ppD3D11Texture2D);
+	/**
+	 * Original signature : <code>void VR_IVRRenderModels_FreeTextureD3D11(intptr_t, void*)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRRenderModels_FreeTextureD3D11(java.nio.IntBuffer, com.sun.jna.Pointer)} and {@link #VR_IVRRenderModels_FreeTextureD3D11(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVRRenderModels_FreeTextureD3D11(IntByReference instancePtr, Pointer pD3D11Texture2D);
+	/** Original signature : <code>void VR_IVRRenderModels_FreeTextureD3D11(intptr_t, void*)</code> */
+	public static native void VR_IVRRenderModels_FreeTextureD3D11(Pointer instancePtr, Pointer pD3D11Texture2D);
 	/**
 	 * Original signature : <code>uint32_t VR_IVRRenderModels_GetRenderModelName(intptr_t, uint32_t, char*, uint32_t)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRRenderModels_GetRenderModelName(java.nio.IntBuffer, int, java.nio.ByteBuffer, int)} and {@link #VR_IVRRenderModels_GetRenderModelName(com.sun.jna.ptr.IntByReference, int, com.sun.jna.Pointer, int)} instead
@@ -2145,13 +2181,13 @@ public class JOpenVRLibrary implements Library {
 	/** Original signature : <code>char* VR_IVRSettings_GetSettingsErrorNameFromEnum(intptr_t, EVRSettingsError)</code> */
 	public static native Pointer VR_IVRSettings_GetSettingsErrorNameFromEnum(Pointer instancePtr, int eError);
 	/**
-	 * Original signature : <code>void VR_IVRSettings_Sync(intptr_t, EVRSettingsError*)</code><br>
+	 * Original signature : <code>bool VR_IVRSettings_Sync(intptr_t, bool, EVRSettingsError*)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRSettings_Sync(java.nio.IntBuffer, java.nio.IntBuffer)} and {@link #VR_IVRSettings_Sync(com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference)} instead
 	 */
 	@Deprecated 
-	public static native void VR_IVRSettings_Sync(IntByReference instancePtr, IntByReference peError);
+	public static native byte VR_IVRSettings_Sync(IntByReference instancePtr, byte bForce, IntByReference peError);
 	/** Original signature : <code>void VR_IVRSettings_Sync(intptr_t, EVRSettingsError*)</code> */
-	public static native void VR_IVRSettings_Sync(Pointer instancePtr, IntBuffer peError);
+	public static native byte VR_IVRSettings_Sync(Pointer instancePtr, byte bForce, IntBuffer peError);
 	/**
 	 * Original signature : <code>bool VR_IVRSettings_GetBool(intptr_t, const char*, const char*, bool, EVRSettingsError*)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRSettings_GetBool(java.nio.IntBuffer, java.lang.String, java.lang.String, byte, java.nio.IntBuffer)} and {@link #VR_IVRSettings_GetBool(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.Pointer, byte, com.sun.jna.ptr.IntByReference)} instead
@@ -2216,6 +2252,14 @@ public class JOpenVRLibrary implements Library {
 	public static native void VR_IVRSettings_SetString(IntByReference instancePtr, Pointer pchSection, Pointer pchSettingsKey, Pointer pchValue, IntByReference peError);
 	/** Original signature : <code>void VR_IVRSettings_SetString(intptr_t, const char*, const char*, const char*, EVRSettingsError*)</code> */
 	public static native void VR_IVRSettings_SetString(Pointer instancePtr, String pchSection, String pchSettingsKey, String pchValue, IntBuffer peError);
+	/**
+	 * Original signature : <code>void VR_IVRSettings_RemoveSection(intptr_t, const char*, EVRSettingsError*)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRSettings_RemoveSection(java.nio.IntBuffer, java.lang.String, java.nio.IntBuffer)} and {@link #VR_IVRSettings_RemoveSection(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVRSettings_RemoveSection(IntByReference instancePtr, Pointer pchSection, IntByReference peError);
+	/** Original signature : <code>void VR_IVRSettings_RemoveSection(intptr_t, const char*, EVRSettingsError*)</code> */
+	public static native void VR_IVRSettings_RemoveSection(Pointer instancePtr, String pchSection, IntBuffer peError);
 	/**
 	 * Original signature : <code>bool VR_IVRTrackedCamera_HasCamera(intptr_t, TrackedDeviceIndex_t)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_HasCamera(java.nio.IntBuffer, int)} and {@link #VR_IVRTrackedCamera_HasCamera(com.sun.jna.ptr.IntByReference, int)} instead
@@ -2463,7 +2507,7 @@ public class JOpenVRLibrary implements Library {
 	public static String IVRChaperoneSetup_Version = "IVRChaperoneSetup_005";
 	public static String IVRCompositor_Version = "IVRCompositor_011";
 	public static String IVROverlay_Version = "IVROverlay_010";
-	public static String IVRRenderModels_Version = "IVRRenderModels_002";
+	public static String IVRRenderModels_Version = "IVRRenderModels_004";
 	public static String IVRControlPanel_Version = "IVRControlPanel_001";
 	public static String IVRNotifications_Version = "IVRNotifications_002";
 	public static String IVRSettings_Version = "IVRSettings_001";

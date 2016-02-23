@@ -13,7 +13,7 @@ varying vec2 texCoord;
 
 #define m_Scale 3.15
 #define m_Bias 0.025
-#define m_SampleRadius 0.325
+#define m_SampleRadius 200.0
 
 vec4 fetchNormalDepth(vec2 tc){
     vec4 nd;
@@ -65,24 +65,24 @@ void main(){
     vec3 position = getPosition(texCoord, firstdepth);
     vec3 normal = texture2D(m_Normals, texCoord).xyz * 2.0 - 1.0;
 
-    float rad = m_SampleRadius / max(16.0, position.z);
+    vec2 rad = m_SampleRadius * g_ResolutionInverse / max(16.0, position.z);
 
-    float ao = doAmbientOcclusion(texCoord + vec2( rad,  rad), position, normal);
-    ao += doAmbientOcclusion(texCoord + vec2(-rad,  rad), position, normal);
-    ao += doAmbientOcclusion(texCoord + vec2( rad, -rad), position, normal);
-    ao += doAmbientOcclusion(texCoord + vec2(-rad, -rad), position, normal);
+    float ao = doAmbientOcclusion(texCoord + vec2( rad.x,  rad.y), position, normal);
+    ao += doAmbientOcclusion(texCoord + vec2(-rad.x,  rad.y), position, normal);
+    ao += doAmbientOcclusion(texCoord + vec2( rad.x, -rad.y), position, normal);
+    ao += doAmbientOcclusion(texCoord + vec2(-rad.x, -rad.y), position, normal);
 
-    ao += doAmbientOcclusion(texCoord + vec2(-rad, 0.0), position, normal);
-    ao += doAmbientOcclusion(texCoord + vec2( rad, 0.0), position, normal);
-    ao += doAmbientOcclusion(texCoord + vec2(0.0, -rad), position, normal);
-    ao += doAmbientOcclusion(texCoord + vec2(0.0,  rad), position, normal);
+    ao += doAmbientOcclusion(texCoord + vec2(-rad.x, 0.0), position, normal);
+    ao += doAmbientOcclusion(texCoord + vec2( rad.x, 0.0), position, normal);
+    ao += doAmbientOcclusion(texCoord + vec2(0.0, -rad.y), position, normal);
+    ao += doAmbientOcclusion(texCoord + vec2(0.0,  rad.y), position, normal);
 
     rad *= 0.7;
 
-    ao += doAmbientOcclusion(texCoord + vec2(-rad, -rad), position, normal);
-    ao += doAmbientOcclusion(texCoord + vec2( rad, -rad), position, normal);
-    ao += doAmbientOcclusion(texCoord + vec2(-rad,  rad), position, normal);
-    ao += doAmbientOcclusion(texCoord + vec2( rad,  rad), position, normal);
+    ao += doAmbientOcclusion(texCoord + vec2(-rad.x, -rad.y), position, normal);
+    ao += doAmbientOcclusion(texCoord + vec2( rad.x, -rad.y), position, normal);
+    ao += doAmbientOcclusion(texCoord + vec2(-rad.x,  rad.y), position, normal);
+    ao += doAmbientOcclusion(texCoord + vec2( rad.x,  rad.y), position, normal);
 
     result = 1.0 - clamp(ao * 0.4, 0.0, 0.5 - position.z * m_Distance * 2.0);
 

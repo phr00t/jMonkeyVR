@@ -208,6 +208,8 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_SceneFocusGained = 403;
 		public static final int EVREventType_VREvent_SceneApplicationChanged = 404;
 		public static final int EVREventType_VREvent_SceneFocusChanged = 405;
+		public static final int EVREventType_VREvent_HideRenderModels = 410;
+		public static final int EVREventType_VREvent_ShowRenderModels = 411;
 		public static final int EVREventType_VREvent_OverlayShown = 500;
 		public static final int EVREventType_VREvent_OverlayHidden = 501;
 		public static final int EVREventType_VREvent_DashboardActivated = 502;
@@ -241,6 +243,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_FirmwareUpdateFinished = 1101;
 		public static final int EVREventType_VREvent_KeyboardClosed = 1200;
 		public static final int EVREventType_VREvent_KeyboardCharInput = 1201;
+		public static final int EVREventType_VREvent_KeyboardDone = 1202;
 		public static final int EVREventType_VREvent_ApplicationTransitionStarted = 1300;
 		public static final int EVREventType_VREvent_ApplicationTransitionAborted = 1301;
 		public static final int EVREventType_VREvent_ApplicationTransitionNewAppStarted = 1302;
@@ -397,6 +400,8 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVRInitError_VRInitError_IPC_CompositorInitFailed = 303;
 		public static final int EVRInitError_VRInitError_IPC_MutexInitFailed = 304;
 		public static final int EVRInitError_VRInitError_IPC_Failed = 305;
+		public static final int EVRInitError_VRInitError_Compositor_Failed = 400;
+		public static final int EVRInitError_VRInitError_Compositor_D3D11HardwareRequired = 401;
 		public static final int EVRInitError_VRInitError_VendorSpecific_UnableToConnectToOculusRuntime = 1000;
 		public static final int EVRInitError_VRInitError_VendorSpecific_HmdFound_But = 1100;
 		public static final int EVRInitError_VRInitError_VendorSpecific_HmdFound_CantOpenDevice = 1101;
@@ -485,6 +490,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVRCompositorError_VRCompositorError_TextureIsOnWrongDevice = 104;
 		public static final int EVRCompositorError_VRCompositorError_TextureUsesUnsupportedFormat = 105;
 		public static final int EVRCompositorError_VRCompositorError_SharedTexturesNotSupported = 106;
+		public static final int EVRCompositorError_VRCompositorError_IndexOutOfRange = 107;
 	};
 	/** enum values */
 	public static interface VROverlayInputMethod {
@@ -1033,6 +1039,14 @@ public class JOpenVRLibrary implements Library {
 	/** Original signature : <code>EVRApplicationError VR_IVRApplications_LaunchDashboardOverlay(intptr_t, const char*)</code> */
 	public static native int VR_IVRApplications_LaunchDashboardOverlay(Pointer instancePtr, String pchAppKey);
 	/**
+	 * Original signature : <code>bool VR_IVRApplications_CancelApplicationLaunch(intptr_t, const char*)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRApplications_CancelApplicationLaunch(java.nio.IntBuffer, java.lang.String)} and {@link #VR_IVRApplications_CancelApplicationLaunch(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer)} instead
+	 */
+	@Deprecated 
+	public static native byte VR_IVRApplications_CancelApplicationLaunch(IntByReference instancePtr, Pointer pchAppKey);
+	/** Original signature : <code>bool VR_IVRApplications_CancelApplicationLaunch(intptr_t, const char*)</code> */
+	public static native byte VR_IVRApplications_CancelApplicationLaunch(Pointer instancePtr, String pchAppKey);
+	/**
 	 * Original signature : <code>EVRApplicationError VR_IVRApplications_IdentifyApplication(intptr_t, uint32_t, const char*)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRApplications_IdentifyApplication(java.nio.IntBuffer, int, java.lang.String)} and {@link #VR_IVRApplications_IdentifyApplication(com.sun.jna.ptr.IntByReference, int, com.sun.jna.Pointer)} instead
 	 */
@@ -1377,6 +1391,14 @@ public class JOpenVRLibrary implements Library {
 	/** Original signature : <code>EVRCompositorError VR_IVRCompositor_GetLastPoses(intptr_t, TrackedDevicePose_t*, uint32_t, TrackedDevicePose_t*, uint32_t)</code> */
 	public static native int VR_IVRCompositor_GetLastPoses(Pointer instancePtr, TrackedDevicePose_t pRenderPoseArray, int unRenderPoseArrayCount, TrackedDevicePose_t pGamePoseArray, int unGamePoseArrayCount);
 	/**
+	 * Original signature : <code>EVRCompositorError VR_IVRCompositor_GetLastPoseForTrackedDeviceIndex(intptr_t, TrackedDeviceIndex_t, TrackedDevicePose_t*, TrackedDevicePose_t*)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRCompositor_GetLastPoseForTrackedDeviceIndex(java.nio.IntBuffer, int, jopenvr.TrackedDevicePose_t, jopenvr.TrackedDevicePose_t)} and {@link #VR_IVRCompositor_GetLastPoseForTrackedDeviceIndex(com.sun.jna.ptr.IntByReference, int, jopenvr.TrackedDevicePose_t, jopenvr.TrackedDevicePose_t)} instead
+	 */
+	@Deprecated 
+	public static native int VR_IVRCompositor_GetLastPoseForTrackedDeviceIndex(IntByReference instancePtr, int unDeviceIndex, TrackedDevicePose_t pOutputPose, TrackedDevicePose_t pOutputGamePose);
+	/** Original signature : <code>EVRCompositorError VR_IVRCompositor_GetLastPoseForTrackedDeviceIndex(intptr_t, TrackedDeviceIndex_t, TrackedDevicePose_t*, TrackedDevicePose_t*)</code> */
+	public static native int VR_IVRCompositor_GetLastPoseForTrackedDeviceIndex(Pointer instancePtr, int unDeviceIndex, TrackedDevicePose_t pOutputPose, TrackedDevicePose_t pOutputGamePose);
+	/**
 	 * Original signature : <code>EVRCompositorError VR_IVRCompositor_Submit(intptr_t, EVREye, Texture_t*, VRTextureBounds_t*, EVRSubmitFlags)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRCompositor_Submit(java.nio.IntBuffer, int, jopenvr.Texture_t, jopenvr.VRTextureBounds_t, int)} and {@link #VR_IVRCompositor_Submit(com.sun.jna.ptr.IntByReference, int, jopenvr.Texture_t, jopenvr.VRTextureBounds_t, int)} instead
 	 */
@@ -1536,6 +1558,14 @@ public class JOpenVRLibrary implements Library {
 	public static native void VR_IVRCompositor_CompositorDumpImages(IntByReference instancePtr);
 	/** Original signature : <code>void VR_IVRCompositor_CompositorDumpImages(intptr_t)</code> */
 	public static native void VR_IVRCompositor_CompositorDumpImages(Pointer instancePtr);
+	/**
+	 * Original signature : <code>bool VR_IVRCompositor_ShouldAppRenderWithLowResources(intptr_t)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRCompositor_ShouldAppRenderWithLowResources(java.nio.IntBuffer)} and {@link #VR_IVRCompositor_ShouldAppRenderWithLowResources(com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	public static native byte VR_IVRCompositor_ShouldAppRenderWithLowResources(IntByReference instancePtr);
+	/** Original signature : <code>bool VR_IVRCompositor_ShouldAppRenderWithLowResources(intptr_t)</code> */
+	public static native byte VR_IVRCompositor_ShouldAppRenderWithLowResources(Pointer instancePtr);
 	/**
 	 * Original signature : <code>EVROverlayError VR_IVROverlay_FindOverlay(intptr_t, const char*, VROverlayHandle_t*)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVROverlay_FindOverlay(java.nio.IntBuffer, java.lang.String, java.nio.LongBuffer)} and {@link #VR_IVROverlay_FindOverlay(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.LongByReference)} instead
@@ -2261,6 +2291,14 @@ public class JOpenVRLibrary implements Library {
 	/** Original signature : <code>void VR_IVRSettings_RemoveSection(intptr_t, const char*, EVRSettingsError*)</code> */
 	public static native void VR_IVRSettings_RemoveSection(Pointer instancePtr, String pchSection, IntBuffer peError);
 	/**
+	 * Original signature : <code>void VR_IVRSettings_RemoveKeyInSection(intptr_t, const char*, const char*, EVRSettingsError*)</code><br>
+	 * @deprecated use the safer methods {@link #VR_IVRSettings_RemoveKeyInSection(java.nio.IntBuffer, java.lang.String, java.lang.String, java.nio.IntBuffer)} and {@link #VR_IVRSettings_RemoveKeyInSection(com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.Pointer, com.sun.jna.ptr.IntByReference)} instead
+	 */
+	@Deprecated 
+	public static native void VR_IVRSettings_RemoveKeyInSection(IntByReference instancePtr, Pointer pchSection, Pointer pchSettingsKey, IntByReference peError);
+	/** Original signature : <code>void VR_IVRSettings_RemoveKeyInSection(intptr_t, const char*, const char*, EVRSettingsError*)</code> */
+	public static native void VR_IVRSettings_RemoveKeyInSection(Pointer instancePtr, String pchSection, String pchSettingsKey, IntBuffer peError);
+	/**
 	 * Original signature : <code>bool VR_IVRTrackedCamera_HasCamera(intptr_t, TrackedDeviceIndex_t)</code><br>
 	 * @deprecated use the safer methods {@link #VR_IVRTrackedCamera_HasCamera(java.nio.IntBuffer, int)} and {@link #VR_IVRTrackedCamera_HasCamera(com.sun.jna.ptr.IntByReference, int)} instead
 	 */
@@ -2458,14 +2496,14 @@ public class JOpenVRLibrary implements Library {
 	 * @deprecated use the safer methods {@link #VR_Init(java.nio.IntBuffer, int)} and {@link #VR_Init(com.sun.jna.ptr.IntByReference, int)} instead
 	 */
 	@Deprecated 
-	public static native Pointer VR_Init(IntByReference peError, int eType);
+	public static native Pointer VR_InitInternal(IntByReference peError, int eType);
 	/**
 	 * Global entry points<br>
 	 * Original signature : <code>intptr_t VR_Init(EVRInitError*, EVRApplicationType)</code>
 	 */
-	public static native Pointer VR_Init(IntBuffer peError, int eType);
+	public static native Pointer VR_InitInternal(IntBuffer peError, int eType);
 	/** Original signature : <code>void VR_Shutdown()</code> */
-	public static native void VR_Shutdown();
+	public static native void VR_ShutdownInternal();
 	/** Original signature : <code>bool VR_IsHmdPresent()</code> */
 	public static native byte VR_IsHmdPresent();
 	/** Original signature : <code>char* VR_GetStringForHmdError(EVRInitError)</code> */
@@ -2483,11 +2521,59 @@ public class JOpenVRLibrary implements Library {
 	public static native Pointer VR_GetVRInitErrorAsSymbol(int error);
 	/** Original signature : <code>char* VR_GetVRInitErrorAsEnglishDescription(EVRInitError)</code> */
 	public static native Pointer VR_GetVRInitErrorAsEnglishDescription(int error);
+	public static class IVROverlay extends PointerType {
+		public IVROverlay(Pointer address) {
+			super(address);
+		}
+		public IVROverlay() {
+			super();
+		}
+	};
+	public static class IVRRenderModels extends PointerType {
+		public IVRRenderModels(Pointer address) {
+			super(address);
+		}
+		public IVRRenderModels() {
+			super();
+		}
+	};
+	public static class IVRSettings extends PointerType {
+		public IVRSettings(Pointer address) {
+			super(address);
+		}
+		public IVRSettings() {
+			super();
+		}
+	};
+	public static class IVRChaperone extends PointerType {
+		public IVRChaperone(Pointer address) {
+			super(address);
+		}
+		public IVRChaperone() {
+			super();
+		}
+	};
+	public static class IVRChaperoneSetup extends PointerType {
+		public IVRChaperoneSetup(Pointer address) {
+			super(address);
+		}
+		public IVRChaperoneSetup() {
+			super();
+		}
+	};
 	public static class VREvent_t extends PointerType {
 		public VREvent_t(Pointer address) {
 			super(address);
 		}
 		public VREvent_t() {
+			super();
+		}
+	};
+	public static class IVRApplications extends PointerType {
+		public IVRApplications(Pointer address) {
+			super(address);
+		}
+		public IVRApplications() {
 			super();
 		}
 	};
@@ -2500,12 +2586,29 @@ public class JOpenVRLibrary implements Library {
 		}
 	};
 	
+	public static class IVRSystem extends PointerType {
+		public IVRSystem(Pointer address) {
+			super(address);
+		}
+		public IVRSystem() {
+			super();
+		}
+	};
+	public static class IVRExtendedDisplay extends PointerType {
+		public IVRExtendedDisplay(Pointer address) {
+			super(address);
+		}
+		public IVRExtendedDisplay() {
+			super();
+		}
+	};
+
 	public static String IVRSystem_Version = "IVRSystem_011";
-	public static String IVRApplications_Version = "IVRApplications_003";
+	public static String IVRApplications_Version = "IVRApplications_004";
 	public static String IVRExtendedDisplay_Version = "IVRExtendedDisplay_001";
 	public static String IVRChaperone_Version = "IVRChaperone_003";
 	public static String IVRChaperoneSetup_Version = "IVRChaperoneSetup_005";
-	public static String IVRCompositor_Version = "IVRCompositor_011";
+	public static String IVRCompositor_Version = "IVRCompositor_012";
 	public static String IVROverlay_Version = "IVROverlay_010";
 	public static String IVRRenderModels_Version = "IVRRenderModels_004";
 	public static String IVRControlPanel_Version = "IVRControlPanel_001";

@@ -96,7 +96,12 @@ public class OpenVR {
     
     public boolean initialize() {
         hmdErrorStore = IntBuffer.allocate(1);
-        vrsystem = JOpenVRLibrary.VR_Init(hmdErrorStore, JOpenVRLibrary.EVRApplicationType.EVRApplicationType_VRApplication_Scene);
+        vrsystem = null;
+        JOpenVRLibrary.VR_InitInternal(hmdErrorStore, JOpenVRLibrary.EVRApplicationType.EVRApplicationType_VRApplication_Scene);
+        if( hmdErrorStore.get(0) == 0 ) {
+            // ok, try and get the vrsystem pointer..
+            vrsystem = JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRSystem_Version, hmdErrorStore);
+        }
         if( vrsystem == null || hmdErrorStore.get(0) != 0 ) {
             Pointer errstr = JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0));
             System.out.println("OpenVR Initialize Result: " + errstr.getString(0));
@@ -114,7 +119,6 @@ public class OpenVR {
             poseMatrices = new Matrix4f[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
             for(int i=0;i<poseMatrices.length;i++) poseMatrices[i] = new Matrix4f();
 
-            vsyncToPhotons = JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
             timePerFrame = 1.0 / hmdDisplayFrequency.get(0);
             
             // disable all this stuff which kills performance
@@ -138,24 +142,30 @@ public class OpenVR {
         }
     }
     
-    public boolean initOpenVRCompositor() {
-        vrCompositor = JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRCompositor_Version, hmdErrorStore);
-        if(vrCompositor != null && hmdErrorStore.get(0) == 0){                
-            System.out.println("OpenVR Compositor initialized OK.");
-            if( VRApplication.isSeatedExperience() ) {
-                JOpenVRLibrary.VR_IVRCompositor_SetTrackingSpace(vrCompositor, JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseSeated);
+    public boolean initOpenVRCompositor(boolean set) {
+        if( set && vrsystem != null ) {
+            vrCompositor = JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRCompositor_Version, hmdErrorStore);
+            if(vrCompositor != null && hmdErrorStore.get(0) == 0){                
+                System.out.println("OpenVR Compositor initialized OK.");
+                if( VRApplication.isSeatedExperience() ) {
+                    JOpenVRLibrary.VR_IVRCompositor_SetTrackingSpace(vrCompositor, JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseSeated);
+                } else {
+                    JOpenVRLibrary.VR_IVRCompositor_SetTrackingSpace(vrCompositor, JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseStanding);                
+                }
             } else {
-                JOpenVRLibrary.VR_IVRCompositor_SetTrackingSpace(vrCompositor, JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseStanding);                
+                System.out.println("OpenVR Compositor error: " + JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0)).getString(0));
+                vrCompositor = null;
             }
-            return true;
-        } else {
-            System.out.println("OpenVR Compositor error: " + JOpenVRLibrary.VR_GetStringForHmdError(hmdErrorStore.get(0)).getString(0));
-            return false;
         }
+        if( vrCompositor == null ) {
+            System.out.println("Skipping VR Compositor...");
+            vsyncToPhotons = JOpenVRLibrary.VR_IVRSystem_GetFloatTrackedDeviceProperty(vrsystem, JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
+        }
+        return vrCompositor != null;
     }
 
     public void destroy() {
-        JOpenVRLibrary.VR_Shutdown();
+        JOpenVRLibrary.VR_ShutdownInternal();
     }
 
     public boolean isInitialized() {

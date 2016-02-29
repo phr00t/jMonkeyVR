@@ -268,6 +268,11 @@ public abstract class VRApplication extends Application {
                         BufferedReader br = new BufferedReader(new FileReader(resfile));
                         settings.setWidth(Integer.parseInt(br.readLine()));
                         settings.setHeight(Integer.parseInt(br.readLine()));
+                        try {
+                            settings.setFullscreen(br.readLine().toLowerCase(Locale.ENGLISH).contains("full"));
+                        } catch(Exception e) {
+                            settings.setFullscreen(false);
+                        }
                         br.close();
                     } catch(Exception e) {
                         settings.setWidth(1280);
@@ -276,9 +281,9 @@ public abstract class VRApplication extends Application {
                 } else {
                     settings.setWidth(1280);
                     settings.setHeight(720);
+                    settings.setFullscreen(false);
                 }
                 settings.setResizable(false);
-                settings.setFullscreen(false);
             }
             settings.setSwapBuffers(true);
         } else {
@@ -592,11 +597,7 @@ public abstract class VRApplication extends Application {
         cam.setFrustumNear(fNear);
         dummyCam = cam.clone();
         if( isInVR() ) {
-            if( compositorAllowed() == false || OpenVR.getVRSystemInstance() == null ) {
-                System.out.println("Skipping SteamVR compositor!");
-            } else {
-                VRhardware.initOpenVRCompositor();
-            }
+            VRhardware.initOpenVRCompositor(compositorAllowed());
             VRviewmanager = new OpenVRViewManager(this);
             VRviewmanager.setResolutionMultiplier(resMult);
             inputManager.addListener(new VRListener(), new String[]{RESET_HMD, MIRRORING});

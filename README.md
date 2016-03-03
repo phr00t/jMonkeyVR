@@ -11,6 +11,8 @@ See <a href="https://github.com/phr00t/jmonkeyengine-virtual-reality/blob/master
 
 <b>Adding OpenVR support to your application:</b>
 
+(0) Use jme3-lwjgl3 in your project, not jme3-lwjgl (needs GLFW in LWJGL 3).
+
 (1) Add the latest jna-x.x.x & JMonkeyVR.jar to the project.
 
 (2) Instead of extending SimpleApplication/BaseApplication for your Main class, extend VRApplication. This class will handle starting your application in VR mode if VR hardware is detected, or normal mode otherwise. If you want to configure a few things, use the preconfigureVRApp function as follows.

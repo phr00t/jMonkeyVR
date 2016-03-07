@@ -1,4 +1,6 @@
 // import the following for VR instancing
+#define VERTEX_SHADER
+#import "Common/ShaderLib/GLSLCompat.glsllib"
 #import "jmevr/shaders/InstanceVR.glsllib"
 
 in vec3 inPosition;

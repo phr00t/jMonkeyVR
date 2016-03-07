@@ -1,3 +1,4 @@
+#define FRAGMENT_SHADER
 #import "Common/ShaderLib/GLSLCompat.glsllib"
 
 uniform sampler2D m_ColorMap;

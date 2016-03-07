@@ -1,5 +1,4 @@
 package jopenvr;
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import java.util.Arrays;
@@ -10,15 +9,15 @@ import java.util.List;
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
 public class VREvent_Reserved_t extends Structure {
-	public NativeLong reserved0;
-	public NativeLong reserved1;
+	public long reserved0;
+	public long reserved1;
 	public VREvent_Reserved_t() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
 		return Arrays.asList("reserved0", "reserved1");
 	}
-	public VREvent_Reserved_t(NativeLong reserved0, NativeLong reserved1) {
+	public VREvent_Reserved_t(long reserved0, long reserved1) {
 		super();
 		this.reserved0 = reserved0;
 		this.reserved1 = reserved1;

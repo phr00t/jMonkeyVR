@@ -205,7 +205,7 @@ public class VRInput {
     public static void _updateConnectedControllers() {
         controllerCount = 0;
         for(int i=0;i<JOpenVRLibrary.k_unMaxTrackedDeviceCount;i++) {
-            if( JOpenVRLibrary.VR_IVRSystem_GetTrackedDeviceClass(OpenVR.getVRSystemInstance(), i) == JOpenVRLibrary.ETrackedDeviceClass.ETrackedDeviceClass_TrackedDeviceClass_Controller ) {
+            if( OpenVR.getVRSystem().GetTrackedDeviceClass.apply(i) == JOpenVRLibrary.ETrackedDeviceClass.ETrackedDeviceClass_TrackedDeviceClass_Controller ) {
                 controllerIndex[controllerCount] = i;
                 controllerCount++;
             }
@@ -218,7 +218,7 @@ public class VRInput {
     public static void _updateControllerStates() {
         for(int i=0;i<controllerCount;i++) {
             int index = controllerIndex[i];
-            JOpenVRLibrary.VR_IVRSystem_GetControllerState(OpenVR.getVRSystemInstance(), index, cStates[index]);
+            OpenVR.getVRSystem().GetControllerState.apply(index, cStates[index]);
             cStates[index].readField("ulButtonPressed");
             cStates[index].readField("rAxis");
             needsNewVelocity[index] = true;
@@ -237,7 +237,7 @@ public class VRInput {
     }
     
     public static boolean doWeHaveInputFocus() {
-        return JOpenVRLibrary.VR_IVRSystem_IsInputFocusCapturedByAnotherProcess(OpenVR.getVRSystemInstance()) == 0;       
+        return OpenVR.getVRSystem().IsInputFocusCapturedByAnotherProcess.apply() == 0;       
     }
     
     public static boolean isInputDeviceTracking(int index) {
@@ -299,8 +299,7 @@ public class VRInput {
     public static void triggerHapticPulse(int controllerIndex, float seconds) {
         if( VRApplication.isInVR() == false || VRInput.isInputDeviceTracking(controllerIndex) == false ) return;
         // apparently only axis ID of 0 works
-        JOpenVRLibrary.VR_IVRSystem_TriggerHapticPulse(OpenVR.getVRSystemInstance(),
-                                                       VRInput.controllerIndex[controllerIndex],
-                                                       0, (short)Math.round(3f * seconds / 1e-3f));
+        OpenVR.getVRSystem().TriggerHapticPulse.apply(VRInput.controllerIndex[controllerIndex],
+                                                      0, (short)Math.round(3f * seconds / 1e-3f));
     }
 }

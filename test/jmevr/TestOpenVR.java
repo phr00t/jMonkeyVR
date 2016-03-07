@@ -209,7 +209,7 @@ public class TestOpenVR extends VRApplication {
                         moveBackwards = false;
                     }
                 } else if( name.equals("dumpImages") ) {
-                    JOpenVRLibrary.VR_IVRCompositor_CompositorDumpImages(OpenVR.getVRCompositorInstance());
+                    OpenVR.getCompositor().CompositorDumpImages.apply();
                 }else if(name.equals("left")){
                     if(keyPressed){
                         rotateLeft = true;

@@ -369,12 +369,11 @@ public abstract class VRApplication extends Application {
      */
     public static void setSeatedExperience(boolean isSeated) {
         seated = isSeated;
-        Pointer vrCompositor = OpenVR.getVRCompositorInstance();
-        if( vrCompositor == null ) return;
+        if( OpenVR.getCompositor() == null ) return;
         if( seated ) {
-            JOpenVRLibrary.VR_IVRCompositor_SetTrackingSpace(vrCompositor, JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseSeated);
+            OpenVR.getCompositor().SetTrackingSpace.apply(JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseSeated);
         } else {
-            JOpenVRLibrary.VR_IVRCompositor_SetTrackingSpace(vrCompositor, JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseStanding);                
+            OpenVR.getCompositor().SetTrackingSpace.apply(JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseStanding);                
         }        
     }
     

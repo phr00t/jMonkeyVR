@@ -21,6 +21,7 @@ public class CameraVideoStreamFrame_t extends Structure {
 	public int m_nISPFrameTimeStamp;
 	public int m_nISPReferenceTimeStamp;
 	public int m_nSyncCounter;
+	public int m_nCamSyncEvents;
 	public int m_nExposureTime;
 	public int m_nBufferIndex;
 	public int m_nBufferCount;
@@ -44,7 +45,7 @@ public class CameraVideoStreamFrame_t extends Structure {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("m_nStreamFormat", "m_nWidth", "m_nHeight", "m_nImageDataSize", "m_nFrameSequence", "m_nISPFrameTimeStamp", "m_nISPReferenceTimeStamp", "m_nSyncCounter", "m_nExposureTime", "m_nBufferIndex", "m_nBufferCount", "m_flFrameElapsedTime", "m_flFrameCaptureTime", "m_nFrameCaptureTicks", "m_bPoseIsValid", "m_matDeviceToAbsoluteTracking", "m_Pad", "m_pImageData");
+		return Arrays.asList("m_nStreamFormat", "m_nWidth", "m_nHeight", "m_nImageDataSize", "m_nFrameSequence", "m_nISPFrameTimeStamp", "m_nISPReferenceTimeStamp", "m_nSyncCounter", "m_nCamSyncEvents", "m_nExposureTime", "m_nBufferIndex", "m_nBufferCount", "m_flFrameElapsedTime", "m_flFrameCaptureTime", "m_nFrameCaptureTicks", "m_bPoseIsValid", "m_matDeviceToAbsoluteTracking", "m_Pad", "m_pImageData");
 	}
 	public CameraVideoStreamFrame_t(Pointer peer) {
 		super(peer);

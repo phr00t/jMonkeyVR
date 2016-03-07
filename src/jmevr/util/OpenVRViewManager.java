@@ -134,7 +134,7 @@ public class OpenVRViewManager {
     
     public void sendTextures() {
         if( isInVR() ) {
-            if( OpenVR.getVRCompositorInstance() != null ) {
+            if( OpenVR.getCompositor() != null ) {
                 // using the compositor...
                 int errl = 0, errr = 0;
                 if( useCustomDistortion || VRApplication.isInstanceVRRendering() ) {
@@ -144,8 +144,8 @@ public class OpenVRViewManager {
                     } else {
                         int submitFlag = useCustomDistortion?JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_LensDistortionAlreadyApplied:
                                                              JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default;
-                        errr = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Right, texTypeLeft, texBoundsRight, submitFlag);
-                        errl = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texTypeLeft, texBoundsLeft, submitFlag);
+                        errr = OpenVR.getCompositor().Submit.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Right, texTypeLeft, texBoundsRight, submitFlag);
+                        errl = OpenVR.getCompositor().Submit.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Left, texTypeLeft, texBoundsLeft, submitFlag);
                     }
                 } else if( texTypeLeft.handle == -1 || texTypeRight.handle == -1 ||
                            texTypeLeft.handle != getLeftTexId() || texTypeRight.handle != getRightTexId() ) {
@@ -154,9 +154,9 @@ public class OpenVRViewManager {
                     texTypeRight.handle = getRightTexId();
                     if( texTypeRight.handle != -1 ) texTypeRight.write();                    
                 } else {
-                    errl = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Left, texTypeLeft, null,
+                    errl = OpenVR.getCompositor().Submit.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Left, texTypeLeft, null,
                                                            JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default);
-                    errr = JOpenVRLibrary.VR_IVRCompositor_Submit(OpenVR.getVRCompositorInstance(), JOpenVRLibrary.EVREye.EVREye_Eye_Right, texTypeRight, null,
+                    errr = OpenVR.getCompositor().Submit.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Right, texTypeRight, null,
                                                            JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default);
                 }
                 if( errl != 0 ) System.out.println("Submit left compositor error: " + Integer.toString(errl));
@@ -254,7 +254,7 @@ public class OpenVRViewManager {
         app.getViewPort().detachScene(app.getGuiNode());
         
         // only setup distortion scene if compositor isn't running (or using custom mesh distortion option)
-        if( useCustomDistortion || OpenVR.getVRCompositorInstance() == null ) {
+        if( useCustomDistortion || OpenVR.getCompositor() == null ) {
             Node distortionScene = new Node();
             Material leftMat = new Material(app.getAssetManager(), "jmevr/shaders/OpenVR.j3md");
             leftMat.setTexture("Texture", leftEyeTex);
@@ -454,7 +454,7 @@ public class OpenVRViewManager {
         
     private void setupFinalFullTexture(Camera cam) {
         // if we are not using the VR Compositor, just keep outputting to the main viewport
-        if( OpenVR.getVRCompositorInstance() == null ) return;
+        if( OpenVR.getCompositor() == null ) return;
             
         // create offscreen framebuffer
         FrameBuffer offBuffer = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);

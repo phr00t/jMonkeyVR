@@ -11,16 +11,18 @@ import java.util.List;
 public class VREvent_Process_t extends Structure {
 	public int pid;
 	public int oldPid;
+	public byte bForced;
 	public VREvent_Process_t() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("pid", "oldPid");
+		return Arrays.asList("pid", "oldPid", "bForced");
 	}
-	public VREvent_Process_t(int pid, int oldPid) {
+	public VREvent_Process_t(int pid, int oldPid, byte bForced) {
 		super();
 		this.pid = pid;
 		this.oldPid = oldPid;
+		this.bForced = bForced;
 	}
 	public VREvent_Process_t(Pointer peer) {
 		super(peer);

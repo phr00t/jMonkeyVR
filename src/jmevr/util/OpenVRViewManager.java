@@ -199,8 +199,13 @@ public class OpenVRViewManager {
     private void prepareCameraSize(Camera cam, float xMult) {
         Vector2f size = new Vector2f();
         OpenVR vrhmd = VRApplication.getVRHardware();
-        
-        vrhmd.getRenderSize(size);
+
+        if( vrhmd == null ) {
+            size.x = 1280f;
+            size.y = 720f;
+        } else {
+            vrhmd.getRenderSize(size);
+        }
         
         if( size.x < app.getContext().getSettings().getWidth() ) {
             size.x = app.getContext().getSettings().getWidth();
@@ -288,19 +293,24 @@ public class OpenVRViewManager {
         }
         // grab the OpenVR handle
         OpenVR dev = VRApplication.getVRHardware();
-        // update the HMD's position & orientation
-        dev.updatePose();
-        dev.getPositionAndOrientation(hmdPos, hmdRot);
-        if( obs != null ) {
-            // update hmdPos based on obs rotation
-            finalRotation.set(objRot);
-            finalRotation.mult(hmdPos, hmdPos);
-            finalRotation.multLocal(hmdRot);
+        if( dev != null ) {
+            // update the HMD's position & orientation
+            dev.updatePose();
+            dev.getPositionAndOrientation(hmdPos, hmdRot);
+            if( obs != null ) {
+                // update hmdPos based on obs rotation
+                finalRotation.set(objRot);
+                finalRotation.mult(hmdPos, hmdPos);
+                finalRotation.multLocal(hmdRot);
+            } else {
+                finalRotation.set(hmdRot);
+            }
+            finalizeCamera(dev.getHMDVectorPoseLeftEye(), objPos, camLeft);
+            finalizeCamera(dev.getHMDVectorPoseRightEye(), objPos, camRight);
         } else {
-            finalRotation.set(hmdRot);
+            camLeft.setFrame(objPos, objRot);
+            camRight.setFrame(objPos, objRot);
         }
-        finalizeCamera(dev.getHMDVectorPoseLeftEye(), objPos, camLeft);
-        finalizeCamera(dev.getHMDVectorPoseRightEye(), objPos, camRight);
         
         if( VRApplication.hasTraditionalGUIOverlay() ) {
             // update the mouse?
@@ -413,19 +423,19 @@ public class OpenVRViewManager {
         camLeft.setFrustumPerspective(VRApplication.DEFAULT_FOV, VRApplication.DEFAULT_ASPECT, fNear, fFar);      
                 
         prepareCameraSize(camLeft, 1f);
-        camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));
+        if( VRApplication.getVRHardware() != null ) camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));
         //org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB);
         
         if( VRApplication.isInstanceVRRendering() == false ) {
             viewPortLeft = setupViewBuffers(camLeft, LEFT_VIEW_NAME);
             camRight = camLeft.clone();
-            camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
+            if( VRApplication.getVRHardware() != null ) camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
             viewPortRight = setupViewBuffers(camRight, RIGHT_VIEW_NAME);
         } else {
             viewPortLeft = app.getViewPort();
             viewPortLeft.attachScene(VRApplication.getMainVRApp().getRootNode());
             camRight = camLeft.clone();
-            camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
+            if( VRApplication.getVRHardware() != null ) camRight.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionRightEye(camRight));
             
             org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_CLIP_DISTANCE0);
             RenderManager._VRInstancing_RightCamProjection = camRight.getViewProjectionMatrix();
@@ -435,9 +445,11 @@ public class OpenVRViewManager {
         // setup gui
         VRGuiManager.setupGui(camLeft, camRight, viewPortLeft, viewPortRight);
         
-        // call these to cache the results internally
-        VRApplication.getVRHardware().getHMDMatrixPoseLeftEye();
-        VRApplication.getVRHardware().getHMDMatrixPoseRightEye();
+        if( VRApplication.getVRHardware() != null ) {
+            // call these to cache the results internally
+            VRApplication.getVRHardware().getHMDMatrixPoseLeftEye();
+            VRApplication.getVRHardware().getHMDMatrixPoseRightEye();
+        }
     }
     
     private ViewPort setupMirrorBuffers(Camera cam, Texture tex, boolean expand) {        

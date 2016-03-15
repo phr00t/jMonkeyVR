@@ -56,7 +56,6 @@ public abstract class VRApplication extends Application {
         SEATED_EXPERIENCE, NO_GUI, INSTANCE_VR_RENDERING
     }
     
-    private static int mirrorFrame;
     private static String OS;
     private static OpenVR VRhardware;    
     private static Camera dummyCam;
@@ -85,17 +84,6 @@ public abstract class VRApplication extends Application {
     
     public static float getOptimizationDistance() {
         return distanceOfOptimization;
-    }
-    
-    private class VRListener implements ActionListener{
-
-        public void onAction(String name, boolean isPressed, float tpf) {
-            if( isPressed ) {
-                if (name.equals(RESET_HMD)){
-                    resetSeatedPose();
-                }
-            }
-        }
     }
     
     /*
@@ -157,11 +145,13 @@ public abstract class VRApplication extends Application {
         // we are going to use OpenVR now, not the Oculus Rift
         // OpenVR does support the Rift
         OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-        VRSupportedOS = true; //!OS.contains("nux"); //for the moment, linux/unix is supported enough to run
+        VRSupportedOS = !OS.contains("nux"); //for the moment, linux/unix causes crashes
         compositorOS = OS.contains("indows");
         
-        VRhardware = new OpenVR();
-        if( VRSupportedOS && disableVR == false ) VRhardware.initialize();
+        if( VRSupportedOS && disableVR == false ) {
+            VRhardware = new OpenVR();
+            VRhardware.initialize();
+        }
     }
     
     /*
@@ -576,7 +566,7 @@ public abstract class VRApplication extends Application {
         cam.setFrustumNear(fNear);
         dummyCam = cam.clone();
         if( isInVR() ) {
-            VRhardware.initOpenVRCompositor(compositorAllowed());
+            if( VRhardware != null ) VRhardware.initOpenVRCompositor(compositorAllowed());
             VRviewmanager = new OpenVRViewManager(this);
             VRviewmanager.setResolutionMultiplier(resMult);
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));

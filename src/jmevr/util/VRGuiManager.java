@@ -65,7 +65,7 @@ public class VRGuiManager {
     
     public static Vector2f getCanvasSize() {
         if( screenSize == null ) {
-            if( VRApplication.isInVR() ) {
+            if( VRApplication.isInVR() && VRApplication.getVRHardware() != null ) {
                 screenSize = new Vector2f();
                 VRApplication.getVRHardware().getRenderSize(screenSize);
                 screenSize.multLocal(VRApplication.getVRViewManager().getResolutionMuliplier());

@@ -20,11 +20,6 @@ import com.jme3.scene.Spatial.CullHint;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
-import com.jme3.texture.FrameBuffer;
-import com.jme3.texture.Image;
-import com.jme3.texture.Texture;
-import com.jme3.texture.Texture2D;
-import com.sun.jna.Pointer;
 import java.awt.Cursor;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -45,7 +40,6 @@ import jmevr.util.OpenVRViewManager;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
 import jopenvr.JOpenVRLibrary;
-import static jopenvr.JOpenVRLibrary.VR_IsHmdPresent;
 import org.lwjgl.system.Platform;
 
 /**
@@ -58,17 +52,18 @@ public abstract class VRApplication extends Application {
     
     public static enum PRECONFIG_PARAMETER {
         USE_STEAMVR_COMPOSITOR, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
-        SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, DISABLE_SWAPBUFFERS_COMPLETELY, PREFER_OPENGL3, DISABLE_VR,
+        SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, ENABLE_MIRROR_WINDOW, PREFER_OPENGL3, DISABLE_VR,
         SEATED_EXPERIENCE, NO_GUI, INSTANCE_VR_RENDERING
     }
     
+    private static int mirrorFrame;
     private static String OS;
     private static OpenVR VRhardware;    
     private static Camera dummyCam;
     private static OpenVRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
-    private static boolean VRSupportedOS, forceVR, disableSwapBuffers, tryOpenGL3 = true, disableVR, seated, nogui, instanceVR;
+    private static boolean VRSupportedOS, forceVR, disableSwapBuffers = true, tryOpenGL3 = true, disableVR, seated, nogui, instanceVR;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     protected Node guiNode, rootNode;
@@ -79,7 +74,7 @@ public abstract class VRApplication extends Application {
     private static float distanceOfOptimization = 0f, resMult = 1f;
     
     private static boolean useCompositor = true, compositorOS;
-    private final String RESET_HMD = "ResetHMD", MIRRORING = "Mirror";
+    private final String RESET_HMD = "ResetHMD";
     
     // no longer using LwjglCanvas, and this sometimes broke the graphics settings
     /*static {
@@ -98,8 +93,6 @@ public abstract class VRApplication extends Application {
             if( isPressed ) {
                 if (name.equals(RESET_HMD)){
                     resetSeatedPose();
-                } else if( name.equals(MIRRORING) ) {
-                    VRApplication.setMirroring(!VRApplication.getMirroring());
                 }
             }
         }
@@ -342,10 +335,10 @@ public abstract class VRApplication extends Application {
             case INSTANCE_VR_RENDERING:
                 instanceVR = value;
                 break;
-            case DISABLE_SWAPBUFFERS_COMPLETELY:
+            case ENABLE_MIRROR_WINDOW:
                 if( VRApplication.useCompositor == false ) {
                     disableSwapBuffers = false;
-                } else disableSwapBuffers = value;
+                } else disableSwapBuffers = !value;
                 break;
             case PREFER_OPENGL3:
                 tryOpenGL3 = value;
@@ -524,19 +517,6 @@ public abstract class VRApplication extends Application {
         return mainApp;
     }
     
-    /*
-        mirror output to main screen (only works with SteamVR Compositor)
-    */
-    public static void setMirroring(boolean set) {
-        if( VRviewmanager == null ) return;
-        VRviewmanager.setMirroring(set);
-    }
-    
-    public static boolean getMirroring() {
-        if( VRviewmanager == null ) return false;
-        return VRviewmanager.getMirroring();
-    }
-        
     @Override
     public void update() {    
         super.update(); // makes sure to execute AppTasks
@@ -599,9 +579,7 @@ public abstract class VRApplication extends Application {
             VRhardware.initOpenVRCompositor(compositorAllowed());
             VRviewmanager = new OpenVRViewManager(this);
             VRviewmanager.setResolutionMultiplier(resMult);
-            inputManager.addListener(new VRListener(), new String[]{RESET_HMD, MIRRORING});
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));
-            inputManager.addMapping(MIRRORING, new KeyTrigger(KeyInput.KEY_F10));
             setLostFocusBehavior(LostFocusBehavior.Disabled);
         } else {
             viewPort.attachScene(rootNode);

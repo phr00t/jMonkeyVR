@@ -185,10 +185,10 @@ public class VR_IVRSystem_FnTable extends Structure {
 		long apply(int unDeviceIndex, int prop, IntBuffer pError);
 	};
 	public interface GetMatrix34TrackedDeviceProperty_callback extends Callback {
-		HmdMatrix34_t.ByValue apply(int unDeviceIndex, int prop, IntBuffer pError);
+		HmdMatrix34_t.ByValue apply(int unDeviceIndex, int prop, IntByReference pError);
 	};
 	public interface GetStringTrackedDeviceProperty_callback extends Callback {
-		int apply(int unDeviceIndex, int prop, Pointer pchValue, int unBufferSize, IntBuffer pError);
+		int apply(int unDeviceIndex, int prop, Pointer pchValue, int unBufferSize, IntByReference pError);
 	};
 	public interface GetPropErrorNameFromEnum_callback extends Callback {
 		Pointer apply(int error);

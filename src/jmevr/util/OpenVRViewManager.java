@@ -19,6 +19,8 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -27,6 +29,7 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
+import com.jme3.ui.Picture;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
 import jmevr.input.OpenVR;
@@ -49,9 +52,7 @@ public class OpenVRViewManager {
     private final VRTextureBounds_t texBoundsLeft = new VRTextureBounds_t(), texBoundsRight = new VRTextureBounds_t();
     private final Texture_t texTypeLeft = new Texture_t(), texTypeRight = new Texture_t();
     
-    private boolean mirrorEnabled;
     private static boolean useCustomDistortion;
-    private int mirrorFrame;
     private float heightAdjustment;
     
     private Texture2D leftEyeTex, rightEyeTex, dualEyeTex;
@@ -80,14 +81,6 @@ public class OpenVRViewManager {
     
     private int getLeftTexId() {
         return (int)leftEyeTex.getImage().getId();
-    }
-    
-    public void setMirroring(boolean set) {
-        mirrorEnabled = set;
-    }
-    
-    public boolean getMirroring() {
-        return mirrorEnabled;
     }
     
     public float getHeightAdjustment() {
@@ -161,15 +154,6 @@ public class OpenVRViewManager {
                 }
                 if( errl != 0 ) System.out.println("Submit left compositor error: " + Integer.toString(errl));
                 if( errr != 0 ) System.out.println("Submit right compositor error: " + Integer.toString(errr));
-                // mirroring?
-                if( mirrorEnabled && app.getContext().getSettings().isSwapBuffers() ) {
-                    // mirror once every 3 frames, to prioritize performance for the VR headset
-                    mirrorFrame = (mirrorFrame + 1) % 3;
-                    if( mirrorFrame == 0 ) {
-                        Renderer r = app.getRenderManager().getRenderer();
-                        r.copyFrameBuffer(viewPortLeft.getOutputFrameBuffer(), null, false);
-                    }
-                }
             }
         }                
     }
@@ -242,7 +226,10 @@ public class OpenVRViewManager {
         // no special scene to setup if we are doing instancing
         if( VRApplication.isInstanceVRRendering() ) {
             // distortion has to be done with compositor here... we want only one pass on our end!
-            useCustomDistortion = false;
+            useCustomDistortion = false;            
+            if( app.getContext().getSettings().isSwapBuffers() ) {
+                setupMirrorBuffers(app.getCamera(), dualEyeTex, true);
+            }       
             return;
         }
         
@@ -273,10 +260,11 @@ public class OpenVRViewManager {
             app.getViewPort().attachScene(distortionScene);
             
             if( useCustomDistortion ) setupFinalFullTexture(app.getViewPort().getCamera());
-        } else {
-            // don't clear between mirroring frames
-            app.getViewPort().setClearFlags(false, false, false);            
         }
+        
+        if( app.getContext().getSettings().isSwapBuffers() ) {
+            setupMirrorBuffers(app.getCamera(), leftEyeTex, false);
+        }       
     }
     
     //final & temp values for camera calculations
@@ -451,13 +439,34 @@ public class OpenVRViewManager {
         VRApplication.getVRHardware().getHMDMatrixPoseLeftEye();
         VRApplication.getVRHardware().getHMDMatrixPoseRightEye();
     }
-        
+    
+    private ViewPort setupMirrorBuffers(Camera cam, Texture tex, boolean expand) {        
+        Camera clonecam = cam.clone();
+        ViewPort viewPort = app.getRenderManager().createPostView("MirrorView", clonecam);
+        clonecam.setParallelProjection(true);
+        viewPort.setClearFlags(true, true, true);
+        viewPort.setBackgroundColor(ColorRGBA.Black);
+        Picture pic = new Picture("fullscene");
+        pic.setLocalTranslation(-0.75f, -0.5f, 0f);
+        if( expand ) {
+            pic.setLocalScale(3f, 1f, 1f);
+        } else {
+            pic.setLocalScale(1.5f, 1f, 1f);            
+        }
+        pic.setQueueBucket(Bucket.Opaque);
+        pic.setTexture(app.getAssetManager(), (Texture2D)tex, false);
+        pic.updateGeometricState();
+        viewPort.attachScene(pic);
+        viewPort.setOutputFrameBuffer(null);
+        return viewPort;
+    }
+    
     private void setupFinalFullTexture(Camera cam) {
         // if we are not using the VR Compositor, just keep outputting to the main viewport
         if( OpenVR.getCompositor() == null ) return;
             
         // create offscreen framebuffer
-        FrameBuffer offBuffer = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);
+        FrameBuffer out = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);
         //offBuffer.setSrgb(true);
 
         //setup framebuffer's texture
@@ -466,14 +475,13 @@ public class OpenVRViewManager {
         dualEyeTex.setMagFilter(Texture.MagFilter.Bilinear);
 
         //setup framebuffer to use texture
-        offBuffer.setDepthBuffer(Image.Format.Depth);
-        offBuffer.setColorTexture(dualEyeTex);        
+        out.setDepthBuffer(Image.Format.Depth);
+        out.setColorTexture(dualEyeTex);        
 
         ViewPort viewPort = this.app.getViewPort();
         viewPort.setClearFlags(true, true, true);
         viewPort.setBackgroundColor(ColorRGBA.Black);
-        //set viewport to render to offscreen framebuffer
-        viewPort.setOutputFrameBuffer(offBuffer);
+        viewPort.setOutputFrameBuffer(out);
     }
     
     private ViewPort setupViewBuffers(Camera cam, String viewName){

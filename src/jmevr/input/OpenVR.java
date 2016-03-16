@@ -164,7 +164,11 @@ public class OpenVR {
         }
         if( compositorFunctions == null ) {
             System.out.println("Skipping VR Compositor...");
-            vsyncToPhotons = vrsystemFunctions.GetFloatTrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
+            if( vrsystemFunctions != null ) {
+                vsyncToPhotons = vrsystemFunctions.GetFloatTrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_SecondsFromVsyncToPhotons_Float, hmdErrorStore);
+            } else {
+                vsyncToPhotons = 0f;
+            }
         }
         return compositorFunctions != null;
     }

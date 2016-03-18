@@ -14,6 +14,7 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.ui.Picture;
 import jmevr.app.VRApplication;
+import jmevr.input.VRInput;
 
 /**
  *
@@ -56,16 +57,21 @@ public class VRMouseManager {
         return temp2f;
     }
     
+    public static void centerMouse() {
+        // set mouse in center of the screen if newly added
+        VRInput.resetInputSinceLastCall();
+        AppSettings as = VRApplication.getMainVRApp().getContext().getSettings();
+        MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
+        if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).setCursorPosition(as.getWidth() / 2, as.getHeight() / 2);        
+    }
+    
     protected static void update(float tpf) {
         // if we are showing the cursor, add our picture as it
         VRApplication vrapp = VRApplication.getMainVRApp();
         if( vrapp.getInputManager().isCursorVisible() ) {
             if( mouseImage.getParent() == null ) {
-                VRApplication.getMainVRApp().getGuiNode().attachChild(mouseImage);
-                // set mouse in center of the screen if newly added
-                AppSettings as = VRApplication.getMainVRApp().getContext().getSettings();
-                MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
-                if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).setCursorPosition(as.getWidth() / 2, as.getHeight() / 2);
+                VRApplication.getMainVRApp().getGuiNode().attachChild(mouseImage);                
+                centerMouse();
             }
             Vector2f mousePos = getCursorPosition();
             mouseImage.setLocalTranslation(mousePos.x, mousePos.y - ySize, VRGuiManager.getGuiDistance() + 1f);

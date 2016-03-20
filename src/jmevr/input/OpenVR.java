@@ -365,6 +365,7 @@ public class OpenVR {
     }
     
     public Vector3f getSeatedToAbsolutePosition() {
+        if( VRApplication.isSeatedExperience() == false ) return Vector3f.ZERO;
         if( hmdSeatToStand == null ) {
             hmdSeatToStand = new Vector3f();
             HmdMatrix34_t mat = vrsystemFunctions.GetSeatedZeroPoseToStandingAbsoluteTrackingPose.apply();

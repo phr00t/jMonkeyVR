@@ -84,7 +84,7 @@ void main(){
     ao += doAmbientOcclusion(texCoord + vec2(-rad.x,  rad.y), position, normal);
     ao += doAmbientOcclusion(texCoord + vec2( rad.x,  rad.y), position, normal);
 
-    result = 1.0 - clamp(ao * 0.4, 0.0, 0.5 - position.z * m_Distance * 2.0);
+    result = 1.0 - clamp(ao * 0.4 - position.z * m_Distance * 2.5, 0.0, 0.6);
 
 #ifndef NO_OUTLINE
     // ok, done with ambient occlusion, do cartoon edge

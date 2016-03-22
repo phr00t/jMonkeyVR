@@ -41,6 +41,8 @@ MaterialDef Post Shadow {
         // is VR instancing?
         Matrix4 ViewProjectionMatrixInverseRight
         Vector4 ViewProjectionMatrixRow2Right
+
+        Boolean BackfaceShadows: true
     }
 
     Technique {
@@ -48,6 +50,7 @@ MaterialDef Post Shadow {
         FragmentShader GLSL150: jmevr/shaders/PostShadowFilter.frag
 
         WorldParameters {         
+            ResolutionInverse
         }
 
         Defines {
@@ -63,6 +66,7 @@ MaterialDef Post Shadow {
             //if no shadow map don't render shadows
             RENDER_SHADOWS : ShadowMap0
             INSTANCING : ViewProjectionMatrixInverseRight
+            BACKFACE_SHADOWS : BackfaceShadows
         }
       
     }
@@ -72,6 +76,7 @@ MaterialDef Post Shadow {
         FragmentShader GLSL100: Common/MatDefs/Shadow/PostShadowFilter.frag
 
         WorldParameters {         
+            ResolutionInverse
         }
 
         Defines {
@@ -83,6 +88,7 @@ MaterialDef Post Shadow {
             PSSM : Splits
             POINTLIGHT : LightViewProjectionMatrix5
             INSTANCING : ViewProjectionMatrixInverseRight
+            BACKFACE_SHADOWS : BackfaceShadows
         }
       
     }

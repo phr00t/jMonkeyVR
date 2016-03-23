@@ -59,7 +59,6 @@ public class VRMouseManager {
     
     public static void centerMouse() {
         // set mouse in center of the screen if newly added
-        VRInput.resetInputSinceLastCall();
         AppSettings as = VRApplication.getMainVRApp().getContext().getSettings();
         MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
         if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).setCursorPosition(as.getWidth() / 2, as.getHeight() / 2);        

@@ -242,7 +242,7 @@ public abstract class VRApplication extends Application {
                 // GLFW workaround on macs
                 settings.setSamples(1);
                 settings.setFrequency(defDev.getDisplayMode().getRefreshRate());
-                settings.setDepthBits(defDev.getDisplayMode().getBitDepth());
+                settings.setDepthBits(24);
                 settings.setVSync(true);
                 // try and read resolution from file in local dir
                 File resfile = new File("resolution.txt");
@@ -274,7 +274,7 @@ public abstract class VRApplication extends Application {
             settings.setSamples(1);
             settings.setWidth(xWin);
             settings.setHeight(yWin);
-            settings.setBitsPerPixel(32);     
+            settings.setBitsPerPixel(24);     
             settings.setFrameRate(0); // never sleep in main loop
             settings.setFrequency(OpenVR.getDisplayFrequency());
             settings.setFullscreen(false);

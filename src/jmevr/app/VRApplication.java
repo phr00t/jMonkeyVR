@@ -240,7 +240,6 @@ public abstract class VRApplication extends Application {
                 }            
             } else {
                 // GLFW workaround on macs
-                settings.setSamples(1);
                 settings.setFrequency(defDev.getDisplayMode().getRefreshRate());
                 settings.setDepthBits(24);
                 settings.setVSync(true);
@@ -271,7 +270,6 @@ public abstract class VRApplication extends Application {
             settings.setSwapBuffers(true);
         } else {
             // use basic mirroring window, skip settings window
-            settings.setSamples(1);
             settings.setWidth(xWin);
             settings.setHeight(yWin);
             settings.setBitsPerPixel(24);     
@@ -281,6 +279,9 @@ public abstract class VRApplication extends Application {
             settings.setVSync(false); // stop vsyncing on primary monitor!
             settings.setSwapBuffers(!disableSwapBuffers);
         }
+        
+        // disable multisampling, which is more likely to break things than be useful
+        settings.setSamples(1);
         
         // set opengl mode
         if( tryOpenGL3 ) {

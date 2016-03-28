@@ -5,7 +5,6 @@ import com.jme3.app.LostFocusBehavior;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppState;
 import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
@@ -53,7 +52,7 @@ public abstract class VRApplication extends Application {
     public static enum PRECONFIG_PARAMETER {
         USE_STEAMVR_COMPOSITOR, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
         SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, ENABLE_MIRROR_WINDOW, PREFER_OPENGL3, DISABLE_VR,
-        SEATED_EXPERIENCE, NO_GUI, INSTANCE_VR_RENDERING
+        SEATED_EXPERIENCE, NO_GUI, INSTANCE_VR_RENDERING, FORCE_DISABLE_MSAA
     }
     
     private static String OS;
@@ -62,7 +61,7 @@ public abstract class VRApplication extends Application {
     private static OpenVRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
-    private static boolean VRSupportedOS, forceVR, disableSwapBuffers = true, tryOpenGL3 = true, disableVR, seated, nogui, instanceVR;
+    private static boolean VRSupportedOS, forceVR, disableSwapBuffers = true, tryOpenGL3 = true, disableVR, seated, nogui, instanceVR, forceDisableMSAA;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     protected Node guiNode, rootNode;
@@ -278,10 +277,13 @@ public abstract class VRApplication extends Application {
             settings.setFullscreen(false);
             settings.setVSync(false); // stop vsyncing on primary monitor!
             settings.setSwapBuffers(!disableSwapBuffers);
+            settings.setTitle("Put Headset On Now: " + settings.getTitle());
         }
         
-        // disable multisampling, which is more likely to break things than be useful
-        settings.setSamples(1);
+        if( forceDisableMSAA ) {
+            // disable multisampling, which is more likely to break things than be useful
+            settings.setSamples(1);
+        }
         
         // set opengl mode
         if( tryOpenGL3 ) {
@@ -342,6 +344,9 @@ public abstract class VRApplication extends Application {
                 break;
             case SEATED_EXPERIENCE:
                 seated = value;
+                break;
+            case FORCE_DISABLE_MSAA:
+                forceDisableMSAA = value;
                 break;
         }
     }

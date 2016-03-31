@@ -398,7 +398,7 @@ public class OpenVR {
         if( vrsystemFunctions != null ) {      
             Pointer str = new Memory(128);
             vrsystemFunctions.GetStringTrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd,
-                                                                   JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_ManufacturerName_String,
+                                                                   JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_ModelNumber_String,
                                                                    str, 128, hmdErrorStore);
             switch( hmdErrorStore.get(0) ) {
                 case 0:

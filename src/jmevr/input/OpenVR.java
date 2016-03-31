@@ -33,7 +33,7 @@ import jopenvr.VR_IVRSystem_FnTable;
 public class OpenVR {
     
     public enum HMD_TYPE {
-        HTC_VIVE, OCULUS_RIFT, OSVR, FOVE, STARVR, OTHER, ERROR
+        HTC_VIVE, OCULUS_RIFT, OSVR, FOVE, STARVR, GAMEFACE, MORPHEUS, GEARVR, NULL, OTHER
     }
     
     private static VR_IVRCompositor_FnTable compositorFunctions;
@@ -396,31 +396,42 @@ public class OpenVR {
     
     public HMD_TYPE getType() {
         if( vrsystemFunctions != null ) {      
-            Pointer str = new Memory(128);
+            Pointer str1 = new Memory(128);
+            Pointer str2 = new Memory(128);
+            String completeName = "";
+            vrsystemFunctions.GetStringTrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd,
+                                                                   JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_ManufacturerName_String,
+                                                                   str1, 128, hmdErrorStore);
+            if( hmdErrorStore.get(0) == 0 ) completeName += str1.getString(0);
             vrsystemFunctions.GetStringTrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd,
                                                                    JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_ModelNumber_String,
-                                                                   str, 128, hmdErrorStore);
-            switch( hmdErrorStore.get(0) ) {
-                case 0:
-                    String val = str.getString(0).toLowerCase(Locale.ENGLISH).trim();
-                    if( val.contains("htc") || val.contains("vive") ) {
-                        return HMD_TYPE.HTC_VIVE;
-                    } else if( val.contains("oculus") || val.contains("rift") ) {
-                        return HMD_TYPE.OCULUS_RIFT;
-                    } else if( val.contains("osvr") ) {
-                        return HMD_TYPE.OSVR;
-                    } else if( val.contains("fove") ) {
-                        return HMD_TYPE.FOVE;
-                    } else if( val.contains("star") ) {
-                        return HMD_TYPE.STARVR;
-                    } else return HMD_TYPE.OTHER;
-                case JOpenVRLibrary.ETrackedPropertyError.ETrackedPropertyError_TrackedProp_ValueNotProvidedByDevice:
-                    return HMD_TYPE.OTHER;
-                default:
-                    return HMD_TYPE.ERROR;
+                                                                   str2, 128, hmdErrorStore);
+            if( hmdErrorStore.get(0) == 0 ) completeName += " " + str2.getString(0);
+            if( completeName.length() > 0 ) {
+                completeName = completeName.toLowerCase(Locale.ENGLISH).trim();
+                if( completeName.contains("htc") || completeName.contains("vive") ) {
+                    return HMD_TYPE.HTC_VIVE;
+                } else if( completeName.contains("osvr") ) {
+                    return HMD_TYPE.OSVR;
+                } else if( completeName.contains("oculus") || completeName.contains("rift") ||
+                           completeName.contains("dk1") || completeName.contains("dk2") || completeName.contains("cv1") ) {
+                    return HMD_TYPE.OCULUS_RIFT;
+                } else if( completeName.contains("fove") ) {
+                    return HMD_TYPE.FOVE;
+                } else if( completeName.contains("game") && completeName.contains("face") ) {
+                    return HMD_TYPE.GAMEFACE;
+                } else if( completeName.contains("morpheus") ) {
+                    return HMD_TYPE.MORPHEUS;
+                } else if( completeName.contains("gear") ) {
+                    return HMD_TYPE.GEARVR;
+                } else if( completeName.contains("star") ) {
+                    return HMD_TYPE.STARVR;
+                } else if( completeName.contains("null") ) {
+                    return HMD_TYPE.NULL;
+                }
             }
         }
-        return HMD_TYPE.ERROR;
+        return HMD_TYPE.OTHER;
     }
     
     public Matrix4f getHMDMatrixPoseRightEye(){

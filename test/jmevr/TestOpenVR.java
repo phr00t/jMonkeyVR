@@ -71,6 +71,11 @@ public class TestOpenVR extends VRApplication {
     @Override
     public void simpleInitApp() {        
         initTestScene();
+        
+        // print out what device we have
+        if( VRApplication.getVRHardware() != null ) {
+            System.out.println("Attached device: " + VRApplication.getVRHardware().getType());
+        }
     }
     
     private void initTestScene(){

@@ -10,10 +10,12 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import jmevr.app.VRApplication;
 import jmevr.util.OpenVRUtil;
@@ -29,6 +31,10 @@ import jopenvr.VR_IVRSystem_FnTable;
  * @author phr00t
  */
 public class OpenVR {
+    
+    public enum HMD_TYPE {
+        HTC_VIVE, OCULUS_RIFT, OSVR, FOVE, STARVR, OTHER, ERROR
+    }
     
     private static VR_IVRCompositor_FnTable compositorFunctions;
     private static VR_IVRSystem_FnTable vrsystemFunctions;
@@ -386,6 +392,35 @@ public class OpenVR {
             hmdPoseLeftEye = new Matrix4f();
             return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, hmdPoseLeftEye);
         }
+    }
+    
+    public HMD_TYPE getType() {
+        if( vrsystemFunctions != null ) {      
+            Pointer str = new Memory(128);
+            vrsystemFunctions.GetStringTrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd,
+                                                                   JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_ManufacturerName_String,
+                                                                   str, 128, hmdErrorStore);
+            switch( hmdErrorStore.get(0) ) {
+                case 0:
+                    String val = str.getString(0).toLowerCase(Locale.ENGLISH).trim();
+                    if( val.contains("htc") || val.contains("vive") ) {
+                        return HMD_TYPE.HTC_VIVE;
+                    } else if( val.contains("oculus") || val.contains("rift") ) {
+                        return HMD_TYPE.OCULUS_RIFT;
+                    } else if( val.contains("osvr") ) {
+                        return HMD_TYPE.OSVR;
+                    } else if( val.contains("fove") ) {
+                        return HMD_TYPE.FOVE;
+                    } else if( val.contains("star") ) {
+                        return HMD_TYPE.STARVR;
+                    } else return HMD_TYPE.OTHER;
+                case JOpenVRLibrary.ETrackedPropertyError.ETrackedPropertyError_TrackedProp_ValueNotProvidedByDevice:
+                    return HMD_TYPE.OTHER;
+                default:
+                    return HMD_TYPE.ERROR;
+            }
+        }
+        return HMD_TYPE.ERROR;
     }
     
     public Matrix4f getHMDMatrixPoseRightEye(){

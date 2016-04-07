@@ -10,6 +10,7 @@ VR Instancing Progress:
 
 package jmevr;
 
+import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -82,7 +83,7 @@ public class TestOpenVR extends VRApplication {
         observer = new Node("observer");
         
         Spatial sky = SkyFactory.createSky(
-                    assetManager, "Textures/Sky/Bright/spheremap.png", SkyFactory.EnvMapType.EquirectMap);
+                    getAssetManager(), "Textures/Sky/Bright/spheremap.png", SkyFactory.EnvMapType.EquirectMap);
         rootNode.attachChild(sky);
         
         Geometry box = new Geometry("", new Box(5,5,5));
@@ -121,7 +122,7 @@ public class TestOpenVR extends VRApplication {
         // gui element
         Vector2f guiCanvasSize = VRGuiManager.getCanvasSize();
         Picture test = new Picture("testpic");
-        test.setImage(assetManager, "Textures/crosshair.png", true);
+        test.setImage(getAssetManager(), "Textures/crosshair.png", true);
         test.setWidth(192f);
         test.setHeight(128f);
         test.setPosition(guiCanvasSize.x * 0.5f - 192f * 0.5f, guiCanvasSize.y * 0.5f - 128f * 0.5f);
@@ -156,7 +157,7 @@ public class TestOpenVR extends VRApplication {
         initInputs();
         
         // use magic VR mouse cusor (same usage as non-VR mouse cursor)
-        inputManager.setCursorVisible(true);
+        getInputManager().setCursorVisible(true);
       
         // filter test (can be added here like this)
         // but we are going to save them for the F key during runtime
@@ -169,6 +170,7 @@ public class TestOpenVR extends VRApplication {
     }
 
      private void initInputs() {
+        InputManager inputManager = getInputManager();
         inputManager.addMapping("toggle", new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping("incShift", new KeyTrigger(KeyInput.KEY_Q));
         inputManager.addMapping("decShift", new KeyTrigger(KeyInput.KEY_E));
@@ -188,9 +190,9 @@ public class TestOpenVR extends VRApplication {
                 }else if(name.equals("filter") && keyPressed){
                     // adding filters in realtime
                     CartoonSSAO cartfilt = new CartoonSSAO();
-                    FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+                    FilterPostProcessor fpp = new FilterPostProcessor(getAssetManager());
                     fpp.addFilter(cartfilt);
-                    viewPort.addProcessor(fpp);
+                    getViewPort().addProcessor(fpp);
                     // filters added to main viewport during runtime,
                     // move them into VR processing
                     // (won't do anything if not in VR mode)

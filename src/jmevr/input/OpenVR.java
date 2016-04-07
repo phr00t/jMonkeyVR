@@ -33,7 +33,7 @@ import jopenvr.VR_IVRSystem_FnTable;
 public class OpenVR {
     
     public enum HMD_TYPE {
-        HTC_VIVE, OCULUS_RIFT, OSVR, FOVE, STARVR, GAMEFACE, MORPHEUS, GEARVR, NULL, OTHER
+        HTC_VIVE, OCULUS_RIFT, OSVR, FOVE, STARVR, GAMEFACE, MORPHEUS, GEARVR, NULL, NONE, OTHER
     }
     
     private static VR_IVRCompositor_FnTable compositorFunctions;
@@ -430,7 +430,7 @@ public class OpenVR {
                     return HMD_TYPE.NULL;
                 }
             }
-        }
+        } else return HMD_TYPE.NONE;
         return HMD_TYPE.OTHER;
     }
     

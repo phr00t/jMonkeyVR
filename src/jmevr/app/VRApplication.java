@@ -1,16 +1,31 @@
 package jmevr.app;
 
+import com.jme3.app.AppTask;
 import com.jme3.app.Application;
+import com.jme3.app.LegacyApplication;
 import com.jme3.app.LostFocusBehavior;
+import com.jme3.app.ResetStatsState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppState;
+import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioContext;
+import com.jme3.audio.AudioRenderer;
+import com.jme3.audio.Listener;
+import com.jme3.input.InputManager;
+import com.jme3.input.JoyInput;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
+import com.jme3.input.TouchInput;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.profile.AppProfiler;
+import com.jme3.profile.AppStep;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Node;
@@ -19,6 +34,9 @@ import com.jme3.scene.Spatial.CullHint;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 import com.jme3.system.JmeSystem;
+import com.jme3.system.NanoTimer;
+import com.jme3.system.SystemListener;
+import com.jme3.system.Timer;
 import java.awt.Cursor;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -28,8 +46,13 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jmevr.input.OpenVR;
@@ -45,7 +68,9 @@ import org.lwjgl.system.Platform;
  *
  * @author reden
  */
-public abstract class VRApplication extends Application {
+public abstract class VRApplication implements Application, SystemListener {
+
+    private static final Logger logger = Logger.getLogger(LegacyApplication.class.getName());
 
     public static float DEFAULT_FOV = 108f, DEFAULT_ASPECT = 1f;
     
@@ -64,6 +89,29 @@ public abstract class VRApplication extends Application {
     private static boolean VRSupportedOS, forceVR, disableSwapBuffers = true, tryOpenGL3 = true, disableVR, seated, nogui, instanceVR, forceDisableMSAA;
     private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
+    // things taken from LegacyApplication
+    private AppStateManager stateManager;    
+    private Camera cam;    
+    private AppSettings settings;
+    private JmeContext context;    
+    private float speed = 1f;
+    private AudioRenderer audioRenderer;    
+    private LostFocusBehavior lostFocusBehavior = LostFocusBehavior.ThrottleOnLostFocus;
+    private final ConcurrentLinkedQueue<AppTask<?>> taskQueue = new ConcurrentLinkedQueue<AppTask<?>>();
+    private Timer timer = new NanoTimer();
+    private boolean paused = false, inputEnabled = true;
+    private InputManager inputManager;
+    private RenderManager renderManager;    
+    private ViewPort viewPort;
+    private ViewPort guiViewPort;
+    private AssetManager assetManager;
+    private Renderer renderer;
+    private Listener listener;
+    private MouseInput mouseInput;
+    private KeyInput keyInput;
+    private JoyInput joyInput;
+    private TouchInput touchInput;
+
     protected Node guiNode, rootNode;
     
     private float fFar = 1000f, fNear = 1f;
@@ -134,6 +182,8 @@ public abstract class VRApplication extends Application {
 
     public VRApplication() {
         super();
+        initStateManager();
+        
         rootNode = new Node("root");
         guiNode = new Node("guiNode");
         guiNode.setQueueBucket(Bucket.Gui);
@@ -162,8 +212,244 @@ public abstract class VRApplication extends Application {
         if( isInVR() && VRviewmanager != null && VRviewmanager.getCamLeft() != null ) {
             return dummyCam;
         }
-        return super.getCamera();
+        return cam;
     }
+
+    /**
+     * Starts the application in {@link Type#Display display} mode.
+     *
+     * @see #start(com.jme3.system.JmeContext.Type)
+     */
+    public void start(boolean waitFor){
+        start(JmeContext.Type.Display, waitFor);
+    }    
+
+    /**
+     * @return The {@link JmeContext display context} for the application
+     */
+    public JmeContext getContext(){
+        return context;
+    }
+
+    /**
+     * @return The {@link AssetManager asset manager} for this application.
+     */
+    public AssetManager getAssetManager(){
+        return assetManager;
+    }
+
+    /**
+     * @return the {@link InputManager input manager}.
+     */
+    public InputManager getInputManager(){
+        return inputManager;
+    }
+
+    /**
+     * @return the {@link AppStateManager app state manager}
+     */
+    public AppStateManager getStateManager() {
+        return stateManager;
+    }
+
+    /**
+     * @return the {@link RenderManager render manager}
+     */
+    public RenderManager getRenderManager() {
+        return renderManager;
+    }
+
+    /**
+     * @return The {@link Renderer renderer} for the application
+     */
+    public Renderer getRenderer(){
+        return renderer;
+    }
+
+    /**
+     * @return The {@link AudioRenderer audio renderer} for the application
+     */
+    public AudioRenderer getAudioRenderer() {
+        return audioRenderer;
+    }
+
+    /**
+     * @return The {@link Listener listener} object for audio
+     */
+    public Listener getListener() {
+        return listener;
+    }
+    
+    public Timer getTimer(){
+        return timer;
+    }    
+
+    /**
+     * Internal use only.
+     */
+    public void handleError(String errMsg, Throwable t){
+        // Print error to log.
+        logger.log(Level.SEVERE, errMsg, t);
+        // Display error message on screen if not in headless mode
+        if (context.getType() != JmeContext.Type.Headless) {
+            if (t != null) {
+                JmeSystem.showErrorDialog(errMsg + "\n" + t.getClass().getSimpleName() +
+                        (t.getMessage() != null ? ": " +  t.getMessage() : ""));
+            } else {
+                JmeSystem.showErrorDialog(errMsg);
+            }
+        }
+
+        stop(); // stop the application
+    }
+
+
+    /**
+     * Internal use only.
+     */
+    public void gainFocus(){
+        if (lostFocusBehavior != LostFocusBehavior.Disabled) {
+            if (lostFocusBehavior == LostFocusBehavior.PauseOnLostFocus) {
+                paused = false;
+            }
+            context.setAutoFlushFrames(true);
+            if (inputManager != null) {
+                inputManager.reset();
+            }
+        }
+    }
+    
+    /**
+     * Internal use only.
+     */
+    public void reshape(int w, int h){
+        if (renderManager != null) {
+            renderManager.notifyReshape(w, h);
+        }
+    }    
+
+    /**
+     * Internal use only.
+     */
+    public void loseFocus(){
+        if (lostFocusBehavior != LostFocusBehavior.Disabled){
+            if (lostFocusBehavior == LostFocusBehavior.PauseOnLostFocus) {
+                paused = true;
+            }
+            context.setAutoFlushFrames(false);
+        }
+    }
+
+    /**
+     * Internal use only.
+     */
+    public void requestClose(boolean esc){
+        context.destroy(false);
+    }
+    
+    /**
+     * Set the display settings to define the display created.
+     * <p>
+     * Examples of display parameters include display pixel width and height,
+     * color bit depth, z-buffer bits, anti-aliasing samples, and update frequency.
+     * If this method is called while the application is already running, then
+     * {@link #restart() } must be called to apply the settings to the display.
+     *
+     * @param settings The settings to set.
+     */
+    public void setSettings(AppSettings settings){
+        this.settings = settings;
+        if (context != null && settings.useInput() != inputEnabled){
+            // may need to create or destroy input based
+            // on settings change
+            inputEnabled = !inputEnabled;
+            if (inputEnabled){
+                initInput();
+            }else{
+                destroyInput();
+            }
+        }else{
+            inputEnabled = settings.useInput();
+        }
+    }    
+    
+    /**
+     * Sets the Timer implementation that will be used for calculating
+     * frame times.  By default, Application will use the Timer as returned
+     * by the current JmeContext implementation.
+     */
+    public void setTimer(Timer timer){
+        this.timer = timer;
+
+        if (timer != null) {
+            timer.reset();
+        }
+
+        if (renderManager != null) {
+            renderManager.setTimer(timer);
+        }
+    }
+    
+
+    /**
+     * Determine the application's behavior when unfocused.
+     *
+     * @return The lost focus behavior of the application.
+     */
+    public LostFocusBehavior getLostFocusBehavior() {
+        return lostFocusBehavior;
+    }
+
+    /**
+     * Change the application's behavior when unfocused.
+     *
+     * By default, the application will
+     * {@link LostFocusBehavior#ThrottleOnLostFocus throttle the update loop}
+     * so as to not take 100% CPU usage when it is not in focus, e.g.
+     * alt-tabbed, minimized, or obstructed by another window.
+     *
+     * @param lostFocusBehavior The new lost focus behavior to use.
+     *
+     * @see LostFocusBehavior
+     */
+    public void setLostFocusBehavior(LostFocusBehavior lostFocusBehavior) {
+        this.lostFocusBehavior = lostFocusBehavior;
+    }
+
+    /**
+     * Returns true if pause on lost focus is enabled, false otherwise.
+     *
+     * @return true if pause on lost focus is enabled
+     *
+     * @see #getLostFocusBehavior()
+     */
+    public boolean isPauseOnLostFocus() {
+        return getLostFocusBehavior() == LostFocusBehavior.PauseOnLostFocus;
+    }
+
+    /**
+     * Enable or disable pause on lost focus.
+     * <p>
+     * By default, pause on lost focus is enabled.
+     * If enabled, the application will stop updating
+     * when it loses focus or becomes inactive (e.g. alt-tab).
+     * For online or real-time applications, this might not be preferable,
+     * so this feature should be set to disabled. For other applications,
+     * it is best to keep it on so that CPU usage is not used when
+     * not necessary.
+     *
+     * @param pauseOnLostFocus True to enable pause on lost focus, false
+     * otherwise.
+     *
+     * @see #setLostFocusBehavior(com.jme3.app.LostFocusBehavior)
+     */
+    public void setPauseOnLostFocus(boolean pauseOnLostFocus) {
+        if (pauseOnLostFocus) {
+            setLostFocusBehavior(LostFocusBehavior.PauseOnLostFocus);
+        } else {
+            setLostFocusBehavior(LostFocusBehavior.Disabled);
+        }
+    }    
     
     @Override
     public void start() {
@@ -298,6 +584,27 @@ public abstract class VRApplication extends Application {
         // disable annoying warnings about GUI stuff being updated, which is normal behavior
         // for late GUI placement for VR purposes
         Logger.getLogger("com.jme3").setLevel(Level.SEVERE);        
+    }    
+    
+    /**
+     * Starts the application.
+     * Creating a rendering context and executing
+     * the main loop in a separate thread.
+     */
+    public void start(JmeContext.Type contextType, boolean waitFor){
+        if (context != null && context.isCreated()){
+            logger.warning("start() called when application already created!");
+            return;
+        }
+
+        if (settings == null){
+            settings = new AppSettings(true);
+        }
+
+        logger.log(Level.FINE, "Starting application: {0}", getClass().getName());
+        context = JmeSystem.newContext(settings, contextType);
+        context.setSystemListener(this);
+        context.create(waitFor);
     }    
     
     /*
@@ -512,10 +819,38 @@ public abstract class VRApplication extends Application {
     public static VRApplication getMainVRApp() {
         return mainApp;
     }
+
+    /**
+     * Runs tasks enqueued via {@link #enqueue(Callable)}
+     */
+    protected void runQueuedTasks() {
+	  AppTask<?> task;
+        while( (task = taskQueue.poll()) != null ) {
+            if (!task.isCancelled()) {
+                task.invoke();
+            }
+        }
+    }
     
     @Override
     public void update() {    
-        super.update(); // makes sure to execute AppTasks
+        // Make sure the audio renderer is available to callables
+        AudioContext.setAudioRenderer(audioRenderer);
+
+        runQueuedTasks();
+
+        if (speed != 0 && !paused) {
+
+            timer.update();
+
+            if (inputEnabled){
+                inputManager.update(timer.getTimePerFrame());
+            }
+
+            if (audioRenderer != null){
+                audioRenderer.update(timer.getTimePerFrame());
+            }
+        }
         
         if (speed == 0 || paused) {
             try {
@@ -565,9 +900,151 @@ public abstract class VRApplication extends Application {
         }
     }
 
+    private void initAssetManager(){
+        URL assetCfgUrl = null;
+
+        if (settings != null){
+            String assetCfg = settings.getString("AssetConfigURL");
+            if (assetCfg != null){
+                try {
+                    assetCfgUrl = new URL(assetCfg);
+                } catch (MalformedURLException ex) {
+                }
+                if (assetCfgUrl == null) {
+                    assetCfgUrl = LegacyApplication.class.getClassLoader().getResource(assetCfg);
+                    if (assetCfgUrl == null) {
+                        logger.log(Level.SEVERE, "Unable to access AssetConfigURL in asset config:{0}", assetCfg);
+                        return;
+                    }
+                }
+            }
+        }
+        if (assetCfgUrl == null) {
+            assetCfgUrl = JmeSystem.getPlatformAssetConfigURL();
+        }
+        if (assetManager == null){
+            assetManager = JmeSystem.newAssetManager(assetCfgUrl);
+        }
+    }
+    
+
+    private void initDisplay(){
+        // aquire important objects
+        // from the context
+        settings = context.getSettings();
+
+        // Only reset the timer if a user has not already provided one
+        if (timer == null) {
+            timer = context.getTimer();
+        }
+
+        renderer = context.getRenderer();
+    }
+
+    private void initAudio(){
+        if (settings.getAudioRenderer() != null && context.getType() != JmeContext.Type.Headless){
+            audioRenderer = JmeSystem.newAudioRenderer(settings);
+            audioRenderer.initialize();
+            AudioContext.setAudioRenderer(audioRenderer);
+
+            listener = new Listener();
+            audioRenderer.setListener(listener);
+        }
+    }
+
+    /**
+     * Creates the camera to use for rendering. Default values are perspective
+     * projection with 45° field of view, with near and far values 1 and 1000
+     * units respectively.
+     */
+    private void initCamera(){
+        cam = new Camera(settings.getWidth(), settings.getHeight());
+
+        cam.setFrustumPerspective(45f, (float)cam.getWidth() / cam.getHeight(), 1f, 1000f);
+        cam.setLocation(new Vector3f(0f, 0f, 10f));
+        cam.lookAt(new Vector3f(0f, 0f, 0f), Vector3f.UNIT_Y);
+
+        renderManager = new RenderManager(renderer);
+        //Remy - 09/14/2010 setted the timer in the renderManager
+        renderManager.setTimer(timer);
+
+        viewPort = renderManager.createMainView("Default", cam);
+        viewPort.setClearFlags(true, true, true);
+
+        // Create a new cam for the gui
+        Camera guiCam = new Camera(settings.getWidth(), settings.getHeight());
+        guiViewPort = renderManager.createPostView("Gui Default", guiCam);
+        guiViewPort.setClearFlags(false, false, false);
+    }
+
+    /**
+     * Initializes mouse and keyboard input. Also
+     * initializes joystick input if joysticks are enabled in the
+     * AppSettings.
+     */
+    private void initInput(){
+        mouseInput = context.getMouseInput();
+        if (mouseInput != null)
+            mouseInput.initialize();
+
+        keyInput = context.getKeyInput();
+        if (keyInput != null)
+            keyInput.initialize();
+
+        touchInput = context.getTouchInput();
+        if (touchInput != null)
+            touchInput.initialize();
+
+        if (!settings.getBoolean("DisableJoysticks")){
+            joyInput = context.getJoyInput();
+            if (joyInput != null)
+                joyInput.initialize();
+        }
+
+        inputManager = new InputManager(mouseInput, keyInput, joyInput, touchInput);
+    }
+
+    private void initStateManager(){
+        stateManager = new AppStateManager(this);
+
+        // Always register a ResetStatsState to make sure
+        // that the stats are cleared every frame
+        stateManager.attach(new ResetStatsState());
+    }    
+
+    /**
+     * Do not call manually.
+     * Callback from ContextListener.
+     * <p>
+     * Initializes the <code>Application</code>, by creating a display and
+     * default camera. If display settings are not specified, a default
+     * 640x480 display is created. Default values are used for the camera;
+     * perspective projection with 45° field of view, with near
+     * and far values 1 and 1000 units respectively.
+     */
+    private void initialize_internal(){
+        if (assetManager == null){
+            initAssetManager();
+        }
+
+        initDisplay();
+        initCamera();
+
+        if (inputEnabled){
+            initInput();
+        }
+        initAudio();
+
+        // update timer so that the next delta is not too large
+//        timer.update();
+        timer.reset();
+
+        // user code here..
+    }
+    
     @Override
     public void initialize() {
-        super.initialize();
+        initialize_internal();
         cam.setFrustumFar(fFar);
         cam.setFrustumNear(fNear);
         dummyCam = cam.clone();
@@ -596,15 +1073,36 @@ public abstract class VRApplication extends Application {
     
     public abstract void simpleInitApp();
     
-    @Override
     public void destroy() {
         if( VRhardware != null ) {
             VRhardware.destroy();
             VRhardware = null;
         }        
         disableVR = true;
-        super.destroy();
+        stateManager.cleanup();
+
+        destroyInput();
+        if (audioRenderer != null)
+            audioRenderer.cleanup();
+
+        timer.reset();
         Runtime.getRuntime().exit(0);
+    }
+    
+    protected void destroyInput(){
+        if (mouseInput != null)
+            mouseInput.destroy();
+
+        if (keyInput != null)
+            keyInput.destroy();
+
+        if (joyInput != null)
+            joyInput.destroy();
+
+        if (touchInput != null)
+            touchInput.destroy();
+
+        inputManager = null;
     }
     
     /*
@@ -613,5 +1111,119 @@ public abstract class VRApplication extends Application {
     public static void resetSeatedPose(){
         if( VRSupportedOS == false || isSeatedExperience() == false ) return;
         VRhardware.reset();
+    }
+    
+    /**
+     * @return The GUI viewport. Which is used for the on screen
+     * statistics and FPS.
+     */
+    @Override
+    public ViewPort getGuiViewPort() {
+        return guiViewPort;
+    }
+
+    @Override
+    public ViewPort getViewPort() {
+        return viewPort;
+    }
+    
+    /**
+     * Enqueues a task/callable object to execute in the jME3
+     * rendering thread.
+     * <p>
+     * Callables are executed right at the beginning of the main loop.
+     * They are executed even if the application is currently paused
+     * or out of focus.
+     *
+     * @param callable The callable to run in the main jME3 thread
+     */
+    @Override
+    public <V> Future<V> enqueue(Callable<V> callable) {
+        AppTask<V> task = new AppTask<V>(callable);
+        taskQueue.add(task);
+        return task;
+    }
+    
+    /**
+     * Enqueues a runnable object to execute in the jME3
+     * rendering thread.
+     * <p>
+     * Runnables are executed right at the beginning of the main loop.
+     * They are executed even if the application is currently paused
+     * or out of focus.
+     *
+     * @param runnable The runnable to run in the main jME3 thread
+     */
+    public void enqueue(Runnable runnable){
+        enqueue(new RunnableWrapper(runnable));
+    }
+
+    private class RunnableWrapper implements Callable{
+        private final Runnable runnable;
+
+        public RunnableWrapper(Runnable runnable){
+            this.runnable = runnable;
+        }
+
+        @Override
+        public Object call(){
+            runnable.run();
+            return null;
+        }
+
+    }    
+
+    /**
+     * Requests the context to close, shutting down the main loop
+     * and making necessary cleanup operations.
+     *
+     * Same as calling stop(false)
+     *
+     * @see #stop(boolean)
+     */
+    @Override
+    public void stop(){
+        stop(false);
+    }
+
+    /**
+     * Requests the context to close, shutting down the main loop
+     * and making necessary cleanup operations.
+     * After the application has stopped, it cannot be used anymore.
+     */
+    @Override
+    public void stop(boolean waitFor){
+        logger.log(Level.FINE, "Closing application: {0}", getClass().getName());
+        context.destroy(waitFor);
+    }
+
+    /**
+     * Restarts the context, applying any changed settings.
+     * <p>
+     * Changes to the {@link AppSettings} of this Application are not
+     * applied immediately; calling this method forces the context
+     * to restart, applying the new settings.
+     */
+    @Override
+    public void restart(){
+        context.setSettings(settings);
+        context.restart();
+    }
+
+    /**
+     * Sets an AppProfiler hook that will be called back for
+     * specific steps within a single update frame.  Value defaults
+     * to null.
+     */
+    
+    public void setAppProfiler(AppProfiler prof) {
+        return;
+    }
+
+    /**
+     * Returns the current AppProfiler hook, or null if none is set.
+     */
+    public AppProfiler getAppProfiler() {
+        return null;
     }
 }

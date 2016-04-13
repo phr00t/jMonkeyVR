@@ -77,6 +77,14 @@ public class VRGuiManager {
         return screenSize;
     }
     
+    private static final Vector2f ratio = new Vector2f();
+    public static Vector2f getCanvasToWindowRatio() {
+        Vector2f canvas = getCanvasSize();
+        ratio.x = canvas.x / VRApplication.getMainVRApp().getContext().getSettings().getWidth();
+        ratio.y = canvas.y / VRApplication.getMainVRApp().getContext().getSettings().getHeight();
+        return ratio;
+    }        
+    
     public static POSITIONING_MODE getPositioningMode() {
         return posMode;
     }    

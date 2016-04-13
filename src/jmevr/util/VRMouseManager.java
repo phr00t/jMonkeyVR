@@ -67,6 +67,12 @@ public class VRMouseManager {
             if( cursorPos.x < 0f ) cursorPos.x = 0f;
             if( cursorPos.y > maxsize.y ) cursorPos.y = maxsize.y;
             if( cursorPos.y < 0f ) cursorPos.y = 0f;
+            // update the mouse cursor too, so they stay in sync
+            MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
+            Vector2f winratio = VRGuiManager.getCanvasToWindowRatio();
+            lastCursorPos.x = cursorPos.x / winratio.x;
+            lastCursorPos.y = cursorPos.y / winratio.y;
+            if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).setCursorPosition((int)lastCursorPos.x, (int)lastCursorPos.y);
         }
     }
     

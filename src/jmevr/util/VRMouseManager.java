@@ -25,7 +25,7 @@ import jmevr.input.VRInput.VRINPUT_TYPE;
 public class VRMouseManager {
  
     private static Picture mouseImage;
-    private static final Vector2f cursorPos = new Vector2f(), lastCursorPos = new Vector2f();
+    private static final Vector2f cursorPos = new Vector2f();
     private static float ySize;
     
     protected static void init() {
@@ -67,12 +67,6 @@ public class VRMouseManager {
             if( cursorPos.x < 0f ) cursorPos.x = 0f;
             if( cursorPos.y > maxsize.y ) cursorPos.y = maxsize.y;
             if( cursorPos.y < 0f ) cursorPos.y = 0f;
-            // update the mouse cursor too, so they stay in sync
-            MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
-            Vector2f winratio = VRGuiManager.getCanvasToWindowRatio();
-            lastCursorPos.x = cursorPos.x / winratio.x;
-            lastCursorPos.y = cursorPos.y / winratio.y;
-            if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).setCursorPosition((int)lastCursorPos.x, (int)lastCursorPos.y);
         }
     }
     
@@ -92,9 +86,7 @@ public class VRMouseManager {
         }
         AppSettings as = VRApplication.getMainVRApp().getContext().getSettings();
         MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
-        lastCursorPos.x = as.getWidth() / 2f;
-        lastCursorPos.y = as.getHeight() / 2f;
-        if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).setCursorPosition((int)lastCursorPos.x, (int)lastCursorPos.y);
+        if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).setCursorPosition((int)(as.getWidth() / 2f), (int)(as.getHeight() / 2f));
     }
     
     protected static void update(float tpf) {
@@ -106,13 +98,13 @@ public class VRMouseManager {
                 centerMouse();
             }
             // handle mouse movements, which may be in addition to (or exclusive from) tracked movement
-            Vector2f mousePos = VRApplication.getMainVRApp().getInputManager().getCursorPosition();
-            Vector2f winratio = VRGuiManager.getCanvasToWindowRatio();
-            float xdif = mousePos.x - lastCursorPos.x;
-            float ydif = mousePos.y - lastCursorPos.y;
-            cursorPos.x += xdif * winratio.x; cursorPos.y += ydif * winratio.y;
-            lastCursorPos.x = mousePos.x;
-            lastCursorPos.y = mousePos.y;
+            MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
+            if( mi instanceof GlfwMouseInput ) {
+                Vector2f winratio = VRGuiManager.getCanvasToWindowRatio();
+                cursorPos.x += ((GlfwMouseInput)mi).getLastDeltaX() * winratio.x;
+                cursorPos.y += ((GlfwMouseInput)mi).getLastDeltaY() * winratio.y;
+                ((GlfwMouseInput)mi).clearDeltas();
+            }
             // ok, update the cursor graphic position
             Vector2f currentPos = getCursorPosition();
             mouseImage.setLocalTranslation(currentPos.x, currentPos.y - ySize, VRGuiManager.getGuiDistance() + 1f);

@@ -38,6 +38,7 @@ import jmevr.input.VRInput.VRINPUT_TYPE;
 import jmevr.post.CartoonSSAO;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
+import jmevr.util.VRMouseManager;
 
 /**
  *
@@ -255,13 +256,13 @@ public class TestOpenVR extends VRApplication {
      public void simpleUpdate(float tpf){
         
          //FPS test
-         tpfAdder += tpf;
+         /*tpfAdder += tpf;
          tpfCount++;
          if( tpfCount == 60 ) {
              System.out.println("FPS: " + Float.toString(1f / (tpfAdder / tpfCount)));
              tpfCount = 0;
              tpfAdder = 0f;
-         }
+         }*/
          
          prod+=tpf;
          distance = 100f * FastMath.sin(prod);
@@ -279,6 +280,9 @@ public class TestOpenVR extends VRApplication {
          if(rotateRight){
              observer.rotate(0, -0.75f*tpf, 0);
          }
+         
+         // use the analog control on the first tracked controller to push around the mouse
+         VRMouseManager.updateAnalogAsMouse(0, null, null, null, tpf);
          
          handleWandInput(0, leftHand);
          handleWandInput(1, rightHand);

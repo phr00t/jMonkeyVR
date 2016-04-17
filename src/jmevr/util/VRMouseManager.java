@@ -26,7 +26,7 @@ public class VRMouseManager {
  
     private static Picture mouseImage;
     private static final Vector2f cursorPos = new Vector2f();
-    private static float ySize;
+    private static float ySize, sensitivity = 4f, acceleration = 2.4f;
     
     protected static void init() {
         // load default mouseimage
@@ -36,6 +36,19 @@ public class VRMouseManager {
         MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
         if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).hideActiveCursor();
         centerMouse();
+    }
+    
+    public static void setSpeed(float sensitivity, float acceleration) {
+        VRMouseManager.sensitivity = sensitivity;
+        VRMouseManager.acceleration = acceleration;
+    }
+    
+    public static float getSpeedSensitivity() {
+        return sensitivity;
+    }
+    
+    public static float getSpeedAcceleration() {
+        return acceleration;
     }
     
     public static void setImage(String texture) {
@@ -53,13 +66,17 @@ public class VRMouseManager {
         // got a tracked controller to use as the "mouse"
         if( VRApplication.isInVR() == false || VRInput.isInputDeviceTracking(inputIndex) == false ) return;
         Vector2f tpDelta = VRInput.getAxisDeltaSinceLastCall(inputIndex, VRINPUT_TYPE.ViveTouchpadAxis);
+        float Xamount = (float)Math.pow(Math.abs(tpDelta.x) * sensitivity, acceleration);
+        float Yamount = (float)Math.pow(Math.abs(tpDelta.y) * sensitivity, acceleration);
+        if( tpDelta.x < 0f ) Xamount = -Xamount;
+        if( tpDelta.y < 0f ) Yamount = -Yamount;
         if( mouseListener != null ) {
-            if( tpDelta.x != 0f && mouseXName != null ) mouseListener.onAnalog(mouseXName, tpDelta.x * 0.666f, tpf);
-            if( tpDelta.y != 0f && mouseYName != null ) mouseListener.onAnalog(mouseYName, tpDelta.y * 0.666f, tpf);            
+            if( tpDelta.x != 0f && mouseXName != null ) mouseListener.onAnalog(mouseXName, Xamount * 0.2f, tpf);
+            if( tpDelta.y != 0f && mouseYName != null ) mouseListener.onAnalog(mouseYName, Yamount * 0.2f, tpf);            
         }
         if( VRApplication.getMainVRApp().getInputManager().isCursorVisible() ) {
-            float mvX = tpDelta.x * 133f;
-            float mvY = tpDelta.y * 133f;
+            float mvX = Xamount * 133f;
+            float mvY = Yamount * 133f;
             cursorPos.x -= mvX;
             cursorPos.y -= mvY;
             Vector2f maxsize = VRGuiManager.getCanvasSize();

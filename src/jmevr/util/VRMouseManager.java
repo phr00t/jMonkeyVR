@@ -25,6 +25,7 @@ import jmevr.input.VRInput.VRINPUT_TYPE;
 public class VRMouseManager {
  
     private static Picture mouseImage;
+    private static int recentCenterCount = 0;
     private static final Vector2f cursorPos = new Vector2f();
     private static float ySize, sensitivity = 4f, acceleration = 2.4f;
     
@@ -97,13 +98,14 @@ public class VRMouseManager {
     public static void centerMouse() {
         // set mouse in center of the screen if newly added
         Vector2f size = VRGuiManager.getCanvasSize();
+        MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
+        AppSettings as = VRApplication.getMainVRApp().getContext().getSettings();
+        if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).setCursorPosition((int)(as.getWidth() / 2f), (int)(as.getHeight() / 2f));
         if( VRApplication.isInVR() ) {
             cursorPos.x = size.x / 2f;
             cursorPos.y = size.y / 2f;
+            recentCenterCount = 2;
         }
-        AppSettings as = VRApplication.getMainVRApp().getContext().getSettings();
-        MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
-        if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).setCursorPosition((int)(as.getWidth() / 2f), (int)(as.getHeight() / 2f));
     }
     
     protected static void update(float tpf) {
@@ -117,9 +119,11 @@ public class VRMouseManager {
             // handle mouse movements, which may be in addition to (or exclusive from) tracked movement
             MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
             if( mi instanceof GlfwMouseInput ) {
-                Vector2f winratio = VRGuiManager.getCanvasToWindowRatio();
-                cursorPos.x += ((GlfwMouseInput)mi).getLastDeltaX() * winratio.x;
-                cursorPos.y += ((GlfwMouseInput)mi).getLastDeltaY() * winratio.y;
+                if( recentCenterCount <= 0 ) {
+                    Vector2f winratio = VRGuiManager.getCanvasToWindowRatio();
+                    cursorPos.x += ((GlfwMouseInput)mi).getLastDeltaX() * winratio.x;
+                    cursorPos.y += ((GlfwMouseInput)mi).getLastDeltaY() * winratio.y;
+                } else recentCenterCount--;
                 ((GlfwMouseInput)mi).clearDeltas();
             }
             // ok, update the cursor graphic position
@@ -128,6 +132,5 @@ public class VRMouseManager {
         } else if( mouseImage.getParent() != null ) {
             mouseImage.removeFromParent();
         }
-    }
-    
+    }    
 }

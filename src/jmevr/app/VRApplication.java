@@ -194,7 +194,7 @@ public abstract class VRApplication implements Application, SystemListener {
         // we are going to use OpenVR now, not the Oculus Rift
         // OpenVR does support the Rift
         OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-        VRSupportedOS = !OS.contains("nux"); //for the moment, linux/unix causes crashes
+        VRSupportedOS = !OS.contains("nux") && System.getProperty("sun.arch.data.model").equalsIgnoreCase("64"); //for the moment, linux/unix causes crashes, 64-bit only
         compositorOS = OS.contains("indows");
         
         if( VRSupportedOS && disableVR == false ) {

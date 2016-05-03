@@ -199,7 +199,9 @@ public abstract class VRApplication implements Application, SystemListener {
         
         if( VRSupportedOS && disableVR == false ) {
             VRhardware = new OpenVR();
-            VRhardware.initialize();
+            if( VRhardware.initialize() ) {
+                setPauseOnLostFocus(false);
+            }
         }
     }
     

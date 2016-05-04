@@ -77,7 +77,7 @@ public class VRInput {
     private static final Quaternion tempq = new Quaternion();
     
     public enum VRINPUT_TYPE {
-        ViveTriggerAxis(0), ViveTouchpadAxis(1), ViveGripButton(2), ViveThumbButton(3);
+        ViveTriggerAxis(0), ViveTouchpadAxis(1), ViveGripButton(2), ViveMenuButton(3);
         
         private final int value;
         private VRINPUT_TYPE(int value) {
@@ -96,7 +96,7 @@ public class VRInput {
                 return false;
             case ViveGripButton:
                 return (cs.ulButtonPressed & 4) != 0;
-            case ViveThumbButton:
+            case ViveMenuButton:
                 return (cs.ulButtonPressed & 2) != 0;                
             case ViveTouchpadAxis:
                 return (cs.ulButtonPressed & 4294967296l) != 0;

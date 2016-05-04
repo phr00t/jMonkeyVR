@@ -32,7 +32,7 @@ import jmevr.app.VRApplication;
 public class VRGuiManager {
     
     public enum POSITIONING_MODE {
-        MANUAL, AUTO_CAM_ALL, AUTO_CAM_ALL_SKIP_PITCH, AUTO_OBSERVER_POS_CAM_ROTATION, AUTO_OBSERVER_ALL
+        MANUAL, AUTO_CAM_ALL, AUTO_CAM_ALL_SKIP_PITCH, AUTO_OBSERVER_POS_CAM_ROTATION, AUTO_OBSERVER_ALL, AUTO_OBSERVER_ALL_CAMHEIGHT
     }
     
     private static Camera camLeft, camRight;
@@ -140,17 +140,22 @@ public class VRGuiManager {
                 rotateScreenTo(camLeft.getRotation(), tpf);
                 break;
             case AUTO_OBSERVER_ALL:
+            case AUTO_OBSERVER_ALL_CAMHEIGHT:
                 obs = VRApplication.getObserver();
                 if( obs != null ) {
+                    Quaternion q;
                     if( obs instanceof Camera ) {
-                        Quaternion q = ((Camera)obs).getRotation();
-                        positionTo(((Camera)obs).getLocation(), q, tpf);
-                        rotateScreenTo(q, tpf);
+                        q = ((Camera)obs).getRotation();                        
+                        temppos.set(((Camera)obs).getLocation());
                     } else {
-                        Quaternion q = ((Spatial)obs).getWorldRotation();
-                        positionTo(((Spatial)obs).getWorldTranslation(), q, tpf);                        
-                        rotateScreenTo(q, tpf);
+                        q = ((Spatial)obs).getWorldRotation();
+                        temppos.set(((Spatial)obs).getWorldTranslation());
                     }
+                    if( posMode == POSITIONING_MODE.AUTO_OBSERVER_ALL_CAMHEIGHT ) {
+                        temppos.y = camLeft.getLocation().y;
+                    }
+                    positionTo(temppos, q, tpf);
+                    rotateScreenTo(q, tpf);
                 }                
                 break;
         }

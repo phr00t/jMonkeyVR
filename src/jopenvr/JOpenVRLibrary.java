@@ -633,7 +633,7 @@ public class JOpenVRLibrary implements Library {
 	public static String IVRExtendedDisplay_Version = "FnTable:IVRExtendedDisplay_001";
 	public static String IVRChaperone_Version = "FnTable:IVRChaperone_003";
 	public static String IVRChaperoneSetup_Version = "FnTable:IVRChaperoneSetup_005";
-	public static String IVRCompositor_Version = "FnTable:IVRCompositor_013";
+	public static String IVRCompositor_Version = "FnTable:IVRCompositor_014";
 	public static String IVROverlay_Version = "FnTable:IVROverlay_011";
 	public static String IVRRenderModels_Version = "FnTable:IVRRenderModels_005";
 	public static String IVRControlPanel_Version = "FnTable:IVRControlPanel_001";

@@ -1070,6 +1070,14 @@ public abstract class VRApplication implements Application, SystemListener {
         // any filters created, move them now
         if( VRviewmanager != null ) {
             VRviewmanager.moveScreenProcessingToEyes();
+            
+            // print out camera information
+            if( isInVR() ) {
+                System.out.println("<--- VR Initialization Information --->");
+                if( VRviewmanager.getCamLeft() != null ) System.out.println("camLeft: " + VRviewmanager.getCamLeft().toString());
+                if( VRviewmanager.getCamRight() != null ) System.out.println("camRight: " + VRviewmanager.getCamLeft().toString());
+                System.out.println("<--- ----------------------------- --->");
+            }
         }
     }
     

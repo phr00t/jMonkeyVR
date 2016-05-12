@@ -24,10 +24,20 @@ import jmevr.input.VRInput.VRINPUT_TYPE;
  */
 public class VRMouseManager {
  
+    private static final int AVERAGE_AMNT = 4;
+    private static int avgCounter;
+    
     private static Picture mouseImage;
     private static int recentCenterCount = 0;
     private static final Vector2f cursorPos = new Vector2f();
-    private static float ySize, sensitivity = 4f, acceleration = 2.4f;
+    private static float ySize, sensitivity = 8f, acceleration = 2f;
+    private static final float[] lastXmv = new float[AVERAGE_AMNT], lastYmv = new float[AVERAGE_AMNT];
+    
+    private static float avg(float[] arr) {
+        float amt = 0f;
+        for(float f : arr) amt += f;
+        return amt / arr.length;
+    }
     
     protected static void init() {
         // load default mouseimage
@@ -76,10 +86,11 @@ public class VRMouseManager {
             if( tpDelta.y != 0f && mouseYName != null ) mouseListener.onAnalog(mouseYName, Yamount * 0.2f, tpf);            
         }
         if( VRApplication.getMainVRApp().getInputManager().isCursorVisible() ) {
-            float mvX = Xamount * 133f;
-            float mvY = Yamount * 133f;
-            cursorPos.x -= mvX;
-            cursorPos.y -= mvY;
+            int index = (avgCounter+1) % AVERAGE_AMNT;
+            lastXmv[index] = Xamount * 133f;
+            lastYmv[index] = Yamount * 133f;
+            cursorPos.x -= avg(lastXmv);
+            cursorPos.y -= avg(lastYmv);
             Vector2f maxsize = VRGuiManager.getCanvasSize();
             if( cursorPos.x > maxsize.x ) cursorPos.x = maxsize.x;
             if( cursorPos.x < 0f ) cursorPos.x = 0f;

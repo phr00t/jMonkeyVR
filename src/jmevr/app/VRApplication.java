@@ -1075,7 +1075,7 @@ public abstract class VRApplication implements Application, SystemListener {
             if( isInVR() ) {
                 System.out.println("<--- VR Initialization Information --->");
                 if( VRviewmanager.getCamLeft() != null ) System.out.println("camLeft: " + VRviewmanager.getCamLeft().toString());
-                if( VRviewmanager.getCamRight() != null ) System.out.println("camRight: " + VRviewmanager.getCamLeft().toString());
+                if( VRviewmanager.getCamRight() != null ) System.out.println("camRight: " + VRviewmanager.getCamRight().toString());
                 System.out.println("<--- ----------------------------- --->");
             }
         }

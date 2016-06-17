@@ -2,9 +2,8 @@ package jopenvr;
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.ptr.LongByReference;
 import java.util.Arrays;
 import java.util.List;
 /**
@@ -13,131 +12,72 @@ import java.util.List;
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
 public class VR_IVRTrackedCamera_FnTable extends Structure {
+	/** C type : GetCameraErrorNameFromEnum_callback* */
+	public VR_IVRTrackedCamera_FnTable.GetCameraErrorNameFromEnum_callback GetCameraErrorNameFromEnum;
 	/** C type : HasCamera_callback* */
 	public VR_IVRTrackedCamera_FnTable.HasCamera_callback HasCamera;
-	/** C type : GetCameraFirmwareDescription_callback* */
-	public VR_IVRTrackedCamera_FnTable.GetCameraFirmwareDescription_callback GetCameraFirmwareDescription;
-	/** C type : GetCameraFrameDimensions_callback* */
-	public VR_IVRTrackedCamera_FnTable.GetCameraFrameDimensions_callback GetCameraFrameDimensions;
-	/** C type : SetCameraVideoStreamFormat_callback* */
-	public VR_IVRTrackedCamera_FnTable.SetCameraVideoStreamFormat_callback SetCameraVideoStreamFormat;
-	/** C type : GetCameraVideoStreamFormat_callback* */
-	public VR_IVRTrackedCamera_FnTable.GetCameraVideoStreamFormat_callback GetCameraVideoStreamFormat;
-	/** C type : EnableCameraForStreaming_callback* */
-	public VR_IVRTrackedCamera_FnTable.EnableCameraForStreaming_callback EnableCameraForStreaming;
-	/** C type : StartVideoStream_callback* */
-	public VR_IVRTrackedCamera_FnTable.StartVideoStream_callback StartVideoStream;
-	/** C type : StopVideoStream_callback* */
-	public VR_IVRTrackedCamera_FnTable.StopVideoStream_callback StopVideoStream;
-	/** C type : IsVideoStreamActive_callback* */
-	public VR_IVRTrackedCamera_FnTable.IsVideoStreamActive_callback IsVideoStreamActive;
-	/** C type : GetVideoStreamFrame_callback* */
-	public VR_IVRTrackedCamera_FnTable.GetVideoStreamFrame_callback GetVideoStreamFrame;
-	/** C type : ReleaseVideoStreamFrame_callback* */
-	public VR_IVRTrackedCamera_FnTable.ReleaseVideoStreamFrame_callback ReleaseVideoStreamFrame;
-	/** C type : SetAutoExposure_callback* */
-	public VR_IVRTrackedCamera_FnTable.SetAutoExposure_callback SetAutoExposure;
-	/** C type : PauseVideoStream_callback* */
-	public VR_IVRTrackedCamera_FnTable.PauseVideoStream_callback PauseVideoStream;
-	/** C type : ResumeVideoStream_callback* */
-	public VR_IVRTrackedCamera_FnTable.ResumeVideoStream_callback ResumeVideoStream;
-	/** C type : GetCameraDistortion_callback* */
-	public VR_IVRTrackedCamera_FnTable.GetCameraDistortion_callback GetCameraDistortion;
+	/** C type : GetCameraFrameSize_callback* */
+	public VR_IVRTrackedCamera_FnTable.GetCameraFrameSize_callback GetCameraFrameSize;
+	/** C type : GetCameraIntrinisics_callback* */
+	public VR_IVRTrackedCamera_FnTable.GetCameraIntrinisics_callback GetCameraIntrinisics;
 	/** C type : GetCameraProjection_callback* */
 	public VR_IVRTrackedCamera_FnTable.GetCameraProjection_callback GetCameraProjection;
-	/** C type : GetRecommendedCameraUndistortion_callback* */
-	public VR_IVRTrackedCamera_FnTable.GetRecommendedCameraUndistortion_callback GetRecommendedCameraUndistortion;
-	/** C type : SetCameraUndistortion_callback* */
-	public VR_IVRTrackedCamera_FnTable.SetCameraUndistortion_callback SetCameraUndistortion;
-	/** C type : RequestVideoServicesForTool_callback* */
-	public VR_IVRTrackedCamera_FnTable.RequestVideoServicesForTool_callback RequestVideoServicesForTool;
-	/** C type : ReleaseVideoServicesForTool_callback* */
-	public VR_IVRTrackedCamera_FnTable.ReleaseVideoServicesForTool_callback ReleaseVideoServicesForTool;
-	/** C type : GetVideoStreamFrameSharedTextureGL_callback* */
-	public VR_IVRTrackedCamera_FnTable.GetVideoStreamFrameSharedTextureGL_callback GetVideoStreamFrameSharedTextureGL;
-	/** C type : ReleaseVideoStreamFrameSharedTextureGL_callback* */
-	public VR_IVRTrackedCamera_FnTable.ReleaseVideoStreamFrameSharedTextureGL_callback ReleaseVideoStreamFrameSharedTextureGL;
-	/** C type : LockSharedTextureGL_callback* */
-	public VR_IVRTrackedCamera_FnTable.LockSharedTextureGL_callback LockSharedTextureGL;
-	/** C type : UnlockSharedTextureGL_callback* */
-	public VR_IVRTrackedCamera_FnTable.UnlockSharedTextureGL_callback UnlockSharedTextureGL;
+	/** C type : AcquireVideoStreamingService_callback* */
+	public VR_IVRTrackedCamera_FnTable.AcquireVideoStreamingService_callback AcquireVideoStreamingService;
+	/** C type : ReleaseVideoStreamingService_callback* */
+	public VR_IVRTrackedCamera_FnTable.ReleaseVideoStreamingService_callback ReleaseVideoStreamingService;
+	/** C type : GetVideoStreamFrameBuffer_callback* */
+	public VR_IVRTrackedCamera_FnTable.GetVideoStreamFrameBuffer_callback GetVideoStreamFrameBuffer;
+	public interface GetCameraErrorNameFromEnum_callback extends Callback {
+		Pointer apply(int eCameraError);
+	};
 	public interface HasCamera_callback extends Callback {
-		byte apply(int nDeviceIndex);
+		int apply(int nDeviceIndex, Pointer pHasCamera);
 	};
-	public interface GetCameraFirmwareDescription_callback extends Callback {
-		byte apply(int nDeviceIndex, Pointer pBuffer, int nBufferLen);
+	public interface GetCameraFrameSize_callback extends Callback {
+		int apply(int nDeviceIndex, int eFrameType, IntByReference pnWidth, IntByReference pnHeight, IntByReference pnFrameBufferSize);
 	};
-	public interface GetCameraFrameDimensions_callback extends Callback {
-		byte apply(int nDeviceIndex, int nVideoStreamFormat, IntByReference pWidth, IntByReference pHeight);
-	};
-	public interface SetCameraVideoStreamFormat_callback extends Callback {
-		byte apply(int nDeviceIndex, int nVideoStreamFormat);
-	};
-	public interface GetCameraVideoStreamFormat_callback extends Callback {
-		int apply(int nDeviceIndex);
-	};
-	public interface EnableCameraForStreaming_callback extends Callback {
-		byte apply(int nDeviceIndex, byte bEnable);
-	};
-	public interface StartVideoStream_callback extends Callback {
-		byte apply(int nDeviceIndex);
-	};
-	public interface StopVideoStream_callback extends Callback {
-		byte apply(int nDeviceIndex);
-	};
-	public interface IsVideoStreamActive_callback extends Callback {
-		byte apply(int nDeviceIndex, Pointer pbPaused, FloatByReference pflElapsedTime);
-	};
-	public interface GetVideoStreamFrame_callback extends Callback {
-		CameraVideoStreamFrame_t apply(int nDeviceIndex);
-	};
-	public interface ReleaseVideoStreamFrame_callback extends Callback {
-		byte apply(int nDeviceIndex, CameraVideoStreamFrame_t pFrameImage);
-	};
-	public interface SetAutoExposure_callback extends Callback {
-		byte apply(int nDeviceIndex, byte bEnable);
-	};
-	public interface PauseVideoStream_callback extends Callback {
-		byte apply(int nDeviceIndex);
-	};
-	public interface ResumeVideoStream_callback extends Callback {
-		byte apply(int nDeviceIndex);
-	};
-	public interface GetCameraDistortion_callback extends Callback {
-		byte apply(int nDeviceIndex, float flInputU, float flInputV, FloatByReference pflOutputU, FloatByReference pflOutputV);
+	public interface GetCameraIntrinisics_callback extends Callback {
+		int apply(int nDeviceIndex, int eFrameType, HmdVector2_t pFocalLength, HmdVector2_t pCenter);
 	};
 	public interface GetCameraProjection_callback extends Callback {
-		byte apply(int nDeviceIndex, float flWidthPixels, float flHeightPixels, float flZNear, float flZFar, HmdMatrix44_t pProjection);
+		int apply(int nDeviceIndex, int eFrameType, float flZNear, float flZFar, HmdMatrix44_t pProjection);
 	};
-	public interface GetRecommendedCameraUndistortion_callback extends Callback {
-		byte apply(int nDeviceIndex, IntByReference pUndistortionWidthPixels, IntByReference pUndistortionHeightPixels);
+	public interface AcquireVideoStreamingService_callback extends Callback {
+		int apply(int nDeviceIndex, LongByReference pHandle);
 	};
-	public interface SetCameraUndistortion_callback extends Callback {
-		byte apply(int nDeviceIndex, int nUndistortionWidthPixels, int nUndistortionHeightPixels);
+	public interface ReleaseVideoStreamingService_callback extends Callback {
+		int apply(long hTrackedCamera);
 	};
-	public interface RequestVideoServicesForTool_callback extends Callback {
-		void apply();
-	};
-	public interface ReleaseVideoServicesForTool_callback extends Callback {
-		void apply();
-	};
-	public interface GetVideoStreamFrameSharedTextureGL_callback extends Callback {
-		byte apply(byte bUndistorted, IntByReference pglTextureId, PointerByReference pglSharedTextureHandle);
-	};
-	public interface ReleaseVideoStreamFrameSharedTextureGL_callback extends Callback {
-		byte apply(int glTextureId, Pointer glSharedTextureHandle);
-	};
-	public interface LockSharedTextureGL_callback extends Callback {
-		void apply(Pointer glSharedTextureHandle, CameraVideoStreamFrame_t pFrameImage);
-	};
-	public interface UnlockSharedTextureGL_callback extends Callback {
-		void apply(Pointer glSharedTextureHandle);
+	public interface GetVideoStreamFrameBuffer_callback extends Callback {
+		int apply(long hTrackedCamera, int eFrameType, Pointer pFrameBuffer, int nFrameBufferSize, CameraVideoStreamFrameHeader_t pFrameHeader, int nFrameHeaderSize);
 	};
 	public VR_IVRTrackedCamera_FnTable() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("HasCamera", "GetCameraFirmwareDescription", "GetCameraFrameDimensions", "SetCameraVideoStreamFormat", "GetCameraVideoStreamFormat", "EnableCameraForStreaming", "StartVideoStream", "StopVideoStream", "IsVideoStreamActive", "GetVideoStreamFrame", "ReleaseVideoStreamFrame", "SetAutoExposure", "PauseVideoStream", "ResumeVideoStream", "GetCameraDistortion", "GetCameraProjection", "GetRecommendedCameraUndistortion", "SetCameraUndistortion", "RequestVideoServicesForTool", "ReleaseVideoServicesForTool", "GetVideoStreamFrameSharedTextureGL", "ReleaseVideoStreamFrameSharedTextureGL", "LockSharedTextureGL", "UnlockSharedTextureGL");
+		return Arrays.asList("GetCameraErrorNameFromEnum", "HasCamera", "GetCameraFrameSize", "GetCameraIntrinisics", "GetCameraProjection", "AcquireVideoStreamingService", "ReleaseVideoStreamingService", "GetVideoStreamFrameBuffer");
+	}
+	/**
+	 * @param GetCameraErrorNameFromEnum C type : GetCameraErrorNameFromEnum_callback*<br>
+	 * @param HasCamera C type : HasCamera_callback*<br>
+	 * @param GetCameraFrameSize C type : GetCameraFrameSize_callback*<br>
+	 * @param GetCameraIntrinisics C type : GetCameraIntrinisics_callback*<br>
+	 * @param GetCameraProjection C type : GetCameraProjection_callback*<br>
+	 * @param AcquireVideoStreamingService C type : AcquireVideoStreamingService_callback*<br>
+	 * @param ReleaseVideoStreamingService C type : ReleaseVideoStreamingService_callback*<br>
+	 * @param GetVideoStreamFrameBuffer C type : GetVideoStreamFrameBuffer_callback*
+	 */
+	public VR_IVRTrackedCamera_FnTable(VR_IVRTrackedCamera_FnTable.GetCameraErrorNameFromEnum_callback GetCameraErrorNameFromEnum, VR_IVRTrackedCamera_FnTable.HasCamera_callback HasCamera, VR_IVRTrackedCamera_FnTable.GetCameraFrameSize_callback GetCameraFrameSize, VR_IVRTrackedCamera_FnTable.GetCameraIntrinisics_callback GetCameraIntrinisics, VR_IVRTrackedCamera_FnTable.GetCameraProjection_callback GetCameraProjection, VR_IVRTrackedCamera_FnTable.AcquireVideoStreamingService_callback AcquireVideoStreamingService, VR_IVRTrackedCamera_FnTable.ReleaseVideoStreamingService_callback ReleaseVideoStreamingService, VR_IVRTrackedCamera_FnTable.GetVideoStreamFrameBuffer_callback GetVideoStreamFrameBuffer) {
+		super();
+		this.GetCameraErrorNameFromEnum = GetCameraErrorNameFromEnum;
+		this.HasCamera = HasCamera;
+		this.GetCameraFrameSize = GetCameraFrameSize;
+		this.GetCameraIntrinisics = GetCameraIntrinisics;
+		this.GetCameraProjection = GetCameraProjection;
+		this.AcquireVideoStreamingService = AcquireVideoStreamingService;
+		this.ReleaseVideoStreamingService = ReleaseVideoStreamingService;
+		this.GetVideoStreamFrameBuffer = GetVideoStreamFrameBuffer;
 	}
 	public VR_IVRTrackedCamera_FnTable(Pointer peer) {
 		super(peer);

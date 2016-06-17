@@ -106,9 +106,6 @@ public class VR_IVRSystem_FnTable extends Structure {
 	/** C type : AcknowledgeQuit_UserPrompt_callback* */
 	public VR_IVRSystem_FnTable.AcknowledgeQuit_UserPrompt_callback AcknowledgeQuit_UserPrompt;
 	/** C type : PerformanceTestEnableCapture_callback* */
-	public VR_IVRSystem_FnTable.PerformanceTestEnableCapture_callback PerformanceTestEnableCapture;
-	/** C type : PerformanceTestReportFidelityLevelChange_callback* */
-	public VR_IVRSystem_FnTable.PerformanceTestReportFidelityLevelChange_callback PerformanceTestReportFidelityLevelChange;
 	public interface GetRecommendedRenderTargetSize_callback extends Callback {
 		void apply(IntBuffer pnWidth, IntBuffer pnHeight);
 	};
@@ -241,17 +238,11 @@ public class VR_IVRSystem_FnTable extends Structure {
 	public interface AcknowledgeQuit_UserPrompt_callback extends Callback {
 		void apply();
 	};
-	public interface PerformanceTestEnableCapture_callback extends Callback {
-		void apply(byte bEnable);
-	};
-	public interface PerformanceTestReportFidelityLevelChange_callback extends Callback {
-		void apply(int nFidelityLevel);
-	};
 	public VR_IVRSystem_FnTable() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("GetRecommendedRenderTargetSize", "GetProjectionMatrix", "GetProjectionRaw", "ComputeDistortion", "GetEyeToHeadTransform", "GetTimeSinceLastVsync", "GetD3D9AdapterIndex", "GetDXGIOutputInfo", "IsDisplayOnDesktop", "SetDisplayVisibility", "GetDeviceToAbsoluteTrackingPose", "ResetSeatedZeroPose", "GetSeatedZeroPoseToStandingAbsoluteTrackingPose", "GetRawZeroPoseToStandingAbsoluteTrackingPose", "GetSortedTrackedDeviceIndicesOfClass", "GetTrackedDeviceActivityLevel", "ApplyTransform", "GetTrackedDeviceIndexForControllerRole", "GetControllerRoleForTrackedDeviceIndex", "GetTrackedDeviceClass", "IsTrackedDeviceConnected", "GetBoolTrackedDeviceProperty", "GetFloatTrackedDeviceProperty", "GetInt32TrackedDeviceProperty", "GetUint64TrackedDeviceProperty", "GetMatrix34TrackedDeviceProperty", "GetStringTrackedDeviceProperty", "GetPropErrorNameFromEnum", "PollNextEvent", "PollNextEventWithPose", "GetEventTypeNameFromEnum", "GetHiddenAreaMesh", "GetControllerState", "GetControllerStateWithPose", "TriggerHapticPulse", "GetButtonIdNameFromEnum", "GetControllerAxisTypeNameFromEnum", "CaptureInputFocus", "ReleaseInputFocus", "IsInputFocusCapturedByAnotherProcess", "DriverDebugRequest", "PerformFirmwareUpdate", "AcknowledgeQuit_Exiting", "AcknowledgeQuit_UserPrompt", "PerformanceTestEnableCapture", "PerformanceTestReportFidelityLevelChange");
+		return Arrays.asList("GetRecommendedRenderTargetSize", "GetProjectionMatrix", "GetProjectionRaw", "ComputeDistortion", "GetEyeToHeadTransform", "GetTimeSinceLastVsync", "GetD3D9AdapterIndex", "GetDXGIOutputInfo", "IsDisplayOnDesktop", "SetDisplayVisibility", "GetDeviceToAbsoluteTrackingPose", "ResetSeatedZeroPose", "GetSeatedZeroPoseToStandingAbsoluteTrackingPose", "GetRawZeroPoseToStandingAbsoluteTrackingPose", "GetSortedTrackedDeviceIndicesOfClass", "GetTrackedDeviceActivityLevel", "ApplyTransform", "GetTrackedDeviceIndexForControllerRole", "GetControllerRoleForTrackedDeviceIndex", "GetTrackedDeviceClass", "IsTrackedDeviceConnected", "GetBoolTrackedDeviceProperty", "GetFloatTrackedDeviceProperty", "GetInt32TrackedDeviceProperty", "GetUint64TrackedDeviceProperty", "GetMatrix34TrackedDeviceProperty", "GetStringTrackedDeviceProperty", "GetPropErrorNameFromEnum", "PollNextEvent", "PollNextEventWithPose", "GetEventTypeNameFromEnum", "GetHiddenAreaMesh", "GetControllerState", "GetControllerStateWithPose", "TriggerHapticPulse", "GetButtonIdNameFromEnum", "GetControllerAxisTypeNameFromEnum", "CaptureInputFocus", "ReleaseInputFocus", "IsInputFocusCapturedByAnotherProcess", "DriverDebugRequest", "PerformFirmwareUpdate", "AcknowledgeQuit_Exiting", "AcknowledgeQuit_UserPrompt");
 	}
 	public VR_IVRSystem_FnTable(Pointer peer) {
 		super(peer);

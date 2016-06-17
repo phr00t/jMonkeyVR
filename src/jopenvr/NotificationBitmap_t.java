@@ -13,26 +13,26 @@ public class NotificationBitmap_t extends Structure {
 	 * void *<br>
 	 * C type : void*
 	 */
-	public Pointer bytes;
-	public int width;
-	public int height;
-	public int depth;
+	public Pointer m_pImageData;
+	public int m_nWidth;
+	public int m_nHeight;
+	public int m_nBytesPerPixel;
 	public NotificationBitmap_t() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("bytes", "width", "height", "depth");
+		return Arrays.asList("m_pImageData", "m_nWidth", "m_nHeight", "m_nBytesPerPixel");
 	}
 	/**
-	 * @param bytes void *<br>
+	 * @param m_pImageData void *<br>
 	 * C type : void*
 	 */
-	public NotificationBitmap_t(Pointer bytes, int width, int height, int depth) {
+	public NotificationBitmap_t(Pointer m_pImageData, int m_nWidth, int m_nHeight, int m_nBytesPerPixel) {
 		super();
-		this.bytes = bytes;
-		this.width = width;
-		this.height = height;
-		this.depth = depth;
+		this.m_pImageData = m_pImageData;
+		this.m_nWidth = m_nWidth;
+		this.m_nHeight = m_nHeight;
+		this.m_nBytesPerPixel = m_nBytesPerPixel;
 	}
 	public NotificationBitmap_t(Pointer peer) {
 		super(peer);

@@ -2,6 +2,8 @@ package jopenvr;
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 import java.util.Arrays;
 import java.util.List;
 /**
@@ -31,6 +33,7 @@ public class VR_IVRCompositor_FnTable extends Structure {
 	/** C type : GetFrameTimeRemaining_callback* */
 	public VR_IVRCompositor_FnTable.GetFrameTimeRemaining_callback GetFrameTimeRemaining;
 	/** C type : FadeToColor_callback* */
+	public VR_IVRCompositor_FnTable.GetCumulativeStats_callback GetCumulativeStats;
 	public VR_IVRCompositor_FnTable.FadeToColor_callback FadeToColor;
 	/** C type : FadeGrid_callback* */
 	public VR_IVRCompositor_FnTable.FadeGrid_callback FadeGrid;
@@ -64,6 +67,23 @@ public class VR_IVRCompositor_FnTable extends Structure {
 	public VR_IVRCompositor_FnTable.ShouldAppRenderWithLowResources_callback ShouldAppRenderWithLowResources;
 	/** C type : ForceInterleavedReprojectionOn_callback* */
 	public VR_IVRCompositor_FnTable.ForceInterleavedReprojectionOn_callback ForceInterleavedReprojectionOn;
+	public VR_IVRCompositor_FnTable.ForceReconnectProcess_callback ForceReconnectProcess;
+	/** C type : SuspendRendering_callback* */
+	public VR_IVRCompositor_FnTable.SuspendRendering_callback SuspendRendering;
+	/** C type : RequestScreenshot_callback* */
+	public jopenvr.VR_IVRScreenshots_FnTable.RequestScreenshot_callback RequestScreenshot;
+	/** C type : GetCurrentScreenshotType_callback* */
+	public VR_IVRCompositor_FnTable.GetCurrentScreenshotType_callback GetCurrentScreenshotType;
+	/** C type : GetMirrorTextureD3D11_callback* */
+	public VR_IVRCompositor_FnTable.GetMirrorTextureD3D11_callback GetMirrorTextureD3D11;
+	/** C type : GetMirrorTextureGL_callback* */
+	public VR_IVRCompositor_FnTable.GetMirrorTextureGL_callback GetMirrorTextureGL;
+	/** C type : ReleaseSharedGLTexture_callback* */
+	public VR_IVRCompositor_FnTable.ReleaseSharedGLTexture_callback ReleaseSharedGLTexture;
+	/** C type : LockGLSharedTextureForAccess_callback* */
+	public VR_IVRCompositor_FnTable.LockGLSharedTextureForAccess_callback LockGLSharedTextureForAccess;
+	/** C type : UnlockGLSharedTextureForAccess_callback* */
+	public VR_IVRCompositor_FnTable.UnlockGLSharedTextureForAccess_callback UnlockGLSharedTextureForAccess;
 	public interface SetTrackingSpace_callback extends Callback {
 		void apply(int eOrigin);
 	};
@@ -93,6 +113,9 @@ public class VR_IVRCompositor_FnTable extends Structure {
 	};
 	public interface GetFrameTimeRemaining_callback extends Callback {
 		float apply();
+	};
+	public interface GetCumulativeStats_callback extends Callback {
+		void apply(Compositor_CumulativeStats pStats, int nStatsSizeInBytes);
 	};
 	public interface FadeToColor_callback extends Callback {
 		void apply(float fSeconds, float fRed, float fGreen, float fBlue, float fAlpha, byte bBackground);
@@ -145,11 +168,38 @@ public class VR_IVRCompositor_FnTable extends Structure {
 	public interface ForceInterleavedReprojectionOn_callback extends Callback {
 		void apply(byte bOverride);
 	};
+	public interface ForceReconnectProcess_callback extends Callback {
+		void apply();
+	};
+	public interface SuspendRendering_callback extends Callback {
+		void apply(byte bSuspend);
+	};
+	public interface RequestScreenshot_callback extends Callback {
+		int apply(int type, Pointer pchDestinationFileName, Pointer pchVRDestinationFileName);
+	};
+	public interface GetCurrentScreenshotType_callback extends Callback {
+		int apply();
+	};
+	public interface GetMirrorTextureD3D11_callback extends Callback {
+		int apply(int eEye, Pointer pD3D11DeviceOrResource, PointerByReference ppD3D11ShaderResourceView);
+	};
+	public interface GetMirrorTextureGL_callback extends Callback {
+		int apply(int eEye, IntByReference pglTextureId, PointerByReference pglSharedTextureHandle);
+	};
+	public interface ReleaseSharedGLTexture_callback extends Callback {
+		byte apply(int glTextureId, Pointer glSharedTextureHandle);
+	};
+	public interface LockGLSharedTextureForAccess_callback extends Callback {
+		void apply(Pointer glSharedTextureHandle);
+	};
+	public interface UnlockGLSharedTextureForAccess_callback extends Callback {
+		void apply(Pointer glSharedTextureHandle);
+	};
 	public VR_IVRCompositor_FnTable() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("SetTrackingSpace", "GetTrackingSpace", "WaitGetPoses", "GetLastPoses", "GetLastPoseForTrackedDeviceIndex", "Submit", "ClearLastSubmittedFrame", "PostPresentHandoff", "GetFrameTiming", "GetFrameTimeRemaining", "FadeToColor", "FadeGrid", "SetSkyboxOverride", "ClearSkyboxOverride", "CompositorBringToFront", "CompositorGoToBack", "CompositorQuit", "IsFullscreen", "GetCurrentSceneFocusProcess", "GetLastFrameRenderer", "CanRenderScene", "ShowMirrorWindow", "HideMirrorWindow", "IsMirrorWindowVisible", "CompositorDumpImages", "ShouldAppRenderWithLowResources", "ForceInterleavedReprojectionOn");
+		return Arrays.asList("SetTrackingSpace", "GetTrackingSpace", "WaitGetPoses", "GetLastPoses", "GetLastPoseForTrackedDeviceIndex", "Submit", "ClearLastSubmittedFrame", "PostPresentHandoff", "GetFrameTiming", "GetFrameTimeRemaining", "GetCumulativeStats", "FadeToColor", "FadeGrid", "SetSkyboxOverride", "ClearSkyboxOverride", "CompositorBringToFront", "CompositorGoToBack", "CompositorQuit", "IsFullscreen", "GetCurrentSceneFocusProcess", "GetLastFrameRenderer", "CanRenderScene", "ShowMirrorWindow", "HideMirrorWindow", "IsMirrorWindowVisible", "CompositorDumpImages", "ShouldAppRenderWithLowResources", "ForceInterleavedReprojectionOn", "ForceReconnectProcess", "SuspendRendering", "RequestScreenshot", "GetCurrentScreenshotType", "GetMirrorTextureD3D11", "GetMirrorTextureGL", "ReleaseSharedGLTexture", "LockGLSharedTextureForAccess", "UnlockGLSharedTextureForAccess");
 	}
 	public VR_IVRCompositor_FnTable(Pointer peer) {
 		super(peer);

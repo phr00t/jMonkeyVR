@@ -32,11 +32,12 @@ public class Compositor_FrameTiming extends Structure {
 	/** C type : TrackedDevicePose_t */
 	public TrackedDevicePose_t m_HmdPose;
 	public int m_nFidelityLevel;
+	public int m_nReprojectionFlags;
 	public Compositor_FrameTiming() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("m_nSize", "m_nFrameIndex", "m_nNumFramePresents", "m_nNumDroppedFrames", "m_flSystemTimeInSeconds", "m_flSceneRenderGpuMs", "m_flTotalRenderGpuMs", "m_flCompositorRenderGpuMs", "m_flCompositorRenderCpuMs", "m_flCompositorIdleCpuMs", "m_flClientFrameIntervalMs", "m_flPresentCallCpuMs", "m_flWaitForPresentCpuMs", "m_flSubmitFrameMs", "m_flWaitGetPosesCalledMs", "m_flNewPosesReadyMs", "m_flNewFrameReadyMs", "m_flCompositorUpdateStartMs", "m_flCompositorUpdateEndMs", "m_flCompositorRenderStartMs", "m_HmdPose", "m_nFidelityLevel");
+		return Arrays.asList("m_nSize", "m_nFrameIndex", "m_nNumFramePresents", "m_nNumDroppedFrames", "m_flSystemTimeInSeconds", "m_flSceneRenderGpuMs", "m_flTotalRenderGpuMs", "m_flCompositorRenderGpuMs", "m_flCompositorRenderCpuMs", "m_flCompositorIdleCpuMs", "m_flClientFrameIntervalMs", "m_flPresentCallCpuMs", "m_flWaitForPresentCpuMs", "m_flSubmitFrameMs", "m_flWaitGetPosesCalledMs", "m_flNewPosesReadyMs", "m_flNewFrameReadyMs", "m_flCompositorUpdateStartMs", "m_flCompositorUpdateEndMs", "m_flCompositorRenderStartMs", "m_HmdPose", "m_nFidelityLevel", "m_nReprojectionFlags");
 	}
 	public Compositor_FrameTiming(Pointer peer) {
 		super(peer);

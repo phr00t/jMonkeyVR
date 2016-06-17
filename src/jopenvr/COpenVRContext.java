@@ -55,43 +55,21 @@ public class COpenVRContext extends Structure {
 	 * C type : intptr_t
 	 */
 	public IntByReference m_pVRApplications;
+	/**
+	 * class vr::IVRTrackedCamera *<br>
+	 * C type : intptr_t
+	 */
+	public IntByReference m_pVRTrackedCamera;
+	/**
+	 * class vr::IVRScreenshots *<br>
+	 * C type : intptr_t
+	 */
+	public IntByReference m_pVRScreenshots;
 	public COpenVRContext() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("m_pVRSystem", "m_pVRChaperone", "m_pVRChaperoneSetup", "m_pVRCompositor", "m_pVROverlay", "m_pVRRenderModels", "m_pVRExtendedDisplay", "m_pVRSettings", "m_pVRApplications");
-	}
-	/**
-	 * @param m_pVRSystem class vr::IVRSystem *<br>
-	 * C type : intptr_t<br>
-	 * @param m_pVRChaperone class vr::IVRChaperone *<br>
-	 * C type : intptr_t<br>
-	 * @param m_pVRChaperoneSetup class vr::IVRChaperoneSetup *<br>
-	 * C type : intptr_t<br>
-	 * @param m_pVRCompositor class vr::IVRCompositor *<br>
-	 * C type : intptr_t<br>
-	 * @param m_pVROverlay class vr::IVROverlay *<br>
-	 * C type : intptr_t<br>
-	 * @param m_pVRRenderModels class vr::IVRRenderModels *<br>
-	 * C type : intptr_t<br>
-	 * @param m_pVRExtendedDisplay class vr::IVRExtendedDisplay *<br>
-	 * C type : intptr_t<br>
-	 * @param m_pVRSettings class vr::IVRSettings *<br>
-	 * C type : intptr_t<br>
-	 * @param m_pVRApplications class vr::IVRApplications *<br>
-	 * C type : intptr_t
-	 */
-	public COpenVRContext(IntByReference m_pVRSystem, IntByReference m_pVRChaperone, IntByReference m_pVRChaperoneSetup, IntByReference m_pVRCompositor, IntByReference m_pVROverlay, IntByReference m_pVRRenderModels, IntByReference m_pVRExtendedDisplay, IntByReference m_pVRSettings, IntByReference m_pVRApplications) {
-		super();
-		this.m_pVRSystem = m_pVRSystem;
-		this.m_pVRChaperone = m_pVRChaperone;
-		this.m_pVRChaperoneSetup = m_pVRChaperoneSetup;
-		this.m_pVRCompositor = m_pVRCompositor;
-		this.m_pVROverlay = m_pVROverlay;
-		this.m_pVRRenderModels = m_pVRRenderModels;
-		this.m_pVRExtendedDisplay = m_pVRExtendedDisplay;
-		this.m_pVRSettings = m_pVRSettings;
-		this.m_pVRApplications = m_pVRApplications;
+		return Arrays.asList("m_pVRSystem", "m_pVRChaperone", "m_pVRChaperoneSetup", "m_pVRCompositor", "m_pVROverlay", "m_pVRRenderModels", "m_pVRExtendedDisplay", "m_pVRSettings", "m_pVRApplications", "m_pVRTrackedCamera", "m_pVRScreenshots");
 	}
 	public COpenVRContext(Pointer peer) {
 		super(peer);

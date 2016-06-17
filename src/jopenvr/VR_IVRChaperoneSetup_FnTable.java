@@ -48,6 +48,9 @@ public class VR_IVRChaperoneSetup_FnTable extends Structure {
 	public VR_IVRChaperoneSetup_FnTable.SetWorkingPhysicalBoundsInfo_callback SetWorkingPhysicalBoundsInfo;
 	/** C type : GetLivePhysicalBoundsInfo_callback* */
 	public VR_IVRChaperoneSetup_FnTable.GetLivePhysicalBoundsInfo_callback GetLivePhysicalBoundsInfo;
+	public VR_IVRChaperoneSetup_FnTable.ExportLiveToBuffer_callback ExportLiveToBuffer;
+	/** C type : ImportFromBufferToWorking_callback* */
+	public VR_IVRChaperoneSetup_FnTable.ImportFromBufferToWorking_callback ImportFromBufferToWorking;
 	public interface CommitWorkingCopy_callback extends Callback {
 		byte apply(int configFile);
 	};
@@ -102,11 +105,17 @@ public class VR_IVRChaperoneSetup_FnTable extends Structure {
 	public interface GetLivePhysicalBoundsInfo_callback extends Callback {
 		byte apply(HmdQuad_t pQuadsBuffer, IntByReference punQuadsCount);
 	};
+	public interface ExportLiveToBuffer_callback extends Callback {
+		byte apply(Pointer pBuffer, IntByReference pnBufferLength);
+	};
+	public interface ImportFromBufferToWorking_callback extends Callback {
+		byte apply(Pointer pBuffer, int nImportFlags);
+	};
 	public VR_IVRChaperoneSetup_FnTable() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("CommitWorkingCopy", "RevertWorkingCopy", "GetWorkingPlayAreaSize", "GetWorkingPlayAreaRect", "GetWorkingCollisionBoundsInfo", "GetLiveCollisionBoundsInfo", "GetWorkingSeatedZeroPoseToRawTrackingPose", "GetWorkingStandingZeroPoseToRawTrackingPose", "SetWorkingPlayAreaSize", "SetWorkingCollisionBoundsInfo", "SetWorkingSeatedZeroPoseToRawTrackingPose", "SetWorkingStandingZeroPoseToRawTrackingPose", "ReloadFromDisk", "GetLiveSeatedZeroPoseToRawTrackingPose", "SetWorkingCollisionBoundsTagsInfo", "GetLiveCollisionBoundsTagsInfo", "SetWorkingPhysicalBoundsInfo", "GetLivePhysicalBoundsInfo");
+		return Arrays.asList("CommitWorkingCopy", "RevertWorkingCopy", "GetWorkingPlayAreaSize", "GetWorkingPlayAreaRect", "GetWorkingCollisionBoundsInfo", "GetLiveCollisionBoundsInfo", "GetWorkingSeatedZeroPoseToRawTrackingPose", "GetWorkingStandingZeroPoseToRawTrackingPose", "SetWorkingPlayAreaSize", "SetWorkingCollisionBoundsInfo", "SetWorkingSeatedZeroPoseToRawTrackingPose", "SetWorkingStandingZeroPoseToRawTrackingPose", "ReloadFromDisk", "GetLiveSeatedZeroPoseToRawTrackingPose", "SetWorkingCollisionBoundsTagsInfo", "GetLiveCollisionBoundsTagsInfo", "SetWorkingPhysicalBoundsInfo", "GetLivePhysicalBoundsInfo", "ExportLiveToBuffer", "ImportFromBufferToWorking");
 	}
 	public VR_IVRChaperoneSetup_FnTable(Pointer peer) {
 		super(peer);

@@ -26,6 +26,7 @@ public class VR_IVRApplications_FnTable extends Structure {
 	/** C type : LaunchApplication_callback* */
 	public VR_IVRApplications_FnTable.LaunchApplication_callback LaunchApplication;
 	/** C type : LaunchDashboardOverlay_callback* */
+	public VR_IVRApplications_FnTable.LaunchTemplateApplication_callback LaunchTemplateApplication;
 	public VR_IVRApplications_FnTable.LaunchDashboardOverlay_callback LaunchDashboardOverlay;
 	/** C type : CancelApplicationLaunch_callback* */
 	public VR_IVRApplications_FnTable.CancelApplicationLaunch_callback CancelApplicationLaunch;
@@ -55,6 +56,7 @@ public class VR_IVRApplications_FnTable extends Structure {
 	public VR_IVRApplications_FnTable.GetApplicationsTransitionStateNameFromEnum_callback GetApplicationsTransitionStateNameFromEnum;
 	/** C type : IsQuitUserPromptRequested_callback* */
 	public VR_IVRApplications_FnTable.IsQuitUserPromptRequested_callback IsQuitUserPromptRequested;
+	public VR_IVRApplications_FnTable.LaunchInternalProcess_callback LaunchInternalProcess;
 	public interface AddApplicationManifest_callback extends Callback {
 		int apply(Pointer pchApplicationManifestFullPath, byte bTemporary);
 	};
@@ -75,6 +77,9 @@ public class VR_IVRApplications_FnTable extends Structure {
 	};
 	public interface LaunchApplication_callback extends Callback {
 		int apply(Pointer pchAppKey);
+	};
+	public interface LaunchTemplateApplication_callback extends Callback {
+		int apply(Pointer pchTemplateAppKey, Pointer pchNewAppKey, AppOverrideKeys_t pKeys, int unKeys);
 	};
 	public interface LaunchDashboardOverlay_callback extends Callback {
 		int apply(Pointer pchAppKey);
@@ -121,11 +126,14 @@ public class VR_IVRApplications_FnTable extends Structure {
 	public interface IsQuitUserPromptRequested_callback extends Callback {
 		byte apply();
 	};
+	public interface LaunchInternalProcess_callback extends Callback {
+		int apply(Pointer pchBinaryPath, Pointer pchArguments, Pointer pchWorkingDirectory);
+	};
 	public VR_IVRApplications_FnTable() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("AddApplicationManifest", "RemoveApplicationManifest", "IsApplicationInstalled", "GetApplicationCount", "GetApplicationKeyByIndex", "GetApplicationKeyByProcessId", "LaunchApplication", "LaunchDashboardOverlay", "CancelApplicationLaunch", "IdentifyApplication", "GetApplicationProcessId", "GetApplicationsErrorNameFromEnum", "GetApplicationPropertyString", "GetApplicationPropertyBool", "GetApplicationPropertyUint64", "SetApplicationAutoLaunch", "GetApplicationAutoLaunch", "GetStartingApplication", "GetTransitionState", "PerformApplicationPrelaunchCheck", "GetApplicationsTransitionStateNameFromEnum", "IsQuitUserPromptRequested");
+		return Arrays.asList("AddApplicationManifest", "RemoveApplicationManifest", "IsApplicationInstalled", "GetApplicationCount", "GetApplicationKeyByIndex", "GetApplicationKeyByProcessId", "LaunchApplication", "LaunchTemplateApplication", "LaunchDashboardOverlay", "CancelApplicationLaunch", "IdentifyApplication", "GetApplicationProcessId", "GetApplicationsErrorNameFromEnum", "GetApplicationPropertyString", "GetApplicationPropertyBool", "GetApplicationPropertyUint64", "SetApplicationAutoLaunch", "GetApplicationAutoLaunch", "GetStartingApplication", "GetTransitionState", "PerformApplicationPrelaunchCheck", "GetApplicationsTransitionStateNameFromEnum", "IsQuitUserPromptRequested", "LaunchInternalProcess");
 	}
 	public VR_IVRApplications_FnTable(Pointer peer) {
 		super(peer);

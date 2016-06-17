@@ -2,6 +2,7 @@ package jopenvr;
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +23,7 @@ public class VR_IVRRenderModels_FnTable extends Structure {
 	/** C type : LoadTextureD3D11_Async_callback* */
 	public VR_IVRRenderModels_FnTable.LoadTextureD3D11_Async_callback LoadTextureD3D11_Async;
 	/** C type : FreeTextureD3D11_callback* */
+	public VR_IVRRenderModels_FnTable.LoadIntoTextureD3D11_Async_callback LoadIntoTextureD3D11_Async;
 	public VR_IVRRenderModels_FnTable.FreeTextureD3D11_callback FreeTextureD3D11;
 	/** C type : GetRenderModelName_callback* */
 	public VR_IVRRenderModels_FnTable.GetRenderModelName_callback GetRenderModelName;
@@ -39,6 +41,11 @@ public class VR_IVRRenderModels_FnTable extends Structure {
 	public VR_IVRRenderModels_FnTable.GetComponentState_callback GetComponentState;
 	/** C type : RenderModelHasComponent_callback* */
 	public VR_IVRRenderModels_FnTable.RenderModelHasComponent_callback RenderModelHasComponent;
+	public VR_IVRRenderModels_FnTable.GetRenderModelThumbnailURL_callback GetRenderModelThumbnailURL;
+	/** C type : GetRenderModelOriginalPath_callback* */
+	public VR_IVRRenderModels_FnTable.GetRenderModelOriginalPath_callback GetRenderModelOriginalPath;
+	/** C type : GetRenderModelErrorNameFromEnum_callback* */
+	public VR_IVRRenderModels_FnTable.GetRenderModelErrorNameFromEnum_callback GetRenderModelErrorNameFromEnum;
 	public interface LoadRenderModel_Async_callback extends Callback {
 		int apply(Pointer pchRenderModelName, PointerByReference ppRenderModel);
 	};
@@ -53,6 +60,9 @@ public class VR_IVRRenderModels_FnTable extends Structure {
 	};
 	public interface LoadTextureD3D11_Async_callback extends Callback {
 		int apply(int textureId, Pointer pD3D11Device, PointerByReference ppD3D11Texture2D);
+	};
+	public interface LoadIntoTextureD3D11_Async_callback extends Callback {
+		int apply(int textureId, Pointer pDstTexture);
 	};
 	public interface FreeTextureD3D11_callback extends Callback {
 		void apply(Pointer pD3D11Texture2D);
@@ -81,11 +91,20 @@ public class VR_IVRRenderModels_FnTable extends Structure {
 	public interface RenderModelHasComponent_callback extends Callback {
 		byte apply(Pointer pchRenderModelName, Pointer pchComponentName);
 	};
+	public interface GetRenderModelThumbnailURL_callback extends Callback {
+		int apply(Pointer pchRenderModelName, Pointer pchThumbnailURL, int unThumbnailURLLen, IntByReference peError);
+	};
+	public interface GetRenderModelOriginalPath_callback extends Callback {
+		int apply(Pointer pchRenderModelName, Pointer pchOriginalPath, int unOriginalPathLen, IntByReference peError);
+	};
+	public interface GetRenderModelErrorNameFromEnum_callback extends Callback {
+		Pointer apply(int error);
+	};
 	public VR_IVRRenderModels_FnTable() {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("LoadRenderModel_Async", "FreeRenderModel", "LoadTexture_Async", "FreeTexture", "LoadTextureD3D11_Async", "FreeTextureD3D11", "GetRenderModelName", "GetRenderModelCount", "GetComponentCount", "GetComponentName", "GetComponentButtonMask", "GetComponentRenderModelName", "GetComponentState", "RenderModelHasComponent");
+		return Arrays.asList("LoadRenderModel_Async", "FreeRenderModel", "LoadTexture_Async", "FreeTexture", "LoadTextureD3D11_Async", "LoadIntoTextureD3D11_Async", "FreeTextureD3D11", "GetRenderModelName", "GetRenderModelCount", "GetComponentCount", "GetComponentName", "GetComponentButtonMask", "GetComponentRenderModelName", "GetComponentState", "RenderModelHasComponent", "GetRenderModelThumbnailURL", "GetRenderModelOriginalPath", "GetRenderModelErrorNameFromEnum");
 	}
 	public VR_IVRRenderModels_FnTable(Pointer peer) {
 		super(peer);

@@ -70,10 +70,6 @@ public class VR_IVRCompositor_FnTable extends Structure {
 	public VR_IVRCompositor_FnTable.ForceReconnectProcess_callback ForceReconnectProcess;
 	/** C type : SuspendRendering_callback* */
 	public VR_IVRCompositor_FnTable.SuspendRendering_callback SuspendRendering;
-	/** C type : RequestScreenshot_callback* */
-	public jopenvr.VR_IVRScreenshots_FnTable.RequestScreenshot_callback RequestScreenshot;
-	/** C type : GetCurrentScreenshotType_callback* */
-	public VR_IVRCompositor_FnTable.GetCurrentScreenshotType_callback GetCurrentScreenshotType;
 	/** C type : GetMirrorTextureD3D11_callback* */
 	public VR_IVRCompositor_FnTable.GetMirrorTextureD3D11_callback GetMirrorTextureD3D11;
 	/** C type : GetMirrorTextureGL_callback* */
@@ -174,12 +170,6 @@ public class VR_IVRCompositor_FnTable extends Structure {
 	public interface SuspendRendering_callback extends Callback {
 		void apply(byte bSuspend);
 	};
-	public interface RequestScreenshot_callback extends Callback {
-		int apply(int type, Pointer pchDestinationFileName, Pointer pchVRDestinationFileName);
-	};
-	public interface GetCurrentScreenshotType_callback extends Callback {
-		int apply();
-	};
 	public interface GetMirrorTextureD3D11_callback extends Callback {
 		int apply(int eEye, Pointer pD3D11DeviceOrResource, PointerByReference ppD3D11ShaderResourceView);
 	};
@@ -199,7 +189,7 @@ public class VR_IVRCompositor_FnTable extends Structure {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("SetTrackingSpace", "GetTrackingSpace", "WaitGetPoses", "GetLastPoses", "GetLastPoseForTrackedDeviceIndex", "Submit", "ClearLastSubmittedFrame", "PostPresentHandoff", "GetFrameTiming", "GetFrameTimeRemaining", "GetCumulativeStats", "FadeToColor", "FadeGrid", "SetSkyboxOverride", "ClearSkyboxOverride", "CompositorBringToFront", "CompositorGoToBack", "CompositorQuit", "IsFullscreen", "GetCurrentSceneFocusProcess", "GetLastFrameRenderer", "CanRenderScene", "ShowMirrorWindow", "HideMirrorWindow", "IsMirrorWindowVisible", "CompositorDumpImages", "ShouldAppRenderWithLowResources", "ForceInterleavedReprojectionOn", "ForceReconnectProcess", "SuspendRendering", "RequestScreenshot", "GetCurrentScreenshotType", "GetMirrorTextureD3D11", "GetMirrorTextureGL", "ReleaseSharedGLTexture", "LockGLSharedTextureForAccess", "UnlockGLSharedTextureForAccess");
+		return Arrays.asList("SetTrackingSpace", "GetTrackingSpace", "WaitGetPoses", "GetLastPoses", "GetLastPoseForTrackedDeviceIndex", "Submit", "ClearLastSubmittedFrame", "PostPresentHandoff", "GetFrameTiming", "GetFrameTimeRemaining", "GetCumulativeStats", "FadeToColor", "FadeGrid", "SetSkyboxOverride", "ClearSkyboxOverride", "CompositorBringToFront", "CompositorGoToBack", "CompositorQuit", "IsFullscreen", "GetCurrentSceneFocusProcess", "GetLastFrameRenderer", "CanRenderScene", "ShowMirrorWindow", "HideMirrorWindow", "IsMirrorWindowVisible", "CompositorDumpImages", "ShouldAppRenderWithLowResources", "ForceInterleavedReprojectionOn", "ForceReconnectProcess", "SuspendRendering", "GetMirrorTextureD3D11", "GetMirrorTextureGL", "ReleaseSharedGLTexture", "LockGLSharedTextureForAccess", "UnlockGLSharedTextureForAccess");
 	}
 	public VR_IVRCompositor_FnTable(Pointer peer) {
 		super(peer);

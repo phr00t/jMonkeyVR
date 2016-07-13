@@ -36,6 +36,11 @@ public class COpenVRContext extends Structure {
 	 */
 	public IntByReference m_pVROverlay;
 	/**
+	 * class vr::IVRResources *<br>
+	 * C type : intptr_t
+	 */
+	public IntByReference m_pVRResources;
+	/**
 	 * class vr::IVRRenderModels *<br>
 	 * C type : intptr_t
 	 */
@@ -69,7 +74,7 @@ public class COpenVRContext extends Structure {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("m_pVRSystem", "m_pVRChaperone", "m_pVRChaperoneSetup", "m_pVRCompositor", "m_pVROverlay", "m_pVRRenderModels", "m_pVRExtendedDisplay", "m_pVRSettings", "m_pVRApplications", "m_pVRTrackedCamera", "m_pVRScreenshots");
+		return Arrays.asList("m_pVRSystem", "m_pVRChaperone", "m_pVRChaperoneSetup", "m_pVRCompositor", "m_pVROverlay", "m_pVRResources", "m_pVRRenderModels", "m_pVRExtendedDisplay", "m_pVRSettings", "m_pVRApplications", "m_pVRTrackedCamera", "m_pVRScreenshots");
 	}
 	public COpenVRContext(Pointer peer) {
 		super(peer);

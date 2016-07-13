@@ -141,6 +141,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int ETrackedDeviceProperty_Prop_Axis2Type_Int32 = 3004;
 		public static final int ETrackedDeviceProperty_Prop_Axis3Type_Int32 = 3005;
 		public static final int ETrackedDeviceProperty_Prop_Axis4Type_Int32 = 3006;
+		public static final int ETrackedDeviceProperty_Prop_ControllerRoleHint_Int32 = 3007;
 		public static final int ETrackedDeviceProperty_Prop_FieldOfViewLeftDegrees_Float = 4000;
 		public static final int ETrackedDeviceProperty_Prop_FieldOfViewRightDegrees_Float = 4001;
 		public static final int ETrackedDeviceProperty_Prop_FieldOfViewTopDegrees_Float = 4002;
@@ -180,6 +181,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVRState_VRState_Ready_Alert = 4;
 		public static final int EVRState_VRState_NotReady = 5;
 		public static final int EVRState_VRState_Standby = 6;
+		public static final int EVRState_VRState_Ready_Alert_Low = 7;
 	};
 	/** enum values */
 	public static interface EVREventType {
@@ -193,6 +195,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_EnterStandbyMode = 106;
 		public static final int EVREventType_VREvent_LeaveStandbyMode = 107;
 		public static final int EVREventType_VREvent_TrackedDeviceRoleChanged = 108;
+		public static final int EVREventType_VREvent_WatchdogWakeUpRequested = 109;
 		public static final int EVREventType_VREvent_ButtonPress = 200;
 		public static final int EVREventType_VREvent_ButtonUnpress = 201;
 		public static final int EVREventType_VREvent_ButtonTouch = 202;
@@ -204,6 +207,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_FocusLeave = 304;
 		public static final int EVREventType_VREvent_Scroll = 305;
 		public static final int EVREventType_VREvent_TouchPadMove = 306;
+		public static final int EVREventType_VREvent_OverlayFocusChanged = 307;
 		public static final int EVREventType_VREvent_InputFocusCaptured = 400;
 		public static final int EVREventType_VREvent_InputFocusReleased = 401;
 		public static final int EVREventType_VREvent_SceneFocusLost = 402;
@@ -236,6 +240,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_ScreenshotTaken = 521;
 		public static final int EVREventType_VREvent_ScreenshotFailed = 522;
 		public static final int EVREventType_VREvent_SubmitScreenshotToDashboard = 523;
+		public static final int EVREventType_VREvent_ScreenshotProgressToDashboard = 524;
 		public static final int EVREventType_VREvent_Notification_Shown = 600;
 		public static final int EVREventType_VREvent_Notification_Hidden = 601;
 		public static final int EVREventType_VREvent_Notification_BeginInteraction = 602;
@@ -267,6 +272,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVREventType_VREvent_ApplicationTransitionAborted = 1301;
 		public static final int EVREventType_VREvent_ApplicationTransitionNewAppStarted = 1302;
 		public static final int EVREventType_VREvent_ApplicationListUpdated = 1303;
+		public static final int EVREventType_VREvent_ApplicationMimeTypeLoad = 1304;
 		public static final int EVREventType_VREvent_Compositor_MirrorWindowShown = 1400;
 		public static final int EVREventType_VREvent_Compositor_MirrorWindowHidden = 1401;
 		public static final int EVREventType_VREvent_Compositor_ChaperoneBoundsShown = 1410;
@@ -366,6 +372,8 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVRApplicationType_VRApplication_Background = 3;
 		public static final int EVRApplicationType_VRApplication_Utility = 4;
 		public static final int EVRApplicationType_VRApplication_VRMonitor = 5;
+		public static final int EVRApplicationType_VRApplication_SteamWatchdog = 6;
+		public static final int EVRApplicationType_VRApplication_Max = 7;
 	};
 	/** enum values */
 	public static interface EVRFirmwareError {
@@ -410,6 +418,14 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVRInitError_VRInitError_Init_NotSupportedWithCompositor = 122;
 		public static final int EVRInitError_VRInitError_Init_NotAvailableToUtilityApps = 123;
 		public static final int EVRInitError_VRInitError_Init_Internal = 124;
+		public static final int EVRInitError_VRInitError_Init_HmdDriverIdIsNone = 125;
+		public static final int EVRInitError_VRInitError_Init_HmdNotFoundPresenceFailed = 126;
+		public static final int EVRInitError_VRInitError_Init_VRMonitorNotFound = 127;
+		public static final int EVRInitError_VRInitError_Init_VRMonitorStartupFailed = 128;
+		public static final int EVRInitError_VRInitError_Init_LowPowerWatchdogNotSupported = 129;
+		public static final int EVRInitError_VRInitError_Init_InvalidApplicationType = 130;
+		public static final int EVRInitError_VRInitError_Init_NotAvailableToWatchdogApps = 131;
+		public static final int EVRInitError_VRInitError_Init_WatchdogDisabledInSettings = 132;
 		public static final int EVRInitError_VRInitError_Driver_Failed = 200;
 		public static final int EVRInitError_VRInitError_Driver_Unknown = 201;
 		public static final int EVRInitError_VRInitError_Driver_HmdUnknown = 202;
@@ -419,12 +435,18 @@ public class JOpenVRLibrary implements Library {
 		public static final int EVRInitError_VRInitError_Driver_NotCalibrated = 206;
 		public static final int EVRInitError_VRInitError_Driver_CalibrationInvalid = 207;
 		public static final int EVRInitError_VRInitError_Driver_HmdDisplayNotFound = 208;
+		public static final int EVRInitError_VRInitError_Driver_TrackedDeviceInterfaceUnknown = 209;
+		public static final int EVRInitError_VRInitError_Driver_HmdDriverIdOutOfBounds = 211;
+		public static final int EVRInitError_VRInitError_Driver_HmdDisplayMirrored = 212;
 		public static final int EVRInitError_VRInitError_IPC_ServerInitFailed = 300;
 		public static final int EVRInitError_VRInitError_IPC_ConnectFailed = 301;
 		public static final int EVRInitError_VRInitError_IPC_SharedStateInitFailed = 302;
 		public static final int EVRInitError_VRInitError_IPC_CompositorInitFailed = 303;
 		public static final int EVRInitError_VRInitError_IPC_MutexInitFailed = 304;
 		public static final int EVRInitError_VRInitError_IPC_Failed = 305;
+		public static final int EVRInitError_VRInitError_IPC_CompositorConnectFailed = 306;
+		public static final int EVRInitError_VRInitError_IPC_CompositorInvalidConnectResponse = 307;
+		public static final int EVRInitError_VRInitError_IPC_ConnectFailedAfterMultipleAttempts = 308;
 		public static final int EVRInitError_VRInitError_Compositor_Failed = 400;
 		public static final int EVRInitError_VRInitError_Compositor_D3D11HardwareRequired = 401;
 		public static final int EVRInitError_VRInitError_Compositor_FirmwareRequiresUpdate = 402;
@@ -595,6 +617,7 @@ public class JOpenVRLibrary implements Library {
 		public static final int VROverlayFlags_SideBySide_Crossed = 11;
 		public static final int VROverlayFlags_Panorama = 12;
 		public static final int VROverlayFlags_StereoPanorama = 13;
+		public static final int VROverlayFlags_SortWithNonSceneOverlays = 14;
 	};
 	/** enum values */
 	public static interface EGamepadTextInputMode {
@@ -718,16 +741,17 @@ public class JOpenVRLibrary implements Library {
 	public static native Pointer VR_GetVRInitErrorAsEnglishDescription(int error);
 
 	public static String IVRSystem_Version = "FnTable:IVRSystem_012";
-	public static String IVRApplications_Version = "FnTable:IVRApplications_005";
+	public static String IVRApplications_Version = "FnTable:IVRApplications_006";
 	public static String IVRSettings_Version = "FnTable:IVRSettings_001";
 	public static String IVRExtendedDisplay_Version = "FnTable:IVRExtendedDisplay_001";
 	public static String IVRChaperone_Version = "FnTable:IVRChaperone_003";
 	public static String IVRChaperoneSetup_Version = "FnTable:IVRChaperoneSetup_005";
-	public static String IVRCompositor_Version = "FnTable:IVRCompositor_015";
-	public static String IVROverlay_Version = "FnTable:IVROverlay_012";
+	public static String IVRCompositor_Version = "FnTable:IVRCompositor_016";
+	public static String IVROverlay_Version = "FnTable:IVROverlay_013";
 	public static String IVRRenderModels_Version = "FnTable:IVRRenderModels_005";
 	public static String IVRControlPanel_Version = "FnTable:IVRControlPanel_001";
 	public static String IVRNotifications_Version = "FnTable:IVRNotifications_002";
 	public static String IVRTrackedCamera_Version = "FnTable:IVRTrackedCamera_003";
         public static String IVRScreenshots_Version = "FnTable:IVRScreenshots_001";
+        public static String IVRResources_Version = "FnTable:IVRResources_001";
 }

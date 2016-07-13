@@ -152,10 +152,11 @@ public class OpenVR {
     }
     
     public boolean initOpenVRCompositor(boolean set) {
+        hmdErrorStore.put(0, 0); // clear the error store
         if( set && vrsystemFunctions != null ) {
             compositorFunctions = new VR_IVRCompositor_FnTable(JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRCompositor_Version, hmdErrorStore));
-            if(compositorFunctions != null && hmdErrorStore.get(0) == 0){                
-                System.out.println("OpenVR Compositor initialized OK.");
+            if(compositorFunctions != null && hmdErrorStore.get(0) == 0 ){                
+                System.out.println("OpenVR Compositor initialized OK!");
                 compositorFunctions.setAutoSynch(false);
                 compositorFunctions.read();
                 if( VRApplication.isSeatedExperience() ) {                    

@@ -27,6 +27,7 @@ public class VR_IVRApplications_FnTable extends Structure {
 	public VR_IVRApplications_FnTable.LaunchApplication_callback LaunchApplication;
 	/** C type : LaunchDashboardOverlay_callback* */
 	public VR_IVRApplications_FnTable.LaunchTemplateApplication_callback LaunchTemplateApplication;
+	public VR_IVRApplications_FnTable.LaunchApplicationFromMimeType_callback LaunchApplicationFromMimeType;
 	public VR_IVRApplications_FnTable.LaunchDashboardOverlay_callback LaunchDashboardOverlay;
 	/** C type : CancelApplicationLaunch_callback* */
 	public VR_IVRApplications_FnTable.CancelApplicationLaunch_callback CancelApplicationLaunch;
@@ -46,6 +47,15 @@ public class VR_IVRApplications_FnTable extends Structure {
 	public VR_IVRApplications_FnTable.SetApplicationAutoLaunch_callback SetApplicationAutoLaunch;
 	/** C type : GetApplicationAutoLaunch_callback* */
 	public VR_IVRApplications_FnTable.GetApplicationAutoLaunch_callback GetApplicationAutoLaunch;
+	public VR_IVRApplications_FnTable.SetDefaultApplicationForMimeType_callback SetDefaultApplicationForMimeType;
+	/** C type : GetDefaultApplicationForMimeType_callback* */
+	public VR_IVRApplications_FnTable.GetDefaultApplicationForMimeType_callback GetDefaultApplicationForMimeType;
+	/** C type : GetApplicationSupportedMimeTypes_callback* */
+	public VR_IVRApplications_FnTable.GetApplicationSupportedMimeTypes_callback GetApplicationSupportedMimeTypes;
+	/** C type : GetApplicationsThatSupportMimeType_callback* */
+	public VR_IVRApplications_FnTable.GetApplicationsThatSupportMimeType_callback GetApplicationsThatSupportMimeType;
+	/** C type : GetApplicationLaunchArguments_callback* */
+	public VR_IVRApplications_FnTable.GetApplicationLaunchArguments_callback GetApplicationLaunchArguments;
 	/** C type : GetStartingApplication_callback* */
 	public VR_IVRApplications_FnTable.GetStartingApplication_callback GetStartingApplication;
 	/** C type : GetTransitionState_callback* */
@@ -81,6 +91,9 @@ public class VR_IVRApplications_FnTable extends Structure {
 	public interface LaunchTemplateApplication_callback extends Callback {
 		int apply(Pointer pchTemplateAppKey, Pointer pchNewAppKey, AppOverrideKeys_t pKeys, int unKeys);
 	};
+	public interface LaunchApplicationFromMimeType_callback extends Callback {
+		int apply(Pointer pchMimeType, Pointer pchArgs);
+	};
 	public interface LaunchDashboardOverlay_callback extends Callback {
 		int apply(Pointer pchAppKey);
 	};
@@ -111,6 +124,21 @@ public class VR_IVRApplications_FnTable extends Structure {
 	public interface GetApplicationAutoLaunch_callback extends Callback {
 		byte apply(Pointer pchAppKey);
 	};
+	public interface SetDefaultApplicationForMimeType_callback extends Callback {
+		int apply(Pointer pchAppKey, Pointer pchMimeType);
+	};
+	public interface GetDefaultApplicationForMimeType_callback extends Callback {
+		byte apply(Pointer pchMimeType, Pointer pchAppKeyBuffer, int unAppKeyBufferLen);
+	};
+	public interface GetApplicationSupportedMimeTypes_callback extends Callback {
+		byte apply(Pointer pchAppKey, Pointer pchMimeTypesBuffer, int unMimeTypesBuffer);
+	};
+	public interface GetApplicationsThatSupportMimeType_callback extends Callback {
+		int apply(Pointer pchMimeType, Pointer pchAppKeysThatSupportBuffer, int unAppKeysThatSupportBuffer);
+	};
+	public interface GetApplicationLaunchArguments_callback extends Callback {
+		int apply(int unHandle, Pointer pchArgs, int unArgs);
+	};
 	public interface GetStartingApplication_callback extends Callback {
 		int apply(Pointer pchAppKeyBuffer, int unAppKeyBufferLen);
 	};
@@ -133,7 +161,7 @@ public class VR_IVRApplications_FnTable extends Structure {
 		super();
 	}
 	protected List<? > getFieldOrder() {
-		return Arrays.asList("AddApplicationManifest", "RemoveApplicationManifest", "IsApplicationInstalled", "GetApplicationCount", "GetApplicationKeyByIndex", "GetApplicationKeyByProcessId", "LaunchApplication", "LaunchTemplateApplication", "LaunchDashboardOverlay", "CancelApplicationLaunch", "IdentifyApplication", "GetApplicationProcessId", "GetApplicationsErrorNameFromEnum", "GetApplicationPropertyString", "GetApplicationPropertyBool", "GetApplicationPropertyUint64", "SetApplicationAutoLaunch", "GetApplicationAutoLaunch", "GetStartingApplication", "GetTransitionState", "PerformApplicationPrelaunchCheck", "GetApplicationsTransitionStateNameFromEnum", "IsQuitUserPromptRequested", "LaunchInternalProcess");
+		return Arrays.asList("AddApplicationManifest", "RemoveApplicationManifest", "IsApplicationInstalled", "GetApplicationCount", "GetApplicationKeyByIndex", "GetApplicationKeyByProcessId", "LaunchApplication", "LaunchTemplateApplication", "LaunchApplicationFromMimeType", "LaunchDashboardOverlay", "CancelApplicationLaunch", "IdentifyApplication", "GetApplicationProcessId", "GetApplicationsErrorNameFromEnum", "GetApplicationPropertyString", "GetApplicationPropertyBool", "GetApplicationPropertyUint64", "SetApplicationAutoLaunch", "GetApplicationAutoLaunch", "SetDefaultApplicationForMimeType", "GetDefaultApplicationForMimeType", "GetApplicationSupportedMimeTypes", "GetApplicationsThatSupportMimeType", "GetApplicationLaunchArguments", "GetStartingApplication", "GetTransitionState", "PerformApplicationPrelaunchCheck", "GetApplicationsTransitionStateNameFromEnum", "IsQuitUserPromptRequested", "LaunchInternalProcess");
 	}
 	public VR_IVRApplications_FnTable(Pointer peer) {
 		super(peer);

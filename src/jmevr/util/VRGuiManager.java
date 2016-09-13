@@ -168,7 +168,7 @@ public class VRGuiManager {
         dir.getRotationColumn(0, left).negateLocal();
         orient.fromAxes(left, dir.getRotationColumn(1, up), look);        
         Quaternion rot = tempq.fromRotationMatrix(orient);
-        if( posMode == POSITIONING_MODE.AUTO_CAM_ALL_SKIP_PITCH ) OpenVRUtil.stripToYaw(rot);
+        if( posMode == POSITIONING_MODE.AUTO_CAM_ALL_SKIP_PITCH ) VRUtil.stripToYaw(rot);
         if( guiPositioningElastic > 0f && posMode != POSITIONING_MODE.MANUAL ) {
             // mix pos & dir with current pos & dir            
             EoldDir.nlerp(rot, tpf * guiPositioningElastic);

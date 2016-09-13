@@ -15,8 +15,8 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.ui.Picture;
 import jmevr.app.VRApplication;
-import jmevr.input.VRInput;
-import jmevr.input.VRInput.VRINPUT_TYPE;
+import jmevr.input.OpenVRInput;
+import jmevr.input.OpenVRInput.VRINPUT_TYPE;
 
 /**
  *
@@ -75,8 +75,10 @@ public class VRMouseManager {
     
     public static void updateAnalogAsMouse(int inputIndex, AnalogListener mouseListener, String mouseXName, String mouseYName, float tpf) {
         // got a tracked controller to use as the "mouse"
-        if( VRApplication.isInVR() == false || VRInput.isInputDeviceTracking(inputIndex) == false ) return;
-        Vector2f tpDelta = VRInput.getAxisDeltaSinceLastCall(inputIndex, VRINPUT_TYPE.ViveTouchpadAxis);
+        if( VRApplication.isInVR() == false || 
+            VRApplication.getVRinput() == null ||
+            VRApplication.getVRinput().isInputDeviceTracking(inputIndex) == false ) return;
+        Vector2f tpDelta = VRApplication.getVRinput().getAxisDeltaSinceLastCall(inputIndex, VRINPUT_TYPE.ViveTouchpadAxis);
         float Xamount = (float)Math.pow(Math.abs(tpDelta.x) * sensitivity, acceleration);
         float Yamount = (float)Math.pow(Math.abs(tpDelta.y) * sensitivity, acceleration);
         if( tpDelta.x < 0f ) Xamount = -Xamount;

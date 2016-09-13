@@ -18,7 +18,7 @@ import java.nio.LongBuffer;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import jmevr.app.VRApplication;
-import jmevr.util.OpenVRUtil;
+import jmevr.util.VRUtil;
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdMatrix44_t;
 import jopenvr.JOpenVRLibrary;
@@ -30,7 +30,7 @@ import jopenvr.VR_IVRSystem_FnTable;
  *
  * @author phr00t
  */
-public class OpenVR {
+public class OpenVR implements VRAPI {
     
     public enum HMD_TYPE {
         HTC_VIVE, OCULUS_RIFT, OSVR, FOVE, STARVR, GAMEFACE, MORPHEUS, GEARVR, NULL, NONE, OTHER
@@ -69,12 +69,17 @@ public class OpenVR {
     private static float vsyncToPhotons;
     private static double timePerFrame, frameCountRun;
     private static long frameCount;
+    private static OpenVRInput VRinput;
     
-    public static VR_IVRSystem_FnTable getVRSystem() {
+    public OpenVRInput getVRinput() {
+        return VRinput;
+    }
+    
+    public VR_IVRSystem_FnTable getVRSystem() {
         return vrsystemFunctions;
     }
     
-    public static VR_IVRCompositor_FnTable getCompositor() {
+    public VR_IVRCompositor_FnTable getCompositor() {
         return compositorFunctions;
     }
     
@@ -87,16 +92,16 @@ public class OpenVR {
     /*
         do not use. set via preconfigure routine in VRApplication
     */
-    public static void _setFlipEyes(boolean set) {
+    public void _setFlipEyes(boolean set) {
         flipEyes = set;
     }
     
-    private static boolean enableDebugLatency = false;
-    public static void printLatencyInfoToConsole(boolean set) {
+    private boolean enableDebugLatency = false;
+    public void printLatencyInfoToConsole(boolean set) {
         enableDebugLatency = set;
     }
 
-    public static int getDisplayFrequency() {
+    public int getDisplayFrequency() {
         if( hmdDisplayFrequency == null ) return 0;
         return hmdDisplayFrequency.get(0);
     }
@@ -141,7 +146,9 @@ public class OpenVR {
             }
             
             // init controllers for the first time
-            VRInput._updateConnectedControllers();
+            VRinput = new OpenVRInput();
+            VRinput.init();
+            VRApplication.getVRinput()._updateConnectedControllers();
             
             // init bounds & chaperone info
             VRBounds.init();
@@ -151,9 +158,9 @@ public class OpenVR {
         }
     }
     
-    public boolean initOpenVRCompositor(boolean set) {
+    public boolean initVRCompositor(boolean allowed) {
         hmdErrorStore.put(0, 0); // clear the error store
-        if( set && vrsystemFunctions != null ) {
+        if( allowed && vrsystemFunctions != null ) {
             compositorFunctions = new VR_IVRCompositor_FnTable(JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRCompositor_Version, hmdErrorStore));
             if(compositorFunctions != null && hmdErrorStore.get(0) == 0 ){                
                 System.out.println("OpenVR Compositor initialized OK!");
@@ -229,7 +236,7 @@ public class OpenVR {
     }
     
     public Quaternion getOrientation() {
-        OpenVRUtil.convertMatrix4toQuat(hmdPose, rotStore);
+        VRUtil.convertMatrix4toQuat(hmdPose, rotStore);
         return rotStore;
     }
 
@@ -254,7 +261,7 @@ public class OpenVR {
            compositorFunctions.WaitGetPoses.apply(hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount, null, 0);
         } else {
             // wait
-            if( latencyWaitTime > 0 ) OpenVRUtil.sleepNanos(latencyWaitTime);
+            if( latencyWaitTime > 0 ) VRUtil.sleepNanos(latencyWaitTime);
                         
             vrsystemFunctions.GetTimeSinceLastVsync.apply(tlastVsync, _tframeCount);
             float fSecondsUntilPhotons = (float)timePerFrame - tlastVsync.get(0) + vsyncToPhotons;
@@ -303,14 +310,14 @@ public class OpenVR {
             VRInput._updateConnectedControllers();
         }*/
         //update controllers pose information
-        VRInput._updateControllerStates();
+        VRApplication.getVRinput()._updateControllerStates();
                 
         // read pose data from native
         for (int nDevice = 0; nDevice < JOpenVRLibrary.k_unMaxTrackedDeviceCount; ++nDevice ){
             hmdTrackedDevicePoses[nDevice].readField("bPoseIsValid");
             if( hmdTrackedDevicePoses[nDevice].bPoseIsValid != 0 ){
                 hmdTrackedDevicePoses[nDevice].readField("mDeviceToAbsoluteTracking");
-                OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(hmdTrackedDevicePoses[nDevice].mDeviceToAbsoluteTracking, poseMatrices[nDevice]);
+                VRUtil.convertSteamVRMatrix3ToMatrix4f(hmdTrackedDevicePoses[nDevice].mDeviceToAbsoluteTracking, poseMatrices[nDevice]);
             }            
         }
         
@@ -329,7 +336,7 @@ public class OpenVR {
         } else {
             HmdMatrix44_t mat = vrsystemFunctions.GetProjectionMatrix.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Left, cam.getFrustumNear(), cam.getFrustumFar(), JOpenVRLibrary.EGraphicsAPIConvention.EGraphicsAPIConvention_API_OpenGL);
             hmdProjectionLeftEye = new Matrix4f();
-            OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, hmdProjectionLeftEye);
+            VRUtil.convertSteamVRMatrix4ToMatrix4f(mat, hmdProjectionLeftEye);
             return hmdProjectionLeftEye;
         }
     }
@@ -342,7 +349,7 @@ public class OpenVR {
         } else {
             HmdMatrix44_t mat = vrsystemFunctions.GetProjectionMatrix.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Right, cam.getFrustumNear(), cam.getFrustumFar(), JOpenVRLibrary.EGraphicsAPIConvention.EGraphicsAPIConvention_API_OpenGL);
             hmdProjectionRightEye = new Matrix4f();
-            OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, hmdProjectionRightEye);
+            VRUtil.convertSteamVRMatrix4ToMatrix4f(mat, hmdProjectionRightEye);
             return hmdProjectionRightEye;
         }
     }
@@ -377,7 +384,7 @@ public class OpenVR {
             hmdSeatToStand = new Vector3f();
             HmdMatrix34_t mat = vrsystemFunctions.GetSeatedZeroPoseToStandingAbsoluteTrackingPose.apply();
             Matrix4f tempmat = new Matrix4f();
-            OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, tempmat);
+            VRUtil.convertSteamVRMatrix3ToMatrix4f(mat, tempmat);
             tempmat.toTranslationVector(hmdSeatToStand);
         }
         return hmdSeatToStand;
@@ -391,7 +398,7 @@ public class OpenVR {
         } else {
             HmdMatrix34_t mat = vrsystemFunctions.GetEyeToHeadTransform.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Left);
             hmdPoseLeftEye = new Matrix4f();
-            return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, hmdPoseLeftEye);
+            return VRUtil.convertSteamVRMatrix3ToMatrix4f(mat, hmdPoseLeftEye);
         }
     }
     
@@ -443,7 +450,7 @@ public class OpenVR {
         } else {
             HmdMatrix34_t mat = vrsystemFunctions.GetEyeToHeadTransform.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Right);
             hmdPoseRightEye = new Matrix4f();
-            return OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(mat, hmdPoseRightEye);
+            return VRUtil.convertSteamVRMatrix3ToMatrix4f(mat, hmdPoseRightEye);
         }
     }
     

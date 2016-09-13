@@ -55,10 +55,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jmevr.input.OSVR;
 import jmevr.input.OpenVR;
-import jmevr.input.VRInput;
+import jmevr.input.OpenVRInput;
+import jmevr.input.VRAPI;
+import jmevr.input.VRInputAPI;
 import jmevr.post.PreNormalCaching;
-import jmevr.util.OpenVRViewManager;
+import jmevr.util.VRViewManager;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
 import jopenvr.JOpenVRLibrary;
@@ -75,19 +78,18 @@ public abstract class VRApplication implements Application, SystemListener {
     public static float DEFAULT_FOV = 108f, DEFAULT_ASPECT = 1f;
     
     public static enum PRECONFIG_PARAMETER {
-        USE_STEAMVR_COMPOSITOR, USE_CUSTOM_DISTORTION, FORCE_VR_MODE, FLIP_EYES,
+        USE_VR_COMPOSITOR, /*USE_CUSTOM_DISTORTION,*/ FORCE_VR_MODE, FLIP_EYES,
         SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, ENABLE_MIRROR_WINDOW, PREFER_OPENGL3, DISABLE_VR,
         SEATED_EXPERIENCE, NO_GUI, INSTANCE_VR_RENDERING, FORCE_DISABLE_MSAA
     }
     
     private static String OS;
-    private static OpenVR VRhardware;    
+    private static VRAPI VRhardware;    
     private static Camera dummyCam;
-    private static OpenVRViewManager VRviewmanager;
+    private static VRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
     private static boolean VRSupportedOS, forceVR, disableSwapBuffers = true, tryOpenGL3 = true, disableVR, seated, nogui, instanceVR, forceDisableMSAA;
-    private static final ArrayList<VRInput> VRinput = new ArrayList<>();
     
     // things taken from LegacyApplication
     private AppStateManager stateManager;    
@@ -198,7 +200,8 @@ public abstract class VRApplication implements Application, SystemListener {
         compositorOS = OS.contains("indows");
         
         if( VRSupportedOS && disableVR == false ) {
-            VRhardware = new OpenVR();
+            //VRhardware = new OpenVR();            
+            VRhardware = new OSVR();
             if( VRhardware.initialize() ) {
                 setPauseOnLostFocus(false);
             }
@@ -561,7 +564,7 @@ public abstract class VRApplication implements Application, SystemListener {
             settings.setHeight(yWin);
             settings.setBitsPerPixel(24);     
             settings.setFrameRate(0); // never sleep in main loop
-            settings.setFrequency(OpenVR.getDisplayFrequency());
+            settings.setFrequency(VRhardware.getDisplayFrequency());
             settings.setFullscreen(false);
             settings.setVSync(false); // stop vsyncing on primary monitor!
             settings.setSwapBuffers(!disableSwapBuffers);
@@ -580,7 +583,7 @@ public abstract class VRApplication implements Application, SystemListener {
             settings.setRenderer(AppSettings.LWJGL_OPENGL2);
         }
         
-        setSettings(settings);
+        setSettings(settings);     
         start(JmeContext.Type.Display, false);
         
         // disable annoying warnings about GUI stuff being updated, which is normal behavior
@@ -624,15 +627,15 @@ public abstract class VRApplication implements Application, SystemListener {
             case FORCE_VR_MODE:
                 forceVR = value;
                 break;
-            case USE_CUSTOM_DISTORTION:
-                OpenVRViewManager._setCustomDistortion(value);
-                break;
-            case USE_STEAMVR_COMPOSITOR:
+            //case USE_CUSTOM_DISTORTION: //deprecated, always using a render manager
+            //    VRViewManager._setCustomDistortion(value);
+            //    break;
+            case USE_VR_COMPOSITOR:
                 VRApplication.useCompositor = value;
                 if( value == false ) disableSwapBuffers = false;
                 break;
             case FLIP_EYES:
-                OpenVR._setFlipEyes(value);
+                VRhardware._setFlipEyes(value);
                 break;
             case INSTANCE_VR_RENDERING:
                 instanceVR = value;
@@ -667,20 +670,22 @@ public abstract class VRApplication implements Application, SystemListener {
      */
     public static void setSeatedExperience(boolean isSeated) {
         seated = isSeated;
-        if( OpenVR.getCompositor() == null ) return;
-        if( seated ) {
-            OpenVR.getCompositor().SetTrackingSpace.apply(JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseSeated);
-        } else {
-            OpenVR.getCompositor().SetTrackingSpace.apply(JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseStanding);                
-        }        
+        if( VRhardware instanceof OpenVR ) {
+            if( VRhardware.getCompositor() == null ) return;
+            if( seated ) {
+                ((OpenVR)VRhardware).getCompositor().SetTrackingSpace.apply(JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseSeated);
+            } else {
+                ((OpenVR)VRhardware).getCompositor().SetTrackingSpace.apply(JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseStanding);                
+            }        
+        }
     }
     
     public static boolean isSeatedExperience() {
         return seated;
     }
     
-    public static ArrayList<VRInput> getVRinputs() {
-        return VRinput;
+    public static VRInputAPI getVRinput() {
+        return VRhardware.getVRinput();
     }
     
     public static boolean isInstanceVRRendering() {
@@ -707,7 +712,7 @@ public abstract class VRApplication implements Application, SystemListener {
     /*
         access to the OpenVR stuff
     */
-    public static OpenVR getVRHardware() {
+    public static VRAPI getVRHardware() {
         return VRhardware;
     }
     
@@ -740,7 +745,7 @@ public abstract class VRApplication implements Application, SystemListener {
     /*
         get view manager
     */
-    public static OpenVRViewManager getVRViewManager() {
+    public static VRViewManager getVRViewManager() {
         return VRviewmanager;
     }
     
@@ -887,7 +892,7 @@ public abstract class VRApplication implements Application, SystemListener {
         
         // update VR pose & cameras
         if( VRviewmanager != null ) {
-            VRviewmanager.update(tpf);           
+            VRviewmanager.update(tpf);    
         } else if( VRApplication.observer != null ) {
             getCamera().setFrame(VRApplication.observer.getWorldTranslation(), VRApplication.observer.getWorldRotation());
         }
@@ -1051,8 +1056,8 @@ public abstract class VRApplication implements Application, SystemListener {
         cam.setFrustumNear(fNear);
         dummyCam = cam.clone();
         if( isInVR() ) {
-            if( VRhardware != null ) VRhardware.initOpenVRCompositor(compositorAllowed());
-            VRviewmanager = new OpenVRViewManager(this);
+            if( VRhardware != null ) VRhardware.initVRCompositor(compositorAllowed());
+            VRviewmanager = new VRViewManager(this);
             VRviewmanager.setResolutionMultiplier(resMult);
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));
             setLostFocusBehavior(LostFocusBehavior.Disabled);

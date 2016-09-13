@@ -7,9 +7,11 @@ package jmevr.util;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.sun.jna.Pointer;
+import jmevr.app.VRApplication;
 import jmevr.input.OpenVR;
 import jopenvr.DistortionCoordinates_t;
 import jopenvr.JOpenVRLibrary;
+import jopenvr.VR_IVRSystem_FnTable;
 
 /**
  *
@@ -45,7 +47,7 @@ public class MeshUtil {
                 vertPos += 3;
 
                 DistortionCoordinates_t dc0;
-                if( OpenVR.getVRSystem() == null ) {
+                if( VRApplication.getVRHardware().getVRSystem() == null ) {
                     // default to no distortion
                     texcoordR[coordPos] = u;
                     texcoordR[coordPos + 1] = 1 - v;
@@ -54,7 +56,7 @@ public class MeshUtil {
                     texcoordB[coordPos] = u;
                     texcoordB[coordPos + 1] = 1 - v;                    
                 } else {
-                    dc0 = OpenVR.getVRSystem().ComputeDistortion.apply(eye, u, v);
+                    dc0 = ((VR_IVRSystem_FnTable)VRApplication.getVRHardware().getVRSystem()).ComputeDistortion.apply(eye, u, v);
                     
                     texcoordR[coordPos] = dc0.rfRed[0];
                     texcoordR[coordPos + 1] = 1 - dc0.rfRed[1];

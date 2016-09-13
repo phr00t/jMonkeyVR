@@ -201,7 +201,8 @@ public class VRViewManager {
                             errl = ((OpenVR)api).getCompositor().Submit.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Left, texTypeLeft, texBoundsLeft, submitFlag);
                         } else if( api instanceof OSVR ) {
                             ((OSVR)api).handleRenderBufferPresent(OSVR.EYE_LEFT, osvr_viewDescLeft, osvr_renderBuffer[OSVR.EYE_LEFT]);
-                            ((OSVR)api).handleRenderBufferPresent(OSVR.EYE_RIGHT, osvr_viewDescRight, osvr_renderBuffer[OSVR.EYE_LEFT]);                            
+                            ((OSVR)api).handleRenderBufferPresent(OSVR.EYE_RIGHT, osvr_viewDescRight, osvr_renderBuffer[OSVR.EYE_LEFT]);        
+                            org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(((OSVR)api).getOpenGLContext());
                         }
                     }
                 } else if( texTypeLeft.handle == -1 || texTypeRight.handle == -1 ||
@@ -235,6 +236,7 @@ public class VRViewManager {
                     } else if( api instanceof OSVR ) {
                         ((OSVR)api).handleRenderBufferPresent(OSVR.EYE_LEFT, osvr_viewDescFull, osvr_renderBuffer[OSVR.EYE_LEFT]);
                         ((OSVR)api).handleRenderBufferPresent(OSVR.EYE_RIGHT, osvr_viewDescFull, osvr_renderBuffer[OSVR.EYE_RIGHT]);                                                    
+                        org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(((OSVR)api).getOpenGLContext());
                     }
                 }
                 if( errl != 0 ) System.out.println("Submit left compositor error: " + Integer.toString(errl));

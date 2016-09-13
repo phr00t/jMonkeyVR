@@ -61,6 +61,7 @@ public class OSVR implements VRAPI {
     Vector3f storePos = new Vector3f();
     Quaternion storeRot = new Quaternion();
     PointerByReference presentState = new PointerByReference();
+    long glfwContext, renderManagerContext, wglGLFW, wglRM;
     
     boolean initSuccess = false, flipEyes = false;
     
@@ -68,9 +69,10 @@ public class OSVR implements VRAPI {
         if( eyeLeftInfo == null || eyeRightInfo == null ) return false;
         byte retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerStartPresentRenderBuffers(presentState);
         if( retval != 0 ) return false;
-        //retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, eye, eyeInfo[eye]); //already done...
+        OSVR_RenderInfoOpenGL.ByValue useEye = eye==EYE_LEFT?eyeLeftInfo:eyeRightInfo;
+        //retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, eye==EYE_LEFT?EYE_LEFT_SIZE:EYE_RIGHT_SIZE, useEye); //already done...
         //if( retval != 0 ) return false;
-        retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), buffer, eye==EYE_LEFT?eyeLeftInfo:eyeRightInfo, view);
+        retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), buffer, useEye, view);
         if( retval != 0 ) return false;
         retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerFinishPresentRenderBuffers(renderManager, presentState.getValue(), renderParams, (byte)0);
         return retval == 0;
@@ -105,17 +107,21 @@ public class OSVR implements VRAPI {
                 } catch(Exception e) { }
             }
             System.out.println("OK, display startup status is good!");
-            // lets kick off the compositor now
-            initVRCompositor(true);
         }
         return initSuccess;
     }
 
     private PointerByReference grabRM, grabRMOGL, grabRIC;
     
+    public long getOpenGLContext() {
+        return glfwContext;
+    }
+    
     @Override
     public boolean initVRCompositor(boolean allowed) {
         if( !allowed || renderManager != null ) return false;
+        wglGLFW = org.lwjgl.opengl.WGL.wglGetCurrentContext();
+        glfwContext = org.lwjgl.glfw.GLFW.glfwGetCurrentContext();
         graphicsLibrary = new osvrrendermanageropengl.OSVR_GraphicsLibraryOpenGL.ByValue();
         graphicsLibrary.toolkit = null;
         grabRM = new PointerByReference(); grabRMOGL = new PointerByReference();
@@ -129,6 +135,15 @@ public class OSVR implements VRAPI {
             OSVR_OpenResultsOpenGL openResults = new OSVR_OpenResultsOpenGL();
             retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerOpenDisplayOpenGL(renderManager, openResults);
             if( retval == 0 ) {
+                wglRM = org.lwjgl.opengl.WGL.wglGetCurrentContext();
+                renderManagerContext = org.lwjgl.glfw.GLFW.glfwGetCurrentContext();
+                org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(glfwContext);
+                if( org.lwjgl.opengl.WGL.wglShareLists(wglRM, wglGLFW) ) {
+                    System.out.println("Context sharing success!");
+                } else {
+                    System.out.println("Context sharing problem...");
+                    
+                }
                 OsvrClientKitLibrary.osvrClientUpdate(context);
                 renderParams = new OSVR_RenderParams.ByValue();
                 OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetDefaultRenderParams(renderParams);

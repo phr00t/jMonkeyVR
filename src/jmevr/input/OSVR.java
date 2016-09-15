@@ -68,16 +68,17 @@ public class OSVR implements VRAPI {
     public boolean handleRenderBufferPresent(OSVR_ViewportDescription.ByValue leftView, OSVR_ViewportDescription.ByValue rightView,
                                              OSVR_RenderBufferOpenGL.ByValue leftBuffer, OSVR_RenderBufferOpenGL.ByValue rightBuffer) {
         if( eyeLeftInfo == null || eyeRightInfo == null ) return false;
-        byte retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerStartPresentRenderBuffers(presentState);
-        if( retval != 0 ) return false;
-        //retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, eye==EYE_LEFT?EYE_LEFT_SIZE:EYE_RIGHT_SIZE, useEye); //already done...
-        //if( retval != 0 ) return false;
-        retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), leftBuffer, eyeLeftInfo, leftView);
-        if( retval != 0 ) return false;
-        retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), rightBuffer, eyeRightInfo, rightView);
-        if( retval != 0 ) return false;
+        byte retval;
+        org.lwjgl.opengl.WGL.wglMakeCurrent(wglRM, wglGLFW);
+        org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(renderManagerContext);
+        OsvrRenderManagerOpenGLLibrary.osvrRenderManagerStartPresentRenderBuffers(presentState);
+        //OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, eye==EYE_LEFT?EYE_LEFT_SIZE:EYE_RIGHT_SIZE, useEye); //already done...
+        OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), leftBuffer, eyeLeftInfo, leftView);
+        OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), rightBuffer, eyeRightInfo, rightView);
         retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerFinishPresentRenderBuffers(renderManager, presentState.getValue(), renderParams, (byte)0);
-        return retval == 0;
+        org.lwjgl.opengl.WGL.wglMakeCurrent(wglGLFW, wglRM);
+        org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(glfwContext);
+        return retval == 0; // only check the last error, since if something errored above, the last call won't work & all calls will log to syserr
     }
     
     public static byte[] defaultNullString = { (byte)32, (byte)0 };
@@ -114,10 +115,6 @@ public class OSVR implements VRAPI {
     }
 
     private PointerByReference grabRM, grabRMOGL, grabRIC;
-    
-    public long getOpenGLContext() {
-        return glfwContext;
-    }
     
     @Override
     public boolean initVRCompositor(boolean allowed) {
@@ -286,7 +283,7 @@ public class OSVR implements VRAPI {
 
     @Override
     public Matrix4f getHMDMatrixProjectionLeftEye(Camera cam) {
-        if( true || eyeLeftInfo == null ) return cam.getProjectionMatrix(); //debug projection
+        if( true || eyeLeftInfo == null ) return cam.getProjectionMatrix(); //debug projection (OSVR gathered projection seems very off)
         if( eyeMatrix[EYE_LEFT] == null ) {
             eyeMatrix[EYE_LEFT] = new Matrix4f();
             eyeMatrix[EYE_LEFT].fromFrustum(cam.getFrustumNear(), cam.getFrustumFar(), 
@@ -300,7 +297,7 @@ public class OSVR implements VRAPI {
 
     @Override
     public Matrix4f getHMDMatrixProjectionRightEye(Camera cam) {
-        if( true || eyeRightInfo == null ) return cam.getProjectionMatrix(); //debug projection
+        if( true || eyeRightInfo == null ) return cam.getProjectionMatrix(); //debug projection (OSVR gathered projection seems very off)
         if( eyeMatrix[EYE_RIGHT] == null ) {
             eyeMatrix[EYE_RIGHT] = new Matrix4f();
             eyeMatrix[EYE_RIGHT].fromFrustum(cam.getFrustumNear(), cam.getFrustumFar(), 

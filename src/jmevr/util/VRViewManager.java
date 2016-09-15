@@ -200,8 +200,8 @@ public class VRViewManager {
                             errr = ((OpenVR)api).getCompositor().Submit.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Right, texTypeLeft, texBoundsRight, submitFlag);
                             errl = ((OpenVR)api).getCompositor().Submit.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Left, texTypeLeft, texBoundsLeft, submitFlag);
                         } else if( api instanceof OSVR ) {
-                            ((OSVR)api).handleRenderBufferPresent(OSVR.EYE_LEFT, osvr_viewDescLeft, osvr_renderBuffer[OSVR.EYE_LEFT]);
-                            ((OSVR)api).handleRenderBufferPresent(OSVR.EYE_RIGHT, osvr_viewDescRight, osvr_renderBuffer[OSVR.EYE_LEFT]);        
+                            ((OSVR)api).handleRenderBufferPresent(osvr_viewDescLeft, osvr_viewDescRight,
+                                                                  osvr_renderBuffer[OSVR.EYE_LEFT], osvr_renderBuffer[OSVR.EYE_LEFT]);
                             org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(((OSVR)api).getOpenGLContext());
                         }
                     }
@@ -212,7 +212,7 @@ public class VRViewManager {
                         texTypeLeft.write();
                         if( api instanceof OSVR ) {
                             osvr_renderBuffer[OSVR.EYE_LEFT].colorBufferName = texTypeLeft.handle;
-                            osvr_renderBuffer[OSVR.EYE_LEFT].depthStencilBufferName = leftEyeDepth.getImage().getId();
+                            if( leftEyeDepth != null ) osvr_renderBuffer[OSVR.EYE_LEFT].depthStencilBufferName = leftEyeDepth.getImage().getId();
                             osvr_renderBuffer[OSVR.EYE_LEFT].write();
                             registerOSVRBuffer(osvr_renderBuffer[OSVR.EYE_LEFT]);
                         }
@@ -222,7 +222,7 @@ public class VRViewManager {
                         texTypeRight.write();
                         if( api instanceof OSVR ) {
                             osvr_renderBuffer[OSVR.EYE_RIGHT].colorBufferName = texTypeRight.handle;
-                            osvr_renderBuffer[OSVR.EYE_RIGHT].depthStencilBufferName = rightEyeDepth.getImage().getId();
+                            if( rightEyeDepth != null ) osvr_renderBuffer[OSVR.EYE_RIGHT].depthStencilBufferName = rightEyeDepth.getImage().getId();
                             osvr_renderBuffer[OSVR.EYE_RIGHT].write();
                             registerOSVRBuffer(osvr_renderBuffer[OSVR.EYE_RIGHT]);
                         }
@@ -234,8 +234,8 @@ public class VRViewManager {
                         errr = ((OpenVR)api).getCompositor().Submit.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Right, texTypeRight, null,
                                                                JOpenVRLibrary.EVRSubmitFlags.EVRSubmitFlags_Submit_Default);
                     } else if( api instanceof OSVR ) {
-                        ((OSVR)api).handleRenderBufferPresent(OSVR.EYE_LEFT, osvr_viewDescFull, osvr_renderBuffer[OSVR.EYE_LEFT]);
-                        ((OSVR)api).handleRenderBufferPresent(OSVR.EYE_RIGHT, osvr_viewDescFull, osvr_renderBuffer[OSVR.EYE_RIGHT]);                                                    
+                        ((OSVR)api).handleRenderBufferPresent(osvr_viewDescFull, osvr_viewDescFull,
+                                                              osvr_renderBuffer[OSVR.EYE_LEFT], osvr_renderBuffer[OSVR.EYE_RIGHT]);
                         org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(((OSVR)api).getOpenGLContext());
                     }
                 }

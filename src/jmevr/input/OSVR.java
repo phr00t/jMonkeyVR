@@ -65,14 +65,16 @@ public class OSVR implements VRAPI {
     
     boolean initSuccess = false, flipEyes = false;
     
-    public boolean handleRenderBufferPresent(int eye, OSVR_ViewportDescription.ByValue view, OSVR_RenderBufferOpenGL.ByValue buffer) {
+    public boolean handleRenderBufferPresent(OSVR_ViewportDescription.ByValue leftView, OSVR_ViewportDescription.ByValue rightView,
+                                             OSVR_RenderBufferOpenGL.ByValue leftBuffer, OSVR_RenderBufferOpenGL.ByValue rightBuffer) {
         if( eyeLeftInfo == null || eyeRightInfo == null ) return false;
         byte retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerStartPresentRenderBuffers(presentState);
         if( retval != 0 ) return false;
-        OSVR_RenderInfoOpenGL.ByValue useEye = eye==EYE_LEFT?eyeLeftInfo:eyeRightInfo;
         //retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, eye==EYE_LEFT?EYE_LEFT_SIZE:EYE_RIGHT_SIZE, useEye); //already done...
         //if( retval != 0 ) return false;
-        retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), buffer, useEye, view);
+        retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), leftBuffer, eyeLeftInfo, leftView);
+        if( retval != 0 ) return false;
+        retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), rightBuffer, eyeRightInfo, rightView);
         if( retval != 0 ) return false;
         retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerFinishPresentRenderBuffers(renderManager, presentState.getValue(), renderParams, (byte)0);
         return retval == 0;
@@ -284,7 +286,7 @@ public class OSVR implements VRAPI {
 
     @Override
     public Matrix4f getHMDMatrixProjectionLeftEye(Camera cam) {
-        if( eyeLeftInfo == null ) return cam.getProjectionMatrix();
+        if( true || eyeLeftInfo == null ) return cam.getProjectionMatrix(); //debug projection
         if( eyeMatrix[EYE_LEFT] == null ) {
             eyeMatrix[EYE_LEFT] = new Matrix4f();
             eyeMatrix[EYE_LEFT].fromFrustum(cam.getFrustumNear(), cam.getFrustumFar(), 
@@ -298,7 +300,7 @@ public class OSVR implements VRAPI {
 
     @Override
     public Matrix4f getHMDMatrixProjectionRightEye(Camera cam) {
-        if( eyeRightInfo == null ) return cam.getProjectionMatrix();
+        if( true || eyeRightInfo == null ) return cam.getProjectionMatrix(); //debug projection
         if( eyeMatrix[EYE_RIGHT] == null ) {
             eyeMatrix[EYE_RIGHT] = new Matrix4f();
             eyeMatrix[EYE_RIGHT].fromFrustum(cam.getFrustumNear(), cam.getFrustumFar(), 

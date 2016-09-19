@@ -46,9 +46,10 @@ public class TestjMonkeyVR extends VRApplication {
 
     // set some VR settings & start the app
     public static void main(String[] args){
+        TestjMonkeyVR.CONSTRUCT_WITH_OSVR = true; //pick which API to use, defaults to OpenVR
         TestjMonkeyVR test = new TestjMonkeyVR();
         test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_VR_COMPOSITOR, true); // disable the SteamVR compositor (kinda needed at the moment)
-        test.preconfigureVRApp(PRECONFIG_PARAMETER.ENABLE_MIRROR_WINDOW, true); // runs faster when set to false, but will allow mirroring
+        test.preconfigureVRApp(PRECONFIG_PARAMETER.ENABLE_MIRROR_WINDOW, false); // runs faster when set to false, but will allow mirroring
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FORCE_VR_MODE, false); // render two eyes, regardless of API detection
         test.preconfigureVRApp(PRECONFIG_PARAMETER.SET_GUI_CURVED_SURFACE, true);
         test.preconfigureVRApp(PRECONFIG_PARAMETER.FLIP_EYES, false);

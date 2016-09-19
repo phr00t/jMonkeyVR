@@ -77,6 +77,8 @@ public abstract class VRApplication implements Application, SystemListener {
 
     public static float DEFAULT_FOV = 108f, DEFAULT_ASPECT = 1f;
     
+    public static boolean CONSTRUCT_WITH_OSVR = false;
+    
     public static enum PRECONFIG_PARAMETER {
         USE_VR_COMPOSITOR, /*USE_CUSTOM_DISTORTION,*/ FORCE_VR_MODE, FLIP_EYES,
         SET_GUI_OVERDRAW, SET_GUI_CURVED_SURFACE, ENABLE_MIRROR_WINDOW, PREFER_OPENGL3, DISABLE_VR,
@@ -155,7 +157,7 @@ public abstract class VRApplication implements Application, SystemListener {
         PreNormalCaching.resetCache();
     }
 
-    public VRApplication( AppState... initialStates ) {
+    public VRApplication(AppState... initialStates) {
         this();
         
         if (initialStates != null) {
@@ -200,8 +202,9 @@ public abstract class VRApplication implements Application, SystemListener {
         compositorOS = OS.contains("indows");
         
         if( VRSupportedOS && disableVR == false ) {
-            //VRhardware = new OpenVR();            
-            VRhardware = new OSVR();
+            if( CONSTRUCT_WITH_OSVR ) {
+                VRhardware = new OSVR();
+            } else VRhardware = new OpenVR();
             if( VRhardware.initialize() ) {
                 setPauseOnLostFocus(false);
             }
@@ -567,7 +570,7 @@ public abstract class VRApplication implements Application, SystemListener {
             settings.setFrequency(VRhardware.getDisplayFrequency());
             settings.setFullscreen(false);
             settings.setVSync(false); // stop vsyncing on primary monitor!
-            settings.setSwapBuffers(!disableSwapBuffers);
+            settings.setSwapBuffers(!disableSwapBuffers || VRhardware instanceof OSVR);
             settings.setTitle("Put Headset On Now: " + settings.getTitle());
         }
         
@@ -1056,7 +1059,9 @@ public abstract class VRApplication implements Application, SystemListener {
         cam.setFrustumNear(fNear);
         dummyCam = cam.clone();
         if( isInVR() ) {
-            if( VRhardware != null ) VRhardware.initVRCompositor(compositorAllowed());
+            if( VRhardware != null ) {
+                VRhardware.initVRCompositor(compositorAllowed());
+            }
             VRviewmanager = new VRViewManager(this);
             VRviewmanager.setResolutionMultiplier(resMult);
             inputManager.addMapping(RESET_HMD, new KeyTrigger(KeyInput.KEY_F9));

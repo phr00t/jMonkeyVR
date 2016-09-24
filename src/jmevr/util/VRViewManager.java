@@ -25,6 +25,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.shadow.DirectionalLightShadowFilter;
+import com.jme3.system.lwjgl.LwjglWindow;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
@@ -270,6 +271,13 @@ public class VRViewManager {
             update(0f);
             VRGuiManager.positionGui();
         }       
+        // if we are OSVR, our primary mirror window needs to be the same size as the render manager's output...
+        if( VRApplication.getVRHardware() instanceof OSVR ) {
+            long window = ((LwjglWindow)VRApplication.getMainVRApp().getContext()).getWindowHandle();
+            org.lwjgl.glfw.GLFW.glfwSetWindowSize(window, camLeft.getWidth(), camLeft.getHeight());
+            VRApplication.getMainVRApp().getContext().getSettings().setResolution(camLeft.getWidth(), camLeft.getHeight());
+            VRApplication.getMainVRApp().reshape(camLeft.getWidth(), camLeft.getHeight());            
+        }       
     }
     
     private float resMult = 1f;
@@ -490,7 +498,7 @@ public class VRViewManager {
     
     private void setupCamerasAndViews() {        
         // get desired frustrum from original camera
-        Camera origCam = app.getCamera();        
+        Camera origCam = app.getBaseCamera();        
         float fFar = origCam.getFrustumFar();
         float fNear = origCam.getFrustumNear();
         
@@ -517,6 +525,10 @@ public class VRViewManager {
         if( VRApplication.getVRHardware() != null ) camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));
         //org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB);
         
+        // if we are OSVR, we need to resize our window
+        if( VRApplication.getVRHardware() instanceof OSVR ) {
+        }
+        
         if( VRApplication.isInstanceVRRendering() == false ) {
             viewPortLeft = setupViewBuffers(camLeft, LEFT_VIEW_NAME);
             camRight = camLeft.clone();
@@ -541,6 +553,7 @@ public class VRViewManager {
             VRApplication.getVRHardware().getHMDMatrixPoseLeftEye();
             VRApplication.getVRHardware().getHMDMatrixPoseRightEye();
         }
+
     }
     
     private ViewPort setupMirrorBuffers(Camera cam, Texture tex, boolean expand) {        

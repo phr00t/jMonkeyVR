@@ -20,6 +20,7 @@ import com.jme3.input.TouchInput;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.profile.AppProfiler;
 import com.jme3.profile.AppStep;
@@ -220,6 +221,10 @@ public abstract class VRApplication implements Application, SystemListener {
         if( isInVR() && VRviewmanager != null && VRviewmanager.getCamLeft() != null ) {
             return dummyCam;
         }
+        return cam;
+    }
+    
+    public Camera getBaseCamera() {
         return cam;
     }
 
@@ -572,6 +577,7 @@ public abstract class VRApplication implements Application, SystemListener {
             settings.setVSync(false); // stop vsyncing on primary monitor!
             settings.setSwapBuffers(!disableSwapBuffers || VRhardware instanceof OSVR);
             settings.setTitle("Put Headset On Now: " + settings.getTitle());
+            settings.setResizable(true);
         }
         
         if( forceDisableMSAA ) {

@@ -3,8 +3,9 @@
 https://github.com/sensics/OSVR-RenderManager/blob/master/examples/RenderManagerOpenGLCAPIExample.cpp
 
 - JVM crashes often.. placing breakpoints during initialization clears it up most of the time (WHY!?)
-- no output to standard window (mirror) -- just black
-- no output to render manager -- just white (might be due to no OSVR hooked up / not able to time warp)
+  - OSVR is just unstable, particularly with no OSVR headset plugged in
+- OSVR render manager display seems to be truncated to mirror window size
+  - initialize everything full size, then shrink the mirror window after rendermanager works?
 
  */
 package jmevr.input;
@@ -70,7 +71,8 @@ public class OSVR implements VRAPI {
         if( eyeLeftInfo == null || eyeRightInfo == null ) return false;
         byte retval;
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerStartPresentRenderBuffers(presentState);
-        //OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, eye==EYE_LEFT?EYE_LEFT_SIZE:EYE_RIGHT_SIZE, useEye); //already done...
+        //OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, EYE_LEFT_SIZE, eyeLeftInfo);
+        //OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, EYE_RIGHT_SIZE, eyeRightInfo);
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), leftBuffer, eyeLeftInfo, leftView);
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), rightBuffer, eyeRightInfo, rightView);
         retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerFinishPresentRenderBuffers(renderManager, presentState.getValue(), renderParams, (byte)0);

@@ -3,9 +3,8 @@
 https://github.com/sensics/OSVR-RenderManager/blob/master/examples/RenderManagerOpenGLCAPIExample.cpp
 
 - JVM crashes often.. placing breakpoints during initialization clears it up most of the time (WHY!?)
-  - OSVR is just unstable, particularly with no OSVR headset plugged in
-- OSVR render manager display seems to be truncated to mirror window size
-  - initialize everything full size, then shrink the mirror window after rendermanager works?
+  - OSVR is just unstable.. any way to improve things?
+- render manager looks good, but left eye seems stretched
 
  */
 package jmevr.input;
@@ -79,11 +78,13 @@ public class OSVR implements VRAPI {
         return retval == 0; // only check the last error, since if something errored above, the last call won't work & all calls will log to syserr
     }
     
-    public static byte[] defaultNullString = { (byte)32, (byte)0 };
+    public static byte[] defaultJString = { 'j', (byte)0 };
+    public static byte[] OpenGLString = { 'O', 'p', 'e', 'n', 'G', 'L', (byte)0 };
     
     @Override
     public boolean initialize() {
-        context = OsvrClientKitLibrary.osvrClientInit(defaultNullString, 0);
+        hmdPose.setAutoSynch(false);
+        context = OsvrClientKitLibrary.osvrClientInit(defaultJString, 0);
         VRinput = new OSVRInput();
         initSuccess = context != null && VRinput.init();
         if( initSuccess ) {
@@ -136,8 +137,9 @@ public class OSVR implements VRAPI {
         grabGLFWContext();
         graphicsLibrary = new osvrrendermanageropengl.OSVR_GraphicsLibraryOpenGL.ByValue();
         graphicsLibrary.toolkit = null;
+        graphicsLibrary.setAutoSynch(false);
         grabRM = new PointerByReference(); grabRMOGL = new PointerByReference();
-        byte retval = OsvrRenderManagerOpenGLLibrary.osvrCreateRenderManagerOpenGL(context, ("OpenGL").getBytes(), graphicsLibrary, grabRM, grabRMOGL);
+        byte retval = OsvrRenderManagerOpenGLLibrary.osvrCreateRenderManagerOpenGL(context, OpenGLString, graphicsLibrary, grabRM, grabRMOGL);
         if( retval == 0 ) {
             renderManager = grabRM.getValue(); renderManagerOpenGL = grabRMOGL.getValue();
             if( renderManager == null || renderManagerOpenGL == null ) {
@@ -145,6 +147,7 @@ public class OSVR implements VRAPI {
                 return false;
             }
             OSVR_OpenResultsOpenGL openResults = new OSVR_OpenResultsOpenGL();
+            openResults.setAutoSynch(false);
             retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerOpenDisplayOpenGL(renderManager, openResults);
             if( retval == 0 ) {
                 wglRM = org.lwjgl.opengl.WGL.wglGetCurrentContext();
@@ -152,6 +155,7 @@ public class OSVR implements VRAPI {
                 shareContext();
                 OsvrClientKitLibrary.osvrClientUpdate(context);
                 renderParams = new OSVR_RenderParams.ByValue();
+                renderParams.setAutoSynch(false);
                 OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetDefaultRenderParams(renderParams);
                 grabRIC = new PointerByReference();
                 retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoCollection(renderManager, renderParams, grabRIC);
@@ -162,6 +166,8 @@ public class OSVR implements VRAPI {
                     numRenderInfo = grabNumInfo.getValue();
                     eyeLeftInfo = new OSVR_RenderInfoOpenGL.ByValue();
                     eyeRightInfo = new OSVR_RenderInfoOpenGL.ByValue();
+                    eyeLeftInfo.setAutoSynch(false);
+                    eyeRightInfo.setAutoSynch(false);
                     return true;
                 }
                 OsvrRenderManagerOpenGLLibrary.osvrDestroyRenderManager(renderManager);
@@ -240,6 +246,7 @@ public class OSVR implements VRAPI {
     public void getEyeInfo() {
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, EYE_LEFT_SIZE, eyeLeftInfo);
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, EYE_RIGHT_SIZE, eyeRightInfo);
+        eyeLeftInfo.read(); eyeRightInfo.read();
     }
 
     @Override
@@ -284,34 +291,38 @@ public class OSVR implements VRAPI {
 
     @Override
     public void updatePose() {
+        if( context == null || displayConfig == null ) return;
         OsvrClientKitLibrary.osvrClientUpdate(context);
         OsvrDisplayLibrary.osvrClientGetViewerPose(displayConfig, FIRST_VIEWER, hmdPose.getPointer());
+        hmdPose.read();
     }
 
     @Override
     public Matrix4f getHMDMatrixProjectionLeftEye(Camera cam) {
-        if( true || eyeLeftInfo == null ) return cam.getProjectionMatrix(); //debug projection (OSVR gathered projection seems very off)
+        if( eyeLeftInfo == null ) return cam.getProjectionMatrix();
         if( eyeMatrix[EYE_LEFT] == null ) {
+            FloatBuffer tfb = FloatBuffer.allocate(16);
+            osvrdisplay.OsvrDisplayLibrary.osvrClientGetViewerEyeSurfaceProjectionMatrixf(displayConfig, 0, (byte)EYE_LEFT, 0, cam.getFrustumNear(), cam.getFrustumFar(), (short)0, tfb);
             eyeMatrix[EYE_LEFT] = new Matrix4f();
-            eyeMatrix[EYE_LEFT].fromFrustum(cam.getFrustumNear(), cam.getFrustumFar(), 
-                                            (float)eyeLeftInfo.projection.left,
-                                            (float)eyeLeftInfo.projection.right,
-                                            (float)eyeLeftInfo.projection.top,
-                                            (float)eyeLeftInfo.projection.bottom, false);
+            eyeMatrix[EYE_LEFT].set(tfb.get(0), tfb.get(4), tfb.get(8), tfb.get(12),
+                                    tfb.get(1), tfb.get(5), tfb.get(9), tfb.get(13),
+                                    tfb.get(2), tfb.get(6), tfb.get(10), tfb.get(14),
+                                    tfb.get(3), tfb.get(7), tfb.get(11), tfb.get(15));
         }
         return eyeMatrix[EYE_LEFT];
     }
 
     @Override
     public Matrix4f getHMDMatrixProjectionRightEye(Camera cam) {
-        if( true || eyeRightInfo == null ) return cam.getProjectionMatrix(); //debug projection (OSVR gathered projection seems very off)
+        if( eyeRightInfo == null ) return cam.getProjectionMatrix();
         if( eyeMatrix[EYE_RIGHT] == null ) {
+            FloatBuffer tfb = FloatBuffer.allocate(16);
+            osvrdisplay.OsvrDisplayLibrary.osvrClientGetViewerEyeSurfaceProjectionMatrixf(displayConfig, 0, (byte)EYE_RIGHT, 0, cam.getFrustumNear(), cam.getFrustumFar(), (short)0, tfb);
             eyeMatrix[EYE_RIGHT] = new Matrix4f();
-            eyeMatrix[EYE_RIGHT].fromFrustum(cam.getFrustumNear(), cam.getFrustumFar(), 
-                                            (float)eyeRightInfo.projection.left,
-                                            (float)eyeRightInfo.projection.right,
-                                            (float)eyeRightInfo.projection.top,
-                                            (float)eyeRightInfo.projection.bottom, false);
+            eyeMatrix[EYE_RIGHT].set(tfb.get(0), tfb.get(4), tfb.get(8), tfb.get(12),
+                                    tfb.get(1), tfb.get(5), tfb.get(9), tfb.get(13),
+                                    tfb.get(2), tfb.get(6), tfb.get(10), tfb.get(14),
+                                    tfb.get(3), tfb.get(7), tfb.get(11), tfb.get(15));
         }
         return eyeMatrix[EYE_RIGHT];
     }

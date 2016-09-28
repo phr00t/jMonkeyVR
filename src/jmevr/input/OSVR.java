@@ -70,8 +70,7 @@ public class OSVR implements VRAPI {
         if( eyeLeftInfo == null || eyeRightInfo == null ) return false;
         byte retval;
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerStartPresentRenderBuffers(presentState);
-        //OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, EYE_LEFT_SIZE, eyeLeftInfo);
-        //OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoFromCollectionOpenGL(renderInfoCollection, EYE_RIGHT_SIZE, eyeRightInfo);
+        //getEyeInfo();
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), leftBuffer, eyeLeftInfo, leftView);
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), rightBuffer, eyeRightInfo, rightView);
         retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerFinishPresentRenderBuffers(renderManager, presentState.getValue(), renderParams, (byte)0);
@@ -261,10 +260,10 @@ public class OSVR implements VRAPI {
 
     @Override
     public Quaternion getOrientation() {
-        storeRot.set((float)hmdPose.rotation.data[0],
-                     (float)hmdPose.rotation.data[1],
+        storeRot.set((float)-hmdPose.rotation.data[0],
+                     (float)-hmdPose.rotation.data[3],
                      (float)hmdPose.rotation.data[2],
-                     (float)hmdPose.rotation.data[3]);
+                     (float)hmdPose.rotation.data[1]);
         if( storeRot.equals(Quaternion.ZERO) ) storeRot.set(Quaternion.DIRECTION_Z);
         return storeRot;
     }
@@ -282,10 +281,10 @@ public class OSVR implements VRAPI {
         storePos.x = (float)hmdPose.translation.data[0];
         storePos.y = (float)hmdPose.translation.data[1];
         storePos.z = (float)hmdPose.translation.data[2];
-        storeRot.set((float)hmdPose.rotation.data[0],
-                     (float)hmdPose.rotation.data[1],
+        storeRot.set((float)-hmdPose.rotation.data[0],
+                     (float)-hmdPose.rotation.data[3],
                      (float)hmdPose.rotation.data[2],
-                     (float)hmdPose.rotation.data[3]);
+                     (float)hmdPose.rotation.data[1]);
         if( storeRot.equals(Quaternion.ZERO) ) storeRot.set(Quaternion.DIRECTION_Z);
     }
 

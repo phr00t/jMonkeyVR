@@ -151,18 +151,26 @@ public class VRViewManager {
             osvr_renderBuffer = new OSVR_RenderBufferOpenGL.ByValue[2];
             osvr_renderBuffer[OSVR.EYE_LEFT] = new OSVR_RenderBufferOpenGL.ByValue();
             osvr_renderBuffer[OSVR.EYE_RIGHT] = new OSVR_RenderBufferOpenGL.ByValue();
+            osvr_renderBuffer[OSVR.EYE_LEFT].setAutoSynch(false);
+            osvr_renderBuffer[OSVR.EYE_RIGHT].setAutoSynch(false);
             osvr_viewDescFull = new OSVR_ViewportDescription.ByValue();
+            osvr_viewDescFull.setAutoSynch(false);
             osvr_viewDescFull.left = osvr_viewDescFull.lower = 0.0;
             osvr_viewDescFull.width = osvr_viewDescFull.height = 1.0;    
             osvr_viewDescLeft = new OSVR_ViewportDescription.ByValue();
+            osvr_viewDescLeft.setAutoSynch(false);
             osvr_viewDescLeft.left = osvr_viewDescLeft.lower = 0.0;
             osvr_viewDescLeft.width = 0.5;
             osvr_viewDescLeft.height = 1.0;    
             osvr_viewDescRight = new OSVR_ViewportDescription.ByValue();
+            osvr_viewDescRight.setAutoSynch(false);
             osvr_viewDescRight.left = 0.5;
             osvr_viewDescRight.lower = 0.0;
             osvr_viewDescRight.width = 0.5;
-            osvr_viewDescRight.height = 1.0;    
+            osvr_viewDescRight.height = 1.0;
+            osvr_viewDescRight.write();
+            osvr_viewDescLeft.write();
+            osvr_viewDescFull.write();
             osvr_renderBuffer[OSVR.EYE_LEFT].depthStencilBufferName = -1;
             osvr_renderBuffer[OSVR.EYE_LEFT].colorBufferName = -1;
             osvr_renderBuffer[OSVR.EYE_RIGHT].depthStencilBufferName = -1;
@@ -274,9 +282,12 @@ public class VRViewManager {
         // if we are OSVR, our primary mirror window needs to be the same size as the render manager's output...
         if( VRApplication.getVRHardware() instanceof OSVR ) {
             long window = ((LwjglWindow)VRApplication.getMainVRApp().getContext()).getWindowHandle();
-            org.lwjgl.glfw.GLFW.glfwSetWindowSize(window, camLeft.getWidth(), camLeft.getHeight());
-            VRApplication.getMainVRApp().getContext().getSettings().setResolution(camLeft.getWidth(), camLeft.getHeight());
-            VRApplication.getMainVRApp().reshape(camLeft.getWidth(), camLeft.getHeight());            
+            Vector2f windowSize = new Vector2f();
+            ((OSVR)VRApplication.getVRHardware()).getRenderSize(windowSize);
+            windowSize.x = Math.max(windowSize.x * 2f, camLeft.getWidth());
+            org.lwjgl.glfw.GLFW.glfwSetWindowSize(window, (int)windowSize.x, (int)windowSize.y);
+            VRApplication.getMainVRApp().getContext().getSettings().setResolution((int)windowSize.x, (int)windowSize.y);
+            VRApplication.getMainVRApp().reshape((int)windowSize.x, (int)windowSize.y);            
         }       
     }
     
@@ -524,10 +535,6 @@ public class VRViewManager {
         prepareCameraSize(camLeft, 1f);
         if( VRApplication.getVRHardware() != null ) camLeft.setProjectionMatrix(VRApplication.getVRHardware().getHMDMatrixProjectionLeftEye(camLeft));
         //org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB);
-        
-        // if we are OSVR, we need to resize our window
-        if( VRApplication.getVRHardware() instanceof OSVR ) {
-        }
         
         if( VRApplication.isInstanceVRRendering() == false ) {
             viewPortLeft = setupViewBuffers(camLeft, LEFT_VIEW_NAME);

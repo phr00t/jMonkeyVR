@@ -52,6 +52,7 @@ public class OSVR implements VRAPI {
     Pointer renderManager, renderManagerOpenGL, renderInfoCollection, registerBufferState;
     OSVRInput VRinput;
     NativeSize numRenderInfo;
+    NativeSizeByReference grabNumInfo = new NativeSizeByReference();    
     OSVR_RenderInfoOpenGL.ByValue eyeLeftInfo, eyeRightInfo;
     Matrix4f hmdPoseLeftEye;
     Matrix4f hmdPoseRightEye;    
@@ -61,6 +62,7 @@ public class OSVR implements VRAPI {
     Vector3f storePos = new Vector3f();
     Quaternion storeRot = new Quaternion();
     PointerByReference presentState = new PointerByReference();
+    OSVR_OpenResultsOpenGL openResults = new OSVR_OpenResultsOpenGL();
     long glfwContext, renderManagerContext, wglGLFW, wglRM;
     
     boolean initSuccess = false, flipEyes = false;
@@ -70,7 +72,7 @@ public class OSVR implements VRAPI {
         if( eyeLeftInfo == null || eyeRightInfo == null ) return false;
         byte retval;
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerStartPresentRenderBuffers(presentState);
-        //getEyeInfo();
+        getEyeInfo();
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), leftBuffer, eyeLeftInfo, leftView);
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), rightBuffer, eyeRightInfo, rightView);
         retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerFinishPresentRenderBuffers(renderManager, presentState.getValue(), renderParams, (byte)0);
@@ -145,7 +147,6 @@ public class OSVR implements VRAPI {
                 System.out.println("Render Manager Created NULL, error!");
                 return false;
             }
-            OSVR_OpenResultsOpenGL openResults = new OSVR_OpenResultsOpenGL();
             openResults.setAutoSynch(false);
             retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerOpenDisplayOpenGL(renderManager, openResults);
             if( retval == 0 ) {
@@ -160,8 +161,7 @@ public class OSVR implements VRAPI {
                 retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetRenderInfoCollection(renderManager, renderParams, grabRIC);
                 if( retval == 0 ) {
                     renderInfoCollection = grabRIC.getValue();
-                    NativeSizeByReference grabNumInfo = new NativeSizeByReference();
-                    OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetNumRenderInfoInCollection(renderInfoCollection, grabNumInfo);         
+                    OsvrRenderManagerOpenGLLibrary.osvrRenderManagerGetNumRenderInfoInCollection(renderInfoCollection, grabNumInfo);  
                     numRenderInfo = grabNumInfo.getValue();
                     eyeLeftInfo = new OSVR_RenderInfoOpenGL.ByValue();
                     eyeRightInfo = new OSVR_RenderInfoOpenGL.ByValue();
@@ -229,7 +229,7 @@ public class OSVR implements VRAPI {
 
     @Override
     public void reset() {
-        // uhh.. how do you reset pose?
+        // uhh.. not sure how to reset...
     }
 
     @Override

@@ -7,7 +7,9 @@ Phr00t's jMonkeyEngine build is required: https://github.com/phr00t/jmonkeyengin
 
 SteamVR is required. You can download & install it free with the Steam client (under Tools).
 
-See <a href="https://github.com/phr00t/jmonkeyengine-virtual-reality/blob/master/test/jmevr/TestOpenVR.java">TestOpenVR.java</a> to see a full example of how to set up an application to use VR hardware & jME3.
+See <a href="https://github.com/phr00t/jMonkeyVR/blob/master/test/jmevr/TestjMonkeyVR.java">TestOpenVR.java</a> to see a full example of how to set up an application to use VR hardware & jME3.
+
+<b>OSVR Support is a work-in-progress!</b>
 
 <b>Adding OpenVR support to your application:</b>
 

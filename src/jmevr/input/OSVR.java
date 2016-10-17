@@ -75,7 +75,7 @@ public class OSVR implements VRAPI {
         getEyeInfo();
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), leftBuffer, eyeLeftInfo, leftView);
         OsvrRenderManagerOpenGLLibrary.osvrRenderManagerPresentRenderBufferOpenGL(presentState.getValue(), rightBuffer, eyeRightInfo, rightView);
-        retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerFinishPresentRenderBuffers(renderManager, presentState.getValue(), renderParams, (byte)0);
+        retval = OsvrRenderManagerOpenGLLibrary.osvrRenderManagerFinishPresentRenderBuffers(renderManager, presentState.getValue(), renderParams, (byte)1);
         return retval == 0; // only check the last error, since if something errored above, the last call won't work & all calls will log to syserr
     }
     
@@ -229,7 +229,8 @@ public class OSVR implements VRAPI {
 
     @Override
     public void reset() {
-        // uhh.. not sure how to reset...
+        // TODO: no native OSVR reset function
+        // may need to take current position and negate it from future values
     }
 
     @Override

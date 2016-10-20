@@ -121,7 +121,8 @@ public class TestjMonkeyVR extends VRApplication {
         // gui element
         Vector2f guiCanvasSize = VRGuiManager.getCanvasSize();
         Picture test = new Picture("testpic");
-        test.setImage(getAssetManager(), "Textures/crosshair.png", true);
+        //test.setImage(getAssetManager(), "Textures/crosshair.png", true);
+        test.setImage(getAssetManager(), "Textures/happy.png", true);
         test.setWidth(192f);
         test.setHeight(128f);
         test.setPosition(guiCanvasSize.x * 0.5f - 192f * 0.5f, guiCanvasSize.y * 0.5f - 128f * 0.5f);

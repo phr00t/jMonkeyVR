@@ -17,9 +17,7 @@ import com.jme3.post.filters.TranslucentBucketFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -46,7 +44,6 @@ import jopenvr.VRTextureBounds_t;
 import osvrrendermanageropengl.OSVR_RenderBufferOpenGL;
 import osvrrendermanageropengl.OSVR_ViewportDescription;
 import osvrrendermanageropengl.OsvrRenderManagerOpenGLLibrary;
-import static osvrrendermanageropengl.OsvrRenderManagerOpenGLLibrary.osvrRenderManagerStartPresentRenderBuffers;
 
 /**
  *

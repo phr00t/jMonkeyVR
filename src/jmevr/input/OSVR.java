@@ -261,9 +261,9 @@ public class OSVR implements VRAPI {
 
     @Override
     public Quaternion getOrientation() {
-        storeRot.set((float)hmdPose.rotation.data[1],
+        storeRot.set((float)-hmdPose.rotation.data[1],
                      (float)hmdPose.rotation.data[2],
-                     (float)hmdPose.rotation.data[3],
+                     (float)-hmdPose.rotation.data[3],
                      (float)hmdPose.rotation.data[0]);
         if( storeRot.equals(Quaternion.ZERO) ) storeRot.set(Quaternion.DIRECTION_Z);
         return storeRot;
@@ -271,20 +271,20 @@ public class OSVR implements VRAPI {
 
     @Override
     public Vector3f getPosition() {
-        storePos.x = (float)hmdPose.translation.data[0];
+        storePos.x = (float)-hmdPose.translation.data[0];
         storePos.y = (float)hmdPose.translation.data[1];
-        storePos.z = (float)hmdPose.translation.data[2];
+        storePos.z = (float)-hmdPose.translation.data[2];
         return storePos;
     }
 
     @Override
     public void getPositionAndOrientation(Vector3f storePos, Quaternion storeRot) {
-        storePos.x = (float)hmdPose.translation.data[0];
+        storePos.x = (float)-hmdPose.translation.data[0];
         storePos.y = (float)hmdPose.translation.data[1];
-        storePos.z = (float)hmdPose.translation.data[2];
-        storeRot.set((float)hmdPose.rotation.data[1],
+        storePos.z = (float)-hmdPose.translation.data[2];
+        storeRot.set((float)-hmdPose.rotation.data[1],
                      (float)hmdPose.rotation.data[2],
-                     (float)hmdPose.rotation.data[3],
+                     (float)-hmdPose.rotation.data[3],
                      (float)hmdPose.rotation.data[0]);
         if( storeRot.equals(Quaternion.ZERO) ) storeRot.set(Quaternion.DIRECTION_Z);
     }

@@ -31,6 +31,7 @@ import com.jme3.texture.Texture2D;
 import com.jme3.ui.Picture;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
+import java.awt.GraphicsEnvironment;
 import jmevr.app.VRApplication;
 import static jmevr.app.VRApplication.isInVR;
 import jmevr.input.OSVR;
@@ -278,6 +279,8 @@ public class VRViewManager {
         }       
         // if we are OSVR, our primary mirror window needs to be the same size as the render manager's output...
         if( VRApplication.getVRHardware() instanceof OSVR ) {
+            int origWidth = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getWidth();
+            int origHeight = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getHeight();
             long window = ((LwjglWindow)VRApplication.getMainVRApp().getContext()).getWindowHandle();
             Vector2f windowSize = new Vector2f();
             ((OSVR)VRApplication.getVRHardware()).getRenderSize(windowSize);
@@ -285,6 +288,9 @@ public class VRViewManager {
             org.lwjgl.glfw.GLFW.glfwSetWindowSize(window, (int)windowSize.x, (int)windowSize.y);
             VRApplication.getMainVRApp().getContext().getSettings().setResolution((int)windowSize.x, (int)windowSize.y);
             VRApplication.getMainVRApp().reshape((int)windowSize.x, (int)windowSize.y);            
+            org.lwjgl.glfw.GLFW.glfwSetWindowPos(window, 0, 32);
+            org.lwjgl.glfw.GLFW.glfwFocusWindow(window);
+            org.lwjgl.glfw.GLFW.glfwSetCursorPos(window, origWidth / 2.0, origHeight / 2.0);
         }       
     }
     

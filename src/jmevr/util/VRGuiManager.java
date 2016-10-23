@@ -22,6 +22,7 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
+import java.awt.GraphicsEnvironment;
 import jmevr.app.VRApplication;
 
 /**
@@ -77,11 +78,18 @@ public class VRGuiManager {
         return screenSize;
     }
     
-    private static final Vector2f ratio = new Vector2f();
+    private static Vector2f ratio;
     public static Vector2f getCanvasToWindowRatio() {
-        Vector2f canvas = getCanvasSize();
-        ratio.x = canvas.x / VRApplication.getMainVRApp().getContext().getSettings().getWidth();
-        ratio.y = canvas.y / VRApplication.getMainVRApp().getContext().getSettings().getHeight();
+        if( ratio == null ) {
+            ratio = new Vector2f();
+            Vector2f canvas = getCanvasSize();
+            int width = Integer.min(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getWidth(),
+                                    VRApplication.getMainVRApp().getContext().getSettings().getWidth());
+            int height = Integer.min(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getHeight(),
+                                     VRApplication.getMainVRApp().getContext().getSettings().getHeight());
+            ratio.x = Float.max(1f, canvas.x / width);
+            ratio.y = Float.max(1f, canvas.y / height);
+        }
         return ratio;
     }        
     

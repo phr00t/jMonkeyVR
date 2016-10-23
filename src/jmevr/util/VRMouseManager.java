@@ -11,6 +11,7 @@ import com.jme3.input.lwjgl.GlfwMouseInput;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.Vector2f;
 import com.jme3.system.AppSettings;
+import com.jme3.system.lwjgl.LwjglWindow;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.ui.Picture;
@@ -128,14 +129,21 @@ public class VRMouseManager {
             if( mouseImage.getParent() == null ) {
                 VRApplication.getMainVRApp().getGuiNode().attachChild(mouseImage);                
                 centerMouse();
+                // the "real" mouse pointer should stay hidden
+                org.lwjgl.glfw.GLFW.glfwSetInputMode(((LwjglWindow)VRApplication.getMainVRApp().getContext()).getWindowHandle(),
+                                                      org.lwjgl.glfw.GLFW.GLFW_CURSOR, org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED);
             }
             // handle mouse movements, which may be in addition to (or exclusive from) tracked movement
             MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
             if( mi instanceof GlfwMouseInput ) {
                 if( recentCenterCount <= 0 ) {
-                    Vector2f winratio = VRGuiManager.getCanvasToWindowRatio();
-                    cursorPos.x += ((GlfwMouseInput)mi).getLastDeltaX() * winratio.x;
-                    cursorPos.y += ((GlfwMouseInput)mi).getLastDeltaY() * winratio.y;
+                    //Vector2f winratio = VRGuiManager.getCanvasToWindowRatio();
+                    cursorPos.x += ((GlfwMouseInput)mi).getLastDeltaX();// * winratio.x;
+                    cursorPos.y += ((GlfwMouseInput)mi).getLastDeltaY();// * winratio.y;
+                    if( cursorPos.x < 0f ) cursorPos.x = 0f;
+                    if( cursorPos.y < 0f ) cursorPos.y = 0f;
+                    if( cursorPos.x > VRGuiManager.getCanvasSize().x ) cursorPos.x = VRGuiManager.getCanvasSize().x;
+                    if( cursorPos.y > VRGuiManager.getCanvasSize().y ) cursorPos.y = VRGuiManager.getCanvasSize().y;
                 } else recentCenterCount--;
                 ((GlfwMouseInput)mi).clearDeltas();
             }

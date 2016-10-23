@@ -288,7 +288,7 @@ public class VRViewManager {
             org.lwjgl.glfw.GLFW.glfwSetWindowSize(window, (int)windowSize.x, (int)windowSize.y);
             VRApplication.getMainVRApp().getContext().getSettings().setResolution((int)windowSize.x, (int)windowSize.y);
             VRApplication.getMainVRApp().reshape((int)windowSize.x, (int)windowSize.y);            
-            org.lwjgl.glfw.GLFW.glfwSetWindowPos(window, 0, 32);
+            org.lwjgl.glfw.GLFW.glfwSetWindowPos(window, origWidth - (int)windowSize.x, 32);
             org.lwjgl.glfw.GLFW.glfwFocusWindow(window);
             org.lwjgl.glfw.GLFW.glfwSetCursorPos(window, origWidth / 2.0, origHeight / 2.0);
         }       

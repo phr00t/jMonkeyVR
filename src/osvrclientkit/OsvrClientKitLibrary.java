@@ -15,7 +15,7 @@ public class OsvrClientKitLibrary implements Library {
 	public static final String JNA_LIBRARY_NAME = "osvrClientKit";
 	public static final NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance(OsvrClientKitLibrary.JNA_LIBRARY_NAME);
 	static {
-		Native.register(OsvrClientKitLibrary.class, OsvrClientKitLibrary.JNA_NATIVE_LIB);
+            Native.register(OsvrClientKitLibrary.class, OsvrClientKitLibrary.JNA_NATIVE_LIB);
 	}
 	/**
 	 * @brief Initialize the library.<br>

@@ -202,10 +202,18 @@ public abstract class VRApplication implements Application, SystemListener {
         VRSupportedOS = !OS.contains("nux") && System.getProperty("sun.arch.data.model").equalsIgnoreCase("64"); //for the moment, linux/unix causes crashes, 64-bit only
         compositorOS = OS.contains("indows");
         
-        if( VRSupportedOS && disableVR == false ) {
+        if( !VRSupportedOS ) {
+            System.out.println("Non-supported OS: " + OS + ", architecture: " + System.getProperty("sun.arch.data.model"));
+        } else if( disableVR ) {
+            System.out.println("VR disabled via code.");
+        } else if( VRSupportedOS && disableVR == false ) {
             if( CONSTRUCT_WITH_OSVR ) {
+                System.out.println("Initializing OSVR...");
                 VRhardware = new OSVR();
-            } else VRhardware = new OpenVR();
+            } else {
+                System.out.println("Initializing OpenVR...");
+                VRhardware = new OpenVR();
+            }
             if( VRhardware.initialize() ) {
                 setPauseOnLostFocus(false);
             }
@@ -644,6 +652,7 @@ public abstract class VRApplication implements Application, SystemListener {
                 if( value == false ) disableSwapBuffers = false;
                 break;
             case FLIP_EYES:
+                if( VRhardware == null ) return;
                 VRhardware._setFlipEyes(value);
                 break;
             case INSTANCE_VR_RENDERING:

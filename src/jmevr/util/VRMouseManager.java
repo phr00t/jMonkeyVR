@@ -33,6 +33,7 @@ public class VRMouseManager {
     private static final Vector2f cursorPos = new Vector2f();
     private static float ySize, sensitivity = 8f, acceleration = 2f;
     private static final float[] lastXmv = new float[AVERAGE_AMNT], lastYmv = new float[AVERAGE_AMNT];
+    private static boolean thumbstickMode;
     
     private static float avg(float[] arr) {
         float amt = 0f;
@@ -48,6 +49,14 @@ public class VRMouseManager {
         MouseInput mi = VRApplication.getMainVRApp().getContext().getMouseInput();
         if( mi instanceof GlfwMouseInput ) ((GlfwMouseInput)mi).hideActiveCursor();
         centerMouse();
+    }
+    
+    public static void setThumbstickMode(boolean set) {
+        thumbstickMode = set;
+    }
+    
+    public static boolean isThumbstickMode() {
+        return thumbstickMode;
     }
     
     public static void setSpeed(float sensitivity, float acceleration) {
@@ -79,7 +88,12 @@ public class VRMouseManager {
         if( VRApplication.isInVR() == false || 
             VRApplication.getVRinput() == null ||
             VRApplication.getVRinput().isInputDeviceTracking(inputIndex) == false ) return;
-        Vector2f tpDelta = VRApplication.getVRinput().getAxisDeltaSinceLastCall(inputIndex, VRINPUT_TYPE.ViveTouchpadAxis);
+        Vector2f tpDelta;
+        if( thumbstickMode ) {
+            tpDelta = VRApplication.getVRinput().getAxis(inputIndex, VRINPUT_TYPE.ViveTouchpadAxis);
+        } else {
+            tpDelta = VRApplication.getVRinput().getAxisDeltaSinceLastCall(inputIndex, VRINPUT_TYPE.ViveTouchpadAxis);            
+        }
         float Xamount = (float)Math.pow(Math.abs(tpDelta.x) * sensitivity, acceleration);
         float Yamount = (float)Math.pow(Math.abs(tpDelta.y) * sensitivity, acceleration);
         if( tpDelta.x < 0f ) Xamount = -Xamount;

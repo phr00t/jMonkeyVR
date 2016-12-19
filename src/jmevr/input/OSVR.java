@@ -81,7 +81,7 @@ public class OSVR implements VRAPI {
     
     public static byte[] defaultJString = { 'j', (byte)0 };
     public static byte[] OpenGLString = { 'O', 'p', 'e', 'n', 'G', 'L', (byte)0 };
-    
+     
     @Override
     public boolean initialize() {
         hmdPose.setAutoSynch(false);
@@ -294,6 +294,7 @@ public class OSVR implements VRAPI {
         if( context == null || displayConfig == null ) return;
         OsvrClientKitLibrary.osvrClientUpdate(context);
         OsvrDisplayLibrary.osvrClientGetViewerPose(displayConfig, FIRST_VIEWER, hmdPose.getPointer());
+        VRinput._updateControllerStates();
         hmdPose.read();
     }
 

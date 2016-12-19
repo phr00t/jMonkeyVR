@@ -1,4 +1,5 @@
 package osvrclientkit;
+import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
@@ -235,7 +236,7 @@ public class OsvrClientKitLibrary implements Library {
 	@Deprecated 
 	public static native byte osvrRegisterButtonCallback(Pointer iface, Pointer cb, Pointer userdata);
 	/** Original signature : <code>OSVR_ReturnCode osvrRegisterButtonCallback(OSVR_ClientInterface, OSVR_ButtonCallback, void*)</code> */
-	public static native byte osvrRegisterButtonCallback(OsvrClientKitLibrary.OSVR_ClientInterface iface, Pointer cb, Pointer userdata);
+	public static native byte osvrRegisterButtonCallback(OsvrClientKitLibrary.OSVR_ClientInterface iface, Callback cb, Pointer userdata);
 	/**
 	 * Original signature : <code>OSVR_ReturnCode osvrRegisterAnalogCallback(OSVR_ClientInterface, OSVR_AnalogCallback, void*)</code><br>
 	 * @deprecated use the safer methods {@link #osvrRegisterAnalogCallback(osvrclientkit.OsvrClientKitLibrary.OSVR_ClientInterface, com.sun.jna.Pointer, com.sun.jna.Pointer)} and {@link #osvrRegisterAnalogCallback(com.sun.jna.Pointer, com.sun.jna.Pointer, com.sun.jna.Pointer)} instead
@@ -243,7 +244,7 @@ public class OsvrClientKitLibrary implements Library {
 	@Deprecated 
 	public static native byte osvrRegisterAnalogCallback(Pointer iface, Pointer cb, Pointer userdata);
 	/** Original signature : <code>OSVR_ReturnCode osvrRegisterAnalogCallback(OSVR_ClientInterface, OSVR_AnalogCallback, void*)</code> */
-	public static native byte osvrRegisterAnalogCallback(OsvrClientKitLibrary.OSVR_ClientInterface iface, Pointer cb, Pointer userdata);
+	public static native byte osvrRegisterAnalogCallback(OsvrClientKitLibrary.OSVR_ClientInterface iface, Callback cb, Pointer userdata);
 	/**
 	 * Original signature : <code>OSVR_ReturnCode osvrRegisterImagingCallback(OSVR_ClientInterface, OSVR_ImagingCallback, void*)</code><br>
 	 * @deprecated use the safer methods {@link #osvrRegisterImagingCallback(osvrclientkit.OsvrClientKitLibrary.OSVR_ClientInterface, com.sun.jna.Pointer, com.sun.jna.Pointer)} and {@link #osvrRegisterImagingCallback(com.sun.jna.Pointer, com.sun.jna.Pointer, com.sun.jna.Pointer)} instead

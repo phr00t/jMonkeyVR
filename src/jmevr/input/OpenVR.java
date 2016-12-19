@@ -248,6 +248,7 @@ public class OpenVR implements VRAPI {
         return posStore;
     }
     
+    @Override
     public void getPositionAndOrientation(Vector3f storePos, Quaternion storeRot) {
         hmdPose.toTranslationVector(storePos);
         storePos.x = -storePos.x;
@@ -255,6 +256,7 @@ public class OpenVR implements VRAPI {
         storeRot.set(getOrientation());
     }    
     
+    @Override
     public void updatePose(){
         if(vrsystemFunctions == null) return;
         if(compositorFunctions != null) {

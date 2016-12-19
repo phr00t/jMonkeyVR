@@ -233,10 +233,10 @@ public class OpenVRInput implements VRInputAPI {
         return cStates[controllerIndex[index]];
     }
     
-    public Matrix4f getPoseForInputDevice(int index) {
-        if( isInputDeviceTracking(index) == false ) return null;
-        return OpenVR.poseMatrices[controllerIndex[index]];
-    }
+    //public Matrix4f getPoseForInputDevice(int index) {
+    //    if( isInputDeviceTracking(index) == false ) return null;
+    //    return OpenVR.poseMatrices[controllerIndex[index]];
+    //}
     
     public boolean doWeHaveInputFocus() {
         return ((VR_IVRSystem_FnTable)VRApplication.getVRHardware().getVRSystem()).IsInputFocusCapturedByAnotherProcess.apply() == 0;       

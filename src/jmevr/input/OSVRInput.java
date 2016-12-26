@@ -15,6 +15,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import jmevr.app.VRApplication;
 import jmevr.util.VRViewManager;
+import jopenvr.JOpenVRLibrary;
 import osvrclientkit.OsvrClientKitLibrary;
 import osvrclientkit.OsvrClientKitLibrary.OSVR_ClientInterface;
 import osvrclientreporttypes.OSVR_AnalogReport;
@@ -33,7 +34,7 @@ public class OSVRInput implements VRInputAPI {
     // button example: https://github.com/OSVR/OSVR-Core/blob/master/examples/clients/ButtonCallback.c
     // analog example: https://github.com/OSVR/OSVR-Core/blob/master/examples/clients/AnalogCallback.c
     
-    private static final int ANALOG_COUNT = 2, BUTTON_COUNT = 8, CHANNEL_COUNT = 3;
+    private static final int ANALOG_COUNT = 3, BUTTON_COUNT = 7, CHANNEL_COUNT = 3;
     
     OSVR_ClientInterface[][] buttons;
     OSVR_ClientInterface[][][] analogs;
@@ -51,6 +52,9 @@ public class OSVRInput implements VRInputAPI {
     private final Vector3f tempv = new Vector3f();
     private final Vector2f temp2 = new Vector2f();
     private final boolean[][] buttonDown = new boolean[16][16];
+    
+    private static final Vector2f tempAxis = new Vector2f(), temp2Axis = new Vector2f();
+    private static final Vector2f lastCallAxis[] = new Vector2f[16];
     
     public static byte[] getButtonString(boolean left, byte index) {
         if( left ) {
@@ -76,18 +80,30 @@ public class OSVRInput implements VRInputAPI {
         return retval;
     }
 
-    @Override
     public void resetInputSinceLastCall() {
+        for(int i=0;i<lastCallAxis.length;i++) {
+            lastCallAxis[i].x = 0f;
+            lastCallAxis[i].y = 0f;
+        }
         for(int i=0;i<16;i++) {
             for(int j=0;j<16;j++) {
                 buttonDown[i][j] = false;
             }
-        }        
+        }
     }
-
-    @Override
-    public Vector2f getAxisDeltaSinceLastCall(int controllerIndex, OpenVRInput.VRINPUT_TYPE forAxis) {
-        return Vector2f.ZERO;
+    
+    public Vector2f getAxisDeltaSinceLastCall(int controllerIndex, OpenVRInput.VRINPUT_TYPE forAxis) {                
+        int axisIndex = forAxis.getValue();
+        temp2Axis.set(lastCallAxis[axisIndex]);
+        lastCallAxis[axisIndex].set(getAxis(controllerIndex, forAxis));
+        if( (temp2Axis.x != 0f || temp2Axis.y != 0f) && (lastCallAxis[axisIndex].x != 0f || lastCallAxis[axisIndex].y != 0f) ) {
+            temp2Axis.subtractLocal(lastCallAxis[axisIndex]);        
+        } else {
+            // move made from rest, don't count as a delta move
+            temp2Axis.x = 0f;
+            temp2Axis.y = 0f;
+        }
+        return temp2Axis;
     }
 
     @Override
@@ -117,10 +133,11 @@ public class OSVRInput implements VRInputAPI {
     public boolean init() {
         
         buttonHandler = new Callback() {
-            public void invoke(OSVR_ClientInterface userdata, Pointer timeval, OSVR_ButtonReport report) {
+            public void invoke(Pointer userdata, Pointer timeval, OSVR_ButtonReport report) {
                 for(int i=0;i<2;i++) {
                     for(int j=0;j<BUTTON_COUNT;j++) {
-                        if( userdata == buttons[i][j] ) {
+                        if( buttons[i][j] == null ) continue;
+                        if( userdata.toString().equals(buttons[i][j].getPointer().toString()) ) {
                             buttonState[i][j] = report.state;
                             return;
                         }
@@ -129,13 +146,14 @@ public class OSVRInput implements VRInputAPI {
             }                
         };  
         analogHandler = new Callback() {
-            public void invoke(OSVR_ClientInterface userdata, Pointer timeval, OSVR_AnalogReport report) {
+            public void invoke(Pointer userdata, Pointer timeval, OSVR_AnalogReport report) {
                 for(int i=0;i<2;i++) {
                     for(int j=0;j<ANALOG_COUNT;j++) {
                         for(int k=0;k<CHANNEL_COUNT;k++) {
-                        if( userdata == buttons[i][j] ) {
-                            analogState[i][j][k] = (float)report.state;
-                            return;
+                            if( analogs[i][j][k] == null ) continue;
+                            if( userdata.toString().equals(analogs[i][j][k].getPointer().toString()) ) {
+                                analogState[i][j][k] = (float)report.state;
+                                return;
                             }
                         }
                     }
@@ -153,15 +171,32 @@ public class OSVRInput implements VRInputAPI {
         handState = new OSVR_Pose3[2];
         handState[0] = new OSVR_Pose3(); handState[1] = new OSVR_Pose3();
         for(int h=0;h<2;h++) {
-            for(int i=0;i<BUTTON_COUNT;i++) {
+            for(int i=0;i<BUTTON_COUNT-2;i++) {
                 buttons[h][i] = getInterface(getButtonString(h==0, (byte)Integer.toString(i).toCharArray()[0]));
                 OsvrClientKitLibrary.osvrRegisterButtonCallback(buttons[h][i], buttonHandler, buttons[h][i].getPointer()); 
             }
         }
+        buttons[0][BUTTON_COUNT-2] = getInterface(new byte[] { '/', 'c', 'o', 'n', 't', 'r', 'o', 'l', 'l', 'e', 'r', '/', 'l', 'e', 'f', 't', '/', 'b', 'u', 'm', 'p', 'e', 'r', (byte)0 } );
+        OsvrClientKitLibrary.osvrRegisterButtonCallback(buttons[0][BUTTON_COUNT-2], buttonHandler, buttons[0][BUTTON_COUNT-2].getPointer()); 
+        buttons[1][BUTTON_COUNT-2] = getInterface(new byte[] { '/', 'c', 'o', 'n', 't', 'r', 'o', 'l', 'l', 'e', 'r', '/', 'r', 'i', 'g', 'h', 't', '/', 'b', 'u', 'm', 'p', 'e', 'r', (byte)0 } );
+        OsvrClientKitLibrary.osvrRegisterButtonCallback(buttons[1][BUTTON_COUNT-2], buttonHandler, buttons[1][BUTTON_COUNT-2].getPointer()); 
+        buttons[0][BUTTON_COUNT-1] = getInterface(new byte[] { '/', 'c', 'o', 'n', 't', 'r', 'o', 'l', 'l', 'e', 'r', '/', 'l', 'e', 'f', 't', '/', 'j', 'o', 'y', 's', 't', 'i', 'c', 'k', '/', 'b', 'u', 't', 't', 'o', 'n', (byte)0 } );
+        OsvrClientKitLibrary.osvrRegisterButtonCallback(buttons[0][BUTTON_COUNT-1], buttonHandler, buttons[0][BUTTON_COUNT-1].getPointer()); 
+        buttons[1][BUTTON_COUNT-1] = getInterface(new byte[] { '/', 'c', 'o', 'n', 't', 'r', 'o', 'l', 'l', 'e', 'r', '/', 'r', 'i', 'g', 'h', 't', '/', 'j', 'o', 'y', 's', 't', 'i', 'c', 'k', '/', 'b', 'u', 't', 't', 'o', 'n', (byte)0 } );
+        OsvrClientKitLibrary.osvrRegisterButtonCallback(buttons[1][BUTTON_COUNT-1], buttonHandler, buttons[1][BUTTON_COUNT-1].getPointer()); 
+            
         analogs[0][0][0] = getInterface(new byte[] { '/', 'c', 'o', 'n', 't', 'r', 'o', 'l', 'l', 'e', 'r', '/', 'l', 'e', 'f', 't', '/', 't', 'r', 'i', 'g', 'g', 'e', 'r', (byte)0 } );
         analogs[1][0][0] = getInterface(new byte[] { '/', 'c', 'o', 'n', 't', 'r', 'o', 'l', 'l', 'e', 'r', '/', 'r', 'i', 'g', 'h', 't', '/', 't', 'r', 'i', 'g', 'g', 'e', 'r', (byte)0 } );
         OsvrClientKitLibrary.osvrRegisterAnalogCallback(analogs[0][0][0], analogHandler, analogs[0][0][0].getPointer());
         OsvrClientKitLibrary.osvrRegisterAnalogCallback(analogs[1][0][0], analogHandler, analogs[1][0][0].getPointer());
+        analogs[0][1][0] = getInterface(new byte[] { '/', 'c', 'o', 'n', 't', 'r', 'o', 'l', 'l', 'e', 'r', '/', 'l', 'e', 'f', 't', '/', 'j', 'o', 'y', 's', 't', 'i', 'c', 'k', '/', 'x', (byte)0 } );
+        analogs[0][1][1] = getInterface(new byte[] { '/', 'c', 'o', 'n', 't', 'r', 'o', 'l', 'l', 'e', 'r', '/', 'l', 'e', 'f', 't', '/', 'j', 'o', 'y', 's', 't', 'i', 'c', 'k', '/', 'y', (byte)0 } );
+        OsvrClientKitLibrary.osvrRegisterAnalogCallback(analogs[0][1][0], analogHandler, analogs[0][1][0].getPointer());
+        OsvrClientKitLibrary.osvrRegisterAnalogCallback(analogs[0][1][1], analogHandler, analogs[0][1][1].getPointer());
+        analogs[1][1][0] = getInterface(new byte[] { '/', 'c', 'o', 'n', 't', 'r', 'o', 'l', 'l', 'e', 'r', '/', 'r', 'i', 'g', 'h', 't', '/', 'j', 'o', 'y', 's', 't', 'i', 'c', 'k', '/', 'x', (byte)0 } );
+        analogs[1][1][1] = getInterface(new byte[] { '/', 'c', 'o', 'n', 't', 'r', 'o', 'l', 'l', 'e', 'r', '/', 'r', 'i', 'g', 'h', 't', '/', 'j', 'o', 'y', 's', 't', 'i', 'c', 'k', '/', 'y', (byte)0 } );
+        OsvrClientKitLibrary.osvrRegisterAnalogCallback(analogs[1][1][0], analogHandler, analogs[1][1][0].getPointer());
+        OsvrClientKitLibrary.osvrRegisterAnalogCallback(analogs[1][1][1], analogHandler, analogs[1][1][1].getPointer());
         
         return true;
     }
@@ -215,7 +250,7 @@ public class OSVRInput implements VRInputAPI {
     @Override
     public Vector3f getPosition(int index) {
         tempv.x = (float)-handState[index].translation.data[0];
-        tempv.y = (float)handState[index].translation.data[1];
+        tempv.y = (float) handState[index].translation.data[1];
         tempv.z = (float)-handState[index].translation.data[2];
         return tempv;
     }

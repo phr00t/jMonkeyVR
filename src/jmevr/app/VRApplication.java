@@ -78,7 +78,7 @@ public abstract class VRApplication implements Application, SystemListener {
 
     public static float DEFAULT_FOV = 108f, DEFAULT_ASPECT = 1f;
     
-    public static boolean CONSTRUCT_WITH_OSVR = false;
+    public static boolean CONSTRUCT_WITH_OSVR = false, DISABLE_VR;
     
     public static enum PRECONFIG_PARAMETER {
         USE_VR_COMPOSITOR, /*USE_CUSTOM_DISTORTION,*/ FORCE_VR_MODE, FLIP_EYES,
@@ -92,7 +92,7 @@ public abstract class VRApplication implements Application, SystemListener {
     private static VRViewManager VRviewmanager;
     private static VRApplication mainApp;
     private static Spatial observer;
-    private static boolean VRSupportedOS, forceVR, disableSwapBuffers = true, tryOpenGL3 = true, disableVR, seated, nogui, instanceVR, forceDisableMSAA;
+    private static boolean VRSupportedOS, forceVR, disableSwapBuffers = true, tryOpenGL3 = true, seated, nogui, instanceVR, forceDisableMSAA;
     
     // things taken from LegacyApplication
     private AppStateManager stateManager;    
@@ -204,9 +204,9 @@ public abstract class VRApplication implements Application, SystemListener {
         
         if( !VRSupportedOS ) {
             System.out.println("Non-supported OS: " + OS + ", architecture: " + System.getProperty("sun.arch.data.model"));
-        } else if( disableVR ) {
+        } else if( DISABLE_VR ) {
             System.out.println("VR disabled via code.");
-        } else if( VRSupportedOS && disableVR == false ) {
+        } else if( VRSupportedOS && DISABLE_VR == false ) {
             if( CONSTRUCT_WITH_OSVR ) {
                 System.out.println("Initializing OSVR...");
                 VRhardware = new OSVR();
@@ -667,7 +667,7 @@ public abstract class VRApplication implements Application, SystemListener {
                 tryOpenGL3 = value;
                 break;
             case DISABLE_VR:
-                disableVR = value;
+                DISABLE_VR = value;
                 break;
             case NO_GUI:
                 nogui = value;
@@ -714,7 +714,7 @@ public abstract class VRApplication implements Application, SystemListener {
         quick check if VR mode is enabled
     */
     public static boolean isInVR() {
-        return disableVR == false && (forceVR || VRSupportedOS && VRhardware != null && VRhardware.isInitialized());
+        return DISABLE_VR == false && (forceVR || VRSupportedOS && VRhardware != null && VRhardware.isInitialized());
     }
     
     /*
@@ -1113,7 +1113,7 @@ public abstract class VRApplication implements Application, SystemListener {
             VRhardware.destroy();
             VRhardware = null;
         }        
-        disableVR = true;
+        DISABLE_VR = true;
         stateManager.cleanup();
 
         destroyInput();

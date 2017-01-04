@@ -47,6 +47,7 @@ public class TestjMonkeyVR extends VRApplication {
     // set some VR settings & start the app
     public static void main(String[] args){
         TestjMonkeyVR.CONSTRUCT_WITH_OSVR = true; //pick which API to use, defaults to OpenVR
+        TestjMonkeyVR.DISABLE_VR = false; // if we wanted to disable loading anything VR related here
         TestjMonkeyVR test = new TestjMonkeyVR();
         test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_VR_COMPOSITOR, true); // disable the SteamVR compositor (kinda needed at the moment)
         test.preconfigureVRApp(PRECONFIG_PARAMETER.ENABLE_MIRROR_WINDOW, false); // runs faster when set to false, but will allow mirroring

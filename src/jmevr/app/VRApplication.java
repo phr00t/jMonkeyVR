@@ -703,6 +703,7 @@ public abstract class VRApplication implements Application, SystemListener {
     }
     
     public static VRInputAPI getVRinput() {
+        if( VRhardware == null ) return null;
         return VRhardware.getVRinput();
     }
     

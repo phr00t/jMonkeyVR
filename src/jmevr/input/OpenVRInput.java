@@ -74,8 +74,14 @@ public class OpenVRInput implements VRInputAPI {
     private static final boolean needsNewVelocity[] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount],
                                  needsNewAngVelocity[] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount],
                                  buttonDown[][] = new boolean[JOpenVRLibrary.k_unMaxTrackedDeviceCount][16];
+    private static float axisMultiplier = 1f;
     private static final Vector3f tempVel = new Vector3f();
     private static final Quaternion tempq = new Quaternion();
+
+    @Override
+    public void setAxisMultiplier(float set) {
+        axisMultiplier = set;
+    }
     
     public enum VRINPUT_TYPE {
         ViveTriggerAxis(0), ViveTouchpadAxis(1), ViveGripButton(2), ViveMenuButton(3);
@@ -88,6 +94,13 @@ public class OpenVRInput implements VRInputAPI {
         public int getValue() {
             return value;
         }        
+    }
+    
+    public void swapHands() {
+        if( controllerCount != 2 ) return; 
+        int temp = controllerIndex[0];
+        controllerIndex[0] = controllerIndex[1];
+        controllerIndex[1] = temp;
     }
     
     public boolean isButtonDown(int controllerIndex, VRINPUT_TYPE checkButton) {
@@ -178,7 +191,9 @@ public class OpenVRInput implements VRInputAPI {
                 tempAxis.x = cs.rAxis[0].x;
                 tempAxis.y = cs.rAxis[0].y;
                 break;
-        }        
+        }       
+        tempAxis.x *= axisMultiplier;
+        tempAxis.y *= axisMultiplier;
         return tempAxis;
     }
     

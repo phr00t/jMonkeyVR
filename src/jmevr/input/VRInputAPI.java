@@ -41,6 +41,10 @@ public interface VRInputAPI {
     
     public Object getRawControllerState(int index);
     
+    public void swapHands();
+    
+    public void setAxisMultiplier(float set);
+    
     //public Matrix4f getPoseForInputDevice(int index);
     
     public boolean doWeHaveInputFocus();

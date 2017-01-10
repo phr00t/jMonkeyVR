@@ -55,6 +55,7 @@ public class OSVRInput implements VRInputAPI {
     
     private static final Vector2f tempAxis = new Vector2f(), temp2Axis = new Vector2f();
     private static final Vector2f lastCallAxis[] = new Vector2f[16];
+    private static float axisMultiplier = 1f;
     
     public static byte[] getButtonString(boolean left, byte index) {
         if( left ) {
@@ -118,8 +119,8 @@ public class OSVRInput implements VRInputAPI {
 
     @Override
     public Vector2f getAxis(int controllerIndex, OpenVRInput.VRINPUT_TYPE forAxis) {
-        temp2.x = analogState[controllerIndex][forAxis.getValue()][0];
-        temp2.y = analogState[controllerIndex][forAxis.getValue()][1];
+        temp2.x = analogState[controllerIndex][forAxis.getValue()][0] * axisMultiplier;
+        temp2.y = analogState[controllerIndex][forAxis.getValue()][1] * axisMultiplier;
         return temp2;
     }
     
@@ -292,6 +293,16 @@ public class OSVRInput implements VRInputAPI {
     @Override
     public void triggerHapticPulse(int controllerIndex, float seconds) {
         
+    }
+
+    @Override
+    public void swapHands() {
+        // not supported yet
+    }
+
+    @Override
+    public void setAxisMultiplier(float set) {
+        axisMultiplier = set;
     }
     
 }

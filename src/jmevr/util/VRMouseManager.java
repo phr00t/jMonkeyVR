@@ -34,6 +34,7 @@ public class VRMouseManager {
     private static float ySize, sensitivity = 8f, acceleration = 2f;
     private static final float[] lastXmv = new float[AVERAGE_AMNT], lastYmv = new float[AVERAGE_AMNT];
     private static boolean thumbstickMode;
+    private static float moveScale = 1f;
     
     private static float avg(float[] arr) {
         float amt = 0f;
@@ -72,6 +73,10 @@ public class VRMouseManager {
         return acceleration;
     }
     
+    public static void setMouseMoveScale(float set) {
+        moveScale = set;
+    }
+    
     public static void setImage(String texture) {
         if( VRApplication.isInVR() == false ) return;
         Texture tex = VRApplication.getMainVRApp().getAssetManager().loadTexture(texture);
@@ -98,6 +103,7 @@ public class VRMouseManager {
         float Yamount = (float)Math.pow(Math.abs(tpDelta.y) * sensitivity, acceleration);
         if( tpDelta.x < 0f ) Xamount = -Xamount;
         if( tpDelta.y < 0f ) Yamount = -Yamount;
+        Xamount *= moveScale; Yamount *= moveScale;
         if( mouseListener != null ) {
             if( tpDelta.x != 0f && mouseXName != null ) mouseListener.onAnalog(mouseXName, Xamount * 0.2f, tpf);
             if( tpDelta.y != 0f && mouseYName != null ) mouseListener.onAnalog(mouseYName, Yamount * 0.2f, tpf);            

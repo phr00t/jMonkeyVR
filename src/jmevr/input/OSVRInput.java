@@ -118,6 +118,13 @@ public class OSVRInput implements VRInputAPI {
     }
 
     @Override
+    public Vector2f getAxisRaw(int controllerIndex, OpenVRInput.VRINPUT_TYPE forAxis) {
+        temp2.x = analogState[controllerIndex][forAxis.getValue()][0];
+        temp2.y = analogState[controllerIndex][forAxis.getValue()][1];
+        return temp2;
+    }
+
+    @Override
     public Vector2f getAxis(int controllerIndex, OpenVRInput.VRINPUT_TYPE forAxis) {
         temp2.x = analogState[controllerIndex][forAxis.getValue()][0] * axisMultiplier;
         temp2.y = analogState[controllerIndex][forAxis.getValue()][1] * axisMultiplier;

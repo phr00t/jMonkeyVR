@@ -31,6 +31,8 @@ public interface VRInputAPI {
     
     public Vector2f getAxis(int controllerIndex, VRINPUT_TYPE forAxis);
     
+    public Vector2f getAxisRaw(int controllerIndex, VRINPUT_TYPE forAxis);
+
     public boolean init();
     
     public int getTrackedControllerCount();

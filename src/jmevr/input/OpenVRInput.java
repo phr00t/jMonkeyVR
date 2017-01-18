@@ -178,6 +178,23 @@ public class OpenVRInput implements VRInputAPI {
         return tempVel;
     }
     
+    public Vector2f getAxisRaw(int controllerIndex, VRINPUT_TYPE forAxis) {
+        VRControllerState_t cs = cStates[OpenVRInput.controllerIndex[controllerIndex]];
+        switch( forAxis ) {
+            default:
+                return null;
+            case ViveTriggerAxis:
+                tempAxis.x = cs.rAxis[1].x;
+                tempAxis.y = tempAxis.x;
+                break;
+            case ViveTouchpadAxis:
+                tempAxis.x = cs.rAxis[0].x;
+                tempAxis.y = cs.rAxis[0].y;
+                break;
+        }       
+        return tempAxis;
+    }
+
     public Vector2f getAxis(int controllerIndex, VRINPUT_TYPE forAxis) {
         VRControllerState_t cs = cStates[OpenVRInput.controllerIndex[controllerIndex]];
         switch( forAxis ) {

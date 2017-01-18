@@ -30,23 +30,32 @@ import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
 import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import jmevr.app.VRApplication;
+import jmevr.input.OpenVRInput;
 import jmevr.input.VRBounds;
 import jmevr.input.OpenVRInput.VRINPUT_TYPE;
 import jmevr.post.CartoonSSAO;
 import jmevr.util.VRGuiManager;
 import jmevr.util.VRGuiManager.POSITIONING_MODE;
 import jmevr.util.VRMouseManager;
+import jopenvr.VRControllerAxis_t;
+import jopenvr.VRControllerState_t;
 
 /**
  *
  * @author reden
  */
 public class TestjMonkeyVR extends VRApplication {
+    
+    public static final boolean MAKE_CONTROLLER_TEXT_FILE = true; // makes a text file with all controller output, slows things down but good for data collection
+    public static File controllerTextFile;
 
     // set some VR settings & start the app
     public static void main(String[] args){
-        TestjMonkeyVR.CONSTRUCT_WITH_OSVR = true; //pick which API to use, defaults to OpenVR
+        TestjMonkeyVR.CONSTRUCT_WITH_OSVR = false; //pick which API to use, defaults to OpenVR
         TestjMonkeyVR.DISABLE_VR = false; // if we wanted to disable loading anything VR related here
         TestjMonkeyVR test = new TestjMonkeyVR();
         test.preconfigureVRApp(PRECONFIG_PARAMETER.USE_VR_COMPOSITOR, true); // disable the SteamVR compositor (kinda needed at the moment)
@@ -159,6 +168,10 @@ public class TestjMonkeyVR extends VRApplication {
         
         // use magic VR mouse cusor (same usage as non-VR mouse cursor)
         getInputManager().setCursorVisible(true);
+        
+        if( MAKE_CONTROLLER_TEXT_FILE ) {
+            controllerTextFile = new File("controllerinfo.txt");
+        }
       
         // filter test (can be added here like this)
         // but we are going to save them for the F key during runtime
@@ -301,12 +314,26 @@ public class TestjMonkeyVR extends VRApplication {
                  addBox(v, q, 0.1f);
                  VRApplication.getVRinput().triggerHapticPulse(index, 0.1f);
              }
-             // print out all of the known information about the controllers here
-             /*for(int i=0;i<VRInput.getRawControllerState(index).rAxis.length;i++) {
-                 VRControllerAxis_t cs = VRInput.getRawControllerState(index).rAxis[i];
-                 System.out.println("Controller#" + Integer.toString(index) + ", Axis#" + Integer.toString(i) + " X: " + Float.toString(cs.x) + ", Y: " + Float.toString(cs.y));
+             // print out all of the known information about the controllers here to file
+             if( MAKE_CONTROLLER_TEXT_FILE ) {
+                String out = "";
+                VRControllerState_t rawstate = ((VRControllerState_t)((OpenVRInput)VRApplication.getVRinput()).getRawControllerState(index));
+                rawstate.read();
+                for(int i=0;i<rawstate.rAxis.length;i++) {
+                    VRControllerAxis_t cs = rawstate.rAxis[i];
+                    cs.read();
+                    out += "Controller#" + Integer.toString(index) + ", Axis#" + Integer.toString(i) + " X: " + Float.toString(cs.x) + ", Y: " + Float.toString(cs.y) + "\n";
+                }
+                out += "Button press: " + Long.toString(rawstate.ulButtonPressed) + ", touch: " + Long.toString(rawstate.ulButtonTouched) + "\n";
+                BufferedWriter writer = null;
+                try {
+                    writer = new BufferedWriter(new FileWriter(controllerTextFile, true));
+                    writer.write(out);
+                } catch(Exception e) { }
+                try {
+                    writer.close();
+                } catch(Exception e) { }
              }
-             System.out.println("Button press: " + Long.toString(VRInput.getRawControllerState(index).ulButtonPressed) + ", touch: " + Long.toString(VRInput.getRawControllerState(index).ulButtonTouched));*/
          } else {
              geo.setCullHint(CullHint.Always); // hide it             
          }
